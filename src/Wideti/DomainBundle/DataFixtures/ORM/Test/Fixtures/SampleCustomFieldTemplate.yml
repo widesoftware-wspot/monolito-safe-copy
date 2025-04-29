@@ -1,0 +1,308 @@
+Wideti\DomainBundle\Entity\CustomFieldTemplate:
+  CustomFields1:
+    type: "email"
+    isUnique: true
+    isLogin: false
+    setNames:
+      - { "pt_br" : "E-mail", "en" : "Email", "es" : "Email" }
+    identifier: "email"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ] }, { "type" : "email", "value" : true, "message" : "wspot.signup_page.field_valid_email", "locale" : [ "pt_br", "en", "es" ] }]
+
+  CustomFields2:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Nome", "en" : "Name", "es" : "Nombre" }
+    identifier: "name"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields3:
+    type: "phone"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Telefone", "en" : "Phone Number", "es" : "Teléfono" }
+    identifier: "phone"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : ["pt_br", "en", "es"]}, { "type" : "minlength", "value" : 10, "message" : "wspot.signup_page.field_phone_min_characters_required", "locale" : ["pt_br"]}]
+    mask: { "pt_br" : "99999999999", "en" : "", "es" : "" }
+
+  CustomFields4:
+    type: "document"
+    isUnique: true
+    isLogin: false
+    setNames:
+      - { "pt_br" : "CPF", "en" : "Passport", "es" : "Pasaporte" }
+    identifier: "document"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : ["pt_br", "en", "es"]}, { "type" : "minlength", "value" : 10, "message" : "wspot.signup_page.field_document_min_characters_required", "locale" : ["pt_br"]}, { "type" : "CpfValidator", "value" : { "required" : true}, "message" : "wspot.signup_page.field_invalid_document", "locale" : ["pt_br"]}]
+    mask: { "pt_br" : "99999999999", "en" : "", "es" : "" }
+
+  CustomFields5:
+    type: "date"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Data de Nascimento", "en" : "Birth date", "es" : "Fecha de nacimiento" }
+    identifier: "data_nascimento"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : ["pt_br", "en", "es"]}, { "type" : "customDate", "value" : { "required" : true}, "message" : "wspot.signup_page.field_invalid_date", "locale" : ["pt_br", "en", "es"]}]
+    mask: { "pt_br" : "99/99/9999", "en" : "99/99/9999", "es" : "99/99/9999" }
+
+  CustomFields6:
+    type: "birthday"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Data de Aniversário", "en" : "Birthday", "es" : "Fecha de Cumpleaños" }
+    identifier: "birthday"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : ["pt_br", "en", "es"]}, { "type" : "customBirthDay", "value" : { "required" : false}, "message" : "wspot.signup_page.field_invalid_date", "locale" : ["pt_br", "en", "es"]}]
+    mask: { "pt_br" : "99/99", "en" : "99/99", "es" : "99/99" }
+
+  CustomFields7:
+    type: "choice"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Mês de Aniversário", "en": "Birthday Month", "es": "Mes de Aniversario" }
+    identifier: "birthday_month"
+    choices: { "pt_br":{ "Mês de Aniversário": "", "Janeiro": "1", "Fevereiro": "2", "Março": "3", "Abril": "4", "Maio": "5", "Junho": "6", "Julho": "7", "Agosto": "8", "Setembro": "9", "Outubro": "10", "Novembro": "11", "Dezembro": "12" },"en":{ "Birthday Month": "", "January": "1", "February": "2", "March": "3", "April": "4", "May": "5", "June": "6", "July": "7", "August": "8", "September": "9", "October": "10", "November": "11", "December": "12" },"es":{ "Mes de Aniversario": "", "Enero": "1", "Febrero": "2", "Marzo": "3", "Abril": "4", "Mayo": "5", "Junio": "6", "Julio": "7", "Agosto": "8", "Septiembre": "9", "Octubre": "10", "Noviembre": "11", "Diciembre": "12" }}
+    validations: [{ "type": "required", "value":true,"message": "wspot.signup_page.field_required", "locale":["pt_br", "en", "es"]}]
+
+  CustomFields8:
+    type: "choice"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - {"pt_br": "Gênero", "en": "Gender", "es": "Género"}
+    identifier: "gender"
+    choices: {"pt_br":{"Gênero":"","Masculino":"Masculino","Feminino":"Feminino","Outros":"Outros","Prefiro não responder":"Prefiro não responder"}," en":{"Gender":"","Male":"Male","Female":"Female","Others":"Others","Prefer not to answer":"Prefer not to answer"},"es":{"Género":"","Masculino":"Masculino","Femenino":"Femenino","Hombre":"Hombre","Prefiero no decir":" Prefiero no decir"}}
+    validations: [{ "type": "required", "value":true,"message": "wspot.signup_page.field_required", "locale":["pt_br", "en", "es"]}]
+
+  CustomFields9:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Idade", "en": "Age", "es": "Edad" }
+    identifier: "age"
+    validations: [{ "type" : "required", "value":true,"message": "wspot.signup_page.field_required", "locale":["pt_br", "en", "es"]}]
+    mask: { "pt_br": "99", "en": "99", "es": "99" }
+
+  CustomFields10:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Veículo", "en" : "Vehicle", "es" : "Vehículo" }
+    identifier: "vehicle"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields11:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Kilometragem", "en" : "Mileage", "es" : "Kilometraje" }
+    identifier: "km"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields12:
+    type: "license_plate"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Placa do veículo", "en" : "License plate", "es" : "Matrícula de coche" }
+    identifier: "license_plate"
+    mask: { "pt_br" : "AAA-9F99", "en" : "", "es" : "" }
+
+  CustomFields13:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Cidade", "en" : "City", "es" : "Ciudad" }
+    identifier: "city"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields14:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Bairro", "en" : "District", "es" : "Barrio" }
+    identifier: "district"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields15:
+    type: "zip_code"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "CEP", "en" : "Zip Code", "es" : "CEP" }
+    identifier: "zip_code"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+    mask: { "pt_br" : "99999-999", "en" : "", "es" : "" }
+
+  CustomFields16:
+    type: "choice"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Profissão", "en": "Occupation", "es": "Profesión" }
+    identifier: "occupation"
+    choices: { "pt_br": { "Profissão": "", "Administrador (a) de Empresas": "Administrador (a) de Empresas", "Advogado (a)": "Advogado (a)", "Agrônomo (a)": "Agrônomo (a)", "Arquiteto (a)": "Arquiteto (a)", "Cientista": "Cientista", "Comerciante": "Comerciante", "Contador (a)": "Contador (a)", "Engenheiro (a)": "Engenheiro (a)", "Farmacêutico (a)": "Farmacêutico (a)", "Médico (a)": "Médico (a)", "Músico": "Músico", "Professor (a)": "Professor (a)", "Profissional Liberal": "Profissional Liberal", "Publicitário (a)": "Publicitário (a)", "Técnico (a) em TI": "Técnico (a) em TI" }, "en": { "Occupation": "", "Business Administrator": "Business Administrator", "Lawyer": "Lawyer", "Agronomist": "Agronomist", "Architect": "Architect", "Scientist": "Scientist", "Trader": "Trader", "Counter": "Counter", "Engineer": "Engineer", "Pharmacist": "Pharmacist", "Medical": "Medical", "Musician": "Musician", "Teacher": "Teacher", "FreeLancer": "FreeLancer", "Advertising": "Advertising", "Technical IT": "Technical IT" }, "es": { "Profesión": "", "Administrador de Empresas": "Administrador de Empresas", "Abogado": "Abogado", "Agronómico": "Agronómico", "Arquitecto": "Arquitecto", "Científico": "Científico", "Comerciante": "Comerciante", "Contador": "Contador", "Ingeniero": "Ingeniero", "Farmaceutico": "Farmaceutico", "Médico": "Médico", "Músico": "Músico", "Profesor": "Profesor", "Independiente": "Independiente", "Publicidad": "Publicidad", "Técnico": "Técnico" }}
+    validations: [{ "type": "required", "value":false, "message": "wspot.signup_page.field_required", "locale": ["pt_br", "en", "es"] }]
+
+  CustomFields17:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Quem indicou nosso WiFi?", "en": "Who's recommended our WiFi?", "es": "Quien indicou nuestro WiFi?" }
+    identifier: "quem_indicou"
+    validations: [{ "type": "required", "value": true, "message": "wspot.signup_page.field_required", "locale": ["pt_br", "en", "es"]}]
+
+  CustomFields18:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Esporte favorito", "en": "Favorite sport", "es": "Deporte favorito" }
+    identifier: "sport"
+    validations: [{ "type": "required", "value": true, "message": "wspot.signup_page.field_required", "locale": ["pt_br", "en", "es"] }]
+
+  CustomFields19:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Time", "en": "Team", "es": "Equipo" }
+    identifier: "team"
+    validations: [{ "type": "required", "value": true, "message": "wspot.signup_page.field_required", "locale": ["pt_br", "en", "es"]}]
+
+  CustomFields20:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Carteira do benficiário", "en": "Carteira do benficiário", "es": "Carteira do benficiário" }
+    identifier: "unimed_number"
+    validations: [{ "type": "required", "value":true,"message": "wspot.signup_page.field_required", "locale":["pt_br", "en", "es"]},{ "type": "minlength", "value":18,"message": "wspot.unimed_number.min_length", "locale":["pt_br", "en", "es"]},{ "type": "customUnimedNumber", "value":true,"message": "wspot.unimed_number.invalid_number", "locale":["pt_br", "en", "es"]}]
+    mask: { "pt_br": "9999.9999999999999", "en": "9999.9999999999999", "es": "9999.9999999999999" }
+    visibleForClients: ["unimed"]
+
+  CustomFields21:
+    type: "choice"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Estado", "en": "State", "es": "Estado" }
+    identifier: "uf"
+    choices: { "pt_br":{ "Estado": "", "Acre": "AC", "Alagoas": "AL", "Amapá": "AP", "Amazonas": "AM", "Bahia": "BA", "Ceará": "CE", "Distrito Federal": "DF", "Espírito Santo": "ES", "Goiás": "GO", "Maranhão": "MA", "Mato Grosso": "MT", "Mato Grosso do Sul": "MS", "Minas Gerais": "MG", "Pará": "PA", "Paraíba": "PB", "Paraná": "PR", "Pernambuco": "PE", "Piauí": "PI", "Rio de Janeiro": "RJ", "Rio Grande do Norte": "RN", "Rio Grande do Sul": "RS", "Rondônia": "RO", "Roraima": "RR", "Santa Catarina": "SC", "São Paulo": "SP", "Sergipe": "SE", "Tocantins": "TO" },"en":{ "Estado": "", "Acre": "AC", "Alagoas": "AL", "Amapá": "AP", "Amazonas": "AM", "Bahia": "BA", "Ceará": "CE", "Distrito Federal": "DF", "Espírito Santo": "ES", "Goiás": "GO", "Maranhão": "MA", "Mato Grosso": "MT", "Mato Grosso do Sul": "MS", "Minas Gerais": "MG", "Pará": "PA", "Paraíba": "PB", "Paraná": "PR", "Pernambuco": "PE", "Piauí": "PI", "Rio de Janeiro": "RJ", "Rio Grande do Norte": "RN", "Rio Grande do Sul": "RS", "Rondônia": "RO", "Roraima": "RR", "Santa Catarina": "SC", "São Paulo": "SP", "Sergipe": "SE", "Tocantins": "TO" },"es":{ "Estado": "", "Acre": "AC", "Alagoas": "AL", "Amapá": "AP", "Amazonas": "AM", "Bahia": "BA", "Ceará": "CE", "Distrito Federal": "DF", "Espírito Santo": "ES", "Goiás": "GO", "Maranhão": "MA", "Mato Grosso": "MT", "Mato Grosso do Sul": "MS", "Minas Gerais": "MG", "Pará": "PA", "Paraíba": "PB", "Paraná": "PR", "Pernambuco": "PE", "Piauí": "PI", "Rio de Janeiro": "RJ", "Rio Grande do Norte": "RN", "Rio Grande do Sul": "RS", "Rondônia": "RO", "Roraima": "RR", "Santa Catarina": "SC", "São Paulo": "SP", "Sergipe": "SE", "Tocantins": "TO" }}
+    validations: [{ "type": "required", "value":true,"message": "wspot.signup_page.field_required", "locale":["pt_br", "en", "es"]}]
+
+  CustomFields22:
+    type: "choice"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br": "Estado Civil", "en": "Marital Status", "es": "Estado Civil" }
+    identifier: "marital_status"
+    choices: { "pt_br":{ "Estado Civil": "", "Solteiro(a)": "Solteiro(a)", "Noivo(a)": "Noivo(a)", "Casado(a)": "Casado(a)", "Divorciado(a)": "Divorciado(a)" },"en":{  "Marital Status": "", "Single": "Single", "Engaged": "Engaged", "Married": "Married", "Divorced": "Divorced" },"es":{ "Estado Civil": "", "Solo(a)": "Solo(a)", "Prometido(a)": "Prometido(a)", "Casado(a)": "Casado(a)", "Divorciado(a)": "Divorciado(a)" }}
+    validations: [ { "type": "required", "value":true,"message": "wspot.signup_page.field_required", "locale":[ "pt_br", "en", "es"]}]
+
+  CustomFields23:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Conta", "en" : "Account", "es" : "Conta" }
+    identifier: "conta"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+    visibleForClients: ["sicredibotucarai"]
+
+  CustomFields24:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Sobrenome", "en" : "Last Name", "es" : "Apellido" }
+    identifier: "last_name"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields25:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Empresa", "en" : "Company", "es" : "Empresa" }
+    identifier: "company"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields26:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Cargo", "en" : "Position", "es" : "Cargo" }
+    identifier: "position"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields27:
+    type: "phone"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br":"Celular", "en":"Phone", "es":"Móvil" }
+    identifier: "mobile"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : ["pt_br", "en", "es"]}, { "type" : "minlength", "value" : 10, "message" : "wspot.signup_page.field_phone_min_characters_required", "locale" : ["pt_br"]}]
+    mask: { "pt_br" : "99999999999", "en" : "", "es" : "" }
+
+  CustomFields28:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "UPN", "en" : "UPN", "es" : "UPN" }
+    identifier: "upn"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+    visibleForClients: ["dev"]
+
+  CustomFields29:
+    type: "choice"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - {"pt_br":"Documento","en":"Document","es":"Documento"}
+    identifier: "custom_oldmambo_document"
+    choices: {"pt_br":{"CPF":"CPF","RG":"RG","Passaporte":"Passaporte","CNH":"CNH"},"en":{"CPF":"CPF","National ID":"National ID","Passport":"Passport","Driver's License":"Driver's License"},"es":{"CPF":"CPF","Registro Nacional":"Registro Nacional","Pasaporte":"Pasaporte","Licencia de Conducir":"Licencia de Conducir"}}
+    validations: [{"type":"required","value":true,"message":"wspot.signup_page.field_required","locale":["pt_br","en","es"]}]
+
+  CustomFields30:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - {"pt_br":"ID Documento","en":"ID Document","es":"ID Documento"}
+    identifier: "custom_oldmambo_id_document"
+    validations: [{"type":"required","value":true,"message":"wspot.signup_page.field_required","locale":["pt_br","en","es"]}]
+
+  CustomFields31:
+    type: "text"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - {"pt_br":"Dispositivo","en":"Device","es":"Dispositivo"}
+    identifier: "mac_address"
+    visibleForClients: []
+
+
+  CustomFields32:
+    type: "date"
+    isUnique: false
+    isLogin: false
+    setNames:
+      - { "pt_br" : "Data de Nascimento", "en" : "Birth date", "es" : "Fecha de nacimiento" }
+    identifier: "age_restriction"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : ["pt_br", "en", "es"]}, { "type" : "customDate", "value" : { "required" : true}, "message" : "wspot.signup_page.field_invalid_date", "locale" : ["pt_br", "en", "es"]},{"type":"ageRestriction","value":{"required":true},"message":"wspot.signup_page.field_age_restriciton_error","locale":["pt_br","en","es"]}]
+    mask: { "pt_br" : "99/99/9999", "en" : "99/99/9999", "es" : "99/99/9999" }
+    visibleForClients: []

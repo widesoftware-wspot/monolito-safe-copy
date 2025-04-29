@@ -1,0 +1,7 @@
+Wideti\DomainBundle\Entity\Plan:
+  Basic:
+    shortCode: 'basic'
+    plan: "Básico"
+  Pro:
+    shortCode: 'pro'
+    plan: "PRO"

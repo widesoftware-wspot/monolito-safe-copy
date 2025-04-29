@@ -1,0 +1,124 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {title: 'Grupos'} %}
+<div class="innerLR">
+
+    <!-- Widget -->
+    <div class="widget widget-tabs widget-tabs border-bottom-none">
+
+        <!-- Widget heading -->
+        <div class="widget-head">
+            <ul>
+                <ul>
+                    <li class="active"><a class="glyphicons eye_open" data-toggle="tab"><i></i>Visualizar</a></li>
+                </ul>
+            </ul>
+        </div>
+        <!-- // Widget heading END -->
+
+        <div class="widget-body">
+
+            <div class="tab-content" style="padding: 0;">
+
+                <div class="tab-pane active widget-body-regular" id="overview">
+
+                    <div class="row-fluid row-merge">
+                        <div class="span12">
+
+                            <div class="innerL">
+                                <div class="span4">
+                                    <!-- About -->
+                                    <h4>{{ entity.groupName }}</h4>
+
+                                    <h6>{{ groupsUnderItsHierarch }} grupo(s) de Ponto de Acesso sob sua hierarquia.</h6>
+
+                                    {% if entity.template %}
+                                        {{ entity.template.name }}
+                                    {% else %}
+                                        Nenhum template definido para este grupo
+                                    {% endif %}
+                                    <!-- // About END -->
+                                </div>
+
+                                <div class="form-actions right">
+                                    {% set urlBackButton = app.request.headers.get('referer') %}
+
+                                    {% if ('edit' in urlBackButton) %}
+                                        <a href="{{ path('access_points_groups') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar para Listagem</a>
+                                    {%  else %}
+                                        <a href="{{ urlBackButton }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+                                    {% endif %}
+
+                                    <a href="{{ path('access_points_groups_edit', {'id': entity.id}) }}" class="btn btn-icon btn-default glyphicons pencil"><i></i>Editar</a>
+                                </div>
+                            </div>
+
+                            <div class="innerL">
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <div class="widget margin-bottom-none" >
+                                            <div class="widget-head">
+                                                <h4 class="heading">Pontos de acesso do grupo</h4>
+                                            </div>
+                                            <div class="widget-body list products">
+                                                {% if entity.accessPoints|length > 0 %}
+                                                <table class="dynamicTable table table-striped table-bordered table-condensed">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>AP</th>
+                                                        <th>Identificador</th>
+                                                        <th>Local</th>
+                                                        <th>Template</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% for ap in accessPoints %}
+                                                        <tr class="gradeX">
+                                                            <td>{{ ap.friendlyName }}</td>
+                                                            <td>
+                                                                {% if ap.identifier %}
+                                                                    {{ ap.identifier }}
+                                                                {% else %}
+                                                                    N/I
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>
+                                                                {% if ap.local %}
+                                                                    {{ ap.local }}
+                                                                {% else %}
+                                                                    N/I
+                                                                {% endif %}
+                                                            </td>
+                                                            <td>
+                                                                {% if ap.template %}
+                                                                    {{ ap.template.name }}
+                                                                {% else %}
+                                                                    Não definido
+                                                                {% endif %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                    <div class="custom-pagination" style="padding-top: 10px;">
+                                                        {% include 'AdminBundle::pagination.html.twig' with {'pagination': pagination, 'route': 'access_points_groups_show', 'route_params': {'id': entity.id }} %}
+                                                    </div>
+                                                {% else %}
+                                                 Nenhum ponto de acesso cadastrado
+                                            {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

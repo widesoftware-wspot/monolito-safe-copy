@@ -1,0 +1,36 @@
+segmentation:
+  path:  /
+  defaults: { _controller: wspot.admin.controller.segmentation:indexAction }
+
+segmentation_new:
+    path:  /new
+    defaults: { _controller: wspot.admin.controller.segmentation:newAction }
+    options:
+        expose: true
+
+segmentation_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.segmentation:editAction }
+    options:
+        expose: true
+
+segmentation_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.segmentation:deleteAction }
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+segmentation_show:
+    path:  /{id}/show/{page}
+    defaults: { _controller: wspot.admin.controller.segmentation:showAction, page:1 }
+    requirements: { methods: get, page: \d+ }
+    options:
+        expose: true
+
+segmentation_export:
+    path:  /{id}/export
+    defaults: { _controller: wspot.admin.controller.segmentation:exportAction }
+    requirements: { methods: post }
+    options:
+        expose: true

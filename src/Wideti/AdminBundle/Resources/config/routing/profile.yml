@@ -1,0 +1,8 @@
+admin_profile_edit:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.users:profileEditAction }
+    requirements: { methods: post|put|get }
+admin_profile_password_edit:
+    path:  /senha
+    defaults: { _controller: wspot.admin.controller.users:profilePasswordEditAction }
+    requirements: { methods: post|put|get }

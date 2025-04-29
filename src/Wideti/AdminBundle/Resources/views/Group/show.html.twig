@@ -1,0 +1,336 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block content %}
+{% include 'AdminBundle::header.html.twig' with { title: 'Regra: ' ~ group.name } %}
+
+<div class="innerLR">
+    <!-- Widget -->
+    <div class="widget widget-tabs widget-tabs border-bottom-none">
+        <!-- Widget heading -->
+        <div class="widget-head">
+            <ul>
+                <ul>
+                    <li class="active"><a class="glyphicons eye_open" data-toggle="tab"><i></i>Visualizar</a></li>
+                </ul>
+            </ul>
+        </div>
+        <!-- // Widget heading END -->
+        <div class="widget-body">
+            <div class="tab-content" style="padding: 0;">
+                <div class="tab-pane active widget-body-regular" id="overview">
+                    <div class="row-fluid row-merge">
+                        <div class="span12">
+                            <div class="innerL">
+                                <div class="span4">
+                                    <h4>Configurações</h4>
+                                </div>
+                            </div>
+
+                            <div class="span5"></div>
+
+                            <div class="innerL" style="margin-top: 20px;">
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        {% for config in group.configurations %}
+                                        <!-- Latest Orders/List Widget -->
+                                            <div class="span4">
+                                            <div class="widget margin-bottom-none" >
+                                                <!-- Widget Heading -->
+                                                <div class="widget-head">
+                                                    <h4 class="heading">{{ config.category }} </h4>
+                                                </div>
+                                                <!-- // Widget Heading -->
+
+                                                <div class="widget-body list products">
+                                                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                                                            {% for value in config.configurationValues %}
+                                                                {% if value.value != "" or value.key in ['enable_block_per_time','enable_bandwidth', 'enable_validity_access'] %}
+                                                                <tr>
+                                                                {% if value.key in ['enable_block_per_time','enable_bandwidth', 'enable_validity_access']  %}
+                                                                    <th class="center">
+                                                                        Está ativo?
+                                                                    </th>
+                                                                {% else %}
+                                                                    <th class="center">
+                                                                        {{ value.label }}
+                                                                    </th>
+                                                                {% endif %}
+
+                                                                {% if value.key in ['enable_block_per_time','enable_bandwidth', 'enable_validity_access']  %}
+                                                                    <td>
+                                                                        {{ value.value ? "Sim" : "Não" }}
+                                                                    </td>
+                                                                {% else %}
+                                                                    <td>
+                                                                        {% if value.label in [ 'Download', 'Upload' ] %}
+                                                                            {{ value.value | format_bytes }}
+                                                                        {% else  %}
+                                                                            {{ value.value }}
+                                                                        {% endif %}
+                                                                    </td>
+                                                                {% endif %}
+                                                                </tr>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            </div>
+                                        {% endfor %}
+
+                                        {% if group.inAccessPoints == true %}
+                                            <div class="row-fluid">
+                                                <div class="span12">
+                                                    <div class="widget margin-bottom-none" >
+                                                        <!-- Widget Heading -->
+                                                        <div class="widget-head">
+                                                            <h4 class="heading">Ponto(s) de Acesso e/ou Grupo(s) de Ponto de Acesso vinculados à cadastros</h4>
+                                                        </div>
+                                                        <!-- // Widget Heading -->
+                                                        <div class="widget-body list products">
+                                                            <table class="dynamicTable table table-striped table-bordered table-condensed">
+                                                                <tr>
+                                                                    <th class="center">
+                                                                        Nome
+                                                                    </th>
+                                                                    <th class="center">
+                                                                        Identificador
+                                                                    </th>
+                                                                {% for value in accessPointsArray  %}
+                                                                    <tr>
+                                                                        <td>{{ value.friendlyName }}</td>
+                                                                        <td>{{ value.identifier }}</td>
+                                                                    </tr>
+                                                                {% endfor %}
+                                                                </tr>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <br />
+                                                </div>
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                                {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") %}
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <h4>Visitantes nesta regra</h4>
+                                        <div class="filter-bar margin-bottom-none">
+                                            {{ form_start(form, {'attr':{'class':'form-inline', 'novalidate': 'novalidate'} } ) }}
+                                            {{ form_row(form.filter,{'attr':{"style":"width:auto"}}) }}
+                                            {% for field in form %}
+                                                {% if field.vars.name starts with 'value_' %}
+                                                    {{ form_row(field) }}
+                                                {% endif %}
+                                            {% endfor %}
+                                            {{ form_end(form) }}
+                                            &nbsp;
+                                            <button id="lot-change" type="button" class="btn btn-primary">Mover selecionados</button>
+                                        </div>
+
+                                        <div class="widget margin-bottom-none" >
+
+                                            <div class="widget-body list products">
+                                                <table class="dynamicTable table table-striped table-bordered table-condensed" style="table-layout: auto">
+                                                    <thead>
+                                                    <tr>
+                                                        <th class="center">
+                                                        <input type="checkbox" name="select-all" id="select-all" />
+                                                        </th>
+                                                        {% for field in customFields %}
+                                                            <th class="center">{{ field }}</th>
+                                                        {% endfor %}
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    {% if guests is empty %}
+                                                        <td class="center" colspan="3">Nenhum visitante nesta regra</td>
+                                                    {% endif %}
+                                                    {% for guest in guests %}
+                                                    <tr>
+                                                        <td class="center">
+                                                            <input type="checkbox" class="guest-lot-change" name="guest-{{ guest.id }}" id="guest-{{ guest.id }}" value="{{ guest.id }}" loginValue="{{ guest.properties['' ~ loginField ] }}" data-group-show-id="{{ group.id }}" />
+                                                        </td>
+                                                        {% for key, field in customFields %}
+                                                            <td class="center">
+                                                                <a href="{{ path('admin_visitantes_show',{id:guest.id}) }}">
+                                                                    {{ guest.properties['' ~ key] }}
+                                                                </a>
+                                                            </td>
+                                                        {% endfor %}
+                                                    </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+
+                                        <br />
+                                        {% block pagination %}
+
+                                            {{ knp_pagination_render(guests, 'AdminBundle::knp_pagination.html.twig') }}
+
+                                        {% endblock %}
+                                        <!-- fim listagem de visitantes -->
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions right" style="margin-bottom: 20px;">
+                <a href="{{ path('group_list') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+                {% if is_granted("ROLE_MARKETING") == false %}
+                    <a href="{{ path('group_edit', { 'id': group.id }) }}" class="btn btn-icon btn-default glyphicons pencil"><i></i>Editar</a>
+                {% endif %}
+            </div>
+        </div>
+        <!-- // Tab content END -->
+    </div>
+    <!-- // Widget END -->
+</div>
+
+    <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+        <form name="change-group-form" id="change-group-form" method="get" action="{{ path('group_guest_transfer') }}" class="form-inline" novalidate="novalidate" target="_self">
+            <div class="modal-body">
+                <div class='span6'>
+                    <div class='control-group'>
+                        <h3>Mover para: </h3>
+                        <input id="guest-id" name="guest-id" type="hidden" />
+                        <input id="group-show-id" name="group-show-id" type="hidden" />
+                        <div class='controls'>
+                            <select name="group" id="group">
+                                {% for g in allGroups %}
+                                    <option value="{{ g.shortcode }}">{{ g.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <br/>
+                        <p id="modal-message"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#" class="btn btn-primary modal-close" id="modal-close">Cancelar</a>
+                <button id="export" type="submit" class="btn btn-success">Transferir</button>
+            </div>
+        </form>
+    </div>
+
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script>
+        var modal;
+        function moveGuestsToGroup(guestsIds, groupid, guestsIdentifiers) {
+
+            var form = $("#change-group-form");
+
+            guestsIds.forEach(function(id, index){
+                form.append("<input type='hidden' name='guest-id[" + index + "]' value='" + id + "' />");
+            });
+            form.append("<input type='hidden' name='group-show-id' value='" + groupid + "' />");
+
+            var baseMessage = (guestsIdentifiers.length > 1) ? "Serão movidos os seguintes visitantes: " : "Será movido o visitante: ";
+            var message = baseMessage + "<span id='modal-guest-email' style='color:red'>" + guestsIdentifiers.join(", ") + "</span>";
+
+            $("#modal-message").html(message);
+            var dialogBox = bootbox
+                .dialog($("#modal").html())
+
+            modal = dialogBox.modal.bind(dialogBox);
+        }
+
+        $('.modal-close').on('click', function(event) {
+            event.preventDefault();
+            modal('hide');
+        });
+
+        $('.btn-change').on("click", function () {
+            var guestIdentifier = $(this).attr('loginvalue');
+            var guestId = $(this).data('id');
+            var groupId = $(this).data('group-show-id');
+            moveGuestsToGroup([guestId], groupId, [guestIdentifier]);
+        });
+
+        $("#lot-change").on("click", function(event) {
+            var checkeds = $(".guest-lot-change:checked");
+            var guestsIdentifiers = [];
+            var ids = [];
+            var thisGroup = checkeds.eq(checkeds.length - 1).data('group-show-id');
+
+            checkeds.each(function () {
+                ids.push(this.value);
+                guestsIdentifiers.push($(this).attr('loginvalue'));
+            });
+
+            if (thisGroup) {
+                moveGuestsToGroup(ids, thisGroup, guestsIdentifiers);
+            } else {
+                var dialog = bootbox.dialog("" +
+                    "<p>Selecione ao menos 1 visitante para esta ação</p>" +
+                    "<div class='modal-footer'>" +
+                    "<a href='#' class='btn btn-primary modal-close'>Fechar</a>" +
+                    "</div>");
+                modal = dialog.modal.bind(dialog);
+            }
+        });
+
+        $("#select-all").on('change', function () {
+            var allInputs = $(".guest-lot-change");
+
+            if($(this).is(":checked")) {
+                allInputs.each(function () {
+                    $(this).prop('checked', true);
+                });
+            } else {
+                allInputs.each(function () {
+                    $(this).prop('checked', false);
+                });
+            }
+        });
+
+        $(".value-field").parent().hide();
+        $('option[value="separator"]').attr('disabled', 'disabled').css({
+            'color': '#999',
+            'line-height': '0px',
+            'font-size': '5px'
+        });
+        if($("#wspot_guest_group_find_filter").val() != 'all' ){
+            let selectedValue = $("#wspot_guest_group_find_filter").val().replace("properties.", "");
+            $(`.value-${selectedValue}`).parent().show();
+        }
+        if($("#wspot_guest_group_find_filter").val() == 'all' ){
+            $("#visitantes_value").css("display","none");
+            $("#visitantes_value").val('');
+        }else{
+            $("#visitantes_value").css("display","block");
+        }
+        $("#wspot_guest_group_find_filter").click(function(e){
+            $(".value-field").parent().hide();
+            if($("#wspot_guest_group_find_filter").val() != 'all' ){
+                let selectedValue = $("#wspot_guest_group_find_filter").val().replace("properties.", "");
+                $(`.value-${selectedValue}`).parent().show();
+            }
+            if($("#wspot_guest_group_find_filter").val() == 'all' ){
+                $("#visitantes_value").css("display","none");
+                $("#visitantes_value").val('');
+            } else {
+                $("#visitantes_value").css("display","block");
+            }
+        });
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

@@ -1,0 +1,5 @@
+# Esse arquivo é para cada DEV sobrescrever os params de produção (parameters.yml) com o seu valor local.
+parameters:
+    dev_delivery_address: 'developers-wspot@wideti.com.br'
+    cm_jwt_secret: jwtWspot@1879secretKey
+    business_manager_host: 'http://172.17.0.1:8080'

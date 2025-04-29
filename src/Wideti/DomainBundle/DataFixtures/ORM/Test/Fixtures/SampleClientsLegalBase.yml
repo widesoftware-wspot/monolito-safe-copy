@@ -1,0 +1,13 @@
+Wideti\DomainBundle\Entity\ClientsLegalBase:
+  ClientsLegalBase:
+    client: "@Client"
+    legalKind: "@TermoConsentimento"
+    active: true
+  ClientsLegalBaseFacebookAuthTeste:
+    client: "@FacebookAuthTeste"
+    legalKind: "@TermoConsentimento"
+    active: true
+  ClientsLegalBaseTwitterAuthTeste:
+    client: "@TwitterAuthTeste"
+    legalKind: "@TermoConsentimento"
+    active: true

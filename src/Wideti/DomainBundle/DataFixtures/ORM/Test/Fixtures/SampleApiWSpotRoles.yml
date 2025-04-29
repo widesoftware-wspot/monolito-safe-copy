@@ -1,0 +1,12 @@
+Wideti\DomainBundle\Entity\ApiWSpotRoles:
+  RoleApi:
+    api: "@ApiWSpot"
+    role: 'ROLE_API'
+
+  RoleRead:
+    api: "@ApiWSpot"
+    role: 'ROLE_READ'
+
+  RoleWrite:
+    api: "@ApiWSpot"
+    role: 'ROLE_WRITE'

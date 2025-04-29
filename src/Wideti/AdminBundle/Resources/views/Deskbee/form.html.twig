@@ -1,0 +1,49 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+{% endblock %}
+
+{% block content %}
+
+{% set route = app.request.attributes.get('_route') %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Deskbee'} %}
+
+
+<div class="innerLR">
+  <div class="widget widget-tabs border-bottom-none">
+    <div class="widget-body">
+      {{ form_start(form) }}
+      {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+      {{ form_row(form.enable_deskbee_integration) }}
+      {{ form_row(form.deskbee_client_id) }}
+      {{ form_row(form.deskbee_client_secret) }}
+      {{ form_row(form.deskbee_environment) }}  
+      {{ form_row(form.deskbee_redirect_url) }}
+      {{ form_widget(form.submit) }}
+
+      {{ form_errors(form) }}
+
+
+      {{ form_end(form) }}
+    </div>
+  </div>
+</div>
+
+{% endblock%}
+{% block javascript %}
+    {{ parent() }}
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js') }}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+{% endblock %}

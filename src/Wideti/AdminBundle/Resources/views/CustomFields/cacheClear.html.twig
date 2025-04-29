@@ -1,0 +1,11 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="module-permission">
+        {% if isCacheActive %}
+            <h1>O Cache dos campos customizados foi excluído.</h1>
+        {% else %}
+            <h1>O Cache esta desativado</h1>
+        {% endif %}
+    </div>
+{% endblock %}

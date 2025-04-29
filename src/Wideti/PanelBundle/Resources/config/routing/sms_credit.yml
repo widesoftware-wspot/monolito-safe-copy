@@ -1,0 +1,10 @@
+panel_sms_credit:
+  path:  /{client}
+  defaults: { _controller: wspot.panel.controller.sms_credit:editAction }
+
+panel_sms_credit_historic_delete:
+  path:  /{id}/delete
+  defaults: { _controller: wspot.panel.controller.sms_credit:deleteHistoricAction }
+  requirements: { methods: post|delete|get }
+  options:
+    expose: true

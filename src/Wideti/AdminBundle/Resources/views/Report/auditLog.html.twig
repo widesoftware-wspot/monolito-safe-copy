@@ -1,0 +1,192 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block dataTitle %}
+    Relatório de Auditoria
+    <span class="tooltip-wrapper">
+        <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Este relatório exibe as ações realizadas pelos usuários no sistema, incluindo data, tipo de evento e outros detalhes."></i>
+    </span>
+{% endblock %}
+
+{% block filterBlock %}
+    <div class="filter-bar row-fluid margin-bottom-none">
+        {% block filter %}
+            {% set exportParams = app.request.query.all %}
+
+            {% form_theme filter 'AdminBundle:Form:fields.html.twig' %}
+
+            {{ form(filter, {'action': path('admin_audit_report', exportParams)}) }}
+
+            {% set exportParams = exportParams|merge({'export': 1}) %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block resultsInfo %}
+    <div class="heading-buttons">
+        <b>Dados Atualizados em: {{ "now"|date_modify("-1 day")|date("d/m/Y") }} </b>
+    </div>
+    <div style="margin-bottom: 10px;">
+        {{ (auditEvents) ? "Encontrados "~ auditEvents|length ~" resultados" : "Nenhum resultado encontrado" }}
+        entre o período de {{ (date_from) ? "" ~ date_from | date('d/m/Y') }} até {{ date_to | date('d/m/Y') }}
+    </div>
+{% endblock %}
+
+{% block thead %}
+    <th>Usuário</th>
+    <th>Evento</th>
+    <th>módulo</th>
+    <th>Identificação</th>
+    <th class="center">Detalhes da Alteração</th>
+    <th class="center">Data de Registro</th>
+
+
+{% endblock %}
+
+{% block tbody %}
+    {% if auditEvents %}
+        {% for entity in pagination %}
+            <tr class="gradeX">
+                <td>
+                    {% if entity.sourceUsername|slice(0, 4) != "API " and entity.sourceUsername != "system" %}
+                    <a 
+                        title="Visualizar detalhes do usuário" 
+                        href="{{ path('admin_usuarios_show', {'id': entity.sourceId}) }}"
+                    >
+                        {{ entity.sourceUsername }}
+                    </a>
+                    {% else %}
+                    <p>
+                        {{ entity.sourceUsername }}
+                    </p>
+                    {% endif %}
+                </td>
+                <td>{{ entity.eventType }}</td>
+                <td>{{ entity.targetKind }}</td>
+                <td>{{ entity.targetIdentifier }}</td>
+                <td class="center">
+                {% if entity.changes %}
+                    <a href="#" 
+                    class="btn-action glyphicons eye_open btn-info" 
+                    title="Detalhes"
+                    data-changes="{{ entity.changes|json_encode }}" 
+                    data-toggle="modal" data-target="#auditModal">
+                        <i class="glyphicon glyphicon-eye-open"></i>
+                    </a>
+                {% else %}
+                    <span>Alterações indisponiveis</span>
+                {% endif %}
+                </td>
+                <td class="center">{{ entity.createdAt|date('d/m/Y H:i:s') }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr class="gradeX">
+            <td colspan="6">Nenhum registro encontrado.</td>
+        </tr>
+    {% endif %}
+
+    <!-- modal -->
+    <div id="auditModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title mt-2">Alterações:</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="auditChangesContent">
+                        <!-- As alterações serão carregadas aqui via AJAX -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagination %}
+    {% if auditEvents|length > 0 %}
+        <div id="auditModal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Alterações do Evento de Auditoria</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="auditChangesContent">
+                            <!-- As alterações serão carregadas aqui via AJAX -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('a[data-toggle="modal"]').click(function() {
+                var changes = $(this).data('changes');
+                var yamlContent = jsyaml.dump(changes);
+                $('#auditChangesContent').html('<pre>' + yamlContent + '</pre>');
+            });
+
+            if ($('#auditReportFilter_date_from').length && $('#auditReportFilter_date_to').length)
+        {
+            $( "#auditReportFilter_date_from" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                changeMonth: false,
+                numberOfMonths: 1,
+                minDate: "-13m",
+                onClose: function( selectedDate ) {
+                    $( "#auditReportFilter_date_to" ).datepicker( "option", "minDate", selectedDate );
+                }
+            }).datepicker( "option", "maxDate", $('#auditReportFilter_date_to').val() );
+
+            $( "#auditReportFilter_date_to" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                changeMonth: false,
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                numberOfMonths: 1,
+                minDate: "-13m",
+                onClose: function( selectedDate ) {
+                    $( "#auditReportFilter_date_from" ).datepicker( "option", "maxDate", selectedDate );
+                }
+            }).datepicker( "option", "minDate", $('#auditReportFilter_date_to').val() );
+        }
+        });
+
+    </script>
+{% endblock %}

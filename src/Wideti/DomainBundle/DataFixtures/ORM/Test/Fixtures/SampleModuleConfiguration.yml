@@ -1,0 +1,232 @@
+Wideti\DomainBundle\Entity\ModuleConfiguration:
+  ModuleConfiguration1:
+    module: "@Module2"
+    key: "enable_access_code"
+    label: "Código de Acesso"
+    type: "checkbox"
+
+  ModuleConfiguration2:
+    module: "@Module3"
+    key: "enable_blacklist"
+    label: "Ativação da lista de bloqueio"
+    type: "checkbox"
+
+  ModuleConfiguration3:
+    module: "@Module4"
+    key: "enable_business_hours"
+    label: "Ativação do Horário de Funcionamento"
+    type: "checkbox"
+
+  ModuleConfiguration4:
+    module: "@Module6"
+    key: "enable_white_label"
+    label: "Ativação de White Label"
+    type: "checkbox"
+
+  ModuleConfiguration5:
+    module: "@Module16"
+    key: "deskbee_client_id"
+    label: "Client ID"
+    type: "text"
+
+  ModuleConfiguration6:
+    module: "@Module16"
+    key: "deskbee_client_secret"
+    label: "Client Secret"
+    type: "text"
+
+  ModuleConfiguration7:
+    module: "@Module16"
+    key: "enable_deskbee_integration"
+    label: "Ativar integração com Deskbee"
+    type: "checkbox"
+
+  ModuleConfiguration8:
+    module: "@Module16"
+    key: "deskbee_redirect_url"
+    label: "URL de redirecionamento para o Deskbee"
+    type: "text"
+  
+  ModuleConfiguration9:
+    module: "@Module16"
+    key: "deskbee_environment"
+    label: "Ambiente deskbee"
+    type: "text"
+
+  ModuleConfiguration10:
+    module: "@Module19"
+    key: "enable_hubsoft_integration"
+    label: "Ativar integração com Hubsoft"
+    type: "checkbox"
+
+  ModuleConfiguration11:
+    module: "@Module19"
+    key: "enable_hubsoft_authentication"
+    label: "Autenticar cliente via Hubsoft"
+    type: "checkbox"
+
+  ModuleConfiguration12:
+    module: "@Module19"
+    key: "enable_hubsoft_prospecting"
+    label: "Enviar dados de prospecto no cadastro dos visitantes"
+    type: "checkbox"
+
+  ModuleConfiguration13:
+    module: "@Module19"
+    key: "hubsoft_auth_button"
+    label: "Texto do botão de autenticação de cliente via Hubsoft"
+    type: "text"
+
+  ModuleConfiguration14:
+    module: "@Module19"
+    key: "hubsoft_id_crm"
+    label: "Id do CRM"
+    type: "text"
+
+  ModuleConfiguration15:
+    module: "@Module19"
+    key: "hubsoft_id_origin"
+    label: "Id da origem"
+    type: "text"
+
+  ModuleConfiguration16:
+    module: "@Module19"
+    key: "hubsoft_id_service"
+    label: "Id do serviço"
+    type: "text"
+
+  ModuleConfiguration17:
+    module: "@Module19"
+    key: "hubsoft_client_group"
+    label: "Grupo dos clientes autenticados"
+    type: "text"
+
+  ModuleConfiguration18:
+    module: "@Module19"
+    key: "hubsoft_host"
+    label: "Host"
+    type: "text"
+
+  ModuleConfiguration19:
+    module: "@Module19"
+    key: "hubsoft_password"
+    label: "Password"
+    type: "text"
+
+  ModuleConfiguration20:
+    module: "@Module19"
+    key: "hubsoft_username"
+    label: "Username"
+    type: "text"
+
+  ModuleConfiguration21:
+    module: "@Module19"
+    key: "hubsoft_client_secret"
+    label: "Client Secret"
+    type: "text"
+
+  ModuleConfiguration22:
+    module: "@Module19"
+    key: "hubsoft_client_id"
+    label: "Client ID"
+    type: "text"
+
+# IXC
+
+  ModuleConfiguration23:
+    module: "@Module20"
+    key: "enable_Ixc_integration"
+    label: "Ativar integração com IXC Soft"
+    type: "checkbox"
+
+  ModuleConfiguration24:
+    module: "@Module20"
+    key: "enable_Ixc_authentication"
+    label: "Autenticar cliente via IXC Soft"
+    type: "checkbox"
+
+  ModuleConfiguration25:
+    module: "@Module20"
+    key: "enable_Ixc_prospecting"
+    label: "Enviar dados de prospecto no cadastro dos visitantes"
+    type: "checkbox"
+
+  ModuleConfiguration26:
+    module: "@Module20"
+    key: "Ixc_auth_button"
+    label: "Texto do botão de autenticação de cliente via IXC Soft"
+    type: "text"
+
+  ModuleConfiguration27:
+    module: "@Module20"
+    key: "Ixc_title_text" 
+    label: "Texto do título da tela de login da integração"
+    type: "text"
+
+  ModuleConfiguration28:
+    module: "@Module20"
+    key: "Ixc_subtitle_text"
+    label: "Texto do sub-título da tela de login da integração"
+    type: "text"
+
+  ModuleConfiguration29:
+    module: "@Module20"
+    key: "Ixc_button_color"
+    label: "Cor do botão de autenticação de cliente via Ixc Soft"
+    type: "text"
+
+  ModuleConfiguration30:
+    module: "@Module20"
+    key: "Ixc_client_group"
+    label: "Grupo dos clientes autenticados"
+    type: "text"
+
+  ModuleConfiguration31:
+    module: "@Module20"
+    key: "Ixc_host"
+    label: "Host"
+    type: "text"
+
+  ModuleConfiguration32:
+    module: "@Module20"
+    key: "Ixc_client_secret"
+    label: "Client Secret- Token"
+    type: "text"
+
+  ModuleConfiguration33:
+    module: "@Module19"
+    key: "hubsoft_title_text"
+    label: "Texto do título da tela de login da integração"
+    type: "text"
+  
+  ModuleConfiguration34:
+    module: "@Module19"
+    key: "hubsoft_subtitle_text"
+    label: "Texto do sub-título da tela de login da integração"
+    type: "text"
+
+  ModuleConfiguration35:
+    module: "@Module19"
+    key: "hubsoft_button_color"
+    label: "Cor do botão de autenticação de cliente via Hubsoft"
+    type: "text"
+
+  # ModuleConfiguration32:
+  #   module: "@Module20"
+  #   key: "Ixc_password"
+  #   label: "Password"
+  #   type: "text"
+
+  # ModuleConfiguration33:
+  #   module: "@Module20"
+  #   key: "Ixc_username"
+  #   label: "Username"
+  #   type: "text"
+
+
+  # ModuleConfiguration35:
+  #   module: "@Module20"
+  #   key: "Ixc_client_id"
+  #   label: "Client ID"
+  #   type: "text"
+

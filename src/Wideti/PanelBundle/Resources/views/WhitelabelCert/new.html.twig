@@ -1,0 +1,21 @@
+{% extends 'PanelBundle::layout.html.twig' %}
+
+{% block content %}
+    <h3 class="heading-mosaic">Gerar certificado Whitelabel</h3>
+
+    <div class="innerLR">
+        <span>Digite abaixo o endereço URL do painel white label que deseja aplicar o certificado:</span>
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-body">
+                <form action="{{ path('whitelabel_cert_feature_generate') }}" method="POST">
+                    <div class="form-group">
+                        <strong for="domain" class="control-label">Endereço:</strong>
+                        <input type="text" class="form-control" id="domain" name="domain" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Gerar Certificado</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

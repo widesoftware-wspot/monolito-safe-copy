@@ -1,0 +1,4 @@
+Wideti\DomainBundle\Entity\Zone:
+  Zone:
+    countryCode: 'BR'
+    zoneName: 'America/Sao_Paulo'

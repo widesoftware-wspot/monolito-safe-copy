@@ -1,0 +1,255 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+
+    <style>
+        .table-description td, .table-description th{
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h3 class="heading-mosaic">Ponto de Acesso - Importar Lista</h3>
+    <div class="innerLR">
+
+        {% if response is defined %}
+            <div class="widget widget-tabs border-bottom-none" style="background-color: #ffe8b7">
+                <div class="widget-body">
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <h4>Status da importação</h4>
+                        </div>
+                    </div>
+                    <!-- Tabs com os erros -->
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <div class="box-generic">
+                                <div class="tabsbar tabsbar-2">
+                                    <ul class="row row-merge">
+                                        <li class="col-md-3"><a href="#tab1-4" data-toggle="tab" style="color: #00aa00">Sucesso <b>({{response.successTotal}})</b></a></li>
+                                        <li class="col-md-3"><a href="#tab2-4" data-toggle="tab" style="color: #ca9e53">Avisos <b>({{response.warningTotal}})</b></a></li>
+                                        <li class="col-md-3"><a href="#tab3-4" data-toggle="tab" style="color: #9f2323">Erros <b>({{response.errorTotal}})</b></a></li>
+                                    </ul>
+                                </div>
+                                <div class="tab-content">
+                                    <div class="tab-pane active" id="tab1-4">
+                                        {% if response.successTotal > 0 %}
+                                        <h4>Importações com sucesso</h4>
+                                            <ul>
+                                            {% for message in response.messages %}
+                                                {% if message.status == 'success' %}
+                                                    <li>{{ message.message }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p>Nenhuma importação foi realizada com sucesso</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="tab-pane" id="tab2-4">
+                                        {% if response.warningTotal > 0 %}
+                                            <h4>Mensagens de aviso</h4>
+                                            <ul>
+                                            {% for message in response.messages %}
+                                                {% if message.status == 'warning' %}
+                                                    <li>{{ message.message }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p>Não foi gerado nenhum aviso.</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="tab-pane" id="tab3-4">
+                                        {% if response.errorTotal > 0 %}
+                                            <h4>Mensagens de erro</h4>
+                                            <ul>
+                                            {% for message in response.messages %}
+                                                {% if message.status == 'error' %}
+                                                    <li>{{ message.message }}</li>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </ul>
+                                        {% else %}
+                                            <p>Não ocorreu nenhum erro na importação.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="widget widget-tabs border-bottom-none" style="background-color: #f0f0f0">
+            <div class="widget-body">
+                <div class="row-fluid">
+                    <div class="span6">
+                        {{ form_start(form, { 'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate', 'enctype': 'multipart/form-data'} }) }}
+                        {% form_theme form with ['AdminBundle:Form:fields.html.twig', 'AdminBundle:Form:templateForm.html.twig'] %}
+                        {{ form_errors(form) }}
+
+                        <h4>Upload do arquivo</h4>
+                        <div id="upload">
+                            {{ form_widget(form.fileUpload) }}
+                        </div>
+                        <p>{{ form_row(form.import) }}</p>
+
+                        {% if fatalError is defined %}
+                            <div class="row alert alert-error">
+                                {{ fatalError|raw }}
+                            </div>
+                        {% endif %}
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-body">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <h4>Modelo de importação do CSV</h4>
+                        <p class="important">
+                            <a href="{{ asset('bundles/admin/modelo_importacao_ponto_acesso.csv') }}"> <i class="icon-download-alt"></i> Download do modelo</a>
+                        </p>
+                        <p class="text-muted">
+                            Baixe o modelo no link acima e siga as instruções abaixo para o preenchimento correto do CSV:
+                        </p>
+
+                        <div>
+                            <table class="table table-bordered table-condensed table-description">
+                                <thead style="background-color: #f7f7f7">
+                                <tr>
+                                    <th>Nome do ponto de acesso</th>
+                                    <th>Fabricante</th>
+                                    <th>Identificador</th>
+                                    <th>Grupo</th>
+                                    <th>Local</th>
+                                    <th>Template</th>
+                                    <th>Timezone</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Meu Ponto de Acesso</td>
+                                    <td>Mikrotik</td>
+                                    <td>90-ED-DE-94-45-F0</td>
+                                    <td>Meu Grupo</td>
+                                    <td>Salão Clientes</td>
+                                    <td>Template padrão</td>
+                                    <td>America/Sao_Paulo</td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <hr class="divider" />
+
+                            <h5>Como preencher os campos</h5>
+                            <ul>
+                                <li>O cabeçalho do arquivo ".csv" é obrigatório.</li>
+                                <li>O arquivo deve ser obrigatoriamente no formato ".csv".</li>
+                                <li>Pontos de acesso excedentes do total cadastrado, serão cadastrados como inativos.</li>
+                                <li>Caso exita algum erro no arquivo, a importação não será realizada.</li>
+                            </ul>
+                            <table class="table table-bordered table-condensed table-description">
+                                <thead style="background-color: #f7f7f7">
+                                    <tr>
+                                        <th width="20%">Campo</th>
+                                        <th width="10%">Obrigatório</th>
+                                        <th width="15%">Valor padrão</th>
+                                        <th width="55%">Descrição</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><b>Nome do ponto de acesso</b></td>
+                                        <td>Sim</td>
+                                        <td>Não possui</td>
+                                        <td>Campo texto com o nome do ponto de acesso, este nome será apresentado em relatórios.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Fabricante</b></td>
+                                        <td>Sim</td>
+                                        <td>Não possui</td>
+                                        <td>Opções válidas: <b>Aruba / Cambium / Cisco / Cisco Meraki Cloud / Draytek / Edgecore /
+                                                Extreme - Aerohive - ExtremeCloud IQ / Extreme - Enterasys - IdentiFi / Extreme - ExtremeCloud IQ Controller /
+                                                Extreme - Motorola - WiNG / Fortinet / Grandstream / Huawei / Intelbras / Intelbras - Linha Future /
+                                                Mikrotik / Openwifi / PfSense / Ruckus-Cloud / Ruckus-Controlador / Ruckus-Standalone / Ruijie Networks /
+                                                Teltonika / Tp-Link / Tp-Link Cloud / Tp-Link v5 / Tp-Link v5 Cloud /
+                                                Unifi Ubiquiti / WatchGuard / Winco / Xirrus / ZyXEL
+                                            </b></td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Identificador</b></td>
+                                        <td>Sim</td>
+                                        <td>Não possui</td>
+                                        <td>Este campo é o Mac do dispositivo <b>00-00-00-00-00-00</b>, caso seja Extreme - Aerohive - ExtremeCloud IQ / Aruba / Fortinet / Mikrotik / PfSense / Ruckus-Standalone /
+                                            Winco / Extreme - ExtremeCloud IQ Controller quaisquer formatos serão aceitos.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Grupo</b></td>
+                                        <td>Não</td>
+                                        <td>Vazio</td>
+                                        <td>Nome do grupo pode ser encontrado em <b>"Pontos de Acesso > Grupos"</b>, colocar extamente o "Nome do Grupo".</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Local</b></td>
+                                        <td>Não</td>
+                                        <td>Vazio</td>
+                                        <td>Pode ser inserido um texto para descrever a localização do ponto de acesso.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Template</b></td>
+                                        <td>Não</td>
+                                        <td>Template padrão</td>
+                                        <td>O nome do template pode ser localizado em <b>"Templates"</b> utilizar o <b>"Nome do Template"</b>, caso o template não exista ou esteja vazio será utilizado o template padrão.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Timezone</b></td>
+                                        <td>Sim</td>
+                                        <td>Não possui</td>
+                                        <td>As opções de timezone para o Brasil são:
+                                            <b>America/Sao_Paulo</b>,
+                                            <b>America/Belem</b>,
+                                            <b>America/Fortaleza</b>,
+                                            <b>America/Recife</b>,
+                                            <b>America/Araguaina</b>,
+                                            <b>America/Maceio</b>,
+                                            <b>America/Bahia</b>,
+                                            <b>America/Campo_Grande</b>,
+                                            <b>America/Cuiaba</b>,
+                                            <b>America/Santarem</b>,
+                                            <b>America/Porto_Velho</b>,
+                                            <b>America/Boa_Vista</b>,
+                                            <b>America/Manaus</b>,
+                                            <b>America/Eirunepe</b>,
+                                            <b>America/Noronha</b>,
+                                            <b>America/Rio_Branco</b>.
+                                            <p>Para consultar outras localidades <a href="http://www.timezoneconverter.com/cgi-bin/findzone.tzc">clique aqui</a>.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/demo/custom_upload.js') }}"></script>
+{% endblock %}
+

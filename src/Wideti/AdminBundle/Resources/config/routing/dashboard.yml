@@ -1,0 +1,12 @@
+admin_dashboard:
+  path:  /
+  defaults: { _controller: wspot.admin.controller.dashboard:dashboardAction }
+  options:
+      expose: true
+
+dashboard_tabs:
+  path:  /dashboard_tabs/{tab}
+  defaults: { _controller: wspot.admin.controller.dashboard:loadDashboardAjaxAction }
+  requirements: { methods: GET }
+  options:
+      expose: true

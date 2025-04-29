@@ -1,0 +1,5 @@
+fake_data_execute:
+    path:  /{action}
+    defaults: { _controller: wspot.admin.controller.wspot_faker:executeAction }
+    options:
+        expose: true

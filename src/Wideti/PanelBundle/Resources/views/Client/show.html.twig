@@ -1,0 +1,193 @@
+{% extends 'PanelBundle::layout.html.twig' %}
+
+{% block content %}
+<h3 class="heading-mosaic">Clientes</h3>
+
+<div class="innerLR">
+    <!-- Widget -->
+    <div class="widget widget-tabs widget-tabs border-bottom-none">
+
+        <div class="widget-body">
+
+            <div class="tab-content" style="padding: 0;">
+
+                <div class="well">
+                    <table class="table table-invoice">
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    <h2>{{ entity.Company }}</h2>
+                                </td>
+                            <tr>
+                                <td>
+                                    <address class="margin-none">
+                                        <a href="https://{{ entity.domain }}.mambowifi.com" target="_blank" > <strong>{{ entity.domain }}.mambowifi.com</strong></a><br/>
+                                    </address>
+
+                                    <br>
+
+                                    Plano: <span class="label label-default">{{ entity.plan|upper }}</span><br/>
+                                    Segmento: <span class="label label-default">{{ entity.segment }}</span><br/>
+                                    Dia Fechamento: <span class="label label-default">{{ entity.closingDate }}</span><br/>
+                                    Valor SMS: <span class="label label-default">R$ {{ entity.smsCost }}</span><br />
+                                    APs Contratadas: <span class="label label-default">{{ entity.contractedAccessPoints }}</span><br />
+                                    Fim da PoC: <span class="label label-default">{{ entity.pocEndDate|date("d/m/Y") }}</span><br />
+                                </td>
+
+                                <td style="width: 50%">
+                                    <h4>Status</h4>
+
+                                    {% if entity.status     == constant('Wideti\\DomainBundle\\Entity\\Client::STATUS_ACTIVE')%}
+                                        <div class="alert alert-success">
+                                    {% elseif entity.status == constant('Wideti\\DomainBundle\\Entity\\Client::STATUS_POC') %}
+                                        <div class="alert alert-primary">
+                                    {% else %}
+                                        <div class="alert alert-warning">
+                                    {% endif %}
+                                        <strong>{{ entity.getStatusAsString }}</strong>
+
+                                    </div>
+                                    {% if entity.status == constant('Wideti\\DomainBundle\\Entity\\Client::STATUS_POC')  and pocEnded %}
+                                        <div class="alert alert-error">
+                                            <button type="button" class="close" data-dismiss="alert">×</button>
+                                            <strong>Atenção!</strong> Cliente com POC vencida em {{ entity.pocEndDate|date("d/m/Y") }} <strong>({{ entity.pocEndDate | DateDiffInDays() }})</strong>
+                                        </div>
+                                    {% endif %}
+
+                                    <br>
+                                    <h4>Módulos</h4>
+                                        {%  for module in entity.module %}
+                                            <span class="label label-default">{{ module.name }}</span>
+                                        {% else %}
+                                            <span class="label label-default">Nenhum Módulo encontrado</span>
+                                        {% endfor %}
+                                    <br>
+
+                                    {% if entity.status == constant('Wideti\\DomainBundle\\Entity\\Client::STATUS_POC') and pocEnded %}
+                                        <br>
+                                        <h4>Usuários que realizaram acesso após bloqueio da POC </h4>
+                                        <div class="widget widget-4 widget-tabs-icons-only widget-timeline margin-bottom-none"  style="background-color:#fafafa;">
+
+                                        <div class="widget-body">
+                                        <div class="tab-content">
+                                            <div class="tab-pane active" id="filterUsersTab">
+                                                <ul class="list-timeline">
+                                                    {% for user in entity.users %}
+                                                        <li>
+                                                            <span class="date"> {{ user.ultimoAcesso|date("d/m")}}</span>
+                                                            <span class="glyphicons activity-icon user"><i></i></span>
+                                                            <span class="ellipsis">{{ user.nome }} <a href="#">{{ user.getRole }}</a> </span>
+                                                            <div class="clearfix"></div>
+                                                        </li>
+                                                    {% else %}
+                                                        <span class="label label-default">Nenhum usuário encontrado</span>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div></div>
+
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="tab-content" style="padding: 0;">
+                <div class="well">
+                    <div class="widget-head">
+                        <h4 class="heading">Informações do Controlador de Dados</h4>
+                    </div>
+
+                    <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+
+                        {% if dataController is not null %}
+                            <div class="span6">
+                                <h5 class="glyphicons shield"><i></i> {{dataController.fullName}} <span>Controlador de Dados</span></h5>
+                                <div class="separator bottom"></div>
+                                <ul class="unstyled icons">
+                                    <li class="glyphicons envelope"><i></i>{{dataController.email}}</li>
+                                    <li class="glyphicons vcard"><i></i>{{dataController.cpf}}</li>
+                                    <li class="glyphicons iphone"><i></i>{{ dataController.phoneNumber }}</li>
+                                    <li class="glyphicons birthday_cake"><i></i> <span class="label label-default">{{ dataController.birthday | date('d/m/Y') }}</span></li>
+                                    <li class="glyphicons tie"><i></i> Cargo: {{ dataController.jobOccupation }} </li>
+                                </ul>
+                            </div>
+                        {% else %}
+                            <div class="span6">
+                                <div class="alert alert-primary">
+                                    Este cliente não possui um Controlador de Dados cadastrado ainda.
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-vertical-center table-striped">
+		<tbody>
+			<tr>
+                <td class="center">
+                    <a href="{{ path('panel_client_download_mikrotik_files', { 'domain': entity.domain }) }}" class="btn btn-danger btn-block" title="Download Mikrotik Config Files" >
+                        Download Mikrotik Config Files
+                    </a>
+                </td>
+				<td class="center"></td>
+				<td class="center"></td>
+			</tr>
+		</tbody>
+	</table>
+
+    <div class="separator bottom"></div>
+
+    <h4 style="margin: 20px 0px;">Logs</h4>
+    <table class="table table-bordered table-condensed table-striped table-primary table-vertical-center checkboxs">
+        <thead>
+        <tr>
+            <th class="center">Autor</th>
+            <th class="center">Método</th>
+            <th class="center">URL</th>
+            <th class="center">Ação</th>
+            <th class="center">Resposta</th>
+            <th class="center">Data</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+                <tr class="gradeX">
+                    <td>{{ log["_source"]["author"] }}</td>
+                    <td>{{ log["_source"]["method"]|default('-') }}</td>
+                    <td>{{ log["_source"]["url"]|default('-') }}</td>
+                    <td>{{ log["_source"]["action"]|raw }}</td>
+                    <td>{{ log["_source"]["response"]|upper}}</td>
+                    <td>{{ log["_source"]["date"]|date("d/m/Y H:i") }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <nav>
+        <ul class="pager">
+            <li><a href="{{ path('panel_client_show', { 'id': entity.id, 'page': (page - 1) }) }}">&#171; Anterior</a></li>
+            <li><a href="{{ path('panel_client_show', { 'id': entity.id, 'page': (page + 1) }) }}">Próximo &#187;</a></li>
+        </ul>
+    </nav>
+
+	<div class="separator bottom"></div>
+
+    <div class="form-actions right">
+        <a href="{{ app.request.headers.get('referer') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+        {% if not is_granted("ROLE_SUPORT_LIMITED") %}
+            <a href="{{ path('panel_client_edit', { 'id': entity.id }) }}" class="btn btn-icon btn-default glyphicons pencil"><i></i>Editar</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

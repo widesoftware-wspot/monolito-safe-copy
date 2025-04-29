@@ -1,0 +1,667 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block css %}{{ parent() }}{% endblock %}
+
+{% block dataTitle %}
+    Visitantes
+{% endblock %}
+
+{% block buttonRight %}
+    {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MANAGER")) %}
+        <style>
+            .glyphicons.refresh i:before{
+                margin-top: 1px !important;
+                margin-left: 0 !important;
+            }
+        </style>
+        <a href="{{ path('admin_visitantes_create')}}" class="btn btn-primary btn-icon glyphicons circle_plus resend">
+            <i></i>Cadastrar
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block filter %}
+    {{ form_start(form, {'attr':{'class':'form-inline', 'novalidate': 'novalidate'} } ) }}
+    {{ form_row(form.filtro,{'attr':{"style":"width:auto"}}) }}
+    {% for field in form %}
+        {% if field.vars.name starts with 'value_' %}
+            {{ form_row(field) }}
+        {% endif %}
+    {% endfor %}
+    {{ form_row(form.status) }}
+    {{ form_row(form.group,{'attr':{"style":"width:auto; margin-right: 10px;"}}) }}
+    {{ form_row(form.dateFrom) }}
+    {{ form_row(form.dateTo) }}
+
+    {% if btnCancel %}
+        <div>
+            <a title="Cancelar Filtro" href="{{ path('admin_visitantes') }}" class="btnSearchCancel glyphicons circle_remove"><i></i></a>
+        </div>
+    {% endif %}
+
+    {{ form_row(form.Filtrar) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block messagebar %}
+    Total de visitantes: {{ pagination.getTotalItemCount }}
+    <span class="tooltip-wrapper countVisits" style="width: 40px;top: 3%;height: 20px;">
+        <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="A quantidade exibida pode variar devido à revogação de consentimento por visitantes"></i>
+    </span>
+{% endblock %}
+
+{% block thead %}
+    {% if showName %}
+        <th class="center">Nome</th>
+    {% endif %}
+
+    <th class="center">{{ loginField.names['pt_br'] }}</th>
+    <th class="center" style="width: 100px;">Cadastro via</th>
+    <th class="center" style="width: 80px;">Grupo</th>
+    <th class="center" style="width: 130px">Data cadastro</th>
+    <th class="center" style="width: 130px">Último Acesso</th>
+    <th class="center" style="width: 80px">Status</th>
+    <th class="center" style="width: 180px">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in pagination %}
+        {% set color = '#484c50' %}
+        {% set title = '' %}
+        <tr class="gradeX" id="{{ entity.id }}">
+            {% if showName %}
+                <td>{{ entity.properties.name|default('Não informado') }}</td>
+            {% endif %}
+
+            {% if (loginField.identifier == 'email' and entity.emailIsValid == false) %}
+                {% set color = '#FF0000' %}
+                {% set title = 'E-mail inválido' %}
+            {% endif %}
+            <td title="{{ title }}" style="color: {{ color }};">{{ entity.properties[loginField.identifier] }}</td>
+            <td style="text-align: center;">{{ entity|guest_register_mode }}</td>
+            <td style="text-align: center;">{{ entity|guest_group|default('Visitantes') }}</td>
+            {% if entity.timezone is empty %}
+                <td><span title="America/Sao_Paulo" data-toggle="tooltip" data-placement="top">{{ entity.created|date('d/m/Y H:i', 'America/Sao_Paulo') }}</span></td>
+                {% if entity.lastAccess is not empty %}
+                    <td><span title="America/Sao_Paulo" data-toggle="tooltip" data-placement="top">{{ (entity.lastAccess) ? entity.lastAccess|date('d/m/Y H:i', 'America/Sao_Paulo') : 'Sem acesso' }}</span></td>
+                {% else %}
+                    <td>{{ (entity.lastAccess) ? entity.lastAccess|date('d/m/Y H:i', 'America/Sao_Paulo') : 'Sem acesso' }}</td>
+                {% endif %}
+            {% else %}
+                <td><span title="{{ entity.timezone }}" data-toggle="tooltip" data-placement="top">{{ entity.created|date('d/m/Y H:i', entity.timezone) }}</span></td>
+                {% if entity.lastAccess is not empty %}
+                    <td><span title="{{ entity.timezone }}" data-toggle="tooltip" data-placement="top">{{ (entity.lastAccess) ? entity.lastAccess|date('d/m/Y H:i', entity.timezone) : 'Sem acesso' }}</span></td>
+                {% else %}
+                    <td>{{ (entity.lastAccess) ? entity.lastAccess|date('d/m/Y H:i', entity.timezone) : 'Sem acesso' }}</td>
+                {% endif %}
+            {% endif %}
+            <td class="center">{{ entity.status|guest_status }}</td>
+            <td class="center">
+                {% if entity.status == 2 or entity.status == 3 %}
+                <a href="#"
+                   class="btn-action glyphicons ok btn-key confirmGuest"  title="Confirmar cadastro manualmente">
+                    <i></i>
+                </a>
+            {% endif %}
+            {% if entity.registrationMacAddress|config('confirmation_email') == 1 and (entity.status == 2 or entity.status == 3) %}
+                <a href="#"
+                   class="btn-action glyphicons refresh btn-key resendConfirmationUrl" title="Reenviar URL de confirmação">
+                    <i></i>
+                </a>
+            {% endif %}
+
+            <a href="{{ path('admin_visitantes_show', { 'id': entity.id }) }}"
+               class="btn-action glyphicons eye_open btn-info" title="Detalhes" ><i></i></a>
+
+            {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MANAGER")%}
+                <a href="#"
+                   class="btn-action glyphicons keys btn-key resendPassword" title="Reenviar Senha"><i></i></a>
+
+                <a href="{{ path('admin_visitantes_edit', { 'id': entity.id }) }}"
+                   class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+            {% endif %}
+
+            </td>
+        </tr>
+    {% endfor %}
+
+    <!-- Modal -->
+    <div class="modal fade modal-delete-guest" id="myModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4><span class="glyphicon glyphicon-lock"></span>Excluir visitante</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Ao excluir o visitante, você poderá não estar mais de acordo com o Marco Civil da Internet. <strong>Essa é uma ação irreversível.</strong></p>
+                    <p>Se tem certeza que deseja continuar, confirme inserindo seu login e senha.</p>
+                    <form role="form" id="client-login" method="post">
+                        <div class="form-group">
+                            <label for="usrname">Login</label>
+                            <input type="text" class="form-control" id="usrname" placeholder="Usuário" name="username" style="width: 97%;">
+                        </div>
+                        <div class="form-group">
+                            <label for="psw">Senha</label>
+                            <input type="password" class="form-control" id="psw" placeholder="Senha" name="password" style="width: 97%;">
+                        </div>
+                        <div id="auth-fail" style="padding: 5px;background-color: #ff0000;text-align: center;color: #fff;margin-bottom: 5px;display: none;"><p></p></div>
+                        <button type="button" class="btn btn-success btn-block" id="button-login"><span class="glyphicon glyphicon-off"></span> Continuar</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger btn-default pull-left" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="modal-exclusion-success" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Visitante Excluído</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="exclusion-success"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modal-export-success" style="display: none;" class="modal fade in" tabindex="-1" style="overflow:hidden;" aria-hidden="false">
+        <div class="modal-body">
+            <h1>Atenção!</h1>
+            <p id="flashMessage" style="font-size: 15px;"></p>
+        </div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagination %}
+    {% if(client.status == 2) %}
+    <div class="poc-report-lines">
+        <p>Apenas {{ maxReportLines }} resultados serão exibidos pois sua conta está em período de Teste.</p>
+    </div>
+    {% endif %}
+    <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+        <form name="export" method="get" action="{{ path('admin_visitantes_export') }}" class="form-inline" novalidate="novalidate">
+            <div class="modal-body">
+                <input type="hidden" id="filters" name="filters" value="{{ path('admin_visitantes_export', app.request.query.all) }}"/>
+                <input type="hidden" id="fileFormat" name="fileFormat" value="" />
+
+                <div style="padding: 0.2em;margin-bottom: 0.5em">
+                    <h3>Exportação de relatório</h3>
+                    <p>Selecione o período abaixo para exportação do relatório baseado na data de cadastro do visitante.</p>
+                    {% if (count_entities > maxDownload) %}
+                        <p style="color: #ff0000"><b>Observações:</b></p>
+                        <p style="color: #ff0000">- O periodo informado excede o limite de visitantes a ser exportado. Tente diminuir a data.</p>
+                    {% endif %}
+                </div>
+                <div style="display: flex; justify-content: space-around; padding: 0.2em">
+                    <div>
+                        <div class='control-group'>
+                            <label class='control-label required' for='startDate' aria-required='true' style="font-weight: bolder">Início*</label>
+                            <div class='controls'>
+                                <input type='text' id='startDate' name='startDate' required='required' class='span2' autocomplete='off' aria-required='true'>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class='control-group'>
+                            <label class='control-label required' for='endDate' aria-required='true' style="font-weight: bolder">Fim*</label>
+                            <div class='controls'>
+                                <input type='text' id='endDate' name='endDate' required='required' class='span2' autocomplete='off' aria-required='true'>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class='control-group'>
+                            <label class='control-label required' for='endDate' aria-required='true' style="font-weight: bolder">Formato</label>
+                            <div class='controls'>
+                                <select name="charset" id="charset">
+                                    <option value="windows">Windows/Mac</option>
+                                    <option value="linux">Linux</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 0.5em">
+                    <p style="color: #b05f58">*Período máximo de <b>12 meses</b></p>
+                </div>
+                <div style="padding: 0.5em; background-color: #eeeeee; margin-top: 10px">
+                    {% if consent.hasError %}
+                        <p style="font-weight: bolder">Ao exportar os dados você está de acordo com as finalidades de uso do seu termo de consentimento.</p>
+                    {% else %}
+                        <p style="font-weight: bolder">Ao exportar os dados você está de acordo com as finalidades de uso abaixo:</p>
+                        <ul id="consent-list">
+                            {% for condition in consent.conditions %}
+                            <li>{{ condition.description }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <a id="close" data-handler="1" class="btn btn-default">Cancelar</a>
+                <button id="export" type="submit" class="btn btn-success">Exportar</button>
+            </div>
+        </form>
+    </div>
+
+    {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+
+    {% embed "AdminBundle::filesReportEmbed.html.twig" %}
+        {% block exportar %}
+            <div class="loadReportFiles">
+                <h3>Download de Relatórios  &nbsp &nbsp<a data-toggle="tooltip" data-placement="top" data-original-title="Atualizar Listagem" id="refresh-report-list" class="glyphicons refresh" ><i></i></a></h3>
+                <div class="btn-group btn-block">
+                    <div class="leadcontainer">
+                        <button class="btn dropdown-lead btn-primary center">Exportar</button>
+                    </div>
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span> </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li class="center"><a class="file" data-format="Csv" data-placement="right" href="#">CSV</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div id="export-generating-alert"></div>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://momentjs.com/downloads/moment.min.js"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot.report.files.js')}}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".value-field").parent().hide();
+            $('option[value="separator"]').attr('disabled', 'disabled').css({
+                'color': '#999',
+                'line-height': '0px',
+                'font-size': '5px'
+            });
+            if($("#visitantes_filtro").val() != 'all' ){
+                let selectedValue = $("#visitantes_filtro").val().replace("properties.", "");
+                $(`.value-${selectedValue}`).parent().show();
+            }
+            if($("#visitantes_filtro").val() == 'all' ){
+                $("#visitantes_value").css("display","none");
+                $("#visitantes_value").val('');
+            }else{
+                $("#visitantes_value").css("display","block");
+            }
+
+            $("#visitantes_filtro").click(function(e){
+                $(".value-field").parent().hide();
+                if($("#visitantes_filtro").val() != 'all' ){
+                    let selectedValue = $("#visitantes_filtro").val().replace("properties.", "");
+                    $(`.value-${selectedValue}`).parent().show();
+                }
+                if($("#visitantes_filtro").val() == 'all' ){
+                    $("#visitantes_value").css("display","none");
+                    $("#visitantes_value").val('');
+                } else {
+                    $("#visitantes_value").css("display","block");
+                }
+            });
+
+            $( "select#wideti_AdminBundle_visitantes_filter_filtro" ).change(function() {
+                if( $(this).val() == 'authorized'){
+                    if($('input#wideti_AdminBundle_visitantes_filter_value').is(":visible")){
+                        $('input#wideti_AdminBundle_visitantes_filter_value').removeAttr('required').css('display', 'none');
+                    }
+                }
+                else{
+                    if($('input#wideti_AdminBundle_visitantes_filter_value').is(":visible") == false ) {
+                        $('input#wideti_AdminBundle_visitantes_filter_value').attr('required', 'required').show();
+                    }
+                }
+            });
+
+            $('tr.gradeX td.center a.confirmGuest').click(function(){
+                var id      = $(this).parent().parent().attr('id');
+                var data    = {'id' : id};
+
+                bootbox.confirm("Deseja realmente confirmar manualmente o cadastro do visitante?", function(result){
+                    if(result){
+                        var route = Routing.generate('guest_confirmation_by_admin', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.msg
+                                });
+
+                                if (response.status == 'success') {
+                                    window.setTimeout('location.reload()', 1000);
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('tr.gradeX td.center a.resendConfirmationUrl').click(function(){
+                var id      = $(this).parent().parent().attr('id');
+                var data    = {'id' : id};
+
+                bootbox.confirm("Deseja realmente reenviar a URL de confirmação de cadastro para o visitante?", function(result){
+
+                    if(result){
+                        var route = Routing.generate('guest_resend_confirmation_url', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.msg
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('tr.gradeX td.center a.resendPassword').click(function() {
+                var id = $(this).parent().parent().attr('id');
+
+                bootbox.dialog("<h3>Alteração de senha do visitante</h3>" +
+                        " Deseja realmente alterar a senha do visitante? <br>" +
+                        " Ao confirmar uma nova senha será gerada. Caso o visitante possua e-mail, enviaremos a senha para ele. <br/><br/>" +
+                        "Caso prefira definir a senha manualmente, <a href='#' id='definePassword'>clique aqui</a>.<br>" +
+                        "<div class='inputPassword'>Senha: <input type='text' id='guestPassword' maxlength='16' class='input-mini' style='margin: 10px 0; width: 150px;'><br></div>"+
+                        "{% if(config.enable_welcome_sms == 1 and phoneField == true) %}<div class='chkSms'>Enviar por SMS? <input type='checkbox' value='1' id='sms' style='margin: 0px 0 3px 10px;'></div>{% endif %}"
+                        , [{
+                            "label" : "Continuar",
+                            "class" : "btn-primary",
+                            "callback": function() {
+                                var password = jQuery('input#guestPassword').val();
+                                var sms      = jQuery('input#sms').prop('checked');
+                                var data     = {'id': id, 'password': password, 'sms': sms};
+                                var route    = Routing.generate('guest_password_reset', { id: id });
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: route,
+                                    data: data,
+                                    dataType : "json",
+                                    success: function(response)
+                                    {
+                                        $.gritter.add({
+                                            title: 'Aviso!',
+                                            text: response.msg
+                                        });
+                                    }
+                                });
+                            }
+                        }, {
+                            "label" : "Cancelar",
+                            "class" : "btn-default"
+                        }]);
+
+                $('.inputPassword').hide();
+                $('.chkSms').css("margin-top", "10px");
+
+                $('#definePassword').on('click', function(){
+
+                    if($('.inputPassword').is(":visible")){
+                        $('.inputPassword').hide();
+                        $('.chkSms').css("margin-top", "10px");
+                    } else {
+                        $('.inputPassword').show();
+                        $('.chkSms').css("margin-top", "0px");
+                    }
+                });
+
+            });
+
+            var count_entities  = {{ count_entities }};
+            var maxDownload     = {{ maxDownload }};
+
+            $('a.file').click(function() {
+
+                var format = $(this).data('format');
+                $("#startDate").val($("#visitantes_dateFrom").val());
+                $("#endDate").val($("#visitantes_dateTo").val());
+                bootbox
+                    .dialog($('#modal'))
+                    .on('shown.bs.modal', function() {
+                        $('.bootbox.modal.fade.in').removeAttr('style');
+                        $('#modal').show();
+                        $('#fileFormat').val(format);
+
+                        $("#startDate").datepicker({
+                            dateFormat: 'dd/mm/yy',
+                            dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                            dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                            dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                            monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                            monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                            nextText: 'Próximo',
+                            prevText: 'Anterior',
+                            changeMonth: false,
+                            numberOfMonths: 1,
+                            maxDate: '0',
+                            onClose: function(selectedDate) {
+                                $("#endDate").datepicker("option", "minDate", selectedDate);
+                            },
+                            onSelect: function(date) {
+                                validFilterDate('#startDate','#endDate')
+                                if (count_entities > maxDownload) {
+                                    // var msecsInADay = 2592000000; //30 days
+                                    var msecsInADay = (86400000 * 365); //365 days
+                                    var toDate = date.split('/');
+                                    var aux = toDate[1] + '/' + toDate[0] + '/' + toDate[2];
+                                    var selectedDate = new Date(aux);
+                                    var endDate = new Date(selectedDate.getTime() + msecsInADay);
+
+                                    $("#endDate").datepicker("option", "maxDate", endDate);
+                                }
+                            }
+                        });
+
+                       $( "#endDate" ).datepicker({
+                        onSelect: function() {
+                            validFilterDate('#startDate','#endDate')
+                        },
+                        defaultDate: "+1w",
+                        dateFormat: 'dd/mm/yy',
+                        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                        dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                        changeMonth: false,
+                        nextText: 'Próximo',
+                        prevText: 'Anterior',
+                        numberOfMonths: 1,
+                        maxDate:new Date(),
+                        onClose: function( selectedDate ) {
+                            $( "#startDate" ).datepicker( "option", "maxDate", selectedDate );
+                        }
+                    }).datepicker( "option", "minDate", $('#endDate').val() );
+                 }) ;
+                validFilterDate('#startDate','#endDate')
+            });
+
+            $('#close').click(function() {
+                bootbox.hideAll();
+                $('meta[http-equiv=refresh]').attr('content', '0');
+            });
+
+            $('#export').click(function() {
+                if ($('#startDate').val() && $('#endDate').val()) {
+                    $('#export-generating-alert').addClass('alert alert-primary export-class');
+                    $('#export-generating-alert').html('<center>Aguarde! Estamos processando</center>' +
+                                                     '<center>sua(s) solicitação(ões).</center>');
+                    $('#listExport').html('');
+                    bootbox.hideAll();
+
+                    window.setTimeout(function(){
+                        $('#export-generating-alert').hide();
+                    }, 5000);
+                }
+            });
+
+            /**
+             * Ajax Load Report Files on S3
+             * Function created to view the generated reports that are available for download in S3.
+             */
+            loadReportFiles('{{ reportType }}');
+
+            $('#refresh-report-list').click(function(){
+                loadReportFiles('{{ reportType }}');
+            });
+
+            // daterange
+            if ($('#visitantes_dateFrom').length && $('#visitantes_dateTo').length)
+            {
+                $( "#visitantes_dateFrom" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    changeMonth: false,
+                    numberOfMonths: 1,
+                    maxDate:new Date(),
+                    onClose: function( selectedDate ) {
+                        $( "#visitantes_dateTo" ).datepicker( "option", "minDate", selectedDate );
+                    }
+                }).datepicker( "option", "maxDate", $('#visitantes_dateTo').val() );
+
+                $( "#visitantes_dateTo" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    changeMonth: false,
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    numberOfMonths: 1,
+                    maxDate:new Date(),
+                    onClose: function( selectedDate ) {
+                        $( "#visitantes_dateFrom" ).datepicker( "option", "maxDate", selectedDate );
+                    }
+                }).datepicker( "option", "minDate", $('#visitantes_dateTo').val() );
+            }
+        });
+
+
+        function validFilterDate(start, end) {
+            let from = $(start).datepicker("getDate") ? $(start).datepicker("getDate") : moment($(start).val(), "DD/MM/YYYY").toDate();
+            let to = $(end).datepicker("getDate") ? $(end).datepicker("getDate") : moment($(end).val(), "DD/MM/YYYY").toDate();
+            let buttonSubmit = (start == "#startDate" ? "#export" : "#visitantes_Filtrar");
+            var timeDiff = Math.abs(from - to);
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            if (diffDays > 365){
+                let hint = "A diferença entre as datas do filtro deve ser de no máximo 1 ano.";
+                $(start).css("border-color", "red");
+                $(end).css("border-color", "red");
+                $(buttonSubmit).prop("disabled",true);
+                $(buttonSubmit).attr("title", hint);
+                $(end).attr("title", hint);
+                $(start).attr("title", hint);
+            }else {
+                $(start).css("border-color", "");
+                $(end).css("border-color", "");
+                $(buttonSubmit).prop("disabled",false);
+                $(buttonSubmit).attr("title", "");
+                $(end).attr("title", "");
+                $(start).attr("title", "");
+            }
+        }
+
+        var userIdToExclude;
+        $(document).ready(function(){
+            $(".exclude-guest").click(function(){
+                $("#myModal").modal();
+               userIdToExclude  = $(this).attr('data-content');
+            });
+        });
+
+        $("#button-login").click(function(e){
+            e.preventDefault();
+
+            let url = '{{ path("admin_delete_guests",{'id':'userIdToExclude'}) }}';
+            url = url.replace('userIdToExclude', userIdToExclude);
+
+
+            var form = $('#client-login');
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(),
+                success: function(data) {
+                  $('#exclusion-success').text(data);
+                  $("#myModal .close").click();
+                  $("#modal-exclusion-success").modal();
+                  window.setTimeout('location.reload()', 1000);
+
+                },
+                error: function(error) {
+                    if(error.status !== 500) {
+                        $('#auth-fail p ').text(error.responseText);
+                        $('#auth-fail').css('display','block');
+                    } else {
+                        $('#auth-fail p ').text("Erro durante a autenticação");
+                        $('#auth-fail').css('display','block');
+                    }
+
+                }
+            });
+        });
+
+        $('#button-exclude').click(function(e){
+            e.preventDefault();
+            $('#auth-fail').css('display','none');
+        });
+
+        $('#usrname').focus(function(e){
+            e.preventDefault();
+            $('#auth-fail').css('display','none');
+        });
+
+        $('#psw').focus(function(e){
+            e.preventDefault();
+            $('#auth-fail').css('display','none');
+        });
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+    {% include 'AdminBundle::export-confirmation.html.twig' %}
+{% endblock %}

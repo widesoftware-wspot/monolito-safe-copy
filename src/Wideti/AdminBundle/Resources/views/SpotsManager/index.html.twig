@@ -1,0 +1,265 @@
+<html lang="pt">
+<head>
+    <title>Gerenciador de Spots</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            color: #5d5d5d;
+        }
+        #header {
+            display: flex;
+            justify-content: space-between;
+            background-color: #044B8D;
+            padding: 1em;
+            box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+        }
+
+        #header h1 {
+            color: #fff;
+            font-size: 1em;
+            font-weight: normal;
+        }
+
+        #header #logout {
+            margin-right: 2em;
+        }
+
+        #header #logout a {
+            color: #fff !important;
+            font-weight: bolder;
+            text-decoration: none;
+        }
+
+        #header #logout a:hover {
+            color: #e0e0e0 !important;
+        }
+
+        #header #logout a i {
+            color: #fff;
+        }
+
+        #filter{
+            /*background-color: #00E466;*/
+            display: flex;
+            align-items: center;
+            align-content: center;
+            justify-content: center;
+            padding: 2em;
+            /*background-color: #e8e8e8;*/
+        }
+
+        #search-box {
+            box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+        }
+
+        #filter input {
+            padding: 13px;
+            width: 500px;
+            /*border: 1px solid darkgrey;*/
+            border:none;
+            border-radius: 0.5em 0 0 0.5em;
+            outline: none;
+
+        }
+
+        ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+            color: #c5c5c5;
+            opacity: 1; /* Firefox */
+        }
+
+        #clear-btn {
+            padding: 13px;
+            border-radius: 0 0.5em 0.5em 0;
+            /*border: 2px solid darkgrey;*/
+            border: none;
+            cursor: pointer;
+            margin-left: -0.4em;
+            background-color: #fff;
+            color: #5d5d5d;
+            font-weight: bolder;
+            text-decoration: none;
+            font-size: 0.9em;
+            /*box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);*/
+        }
+
+        #clear-btn i:hover {
+            color: #ff7465;
+        }
+
+        #search-btn {
+            padding: 13px;
+            /*border: 1px solid darkgrey;*/
+            border: none;
+            /*border-radius: 0 0.5em 0.5em 0;*/
+            cursor: pointer;
+            margin-left: -0.4em;
+            background-color: #fff;
+            color: #5d5d5d;
+            font-weight: bolder;
+            /*box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);*/
+        }
+
+        #search-btn i:hover {
+            color: #60b400;
+        }
+
+
+        #body {
+            margin-top: 2em;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #content-table {
+            min-width: 1024px;
+            border-spacing: 0;
+            border: 1px solid #e8e8e8;
+            border-radius: 1em 1em 0 0;
+            box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+        }
+
+        #content-table td {
+            text-align: center;
+            padding: 1em 0.5em 1em 0.5em;
+            border: none;
+            border-bottom: 1px solid #e8e8e8;
+            font-size: 0.9em;
+
+        }
+
+        #content-table th {
+            text-align: center;
+            padding: 2em 0.8em 0.8em;
+            border: none;
+            border-bottom: 1px solid #e8e8e8;
+
+        }
+
+        .btn-access {
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            color: #60b400;
+            font-weight: bolder;
+        }
+
+        .btn-access:hover {
+            color: #4c8f00
+        }
+
+        .btn-access:active {
+            color: #2f5900
+        }
+
+        .paginator {
+            margin-top: 2em;
+            margin-bottom: 2em;
+            display: flex;
+            justify-content: center;
+            min-width: 1024px;
+        }
+
+        .paginator a {
+            text-decoration: none;
+            font-weight: bolder;
+            color: #5d5d5d;
+        }
+
+        .paginator ul li {
+            display: inline;
+            background-color: #fff;
+            padding: 0.5em;
+            margin-left: 0.2em;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+        }
+
+        .paginator ul li.active a {
+            color: #fff;
+        }
+
+        .paginator ul li.active {
+            background-color: #5d5d5d;
+        }
+
+        #label-search-term {
+            font-size: 0.8em;
+            margin-bottom: 1em;
+            color: #a5a5a5;
+        }
+
+        #label-search-term span {
+            color: #cc681e;
+        }
+    </style>
+    <script src="https://kit.fontawesome.com/09cf9c03fc.js" crossorigin="anonymous"></script>
+    <script>
+        function resetSearch() {
+            window.location = "{{ path('spots_manager_index') }}"
+        }
+    </script>
+</head>
+
+<body>
+
+    <div id="header">
+        <h1>Gerenciador de Spots</h1>
+        <div id="logout">
+            <a href="{{ path('spots_manager_logout') }}">
+                 Sair <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </div>
+
+    <div id="filter">
+        <div id="search-box">
+            <form action="#">
+                <input type="text" name="search" id="search" value="{{ app.request.query.get('search') }}" placeholder="Busque pelo nome ou domínio"/>
+                <button type="submit" id="search-btn"><i class="fas fa-search"></i></button>
+                <button type="button" id="clear-btn" onclick="resetSearch()"><i class="fas fa-times"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <div id="body">
+        <div>
+            {% if app.request.query.get('search') != ""  %}
+                <h2 id="label-search-term">Resultados encontrados com o termo:  <span>{{ app.request.query.get('search') }}</span> </h2>
+            {% endif %}
+            <table id="content-table" >
+                <tr>
+                    <th>Domínio</th>
+                    <th>Nome</th>
+                    <th>Ações</th>
+                </tr>
+                {% for c in clients %}
+                    <tr>
+                        <td>{{ c.domain }}</td>
+                        <td>{{ c.company }}</td>
+                        <td>
+                            {% if env == 'prod' %}
+                                <form method="post" action="https://{{ c.domain }}.mambowifi.com/admin/spots-manager/auth">
+                            {% elseif env == 'dev' %}
+                                <form method="post" action="http://{{ c.domain }}.mambowifi.com/app_dev.php/admin/spots-manager/auth">
+                            {% endif %}
+                                <input type="hidden" name="token" value="{{ tokens[c.domain] }}">
+                                <button class="btn-access">Acessar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+        </div>
+        <div>
+            {{ knp_pagination_render(clients, 'AdminBundle::knp_pagination_spots_manager.html.twig') }}
+        </div>
+    </div>
+
+</body>
+
+</html>

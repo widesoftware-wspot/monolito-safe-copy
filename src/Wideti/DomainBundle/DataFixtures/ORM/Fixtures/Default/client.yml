@@ -1,0 +1,25 @@
+Wideti\DomainBundle\Entity\Client:
+  Client1:
+    segment: @Segment3
+    erpId: 1
+    isSicredi: 0
+    type: 1
+    plan: @Pro
+    company: WideTI
+    document: 17.512.419/0001-25
+    domain: srv-homolog
+    address: Rua Avelino Silveira Franco, 149 - Sala 353
+    district: Sousas
+    city: Campinas
+    state: SP
+    zipCode: 13105-822
+    status: 1
+    smsCost: "0,24"
+    contractedAccessPoints: 10
+    closingDate: 10
+    apCheck: 0
+    madeRdIntegration: 0
+    createdBy: "painel-azul"
+    isWhiteLabel: 0
+    mongoDatabaseName: dev
+    enablePasswordAuthentication: true

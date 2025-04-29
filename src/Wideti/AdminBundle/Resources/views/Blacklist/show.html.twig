@@ -1,0 +1,122 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Bloqueio de Dispositivos'} %}
+
+<div class="innerLR">
+    <!-- Widget -->
+    <div class="widget widget-tabs widget-tabs border-bottom-none">
+        <!-- Widget heading -->
+        <div class="widget-head">
+            <ul>
+                <ul>
+                    <li class="active"><a class="glyphicons eye_open" data-toggle="tab"><i></i>Visualizar</a></li>
+                </ul>
+            </ul>
+        </div>
+        <!-- // Widget heading END -->
+        <div class="widget-body">
+            <div class="tab-content" style="padding: 0;">
+                <div class="tab-pane active widget-body-regular" id="overview">
+                    <div class="row-fluid row-merge">
+                        <div class="span12">
+                            <div class="innerL">
+                                <div class="span4">
+                                    <h4>Bloqueio: {{ blacklist.macAddress }}</h4>
+                                    <ul>
+                                        <li>Criado por: {{ blacklist.createdBy }}</li>
+                                        <li>Data de criação: {{ blacklist.created|date('d/m/Y H:i')  }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Row -->
+
+                            <!-- Column -->
+                            <div class="span5">
+                                <h4 style="margin-bottom: 10px;">Visitantes afetados</h4>
+                                <label>
+                                    <p>
+                                        A lista de visitantes afetados, informa que o visitante já efetuou login com o
+                                        dispositivo bloqueado, então ele pode ser afetado pelo bloqueio, porém o bloqueio
+                                        não impede que o visitante faça login a partir de outro dispostivo.
+                                    </p>
+                                </label>
+                            </div>
+
+                            <div class="innerL" style="margin-top: 20px;">
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <!-- Latest Orders/List Widget -->
+                                        <div class="widget margin-bottom-none" >
+
+                                            <!-- Widget Heading -->
+                                            <div class="widget-head">
+                                                <h4 class="heading">Visitantes afetados pelo bloqueio</h4>
+                                            </div>
+                                            <!-- // Widget Heading -->
+
+                                            <div class="widget-body list products">
+                                                {% if guests %}
+                                                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                                                        <!-- Table heading -->
+                                                        <thead>
+                                                        <tr>
+                                                            <th class="center">Email</th>
+                                                            <th class="center">Nome</th>
+                                                            <th class="center">Último acesso</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        {% for guest in guests %}
+                                                            <tr>
+                                                                <td class="center">
+                                                                    <a href="{{ path('admin_visitantes_show',{id:guest.id}) }}">
+                                                                        {{ guest.properties.email }}
+                                                                    </a>
+                                                                </td>
+                                                                <td class="center">
+                                                                    {{ guest.properties.name | default("Não informado") }}
+                                                                </td>
+                                                                <td class="center">
+                                                                    {{ guest.lastAccess | date('d/m/Y H:i') }}
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                {% else %}
+                                                    &nbsp; Nenhum dispositivo encontrado
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions right" style="margin-bottom: 20px;">
+                {% set urlBackButton = app.request.headers.get('referer') %}
+
+                {% if ('edit' in urlBackButton) %}
+                    <a href="{{ path('blacklist_list') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar para Listagem</a>
+                {%  else %}
+                    <a href="{{ urlBackButton }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+                {% endif %}
+            </div>
+        </div>
+        <!-- // Tab content END -->
+    </div>
+    <!-- // Widget END -->
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

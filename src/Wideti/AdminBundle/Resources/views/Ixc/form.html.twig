@@ -1,0 +1,194 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+    <style>
+      .btn-success:hover {
+        opacity: 0.9;
+      }
+      #wspot_Ixc_integration_Ixc_button_color {
+        margin-bottom: 0 !important;
+      }
+      .input-group {
+        width: 150px;
+      }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+{% set route = app.request.attributes.get('_route') %}
+{% include 'AdminBundle::header.html.twig' with {'title': 'Ixc'} %}
+
+
+<div class="innerLR">
+  <div class="widget widget-tabs border-bottom-none">
+    <div class="widget-body">
+      {{ form_start(form) }}
+      {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+    <div class="row-fluid">
+        <div class="span6">
+      {{ form_row(form.enable_Ixc_integration) }}
+      {{ form_row(form.Ixc_host) }}
+      {{ form_row(form.Ixc_client_secret) }}
+
+      <button id="testCredentials" class="btn btn-success" style="margin-bottom: 20px; text-shadow: none; border: none; background-color: #1DBD5D !important;">Testar credenciais</button>
+      <div class="row">
+        <p style="margin-left: 10px;">Confira o passo a passo para configuração da integração clicando <a target="_blank" href="https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000194870-integração-com-Ixc">aqui</a>.</p>
+        <p style="margin-left: 10px;">Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+      </div>
+    </div>
+    
+    <div class="span6">
+      {{ form_row(form.enable_Ixc_authentication) }}
+      <div id="Ixc-client-auth-session" style="display: block;">
+        {{ form_row(form.Ixc_client_group) }}
+        {{ form_row(form.Ixc_title_text) }}
+        {{ form_row(form.Ixc_subtitle_text) }}
+        {{ form_row(form.Ixc_auth_button) }}
+        <div class="control-group color  colorpicker-element">
+          <label class="control-label">Cor do botão de autenticação de cliente via Ixc</label>
+            <div class="controls input-group color-picker">
+                                            {{ form_widget(form.Ixc_button_color) }}
+            <span class="input-group-addon"><i style="background-color: rgb(0, 0, 0); --darkreader-inline-bgcolor: #000000;" data-darkreader-inline-bgcolor=""></i></span>
+            </div>
+        </div>
+        <br style="font-size: 5px;">
+        </div>
+      {{ form_row(form.enable_Ixc_prospecting) }}
+      <div id="Ixc-prospect-session" style="display: block;">
+      </div>
+      {{ form_errors(form) }}
+    </div>
+    </div>
+    <hr class="separator">
+
+    <div class="form-actions right">
+        {{ form_widget(form.submit) }}
+    </div>
+    {{ form_end(form) }}
+  </div>
+  <div class="tab-pane modal fade" id="checkCredentialsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-footer center">
+                    <p id="responseMessage" style='text-align:center;font-size: 11pt;'>Testando credenciais, por favor, aguarde...</p>
+                    <a id="closePopupButton" style='display:none;'  href="#" class="btn btn-default" data-dismiss="modal">Ok</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock%}
+{% block javascript %}
+    {{ parent() }}
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js') }}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script>
+        function showOrHideAuthConfigs(value, element) {
+            console.log('showOrHide called with value:', value, 'and element:', element);
+            if (value) {
+                $(`#${element}`).css('display', 'block');
+            } else {
+                $(`#${element}`).css('display', 'none');
+            }
+        }
+
+        $(document).ready(function() {
+            // Initialize color picker
+            $('.color-picker').colorpicker();
+
+            // Event handler for the test credentials button
+            $('#testCredentials').click(function(event) {
+                event.preventDefault();
+                $('#checkCredentialsModal').modal({
+                    show: true,
+                    keyboard: false,
+                    backdrop: 'static'
+                });
+                console.log({
+                        client_secret: $('#wspot_Ixc_integration_Ixc_client_secret').val(),
+                        host: $('#wspot_Ixc_integration_Ixc_host').val()
+                    });
+                testCredentials();
+            });
+
+            function testCredentials() {
+                $.ajax({
+                    url: Routing.generate('Ixc_test_credentials'),
+                    type: 'POST',
+                    data: {
+                        client_secret: $('#wspot_Ixc_integration_Ixc_client_secret').val(),
+                        host: $('#wspot_Ixc_integration_Ixc_host').val()
+                    },
+
+                    success: function(resp) {
+                        $('#responseMessage').text(resp.message);
+                        $('#responseMessage').css('color', 'green');
+                        $('#closePopupButton').css('display', 'inline');
+                    },
+                    error: function(resp) {
+                        let message = "Erro desconhecido.";
+                        try {
+                            message = JSON.parse(resp.responseText).message;
+                        } catch (e) {
+                            console.error("Erro ao analisar a resposta:", e);
+                        }
+                        $('#responseMessage').text(message);
+                        $('#responseMessage').css('color', 'red');
+                        $('#closePopupButton').css('display', 'inline');
+                    }
+                });
+            }
+
+            // Store initial values for enable/disable logic
+            const initialHostValue = $('#wspot_Ixc_integration_Ixc_host').val();
+            const initialClientSecretValue = $('#wspot_Ixc_integration_Ixc_client_secret').val();
+            
+
+            function checkIntegrationStatus() {
+                if (!$('#wspot_Ixc_integration_enable_Ixc_integration').is(':checked')) {
+                    console.log('desativa integração, deixar salvar');
+                    $('#wspot_Ixc_integration_submit').prop('disabled', false);
+                }
+            }
+
+            // Chama a função no carregamento da página e também toda vez que o checkbox muda de estado
+
+
+            // Call showOrHide for initial state
+            showOrHideAuthConfigs($('#wspot_Ixc_integration_enable_Ixc_integration').is(':checked'), 'Ixc-client-auth-session');
+            showOrHideAuthConfigs($('#wspot_Ixc_integration_enable_Ixc_prospecting').is(':checked'), 'Ixc-prospect-session');
+
+            // Change events for toggling visibility of authentication sections
+            $('#wspot_Ixc_integration_enable_Ixc_integration').on('change', function() {
+                let isChecked = $(this).is(':checked');
+                console.log('Ixc Integration checked:', isChecked);
+                $(`#wspot_Ixc_integration_enable_Ixc_authentication`).parent().parent().toggleButtons('setState', isChecked, true);
+                $('#wspot_Ixc_integration_enable_Ixc_prospecting').parent().parent().toggleButtons('setState', isChecked, true);
+                showOrHideAuthConfigs(isChecked, 'Ixc-client-auth-session'); // Ensure the auth session is shown/hidden
+            });
+
+            $('#wspot_Ixc_integration_enable_Ixc_authentication').on('change', function() {
+                showOrHideAuthConfigs($(this).is(':checked'), 'Ixc-client-auth-session');
+            });
+
+            $('#wspot_Ixc_integration_enable_Ixc_prospecting').on('change', function() {
+                showOrHideAuthConfigs($(this).is(':checked'), 'Ixc-prospect-session');
+            });
+            checkIntegrationStatus();
+            $('#wspot_Ixc_integration_enable_Ixc_integration').on('change', checkIntegrationStatus);
+        });
+    </script>
+{% endblock %}

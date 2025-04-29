@@ -1,0 +1,232 @@
+.hide {
+    display: none;
+}
+
+.contentVideoMobileApple {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+}
+
+.videoMobileApple{
+    position: absolute!important;
+    transform-origin: bottom left!important;
+    width: 180vw!important;
+    height: 100vw!important;
+    margin-top: 10vw!important;
+    object-fit: cover!important;
+    visibility: visible!important;
+    margin-left: -40vw;
+}
+
+.pcPortraitApple{
+    width: 533px;
+    height: 342px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto; transform: rotate(-270deg);
+}
+
+.portraitAudioApple{
+    opacity: .8;
+    filter: invert(100%);
+    -webkit-filter: invert(100%);
+}
+
+.pcHorizontalApple{
+    width: 900px;
+    height: 500px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+@media screen and (max-width: 598px) {
+    .controlsMobileApple{
+        position: absolute;
+        bottom: 11.5%;
+        margin-left: 10%
+    }
+}
+
+@media screen and (min-width: 599px) {
+    .controlsMobileApple{
+        position: absolute;
+        bottom: 11.5%;
+        margin-left: 16%
+    }
+}
+
+.pcHorizontalControlsApple{
+    position: relative;
+    bottom: 20%;
+    padding: 20px;
+    cursor: pointer;
+}
+
+.mobileHorizontalDiv{
+    height: 100%;
+    position: absolute !important;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.landscapeVideo{
+    max-width: 100%;
+    width: 869px;
+    height: 533px;
+}
+
+.pcHorizontal {
+    width: 869px;
+    height: 533px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.mobileHorizontal{
+    width: 100%;
+    position: absolute!important;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.pcVertical{
+    transform: rotate(90deg);
+    width: 533px;
+    height: 342px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.portraitVideo{
+    max-width: 100%;
+    width: 533px;
+    height: 342px;
+    transform: rotate(-90deg);
+}
+
+.pcPortraitControlsApple {
+    transform: rotate(-90deg);
+    margin-left: 87%;
+    margin-top: -100px;
+    position: relative;
+    cursor:pointer;
+}
+
+#videoSize{
+    width: 601px;
+    height: 345px
+}
+
+.pcPortraitControls {
+    transform: rotate(-90deg);
+    margin-left: 83%;
+    margin-top: -120px;
+    position: relative;
+    cursor:pointer;
+}
+
+.pcHorizontalControlsMobile{
+    position: absolute;
+    bottom: 34%;
+    padding: 20px;
+    cursor:pointer;
+}
+
+.pcHorizontalControlsMobileApple{
+    position: absolute;
+    bottom: 37%;
+    padding: 20px;
+    cursor:pointer;
+}
+
+.pcHorizontalControls{
+    position: absolute;
+    bottom: 5%;
+    padding: 20px;
+    cursor:pointer;
+}
+
+.contentVideoMobile {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+}
+
+.videoMobile{
+    position: absolute!important;
+    transform-origin: bottom left!important;
+    width: 92%;
+    height: 96%;
+    object-fit: cover !important;
+    visibility: visible!important;
+    padding: 13px;
+}
+
+.controlsMobile{
+    position: absolute;
+    bottom: 4%;
+    margin-left: 8%
+}
+
+.contentVideoMobile {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+}
+
+.fp-switch .fp-play-1,
+.fp-wait {
+    display: none !important;
+}
+.fp-middle {
+    display: none !important;
+}
+
+#loading span {
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    top: 50%;
+    left: 50%;
+    margin-left: -50px; /* margin is -0.5 * dimension */
+    margin-top: -25px;
+}
+
+#loading span.loader {
+    background-image: url("/bundles/admin/theme/images/ajax-loader.gif");
+    height: 32px;
+    width: 32px;
+    margin: 0 auto;
+    margin-top: 20px;
+}

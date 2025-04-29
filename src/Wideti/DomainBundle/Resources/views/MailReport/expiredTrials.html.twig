@@ -1,0 +1,91 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="font-weight: bold;padding-right:20px;padding-left: 20px;font-size:25px;line-height:46px;color:#444444;font-family:Arial;">
+                        <a style="font-size:35px;text-decoration: none;">Atenção.</a><br>
+                        <a style="font-size:25px;text-decoration: none;color: #ec213a;">Clientes com mais de 10 dias após vencimento da POC.</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding-left:30px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#909090;font-family:Arial;">
+                        <a style="font-size:35px;text-decoration: none;"><br>Os clientes abaixo foram desativados automaticamente pelo sistema.</a><br>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding-left: 30px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-top:50px;padding-right:5px;padding-left: 5px;font-size:12px;line-height:30px;color:#909090;font-family:Arial;text-align: justify;">
+                        <table style="border: 1px solid #c9cccf; max-width: 100%;">
+                            <tr>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;width: 250px;">Razao Social</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Dominio</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Data Criação</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Data final da POC</td>
+                            </tr>
+                            {% for entity in entities %}
+                            <tr>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;width: 250px;text-align: left;">{{ entity.company |slice(0, 40) }}</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.domain }}</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.created | date("d/m/Y") }}</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.poc_end_date | date("d/m/Y")  }}</td>
+                            </tr>
+                            {% else %}
+                                <td colspan="4" style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#909090;font-family:Arial;">
+                                    <strong><i>Nenhum cliente encontrado.</i></strong> <br>
+                                </td>
+                            {% endfor %}
+                        </table></td>
+                </tr>
+    </tbody>
+    </table>
+    </td>
+    </tr>
+
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:14px;line-height:18px;color:#909090;font-family:Arial;">Se precisar de ajuda ou caso n&atilde;o tenha solicitado o cadastro no Mambo Wifi, por favor entre em contato conosco pelo email <a href="mailto:suporte@Mambowifi.com" style="text-decoration: none; color: #ec213a">suporte@mambowifi.com</a></td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:14px;line-height:18px;color:#444444;font-family:Arial;">Teremos o maior prazer em ajud&aacute;-lo.</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:14px;line-height:18px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:14px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Equipe Mambo Wifi</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

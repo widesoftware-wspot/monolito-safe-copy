@@ -1,0 +1,243 @@
+redirect_admin_login:
+  path: /
+  defaults:
+    _controller: FrameworkBundle:Redirect:urlRedirect
+    path: /admin/login
+    permanent: true
+
+gregwar_captcha_routing:
+    resource: "@GregwarCaptchaBundle/Resources/config/routing/routing.yml"
+    prefix: /_gcb
+
+login:
+  resource: "@AdminBundle/Resources/config/routing/login.yml"
+  prefix:   /
+
+usuarios:
+  resource: "@AdminBundle/Resources/config/routing/users.yml"
+  prefix:   /usuarios
+
+profile:
+  resource: "@AdminBundle/Resources/config/routing/profile.yml"
+  prefix:   /perfil
+
+visitantes:
+  resource: "@AdminBundle/Resources/config/routing/guests.yml"
+  prefix:   /visitantes
+
+relatorios:
+  resource: "@AdminBundle/Resources/config/routing/reports.yml"
+  prefix:   /relatorios
+
+exports:
+  resource: "@AdminBundle/Resources/config/routing/exports.yml"
+  prefix:   /exports
+
+configurations:
+  resource: "@AdminBundle/Resources/config/routing/configurations.yml"
+  prefix:   /config
+
+dashboard:
+  resource: "@AdminBundle/Resources/config/routing/dashboard.yml"
+  prefix:   /dashboard
+
+firstConfig:
+  resource: "@AdminBundle/Resources/config/routing/first_config.yml"
+  prefix: /first-config
+
+forgot_password:
+  path: /forgot_password
+  defaults: { _controller: wspot.admin.controller.users:forgotPasswordAction }
+
+reset_forgotten_password:
+  path: /reset_forgotten_password
+  defaults: { _controller: wspot.admin.controller.users:resetForgottenPasswordAction }
+
+reset_user_password:
+  path: /reset_user_password
+  defaults: { _controller: wspot.admin.controller.users:resetUserPasswordAction }
+
+create_first_password:
+  path:  /create_first_password
+  defaults: { _controller: wspot.admin.controller.users:createFirstPasswordAction }
+  options:
+      expose: true
+
+access_points:
+  resource: "@AdminBundle/Resources/config/routing/access_points.yml"
+  prefix:   /accesspoints
+
+access_points_groups:
+  resource: "@AdminBundle/Resources/config/routing/access_points_groups.yml"
+  prefix:   /accesspoints/groups
+
+access_points_and_groups:
+  resource: "@AdminBundle/Resources/config/routing/access_points_and_groups.yml"
+  prefix: /access-points-and-groups
+
+template:
+  resource: "@AdminBundle/Resources/config/routing/template.yml"
+  prefix:   /template
+
+contract:
+  resource: "@AdminBundle/Resources/config/routing/contract.yml"
+  prefix:   /contract
+
+campaign:
+  resource: "@AdminBundle/Resources/config/routing/campaign.yml"
+  prefix:   /campaign
+
+sms_marketing:
+  resource: "@AdminBundle/Resources/config/routing/sms_marketing.yml"
+  prefix:   /sms-marketing
+
+segmentation:
+  resource: "@AdminBundle/Resources/config/routing/segmentation.yml"
+  prefix:   /segmentation
+
+logs:
+  resource: "@AdminBundle/Resources/config/routing/logs.yml"
+  prefix:   /logs
+
+access_code:
+  resource: "@AdminBundle/Resources/config/routing/access_code.yml"
+  prefix:   /access_code
+
+blacklist:
+  resource: "@AdminBundle/Resources/config/routing/blacklist.yml"
+  prefix:   /blacklist
+
+business_hours:
+  resource: "@AdminBundle/Resources/config/routing/business_hours.yml"
+  prefix:   /business-hours
+
+api_wspot:
+  resource: "@AdminBundle/Resources/config/routing/api_wspot.yml"
+  prefix:   /api
+
+api_rd_station:
+  resource: "@AdminBundle/Resources/config/routing/api_rd_station.yml"
+  prefix:   /api-rdstation
+
+api_egoi:
+  resource: "@AdminBundle/Resources/config/routing/api_egoi.yml"
+  prefix:   /api-egoi
+
+custom_fields:
+  resource: "@AdminBundle/Resources/config/routing/custom_fields.yml"
+  prefix:   /custom-fields
+
+white_label:
+  resource: "@AdminBundle/Resources/config/routing/white_label.yml"
+  prefix:   /white-label
+
+group:
+  resource: "@AdminBundle/Resources/config/routing/group.yml"
+  prefix:   /group
+
+guest:
+  resource: "@AdminBundle/Resources/config/routing/guest_password_recovery.yml"
+  prefix:   /guest
+
+customer_area:
+  resource: "@AdminBundle/Resources/config/routing/customer_area.yml"
+  prefix:   /customer-area
+
+maintenance_page:
+  resource: "@AdminBundle/Resources/config/routing/maintenance_page.yml"
+  prefix:   /pagina-em-manutencao
+
+notification:
+  resource: "@AdminBundle/Resources/config/routing/notification.yml"
+  prefix: /notification
+
+cache:
+  resource: "@AdminBundle/Resources/config/routing/cache.yml"
+  prefix: /cache
+
+fake_data:
+  resource: "@AdminBundle/Resources/config/routing/fake_data.yml"
+  prefix: /fake-data
+
+change-plan:
+  resource: "@AdminBundle/Resources/config/routing/client_token_change_plan.yml"
+  prefix: /change-plan
+
+data_controller_area:
+  resource: "@AdminBundle/Resources/config/routing/data_controller.yml"
+  prefix: /data-controller
+
+consent_manager_area:
+  resource: "@AdminBundle/Resources/config/routing/consent_manager.yml"
+  prefix: /consent-manager
+
+spots_manager:
+  resource: "@AdminBundle/Resources/config/routing/spots_manager.yml"
+  prefix: /spots-manager
+
+legal_base_manager:
+  path: /legal-base-manager
+  defaults: { _controller: wspot.admin.controller.legal_base_manager:indexAction }
+
+api_docs:
+  path: /api-docs
+  defaults: { _controller: wspot.admin.controller.api_docs:indexAction}
+
+deskbee_integration:
+    path:  /deskbee-integration/config
+    defaults: { _controller: wspot.admin.controller.deskbee_integration:indexAction, block:false }
+    options:
+        expose: true
+
+hubsoft_integration:
+    path:  /hubsoft-integration/config
+    defaults: { _controller: wspot.admin.controller.hubsoft_integration:indexAction, block:false }
+    options:
+        expose: true
+
+hubsoft_test_credentials:
+    path: /hubsoft-integration/test-credentials
+    defaults: { _controller: wspot.admin.controller.hubsoft_integration:testCredentialsAction }
+    options:
+      expose: true
+
+
+Ixc_integration:
+    path:  /ixc-integration/config
+    defaults: { _controller: wspot.admin.controller.Ixc_integration:indexAction, block:false }
+    options:
+        expose: true
+
+Ixc_test_credentials:
+    path: /ixc-integration/test-credentials
+    defaults: { _controller: wspot.admin.controller.Ixc_integration:testCredentialsAction }
+    options:
+      expose: true
+smart_location:
+    path:  /smartlocation/config
+    defaults: { _controller: wspot.admin.controller.smartlocation:indexAction, block:false }
+    options:
+        expose: true
+
+sso_integration:
+    path:  /sso-integration/
+    defaults: { _controller: wspot.admin.controller.sso_integration:indexAction, block:false }
+    options:
+        expose: true
+
+sso_integration_new:
+    path:  /sso-integration/new/
+    defaults: { _controller: wspot.admin.controller.sso_integration:newAction }
+
+sso_integration_edit:
+    path:  /sso-integration/{id}/edit/
+    defaults: { _controller: wspot.admin.controller.sso_integration:editAction }
+    options:
+        expose: true
+
+sso_integration_delete:
+    path:  /sso-integration/{id}/delete/
+    defaults: { _controller: wspot.admin.controller.sso_integration:deleteAction}
+    options:
+        expose: true
+

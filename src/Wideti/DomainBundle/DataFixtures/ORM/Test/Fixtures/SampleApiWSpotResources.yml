@@ -1,0 +1,80 @@
+Wideti\DomainBundle\Entity\ApiWSpotResources:
+  GuestGet:
+    api: "@ApiWSpot"
+    resource: 'guest'
+    method: 'GET'
+
+  GuestPost:
+    api: "@ApiWSpot"
+    resource: 'guest'
+    method: 'POST'
+
+  GuestPUT:
+    api: "@ApiWSpot"
+    resource: 'guest'
+    method: 'PUT'
+
+  GuestDelete:
+    api: "@ApiWSpot"
+    resource: 'guest'
+    method: 'DELETE'
+
+  ClientGet:
+    api: "@ApiWSpot"
+    resource: 'clients'
+    method: 'GET'
+
+  ClientPost:
+    api: "@ApiWSpot"
+    resource: 'clients'
+    method: 'POST'
+
+  ClientPUT:
+    api: "@ApiWSpot"
+    resource: 'clients'
+    method: 'PUT'
+
+  ClientDelete:
+    api: "@ApiWSpot"
+    resource: 'clients'
+    method: 'DELETE'
+
+  SegmentationGet:
+    api: "@ApiWSpot"
+    resource: 'segmentation'
+    method: 'GET'
+
+  SegmentationPost:
+    api: "@ApiWSpot"
+    resource: 'segmentation'
+    method: 'POST'
+
+  SegmentationPUT:
+    api: "@ApiWSpot"
+    resource: 'segmentation'
+    method: 'PUT'
+
+  SegmentationDelete:
+    api: "@ApiWSpot"
+    resource: 'segmentation'
+    method: 'DELETE'
+
+  ClientsInternalGet:
+    api: "@ApiWSpot"
+    resource: 'internal_clients'
+    method: 'GET'
+
+  ClientsInternalPost:
+    api: "@ApiWSpot"
+    resource: 'internal_clients'
+    method: 'POST'
+
+  ConsentInternalPOST:
+    api: "@ApiWSpot"
+    resource: 'internal_consent'
+    method: 'POST'
+
+  ClientsInternalPut:
+    api: "@ApiWSpot"
+    resource: 'internal_clients'
+    method: 'PUT'

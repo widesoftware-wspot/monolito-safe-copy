@@ -1,0 +1,88 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: config.yml }
+
+services:
+  # Monolog HTML formatter
+  monolog.formatter.html:
+    class: Monolog\Formatter\HtmlFormatter
+
+  #Monolog JSON formatter
+  monolog.formatter.json:
+    class: Monolog\Formatter\JsonFormatter
+
+  # Console Records PreProcessor
+  # monolog.processor.loggly_processor:
+  #   class:  Wideti\DomainBundle\Monolog\RecordProcessor
+  #   arguments: ["@service_container"]
+  #   tags:
+  #       - { name: monolog.processor, method: processExtraRecord, handler: loggly }
+
+  # Console Records PreProcessor
+  monolog.processor.logstash_processor:
+    class:  Wideti\DomainBundle\Monolog\RecordProcessor
+    arguments: ["@service_container"]
+    tags:
+      - { name: monolog.processor, method: processExtraRecord, handler: logstash_error }
+  
+  # Console Records PreProcessor
+  monolog.processor.file_processor:
+    class:  Wideti\DomainBundle\Monolog\RecordProcessor
+    arguments: ["@service_container"]
+    tags:
+      - { name: monolog.processor, method: processExtraRecord, handler: file_log }
+
+monolog:
+  handlers:
+    # loggly:
+    #     level: error
+    #     token: %loggly_token%
+    #     type: loggly
+    #     tags: %loggly_tag%
+    logstash_error:
+        type:  rotating_file
+        path:  %kernel.logs_dir%/%kernel.environment%.log
+        level: error
+        max_files: 3
+        formatter: monolog.formatter.json
+        # excluded_404s:
+        #   - ^/
+    file_log:
+        type:  stream
+        path:  /var/log/wspot-monolito-v3.log
+        level: error
+        formatter: monolog.formatter.json
+        # excluded_404s:
+        #   - ^/
+
+
+old_sound_rabbit_mq:
+  connections:
+    default:
+      host: %rabbitmq_host%
+      port: 5672
+      user: %rabbitmq_username%
+      password: %rabbitmq_password%
+      lazy: true
+      connection_timeout: 3
+      read_write_timeout: 3
+      keepalive: true
+      heartbeat: 0
+      vhost: '/'
+  producers:
+    send_guest:
+      connection: default
+      exchange_options: {name: 'send_guest', type: 'direct'}
+      queue_options:
+        name: 'wspot-guests'
+    disconnect_guest:
+      connection: default
+      exchange_options: {name: 'disconnect_guest', type: 'direct'}
+      queue_options:
+        name: 'disconnect-guests'
+  consumers:
+    disconnect_guest:
+      connection: default
+      exchange_options: {name: 'disconnect_guest', type: direct}
+      queue_options: {name: 'disconnect-guests'}
+      callback: 'core.service.disconnect_guest_consumer'

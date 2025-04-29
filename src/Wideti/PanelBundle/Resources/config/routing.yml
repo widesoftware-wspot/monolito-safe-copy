@@ -1,0 +1,38 @@
+redirect_panel_login:
+  path: /
+  defaults:
+    _controller: FrameworkBundle:Redirect:urlRedirect
+    path: /panel/login
+    permanent: true
+
+login:
+  resource: "@PanelBundle/Resources/config/routing/login.yml"
+  prefix:   /
+
+dashboard:
+  resource: "@PanelBundle/Resources/config/routing/dashboard.yml"
+  prefix:   /dashboard
+
+client:
+  resource: "@PanelBundle/Resources/config/routing/client.yml"
+  prefix:   /client
+
+report:
+  resource: "@PanelBundle/Resources/config/routing/report.yml"
+  prefix:   /report
+
+mailchimp:
+  resource: "@PanelBundle/Resources/config/routing/mailchimp.yml"
+  prefix:   /mailchimp
+
+sms_gateway:
+  resource: "@PanelBundle/Resources/config/routing/sms_gateway.yml"
+  prefix:   /sms-gateway
+
+sms_credit:
+  resource: "@PanelBundle/Resources/config/routing/sms_credit.yml"
+  prefix:   /sms-credit
+
+whitelabel_cert_feature:
+  resource: "@PanelBundle/Resources/config/routing/whitelabel_cert_feature.yml"
+  prefix:   /whitelabel-cert

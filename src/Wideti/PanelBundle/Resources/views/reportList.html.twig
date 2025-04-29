@@ -1,0 +1,78 @@
+{% extends 'PanelBundle::layout.html.twig' %}
+
+{% block content %}
+
+    <!-- Heading -->
+<h3 class="heading-mosaic">
+    {% block heading %}
+        Visitantes
+    {% endblock %}
+</h3>
+
+{% block cards %}
+{% endblock %}
+
+<div class="innerLR">
+   {% block filterBlock %}
+    <div class="filter-bar row-fluid margin-bottom-none">
+        {% block filter %}
+            {% form_theme filter 'AdminBundle:Form:fields.html.twig' %}
+            {{ form(filter) }}
+        {% endblock %}
+    </div>
+   {% endblock %}
+
+    <div class="widget">
+        <div class="widget-body">
+
+            {% block charts %}
+            {% endblock %}
+
+            {% block resultsInfo %}{% endblock %}
+
+            {% block table %}
+                <table class="dynamicTable table table-striped table-bordered table-condensed ">
+                    <!-- Table heading -->
+                    <thead>
+                        <tr>
+                            {% block thead %}
+                                <th></th>
+                            {% endblock %}
+                        </tr>
+                    </thead>
+                    <!-- // Table heading END -->
+                    <!-- Table body -->
+                    <tbody>
+                        <!-- Table row -->
+                        {% block tbody %}
+                            <tr class="gradeX">
+                                <td></td>
+                            </tr>
+                        {% endblock %}
+                        <!-- // Table row END -->
+                    </tbody>
+                    <!-- // Table body END -->
+                </table>
+
+                <!-- // Table END -->
+                <div class="separator top form-inline small">
+                    {% block pagination %}
+                    {% endblock %}
+                </div>
+                {% block action%}
+                {%endblock%}
+
+            {% endblock %}
+        </div>
+    </div>
+
+{% block extraTable %}
+{% endblock %}
+
+<!-- // Widget END -->
+</div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

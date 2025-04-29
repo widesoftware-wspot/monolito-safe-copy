@@ -1,0 +1,24 @@
+panel_report_poc:
+    path: /poc/{page}
+    defaults: { _controller: wspot.panel.controller.report:clientsTestingAction}
+
+panel_report_domain:
+    path: /dominios
+    defaults: { _controller: wspot.panel.controller.report:domainsAction }
+
+panel_report_clients_not_using:
+    path: /clientes-sem-uso
+    defaults: { _controller: wspot.panel.controller.report:clientsAreNotUsingAction }
+
+panel_report_clients_not_using_export:
+    path: /clientes-sem-uso/export
+    defaults: { _controller: wspot.panel.controller.report:clientsAreNotUsingExport }
+
+panel_report_clientsFeatures:
+    path: /clientes-funcionalidades
+    defaults: { _controller: wspot.panel.controller.report:clientsFeaturesAction }
+
+panel_report_payment:
+    path: /pagamento
+    defaults: { _controller: wspot.panel.controller.report:paymentAction }
+

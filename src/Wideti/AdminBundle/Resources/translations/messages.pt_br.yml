@@ -1,0 +1,408 @@
+entity:
+  Users:
+    status: status
+    receiveReportMail: relatório via e-mail
+    username: e-mail
+    nome: nome
+    ultimoAcesso: último acesso
+    role: perfil
+
+  Campaign:
+    name: nome
+    startDate: data de início
+    endDate: data de término
+    preLogin: pré-login
+    preLoginImageDesktop: imagem desktop do pré-login
+    preLoginImageMobile: imagem mobile do pré-login
+    preLoginImageTime: tempo da imagem do pré-login
+    posLogin: pós-login
+    posLoginBanner: banner do pós login
+    posLoginImageDesktop: imagem desktop do pós-login
+    posLoginImageMobile: imagem mobile do pós-login
+    posLoginImageTime: tempo da imagem do pós-login
+    redirectUrl: url de redirecionamento
+    inAccessPoints: exibir campanha em access points
+    status: status
+    template: template
+    ssid: ssid
+    accessPoints: os access points
+
+  Configuration:
+    value: a configuração
+
+  Guest:
+    documentType: tipo de documento
+    locale: idioma
+    authorizeEmail: autoriza recebimento de e-mail
+    gender: gênero
+    status: status
+    email: e-mail
+    telefone: telefone
+
+wspot:
+  unimed_number:
+    min_length: "Campo deve ter pelo menos 17 digitos"
+    invalid_number: "Cartão do beneficiário inválido"
+
+  campaign:
+    loading_message: "Aguarde"
+    count_message: "Você será redirecionado em"
+    count_message_simulate: "Essa é uma página demonstrativa. Você será redirecionado em..."
+
+  day: dia
+  hour: hora
+  minute: minuto
+
+  admin_page:
+    bad_credentials: "E-mail ou senha inválidos."
+
+  access_point:
+    title: "Accesso Bloqueado!"
+    message_1: "O acesso através desse ponto de acesso está bloqueado."
+
+  default:
+    selected_language: "O idioma foi selecionado automaticamente de acordo com seu navegador"
+    guest: "Visitante"
+
+  blacklist:
+    guest_inactive_title: "Dispositivo bloqueado"
+    guest_inactive_message: "Seu acesso a rede WI-FI esta bloqueado. Por favor entre em contato com o administrador"
+
+  business_hours:
+    title: "Aviso!"
+    unavailable: "Informamos que o acesso à rede Wi-Fi está indisponível. <br><br>Acesso liberado das "
+    period: "%starHour% às %endHour%"
+    or: " ou "
+
+  signup_page:
+    terms_required: "É necessário aceitar os termos de uso"
+    consent_required: "É necessário aceitar os termos de consentimento"
+    field_required: "Campo obrigatório"
+    field_custom_required: "Campo obrigatório"
+    field_invalid_date: "Por favor, insira uma data válida"
+    field_age_restriciton_error: "Idade mínima não permitida para o acesso."
+    field_invalid_document: "Digite um CPF válido"
+    field_name_min_characters_required: "Este campo deve ter pelo menos 6 caracteres"
+    field_document_min_characters_required: "Este campo deve ter 11 caracteres"
+    field_zip_code_min_characters_required: "Este campo deve ter 9 caracteres"
+    field_phone_min_characters_required: "Telefone/Celular deve ter DDD + telefone"
+    field_password_required: "Insira uma senha"
+    field_password_confirm_required: "Insira a confirmação da senha"
+    field_password_min_characters_required: "Sua senha deve ter pelo menos 6 caracteres"
+    field_password_max_characters_required: "Sua senha deve ter no máximo 30 caracteres"
+    field_password_equalTo_required: "As senhas devem ser iguais"
+    field_valid_email: "Por favor, insira um email válido"
+    field_valid_domain_email: "Domínio de e-mail não permitido"
+    field_cep_invalid: 'CEP inválido'
+    field_cep_not_found: 'CEP não encontrado'
+    general_error: "Ocorreu um erro ao efetuar o seu cadastro."
+    mac_registered_error: "Erro, já existe uma conta cadastrada para este dispositivo."
+
+  login_page:
+    guest_inactive_title: "Usuário Inativo"
+    guest_inactive_message: "Seu acesso à rede Wi-Fi foi bloqueado. Por favor, entre em contato com o Administrador."
+    have_account: "Possuo cadastro"
+    have_no_account: "Não possuo cadastro"
+    welcome: "Seja bem vindo"
+    login_title: "Login"
+    signup_title: "Cadastro"
+    signup_identifier: "Identificação"
+    signup_identifier_hotelviva: "Olá, bem-vindo."
+    guest_message_hotelviva: "Se você for hóspede, clique aqui"
+    visitor_message_hotelviva: "Se você for um visitante, preencha seu e-mail e clique abaixo"
+    read_accept: "Ao se cadastrar você está de acordo com os "
+    terms_use: "termos de uso"
+    terms_required_msg1: "Estou de acordo com os "
+    terms_required_msg2: "Termos de Uso"
+    forgot_password: "Esqueci / Trocar a senha"
+    forgot_email: "Esqueci meu e-mail"
+    dont_have_account: "Não possui cadastro?"
+    click_here: "Não possuo cadastro"
+    signup_email_input: "E-mail"
+    signup_password_input: "Senha"
+    signup_cpf_input: "CPF"
+    signup_confirm_password_input: "Repita a senha"
+    signup_password_must_match_input: "As senhas devem coincidir"
+    signup_authorized_checkin: "Autorizo realizar o Check-in no Facebook"
+    signup_submit_input: "Cadastrar"
+    signup_submit_identifier: "Conectar"
+    login_submit_input: "Conectar"
+    facebook_share_require: "É necessário compartilhar para conectar."
+    facebook_share_connect: "Compartilhar e Conectar-se"
+    login_wrong_data: "Login ou senha inválidos."
+    login_wrong_data_1: "Login inválido."
+    login_inactive_user: "Usuário Inativo."
+    login_password_doesnt_match: "Senha e confirmação de senha não coincidem."
+    login_document_already_exists: "CPF já cadastrado na base de dados."
+    forgot_pass_continue_input: "Continuar"
+    forgot_pass_message1: "Por favor, informe o login de cadastro no campo abaixo."
+    forgot_pass_message2: "Insira abaixo seus dados para confirmação e sua nova senha."
+    forgot_pass_guest_not_found: "Visitante não encontrado."
+    forgot_pass_admin_request: "Enviamos para o e-mail informado sua nova senha de acesso. Caso não tenha recebido, tente novamente ou entre em contato conosco através do e-mail "
+    forgot_pass_wrong_data: "Os valores informados não coincidem. Tente novamente."
+    forgot_pass_exists_data: "Este valor já está sendo usado."
+    authorize_email: "Quero receber novidades por email/sms"
+    complete_registration: "Finalize o seu cadastro"
+    complete_progressive_form: "Complete o seu cadastro"
+    complete_registration_welcome: "Seja bem-"
+    complete_registration_gender_m: "vindo"
+    complete_registration_gender_w: "vinda"
+    complete_progressiveform_instructions: "Para navegar, preencha com seus dados cadastrais"
+    complete_registration_instructions: "Para finalizar seu cadastro, complete o formulário abaixo."
+    connect_using: "Conecte-se via"
+    facebook_account: "Facebook"
+    facebook_error: "Erro na comunicação com o Facebook, tente novamente."
+    twitter_account: "Twitter"
+    twitter_error: "Erro na comunicação com o Twitter, tente novamente."
+    google_account: "Google"
+    google_error: "Erro na comunicação com o Twitter, tente novamente."
+    linkedin_account: "LinkedIn"
+    linkedin_error: "Erro na comunicação com o LinkedIn, tente novamente."
+    sso_error: "Erro na comunicação com o SSO, tente novamente."
+    field_already_exists: "Valor já cadastrado na base de dados."
+    preview_page_alert: "Você não está nesta rede de Hotspot. Esta tela é apenas para visualização. Não será possível realizar nenhuma ação."
+    duplicated_register: "Já existe um cadastro com essas informações"
+    javascript_alert: "Habilite o javascript para continuar"
+    consent_fail_alert: "Não foi possível liberar seu acesso à internet. Por favor tente novamente mais tarde."
+
+  confirmation:
+    title: "Confirmação de cadastro"
+    title_login: "Confirmação de acesso"
+    sms_message_1: "Para confirmar seu cadastro, informe abaixo o código que foi enviado via SMS para o número"
+    sms_message_1_login: "Para confirmar seu acesso, informe abaixo o código que foi enviado via SMS para o número"
+    sms_message_2: "Foi enviado um SMS para o número"
+    sms_message_2_1: "Para confirmar seu cadastro e continuar navegando, acesse o endereço informado na mensagem."
+    sms_message_waiting_1: "Olá"
+    sms_message_waiting_2: ", seu cadastro está sendo confirmado. Aguarde alguns segundos até que sua navegação seja liberada."
+    email_message_1: "Foi enviado um e-mail para"
+    email_message_1_1: "e seu acesso à Internet será liberado por"
+    email_message_1_2: "Siga as instruções de confirmação de cadastro informadas no e-mail."
+    resend_sms_code: "Não recebi o SMS. Reenviar"
+    resend_code: "Código de confirmação reenviado!"
+    resend_sms_waiting_1: "Aguarde"
+    resend_sms_waiting_2: "segundos para reenviar o SMS"
+    resend_email_url: "Reenviar o e-mail"
+    resend_url: "E-mail reenviado!"
+    phone_change: "Alterar o número do celular"
+    email_change: "Alterar o e-mail"
+    confirmation_code: "Digite abaixo o código de confirmação"
+    confirm_button: "Confirmar"
+    continue_button: "Clique aqui para iniciar a navegação"
+    block_title: "Acesso à internet bloqueado!"
+    block_message_1: "O tempo limite para confirmação de seu cadastro se expirou e seu acesso à internet foi bloqueado por "
+    block_message_2: "Após este tempo, por favor, siga as instruções que enviamos em seu e-mail para que seu cadastro seja confirmado e seu acesso à internet liberado."
+    invalid_token: "Atenção"
+    invalid_token_message_1: "Seu cadastro já foi ativado ou a URL que você está tentando acessar é inválida."
+    invalid_token_message_2: "Se você está com algum problema para se conectar à rede Wi-fi, por favor, entre em contato com nosso suporte através do e-mail"
+    button_home: "Ir para página inicial"
+    sms_invalid_number: "Número de SMS inválido"
+    sms_sent_error: "Ocorreu um erro ao enviar a mensagem"
+
+  block_per_time:
+    title: "Acesso à internet bloqueado!"
+    message_1: "Olá, "
+    message_2: "O tempo limite de uso da rede Wi-Fi foi atingido. Por favor, tente novamente após "
+    message_3: "Acessar a partir de: "
+
+  validity_access:
+    title: "Acesso à internet bloqueado!"
+    message_1: "Olá, "
+    message_2: "O tempo limite de uso da rede Wi-Fi foi atingido."
+
+  block_per_limit_of_connections:
+    title: "Acesso à internet bloqueado!"
+    message_1: "Olá, "
+    message_2: "O limite de conexão com seu usuário à rede Wi-Fi foi atingido."
+
+  change_user_data:
+    title: "Alterar dados"
+    invalid_phone: "Número de telefone inválido"
+    invalid_phone_ddd: "Insira o DDD sem o 0"
+    invalid_phone_message_register: "O número de telefone informado não é válido ou não existe. Para confirmar o seu cadastro, informe no campo abaixo um número de celular para receber o código de ativação."
+    invalid_phone_message_welcome: "O número de telefone informado não é válido ou não existe. Informe no campo abaixo um número de celular para receber seus dados de acesso."
+    used_email: "E-mail já cadastrado na base de dados."
+    save_button: "Alterar"
+
+  invalid_email:
+    title: "E-mail Inválido!"
+    message_1: "Olá, "
+    message_2: "O email "
+    message_3: " é inválido. Por favor, insira um e-mail válido e clique em Alterar."
+    used_email: "E-mail já cadastrado na base de dados."
+    new_email: "Informe um e-mail válido!"
+    email_updated: "E-mail alterado com sucesso"
+    save_button: "Alterar"
+    email_validate_process: "Estamos validando o seu e-mail..."
+    email_validate_success: "E-mail validado com sucesso!"
+    email_validate_error: "Por favor, insira um email válido"
+
+  invalid_name:
+    name_validate_error: "Caracteres especiais não são aceitos"
+
+  auto_login:
+    hello: "Olá"
+    welcome: ", bem vindo(a) de volta."
+    message_1: "Identificamos que você esteve em, "
+    message_2: "pertencente à"
+    message_3: ", em"
+    message_4: "Identificamos que você já esteve aqui. Seu último acesso com esse dispositivo foi em:"
+    message_5: "Clique abaixo e já comece a navegar."
+    not_me: "Não sou"
+
+  access_code:
+    title: "Código de Acesso"
+    message_1: "Olá, "
+    message_2: "Para iniciar a navegação insira no campo abaixo o seu código de acesso."
+    placeholder: "código de acesso"
+    submit_button: "validar código"
+    invalid_code: "Código inválido! Tente novamente."
+    expired_lot: "Código de acceso expirado."
+    used_code: "Este código já foi utilizado!"
+    button_back: "Voltar"
+    change_code: "Alterar Código de Acesso"
+    access_denied: "Acesso não autorizado!"
+    access_denied_message: "Identificamos uma conexão ativa com seus dados. Só é permitido o acesso à rede Wi-Fi para um dispositivo."
+    access_denied_unique_access: "Este código já foi utilizado!"
+    free_access_message: "Caso você não possua um código de acesso, clique no botão abaixo e navegue gratuitamente por"
+    free_access_button: "clique aqui para iniciar a navegação"
+
+  forgot_pass_page:
+    title: "Esqueci minha Senha"
+    description: "Por favor, insira seus dados para o recadastramento da senha "
+    password_sent: "Sua senha foi alterada, e enviada para seu email como um lembrete"
+    will_be_authenticated: "Você será autenticado em "
+    seconds: "segundos"
+    cancel: "Cancelar"
+    continue: "Continuar"
+
+  forgot_email_page:
+    title: "Esqueci meu e-mail"
+    description: "Por favor, insira abaixo o CPF utilizado no cadastro para que possamos localizar o seu cadastro"
+    email_not_found: "E-mail não encontrado, tente novamente."
+    message: "O e-mail utilizado no cadastro é: "
+    search: "Pesquisar"
+    reset_pass: "Alterar senha"
+    connect: "Conectar"
+
+  consent_term:
+    link: 'Eu aceito o <a href="%consentTermPageUrl%">Termo de Consentimento</a> do uso dos meus dados'
+    page_title: "Termo de Uso e Consentimento"
+    page_content: >
+      <p>Pelo presente Termo de Uso e Consentimento, autorizo o tratamento dos dados pessoais cadastrados, para finalidades:</p>
+      %conditions%
+      <p>, nos termos da Política de Privacidade constante abaixo.</p>
+      <p>Declaro que este consentimento se deu de forma livre, expressa, individual, clara, específica e legítima e que estou ciente que caso queira revogar a presente autorização basta <a href="%formUrl%" target="_blank" style="text-decoration: underline;">clicar aqui</a>.</p>
+      <p>Assim, estando ciente e de acordo com os termos deste, firmo meu consentimento através da checagem do campo "Eu aceito o Termo de Consentimento do uso dos meus dados" no formulário de cadastro.</p>
+      <p>Em caso de dúvidas, o contato deverá ser realizado através do email <a href="mailto:%admin_email%">%admin_email%</a>.</p>
+
+  terms_page:
+    page_title: "Termos de Uso"
+    part_1: "Pelo presente “TERMO DE USO”, firmado entre a %partner_name% e pelo USUÁRIO de microcomputador portátil (Notebook) ou aparelhos móveis (Tablet, Celular, entre outros), identificado e qualificado através do cadastro, fica através do presente termo ciente de que deverá utilizar o sistema de HotSpot, com total responsabilidade dos acessos realizados na Rede."
+    part_2: "Por ser um local público que disponibiliza de forma gratuita o acesso a internet, não responsabilizar-se-á a %partner_name%, por possíveis acessos indesejados bem como a má utilização por parte do USUÁRIO do sistema oferecido, ocorrendo o mal uso dos acessos ou eventualmente ocorrer quaisquer danos quer moral ou material, estes serão de inteira responsabilidade do USUÁRIO, eximindo dessa forma a %partner_name%, de quaisquer irregularidade por ele USUÁRIO cometidas."
+    part_3: "Não poderão os USUÁRIOS, utilizar-se do serviço ora oferecido, para instigar, ameaçar, ofender, abalar a imagem, invadir a privacidade ou prejudicar outros membros da comunidade internet, bem como fica terminantemente proibido o uso em site de material de sexo, bem com quaisquer outros em benefício de se obter vantagens ilícitas e imorais em pról do USUÁRIO."
+    part_4: "Fica a %partner_name%, isenta de responder por qualquer possível irregularidade cometidas por USUÁRIOS."
+    part_5: "Assim, estando ciente e de acordo com os termos deste, acima descritos, firmo o presente para que surta seus legais efeitos de Lei."
+
+  social:
+    title_like: "Curta nossa página"
+    title_checkin: "Compartilhe no Facebook"
+    title_like_and_checkin: "Curta e Compartilhe"
+    facebook_like: "Curta nossa página no Facebook!"
+    facebook_checkin: "Faça o Check-in e mostre aos seus amigos que você está aqui!"
+
+  two_factor_auth:
+    title: "Olá Visitante"
+    error: "Erro ao tentar validar seu acesso. Tente novamente."
+
+  generic:
+    go_back: "Voltar"
+    field_required: "Campo obrigatório"
+    confirm: "Aceitar"
+
+  secret_answer:
+    title: "Segurança da sua conta"
+    info: "Selecione abaixo a sua pergunta de segurança. Essa pergunta e resposta nos ajudarão a verificar sua identidade caso você esqueça sua senha."
+    default_choice: "Selecione uma pergunta de segurança."
+    button_text: "Continuar"
+    placeholder: "Resposta"
+
+  secret_answer_recovery:
+    title: "Pergunta de Segurança"
+    info: "Sua conta possui uma pergunta de segurança, você deve digitar a resposta abaixo:"
+    placeholder: "Resposta"
+    button_text: "Continuar"
+    error_title: "Voce esta bloqueado temporariamente"
+    error_info: "Tente seu acesso novamente daqui 10 minuto(s)."
+    error_cancel: "Cancelar"
+    retry_msg: "Resposta incorreta. Você tem mais %tentativas% tentativas"
+    retry_block: "Resposta incorreta. Você foi bloqueado por 10 minutos"
+    title_pwd_only: "Cadastrar nova senha"
+    info_pwd_only: "Insira abaixo sua nova senha e confirme."
+
+  recovery_password_choice:
+    title: "Por qual método deseja redifinir sua senha de acesso?"
+    email: "E-mail"
+    secret_question: "Pergunta Secreta"
+    cancel: "Cancelar"
+
+  recovery_password_email:
+    title: "Recuperação de senha via E-mail"
+    p1_part1: "Foi enviado um e-mail para "
+    p1_part2: ". Lá você encontrará uma mensagem com uma senha temporária."
+    p2: "Após receber a senha temporária, faça login em sua conta utilizando-a. Você será solicitado a definir uma nova senha assim que fizer login pela primeira vez"
+    back: "Voltar"
+    login: "Efetuar Login"
+
+  authorize_error_url:
+    title: "Falha ao Autenticar"
+    message: "Uma falha ocorreu em seu processo de autenticação. Clique no botão abaixo para tentar novamente"
+    submit_input: "Tentar novamente"
+
+  authorize_load:
+    title: "Autenticação"
+    message: "Autorizando visitante na rede..."
+  
+  preview:
+    alert_text: "Você está em um ambiente de simulação. Ao finalizar, você não será autenticado na rede deste Ponto de Acesso nem exibido como usuário online."
+    title: "Preview Concluído"
+    preview_done_info1: "O fluxo de experiência de jornada do usuário foi finalizado."
+    preview_done_info2: "Este é o momento onde o visitante da rede WiFi é redirecionado para se autenticar no equipamento da rede."
+
+
+mail_report:
+  subject: "Analise os resultados do seu Mambo WiFi"
+  wl_subject: "Analise os resultados do seu Hotspot"
+  intro_dominio: "Esse relatório é referente a sua conta"
+  intro_1: "Olá, esse é o seu resumo semanal do %companyName%. Descubra o que aconteceu no seu hotspot nos últimos %amountOfDays% dias."
+  intro_2: "Aqui são apresentadas informações referentes aos visitantes e acessos. Para mais detalhes e informações visite a área administrativa utilizando seu email e senha."
+  guests_title: "Informações sobre seus visitantes"
+  guests_tip: "Acompanhe abaixo o progresso de visitas nos últimos %amountOfDays% dias. Você tem acesso à essas informações em forma de relatório através da área administrativa, onde será possível filtrar as informações por pontos de acesso e período das visitas realizadas."
+  total_signups_guests: "TOTAL DE VISITANTES CADASTRADOS"
+  all: "EM TODO O PERÍODO"
+  period: "NOS ÚLTIMOS %amountOfDays% DIAS"
+  most_visited_hours: "HORÁRIOS COM MAIS ACESSOS"
+  most_visited_days: "QUANTIDADE DE VISITANTES POR DIA"
+  unique_guests: "VISITANTES ÚNICOS"
+  unique_guests_info: "Visitantes que vieram apenas uma vez"
+  returning_guests: "VISITANTES RECORRENTES"
+  returning_guests_info: "Visitantes que retornaram recentemente"
+  os: "SISTEMA OPERACIONAL"
+  devices: "DISPOSITIVOS"
+  aps_most_visited: "TOP 5 PONTOS DE ACESSO COM MAIS VISITAS"
+  network_tip: "Veja abaixo o consumo de dados dos últimos %amountOfDays% dias. Você tem acesso à essas informações em forma de relatório através da área administrativa, onde será possível filtrar as informações por pontos de acesso e período."
+  network_title: "Relatório de Rede"
+  download: "DOWNLOAD"
+  upload: "UPLOAD"
+  download_upload: "DOWNLOAD E UPLOAD"
+  sms_title: "Informações sobre envio de SMS"
+  total_sms_send: "Total de SMS enviados"
+  last_month: "No último mês"
+  current_month: "No mês atual"
+  sms_cost: "Valor cobrado por SMS enviado: R$ %smsCost%."
+  contact_us: "Se precisar de ajuda ou caso não tenha solicitado o cadastro no %companyName%, por favor entre em contato conosco pelo email"
+  signature_1: "Teremos o maior prazer em ajudá-lo."
+  signature_2: "Atenciosamente,"
+  signature_3: "Equipe %companyName%"
+  no_result: "Não existem registros neste período."
+  marco_civil: "Hotspot de acordo com o Marco Civil da Internet. Registramos os dados de cadastro do visitante, IP da conexão, MAC Address, horários e duração das conexões à internet. Os registros de conexão são por armazenados por um ano, como determina a Lei 12.965, em vigor desde junho de 2014."
+

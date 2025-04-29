@@ -1,0 +1,429 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/css/formularios.css')}}" rel="stylesheet" />
+    <style>
+        .custom-field-list {
+            display:flex;
+            justify-content: end;
+            gap: 10px;
+        }
+        .heading-buttons a {
+            margin-left: 30px;
+        }
+        .center {
+            vertical-align: middle !important;
+        }
+        select.span10 {
+            margin-bottom: 0px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <ul class="breadcrumb"></ul>
+    <div class="separator bottom"></div>
+
+    <div class="heading-buttons">
+        <h3>Customizar Formulários</h3>
+        <a href="{{ path('custom_field_template_new')}}" style="position: relative;"
+                                class="btn btn-primary btn-icon glyphicons circle_plus">
+                            <i></i>Criar novo campo</a>
+    </div>
+    <div class="separator bottom"></div>
+    <div class="innerLR">
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="tabsbar">
+                    <ul>
+                        <li class="glyphicons user_add active"><a href="#tabSignup" data-toggle="tab"><i></i> Fomulário</a></li>
+                        <li class="glyphicons share"><a href="#tabSignin" data-toggle="tab"><i></i> Campo de Login </a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="tab-content">
+                <!-- SignUp Fields -->
+                <div class="tab-pane active" id="tabSignup">
+
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <div class="widget widget-body-white">
+                                <div class="widget-head">
+                                    <h4 class="heading text-uppercase">Sobre a seleção de campos para cadastro</h4>
+                                </div>
+                                <div class="widget-body padding-none">
+                                    <p>Selecione quais campos serão ultilizados no cadastro do seu visitante.</p>
+                                    <p>Você poderá selecionar as validações <span style="color: red">"Único"</span> e <span style="color: red">"Obrigatório"</span> na hora de selecionar o campo.</p>
+                                    <p>Não será permitido selecionar a validação <span style="color: red">"Único"</span> caso seja em um campo que já exista em seu formulário e possua registros duplicados com essa informação.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <div class="widget">
+                                <div class="widget-head">
+                                    <h4 class="heading text-uppercase">Campos disponíveis</h4>
+                                </div>
+                                <div class="widget-body">
+                                    <table class="table table-white table-vertical-center margin-none table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Campo</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="template-list">
+                                            <!-- Ajax loaded -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="span6" style="padding-right: 3em">
+                            <div class="widget widget-body-white">
+                                <div class="widget-head">
+                                    <h4 class="heading text-uppercase">Campos selecionados</h4>
+                                </div>
+                                <div class="widget-body padding-none">
+                                    <h6 class="text-error">Arraste os campos para reordená-los (verticalmente).</h6>
+                                    <table class="table table-vertical-center table-condensed margin-none">
+                                        <thead>
+                                        <tr>
+                                            <th class="center">Nome</th>
+                                            <th class="center">
+                                                Único <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" 
+e                                                data-content="{% if captiveType == 'disable_password_authentication' %}Para o captive sem senha, apenas o campo de login pode ser único.{% else %}Selecione campos que serão únicos no sistema, cuidado ao selecionar esta validação, visitantes não poderão inserir valores duplicados ao se cadastrar.{% endif %}" 
+                                                data-original-title="" title=""></i>
+                                            </th>
+                                            <th class="center">
+                                                Obrigatório <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-content="Campos serão obrigatórios no ato do cadastro do visitante." data-original-title="" title=""></i>
+                                            </th>
+                                            <th class="center">
+                                                Solicitar quando? <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-content="Exemplo: Caso marque a opção 2ª visita, apenas na segunda conexão do visitante ao WiFi que será solicitado esse campo." data-original-title="" title=""></i>
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="selected-list">
+                                            <!-- Ajax loaded -->
+                                        </tbody>
+                                    </table>
+                                    <hr class="divider" />
+                                    <button class="btn btn-success btn-salvar">Salvar</button>
+                                    <span class="save-alert" style="color: darkred"></span>
+                                </div>
+                            </div>
+                            <div class="widget widget-body-white">
+                                <div class="widget-head">
+                                        <h4 class="heading text-uppercase">Atualizar cadastros <span class="label label-danger label-sm">NOVO</span></h4>
+                                    </div>
+                                    <div class="widget-body padding-none" style="padding-bottom:0;">
+                                        <div class="control-group">
+                                            <div style="margin-bottom:5px;">
+                                                Solicitar novos campos retroativamente
+                                                <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-content="Ative essa opção para solicitar que seus visitantes completem campos pendentes ao acessarem o Wi-Fi. Isso garante que sua base de cadastros esteja sempre atualizada." data-original-title="" title=""></i>
+                                            </div>
+                                            <div class="controls">
+                                                <div class="toggle_button_ask_guest_retroactive_fields" data-togglebutton-style-enabled="danger">
+                                                <input type="checkbox" id="ask_guest_retroactive_fields" name="ask_guest_retroactive_fields" {{ retroactive ? 'checked' : ''}}>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            <div class="widget widget-body-white">
+                                <div class="widget-head">
+                                    <h4 class="heading text-uppercase">Recuperação de senha do visitante</h4>
+                                </div>
+                                <div class="widget-body padding-none">
+                                    <p style="margin-top:0.5vh;">
+                                        Escolha abaixo o método de recuperação de senha preferido para seus visitantes: 
+                                        opte entre recuperação <b>via pergunta de segurança</b> e/ou 
+                                        recuperação <b>via e-mail</b> para oferecer uma experiência personalizada e conveniente aos usuários.
+                                    </p>
+
+                                </div>
+                                <div class="custom-forms ">
+                                    <div class="span3" for="guest_password_recovery_security">
+
+                                        <div class="card" id="securityRecoveryCard">
+                                            <div class="card-body">
+                                                <div class="iconcontainer">
+                                                    <svg width="37" height="20" viewBox="0 0 37 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M1.68182 20V16.6667H35.3182V20H1.68182ZM3.61591 9.91667L1.42955 8.66667L2.85909 6.16667H0V3.66667H2.85909L1.42955 1.25L3.61591 0L5.04545 2.41667L6.475 0L8.66136 1.25L7.23182 3.66667H10.0909V6.16667H7.23182L8.66136 8.66667L6.475 9.91667L5.04545 7.41667L3.61591 9.91667ZM17.0705 9.91667L14.8841 8.66667L16.3136 6.16667H13.4545V3.66667H16.3136L14.8841 1.25L17.0705 0L18.5 2.41667L19.9295 0L22.1159 1.25L20.6864 3.66667H23.5455V6.16667H20.6864L22.1159 8.66667L19.9295 9.91667L18.5 7.41667L17.0705 9.91667ZM30.525 9.91667L28.3386 8.66667L29.7682 6.16667H26.9091V3.66667H29.7682L28.3386 1.25L30.525 0L31.9545 2.41667L33.3841 0L35.5705 1.25L34.1409 3.66667H37V6.16667H34.1409L35.5705 8.66667L33.3841 9.91667L31.9545 7.41667L30.525 9.91667Z" fill="black" />
+                                                </svg>
+                                                </div>
+                                            </div>
+                                            <h5 class="card-title">Redefinição de senha via pergunta secreta</h5>
+                                            <p class="card-text">Recuperação de senha através de uma pergunta de segurança selecionada pelo visitante durante o cadastro. Permite aos visitantes recuperarem sua senha respondendo a uma pergunta previamente definida por eles.</p>
+                                            <p><a href="#" class="saiba-mais-pergunta">Saiba mais</a></p>
+                                            <div class="control-group">
+                                                    Ativar?
+                                                    <div class="controls">
+                                                        <div class="toggle_button_guest_password_recovery_security" data-togglebutton-style-enabled="danger">
+                                                        <input type="checkbox" id="guest_password_recovery_security" name="guest_password_recovery_security" {{ security ? 'checked' : ''}}>
+                                                    </div>
+                                                    </div>
+                                            </div>      
+                                        </div>
+                                    </div>
+                                    <div class="span3" for="guest_password_recovery_email">  
+                                        <div class="card" id="passwordRecoveryCard">
+                                        <i id='tooltip-emailrecovery' class="icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-content="Para que esse recurso funcione, é necessário que todos os visitantes tenham seu e-mail cadastrado, ou seja, esse campo tem que ser solicitado desde o começo da conta.   Caso deseje ativar, será necessário limpar todos os dados da sua conta. Para maiores informações consulte nosso suporte." data-original-title="" title=""></i>
+                                            <div class="card-body" id="passwordRecoveryCardContent">
+                                                <div class="iconcontainer">
+                                                    <i class="fa fa-envelope"></i> 
+                                                </div>
+                                                <h5 class="card-title">Redefinição de senha via E-mail</h5>
+                                                <p class="card-text">Recuperação de senha através do envio de uma senha provisória para o e-mail do visitante. No primeiro acesso, o visitante deverá alterar essa senha para uma nova. Essa abordagem permite que os visitantes recuperem sua conta utilizando seu endereço de e-mail previamente cadastrado.</p>
+                                                <p><a href="#" class="saiba-mais-email" id="passwordRecoveryEmailCardSaibaMais">Saiba mais</a></p>
+                                                <div class="control-group">
+                                                    Ativar?
+                                                    <div class="controls">
+                                                        <div class="toggle_button_guest_password_recovery_email" data-togglebutton-style-enabled="danger">
+                                                        <input type="checkbox" id="guest_password_recovery_email" name="guest_password_recovery_email" {{ email ? 'checked' : ''}} {{ allow_guest_password_recovery_email ? '': 'disabled'}}>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                    <div class="obs-recovery-password">
+                                        <span>Obs:</span> Caso não selecionar um método específico de recuperação acima, o sistema usará o <span>método padrão</span>, menos seguro. 
+                                        No método padrão, os visitantes serão solicitados a fornecer uma resposta correta com base nos campos cadastrais preenchidos durante seu primeiro acesso à rede WiFi.
+                                        Quando um visitante esquece sua senha, será solicitado que ele insira informações específicas que correspondam aos dados fornecidos durante seu primeiro cadastro na rede.
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+            <!-- Popup pergunta -->
+            <div id="popup-pergunta" class="popup-pergunta">
+                <div class="popup-content">
+                    <span class="close-pergunta">&times;</span>
+                    <div class="popup-sgv">
+                    <svg width="70" height="60" viewBox="0 0 37 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.68182 20V16.6667H35.3182V20H1.68182ZM3.61591 9.91667L1.42955 8.66667L2.85909 6.16667H0V3.66667H2.85909L1.42955 1.25L3.61591 0L5.04545 2.41667L6.475 0L8.66136 1.25L7.23182 3.66667H10.0909V6.16667H7.23182L8.66136 8.66667L6.475 9.91667L5.04545 7.41667L3.61591 9.91667ZM17.0705 9.91667L14.8841 8.66667L16.3136 6.16667H13.4545V3.66667H16.3136L14.8841 1.25L17.0705 0L18.5 2.41667L19.9295 0L22.1159 1.25L20.6864 3.66667H23.5455V6.16667H20.6864L22.1159 8.66667L19.9295 9.91667L18.5 7.41667L17.0705 9.91667ZM30.525 9.91667L28.3386 8.66667L29.7682 6.16667H26.9091V3.66667H29.7682L28.3386 1.25L30.525 0L31.9545 2.41667L33.3841 0L35.5705 1.25L34.1409 3.66667H37V6.16667H34.1409L35.5705 8.66667L33.3841 9.91667L31.9545 7.41667L30.525 9.91667Z" fill="black" />
+                    </svg>
+                    </div>
+                    <h2 class="popup-title">Redefinição de senha via pergunta secreta</h2>
+                    <p class="popup-text">
+                    Quando o visitante se conecta a rede WiFi é solicitado para ele definir uma pergunta de segurança predefinida e fornecer sua resposta.<br><br>
+                    Quando esse visitante esquecer sua senha no futuro, basta selecionar a opção <strong>"Esqueci minha senha"</strong> e será solicitado que ele responda à sua pergunta de segurança. 
+                    Uma vez que a resposta corresponda à que ele forneceu anteriormente, poderá redefinir sua senha e acessar novamente a rede Wi-Fi.<br><br>
+                    Este método oferece uma alternativa segura e eficaz para restaurar o acesso à sua conta, eliminando a necessidade de intervenção externa e garantindo que apenas ele possa redefinir sua própria senha.<br><br>
+                    Clique <a href="https://suporte.mambowifi.com/a/solutions/articles/16000153691" target="_blank">aqui</a> para ler o artigo completo
+                    <br><br><br>
+                    <strong style="color: red !important">Fluxo explicativo:</strong><br>
+                    </p>
+                    <div class="popup-items">
+                    <ul>
+                        <li>
+                            <p>1.</p>
+                            <p>Cadastro inicial</p>
+                            <p>O visitante faz seu cadastro e escolhe uma pergunta de segurança entre 7 opções.</p>
+                        </li>
+                        <li>
+                            <p>2.</p>
+                            <p>Resposta de Segurança:</p>
+                            <p>Ele define uma resposta única para a pergunta escolhida.</p>
+                        </li>
+                        <li>
+                            <p>3.</p>
+                            <p>Esqueci minha senha</p>
+                            <p>Se ele esquecer a senha, será solicitada a resposta à pergunta de segurança.</p>
+                        </li>
+                        <li>
+                            <p>4.</p>
+                            <p>Verificação da Resposta</p>
+                            <p>O sistema verifica se a resposta está correta.</p>
+                        </li>
+                        <li>
+                            <p>5.</p>
+                            <p>Redefinição da Senha</p>
+                            <p>Se correta, ele pode redefinir sua senha e acessar sua conta novamente.</p>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Popup email -->
+            <div id="popup-email" class="popup-email">
+                <div class="popup-content">
+                    <span class="close-email">&times;</span>
+                    <div class="iconcontainer">
+                        <i class="fa fa-envelope"></i> 
+                    </div>
+                    <h2 class="popup-title">Redefinição de senha via E-mail</h2>
+                    <p class="popup-text">
+                    Para esse recurso funcionar precisaremos que todos os visitantes tenham seu e-mail cadastrado, ou seja, esse campo no formulário deve ser obrigatório e tem que ser solicitado desde o inicio da sua conta.<br><br>
+                   Após o visitante clicar em “esqueci minha senha” no captive portal e inserir seu campo de login, uma senha provisória será enviada para o e-mail pré-cadastrado do visitante. No primeiro acesso, o visitante deverá fazer login com essa senha provisória e automaticamente será solicitado para ele alterar essa senha para uma nova (de sua escolha).<br><br>
+                    <strong>Obs:</strong> É importante ressaltar que como o visitante ainda não está autenticado na rede Wi-Fi, ele precisará acessar seu e-mail usando os dados móveis em seu dispositivo.<br><br>
+                    Clique <a href="https://suporte.mambowifi.com/support/solutions/articles/16000185968" target="_blank">aqui</a> para ler o artigo completo
+                    <br><br>
+                    <strong style="color: red !important">Fluxo explicativo:</strong><br>
+                    </p>
+                    <div class="popup-items">
+                    <ul>
+                        <li>
+                            <p>1.</p>
+                            <p>Captive portal</p>
+                            <p>Clicando em esqueci minha senha ele precisa digitar o seu campo de login.</p>
+                        </li>
+                        <li>
+                            <p>2.</p>
+                            <p>Validação</p>
+                            <p>Fazemos uma validação se aquele login pertence a um visitante cadastrado.</p>
+                        </li>
+                        <li>
+                            <p>3.</p>
+                            <p>Disparo de e-mail</p>
+                            <p>Se sim, enviaremos uma senha provisória em seu e-mail que será usada para fazer seu login.</p>
+                        </li>
+                        <li>
+                            <p>4.</p>
+                            <p>Login no captive</p>
+                            <p>Retorne a tela de login e utilize sua senha provisória enviada.</p>
+                        </li>
+                        <li>
+                            <p>5.</p>
+                            <p>Confirmação</p>
+                            <p>Após o login, será solicitado para criar uma senha a sua escolha.</p>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Popup recuperação desativada -->
+            <div id="popup-desativada" class="popup-desativada" style="display:none">
+                <div class="popup-content">
+                    <h2 class="popup-title">Atenção</h2>
+                    <p class="popup-text">
+                    Você não selecionou nenhum método de recuperação de senha. Por favor, esteja ciente de que isso resultará no uso do <strong>método padrão</strong>, que é menos seguro.
+                    <br><br>
+                    No <strong>método padrão</strong>, os visitantes serão solicitados a fornecer uma resposta correta a uma pergunta baseada em informações pessoais fornecidas durante o seu cadastro no WiFi para redefinir suas senhas.
+                    <br><br>
+                    <br><br>
+                    <strong style="color: red !important">Fluxo explicativo:</strong><br>
+
+                    </p>
+                    <div class="popup-items">
+                    <ul>
+                        <li>
+                            <p>1.</p>
+                            <p>Cadastro inicial</p>
+                            <p>O visitante faz seu cadastro e preenche todas as informações solicitadas no formulário.</p>
+                        </li>
+                        <li>
+                            <p>2.</p>
+                            <p>Esqueci minha senha</p>
+                            <p>Se ele esquecer a senha, será solicitada de forma aleatória algum campo de cadastro que ele preencheu.</p>
+                        </li>
+                        <li>
+                            <p>3.</p>
+                            <p>Exemplo</p>
+                            <p>É solicitado o campo “celular”, caso ele acerte a resposta que preencheu na primeira vez, permitimos ele mudar sua senha.</p>
+                        </li>
+                        <li>
+                            <p>4.</p>
+                            <p>Criação da nova senha</p>
+                            <p>Pronto, digite sua nova senha e ele é liberado para navegação..</p>
+                        </li>
+                    </ul>
+                    </div>
+                    <br>
+
+                    <div class='comfirmation-box'>
+                        <h3>   <strong>  Deseja confirmar essa escolha? </strong> </h3>
+                        <div>
+                            <button id="cancelButton"   class='btn btn-large btn-icon btn-default '  type="button" >Cancelar</button>
+                            <button id="confirmDisableButton" class='btn btn-large  btn-icon btn-confirm' type="button">Confirmar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- //// END SignUp Fields -->
+
+                <!-- SignIn Fields -->
+                <div class="tab-pane" id="tabSignin">
+
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <div class="widget widget-body-white">
+                                <div class="widget-head">
+                                    <h4 class="heading text-uppercase">Sobre a seleção de campo para login</h4>
+                                </div>
+                                <div class="widget-body padding-none">
+                                    <p>Selecione qual campo será ultilizado para login no sistema.</p>
+                                    {% if captiveType == 'disable_password_authentication' %}
+                                        <p>O campo <b>"Senha"</b> não será solicitado, pois o seu captive está configurado como <span style="color: red">"Sem Senha"</span>. Você poderá selecionar qual será a identificação solicitada ao visitante.</p>
+
+                                        <p>O campo utilizado para login deverá sempre ser um campo <span style="color: red"> realmente único</span>  como: e-mail, cpf, celular ou telefone, pois ele será o identificador único e intransferível do visitante.</p>
+                                    {% else %}
+                                        <p>O campo <span style="color: red">"Senha"</span> sempre será solicitado, você poderá apenas selecionar qual será a identificação do seu visitante no sistema que solicitaremos junto com a senha.</p>
+                                        <p>Ao lado são apresentados somente campos que possuem as validações <span style="color: red">"Único"</span> e <span style="color: red">"Obrigatório"</span> ativadas.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="span6">
+                            <div class="widget widget-body-white">
+                                <div class="widget-head">
+                                    <h4 class="heading text-uppercase">Campos disponíveis para login</h4>
+                                </div>
+                                <div class="widget-body padding-none">
+                                    <table class="table table-vertical-center table-condensed margin-none">
+                                        <thead>
+                                        <tr>
+                                            <th class="center">Campo</th>
+                                            <th class="center">Alterar campo de login</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="login-list">
+                                        <!-- Ajax loaded -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- //// END SignIn Fields -->
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js') }}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot-manage-custom-fields.js') }}"></script>
+    <script src="https://use.fontawesome.com/7a860b23cb.js"></script>
+    <script>
+        var allowGuestPasswordRecoveryEmail = {{ allow_guest_password_recovery_email ? 'true' : 'false' }};
+
+       if (!allowGuestPasswordRecoveryEmail) {
+            document.getElementById('passwordRecoveryCardContent').classList.add('disabled-card');
+            document.getElementById('passwordRecoveryEmailCardSaibaMais').classList.add('disabled-link');
+            document.getElementById('tooltip-emailrecovery').classList.add('showicon');
+        }
+        window.captiveType = "{{ captiveType|e('js') }}";
+    </script>
+{% endblock %}

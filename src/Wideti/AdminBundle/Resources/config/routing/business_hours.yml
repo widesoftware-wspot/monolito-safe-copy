@@ -1,0 +1,30 @@
+business_hours:
+    path:  /list/{block}
+    defaults: { _controller: wspot.admin.controller.business_hours:indexAction, block:false }
+    options:
+        expose: true
+
+business_hours_create:
+    path:  /create
+    defaults: { _controller: wspot.admin.controller.business_hours:createAction}
+    options:
+        expose: true
+
+business_hours_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.business_hours:editAction}
+    options:
+        expose: true
+
+business_hours_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.business_hours:deleteAction}
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+business_hours_module:
+    path:  /{status}/module
+    defaults: { _controller: wspot.admin.controller.business_hours:moduleConfigAction }
+    options:
+        expose: true

@@ -1,0 +1,66 @@
+Wideti\DomainBundle\Entity\AccessPoints:
+  AccessPoint1:
+    group: "@Group1"
+    friendlyName: AP Teste 01
+    vendor: mikrotik
+    vendorId: "@Mikrotik"
+    identifier: 11-11-11-11-11-11
+    local: Teste Local 1
+    client: "@Client"
+    radiusVerified: true
+    requestVerified: true
+    verifiedDate: <(new \DateTime())>
+    status: 1
+    timezone: 'America/Sao_Paulo'
+
+  AccessPoint2:
+    group: "@Group1"
+    friendlyName: AP Teste 02
+    vendor: mikrotik
+    vendorId: "@Mikrotik"
+    identifier: 2B-9C-E8-F4-4D-75
+    local: Teste Local 2
+    client: "@Client"
+    radiusVerified: false
+    requestVerified: false
+    status: 1
+    timezone: 'America/Sao_Paulo'
+
+  AccessPoint3:
+    group: "@Group3"
+    friendlyName: AP Teste 01
+    vendor: mikrotik
+    vendorId: "@Mikrotik"
+    identifier: 2B-90-EF-F2-4D-80
+    local: Teste Local 1
+    client: "@FacebookAuthTeste"
+    radiusVerified: false
+    requestVerified: false
+    status: 1
+    timezone: 'America/Sao_Paulo'
+
+  AccessPoint4:
+    group: "@Group1"
+    friendlyName: AP Teste 03
+    vendor: teltonika
+    vendorId: "@Teltonika"
+    identifier: 33-33-33-33-33-33
+    local: Teste Local 3
+    client: "@Client"
+    radiusVerified: false
+    requestVerified: false
+    status: 1
+    timezone: 'America/Sao_Paulo'
+
+  AccessPoint5:
+    group: "@Group4"
+    friendlyName: AP Teste 05
+    vendor: teltonika
+    vendorId: "@Mikrotik"
+    identifier: 33-33-00-00-33-33
+    local: Teste Local 5
+    client: "@TwitterAuthTeste"
+    radiusVerified: false
+    requestVerified: false
+    status: 1
+    timezone: 'America/Sao_Paulo'

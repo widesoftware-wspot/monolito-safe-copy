@@ -1,0 +1,18 @@
+Wideti\DomainBundle\Entity\Template:
+  Template:
+    name: Template padrão
+    partnerLogo: null
+    backgroundColor: null
+    backgroundImage: null
+    backgroundPortraitImage: null
+    fontColor: "#000000"
+    boxOpacity: 1
+    loginBoxColor: "#ec213a"
+    loginFontColor: "#FFFFFF"
+    loginButtonColor: "#424242"
+    loginButtonFontColor: "#FFFFFF"
+    signupBoxColor: "#424242"
+    signupFontColor: "#FFFFFF"
+    signupButtonColor: "#ec213a"
+    signupButtonFontColor: "#FFFFFF"
+    client: @Client1

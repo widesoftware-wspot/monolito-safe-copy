@@ -1,0 +1,82 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block translation %}
+    {% if (config.translation == 1) %}
+        {% if app.session.get('preview') %}
+            <div style="background-color: #9f2323; color: #fff;text-align: center;padding: 1em; font-weight: bolder">
+                {{ 'wspot.preview.alert_text'|trans }}
+            </div>
+        {% else %}
+            <div class="language-box">
+                {{ 'wspot.default.selected_language'|trans }}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <style>
+        @media (max-width: 460px) {
+            body {
+                line-height: 15px !important;
+                font-size: 10pt;
+            }
+
+            #loginBox {
+                overflow: scroll;
+                overflow-x: hidden;
+                border-radius: 5px;
+                height: auto;
+                min-height: 55vh !important;
+                padding: 0 !important;
+            }
+
+            h1, h2, h3,
+            .content-center {
+                line-height: 26px !important;
+            }
+        }
+
+        h1, h2, h3,
+        .content-center {
+            line-height: 26px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block container %}
+    <section class="container singleBox">
+
+        <div id="loginBox" class="boxes fullBox" style="display: block !important; min-height: 0 !important;">
+            <div class="box-content">
+
+                <div class="content-center autologin">
+                    <h3 style="font-size: 20px !important;"><strong>{{ 'wspot.login_page.consent_fail_alert' | trans }}</strong></h3>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset(assets_path ~'/js/fingerprinting.js')}}"></script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            jQuery('#loaderBtnAutoLogin').hide();
+
+            jQuery('#wspot_signin_entrar').click(function(){
+                jQuery(this).hide();
+                jQuery('#loaderBtnAutoLogin').show();
+            });
+        });
+
+        setTimeout(function() {
+            $(".language-box").toggle("drop", {direction: 'up'}, 800);
+        }, 4000);
+
+    </script>
+{% endblock %}

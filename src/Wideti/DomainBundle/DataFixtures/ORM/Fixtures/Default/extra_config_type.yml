@@ -1,0 +1,5 @@
+Wideti\DomainBundle\Entity\ExtraConfigType:
+  RuckusCloud:
+    configType: 'secretKey'
+  TpLinkCloud:
+    configType: 'controllerUrl'

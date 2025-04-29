@@ -1,0 +1,359 @@
+wspot:
+  unimed_number:
+      min_length: 'Field must be at least 17 digits'
+      invalid_number: 'Invalid number, e.g. 0108.9999999999999'
+
+  campaign:
+      loading_message: 'Wait'
+      count_message: 'You will be redirected in:'
+
+  day: day
+  hour: hour
+  minute: minute
+
+  access_point:
+    title: 'Internet access blocked!'
+    message_1: 'Access through this access point is blocked.'
+
+  signup_page:
+    terms_required: 'You must accept the terms of use'
+    consent_required: 'You must accept the consent terms'
+    field_required: 'This field is required'
+    field_custom_required: 'Field required'
+    field_invalid_date: 'Please enter a valid date'
+    field_age_restriciton_error: "Minimum age not allowed to access"
+    field_invalid_document: 'Please enter a valid passport'
+    field_name_min_characters_required: 'Your name must have at least 6 characters'
+    field_document_min_characters_required: 'Passport must have at least 6 characters'
+    field_zip_code_min_characters_required: 'Zip Code must have at least 9 characters'
+    field_password_required: 'Enter a password'
+    field_password_confirm_required: 'Enter the password confirmation'
+    field_password_min_characters_required: 'Your password must have at least 6 characters'
+    field_password_max_characters_required: 'Your password must have at most 30 characters'
+    field_password_equalTo_required: 'Passwords must have the same'
+    field_valid_email: 'Please, enter a valid email'
+    field_valid_domain_email: 'Email domain not allowed'
+    field_cep_invalid: 'Invalid zip code'
+    field_cep_not_found: 'Zipip code not found'
+    general_error: 'An error occurred, please try again'
+    mac_registered_error: 'There is an account already registered for this device'
+
+  default:
+    selected_language: 'The language is automatically selected according to your browser'
+    guest: 'Guest'
+
+  blacklist:
+    guest_inactive_title: 'Locked device'
+    guest_inactive_message: 'Your access to the Wi-Fi network was blocked. Please contact the administrator.'
+
+  business_hours:
+    title: 'Warning!'
+    unavailable: 'Wi-Fi network is unavailable. <br><br>Wi-Fi access available from '
+    period: "%starHour% to %endHour%"
+    or: " or "
+
+  login_page:
+    guest_inactive_title: 'Inactive User'
+    guest_inactive_message: 'Their access to Wi-Fi network has been blocked. Please contact the Administrator.'
+    have_account: "I have an account"
+    have_no_account: "I don't have an account"
+    welcome: "Welcome"
+    login_title: "Login"
+    signup_title: "Sign Up"
+    signup_identifier: "Identification"
+    signup_identifier_hotelviva: "Hello, welcome."
+    guest_message_hotelviva: "If you are a guest, click here"
+    visitor_message_hotelviva: "If you are a visitor, fill in your email and click below"
+    read_accept: "Signing up you are agreeing with our "
+    terms_use: 'terms of use'
+    terms_required_msg1: 'I agree to the '
+    terms_required_msg2: 'Terms of Use'
+    forgot_password: 'Forgot / Reset password'
+    forgot_email: 'Forgot my email'
+    dont_have_account: "Dont Have an Account?"
+    click_here: 'Create a new account'
+    signup_email_input: 'Email'
+    signup_password_input: 'Password'
+    signup_cpf_input: 'Passport'
+    signup_confirm_password_input: 'Retype password'
+    signup_password_must_match_input: 'Passwords must match'
+    signup_authorized_checkin: "I'd like to post in my wall that I'm here!"
+    signup_submit_input: 'Sign up'
+    signup_submit_identifier: "Connect"
+    login_submit_input: 'Connect'
+    facebook_share_require: 'You must share to connect.'
+    facebook_share_connect: 'Share and Connect'
+    login_wrong_data: 'Invalid login or password.'
+    login_wrong_data_1: 'Invalid login.'
+    login_inactive_user: 'Inactive user.'
+    login_password_doesnt_match: 'Password values does not match. Please, try again.'
+    login_document_already_exists: 'Passport number already exists in the database.'
+    forgot_pass_continue_input: 'Next step'
+    forgot_pass_message1: 'Please, insert your data to reset your password.'
+    forgot_pass_message2: 'Enter your details below to confirm your new password.'
+    forgot_pass_guest_not_found: 'Guest not found.'
+    forgot_pass_admin_request: 'An email has been sent to you with further instructions. If you have not received, try again or contact us via e-mail '
+    forgot_pass_wrong_data: 'Wrong information, try again with your data'
+    forgot_pass_wrong_data: 'This values do not match. Try again.'
+    forgot_pass_exists_data: 'This value is already used.'
+    authorize_email: "I'd like to receive e-mail/sms content"
+    complete_registration: 'Complete your registration'
+    complete_progressive_form: 'Complete your registration'
+    complete_registration_welcome: 'Welcome '
+    complete_registration_gender_m: 'Mr. '
+    complete_registration_gender_w: 'Ms. '
+    complete_registration_instructions: 'To complete your registration, fill the fields below.'
+    complete_progressiveform_instructions: 'To access the internet, please fill in your registration details.'
+    connect_using: 'Connect using'
+    facebook_account: 'Facebook'
+    facebook_error: 'Login via Facebook failed, please try again.'
+    twitter_account: 'Twitter'
+    twitter_error: 'Login via Twitter failed, please try again.'
+    google_account: 'Google'
+    google_error: 'Login via Google failed, please try again.'
+    linkedin_account: 'LinkedIn'
+    linkedin_error: 'Login via LinkedIn failed, please try again.'
+    sso_error: 'Login via SSO failed, please try again.'
+    field_already_exists: 'This field already exists'
+    preview_page_alert: 'At the moment you are not connected to this Hotspot. This page is only a preview. No further action is allowed.'
+    duplicated_register: 'A register with this information already exists'
+    javascript_alert: 'Enable javascript to continue'
+    consent_fail_alert: 'It was not possible to grant internet access. Please try again later.'
+
+  confirmation:
+    title: 'Sign up confirmation'
+    sms_message_1: 'To confirm your registration enter the code sent via SMS to the number provided'
+    sms_message_2: 'It sent a confirmation link via SMS to the number'
+    sms_message_2_1: "You'll need to activate your registration to continue browsing."
+    sms_message_waiting_1: 'Hi'
+    sms_message_waiting_2: ', your subscription has been confirmed. Wait a few seconds until your navigation starts.'
+    email_message_1: 'An email was sent to'
+    email_message_1_1: 'and his Internet access will be released by'
+    email_message_1_2: 'Follow the registration instructions that was sent by email.'
+    resend_sms_code: 'Resend SMS'
+    resend_code: 'Confirmation code was sent!'
+    resend_sms_waiting_1: 'Wait'
+    resend_sms_waiting_2: 'seconds to resend SMS'
+    resend_email_url: 'Resend Email'
+    resend_url: 'Confirmation URL was sent!'
+    phone_change: 'Change the cell phone number'
+    email_change: 'Change the email'
+    confirmation_code: 'Enter below the confirmation code'
+    confirm_button: 'Confirm'
+    continue_button: 'Click here to start browsing'
+    block_title: 'Internet access blocked!'
+    block_message_1: 'The confirmation link expired and the internet access was blocked by '
+    block_message_2: 'An email has been sent to you with further instructions to confirm your registration, please follow the instructions to get internet access.'
+    invalid_token: 'Warning'
+    invalid_token_message_1: 'Your registration has already been activated or the URL you are trying to access is invalid.'
+    invalid_token_message_2: 'If you are in trouble to connect to the Wi-fi, please contact our support via email'
+    button_home: 'Return to homepage'
+    sms_invalid_number: 'SMS invalid number'
+    sms_sent_error: 'An error occurred while sending the message'
+
+  block_per_time:
+    title: 'Internet access blocked!'
+    message_1: 'Hi, '
+    message_2: 'The network usage time limit has been reached. Please try again after '
+    message_3: 'Sign in from: '
+
+  validity_access:
+    title: 'Internet access blocked!'
+    message_1: 'Hi, '
+    message_2: 'The network usage time limit has been reached.'
+
+  block_per_limit_of_connections:
+    title: 'Internet access blocked!'
+    message_1: 'Hi, '
+    message_2: 'The connection limit for your user on this network has been reached.'
+
+  change_user_data:
+    title: 'Change data'
+    invalid_phone: 'Invalid phone number'
+    invalid_phone_message_register: 'Informed phone number is not valid or does not exist. To confirm your registration, enter in the field below a mobile number to receive the activation code.'
+    invalid_phone_message_welcome: 'Informed phone number is not valid or does not exist. Tell in the field below a cell phone number to receive your access data.'
+    used_email: 'This email is already in use'
+    save_button: 'Update'
+
+  invalid_email:
+    title: 'Invalid email!'
+    message_1: 'Hi, '
+    message_2: 'The email '
+    message_3: ' Is invalid. Please enter a valid email address and click Update.'
+    used_email: 'The email address you have entered is already registered.'
+    new_email: 'Please enter a valid email address!'
+    email_updated: 'Email successfully changed'
+    save_button: 'Update'
+    email_validate_process: 'We are validating your email...'
+    email_validate_success: 'Email validated successfully!'
+    email_validate_error: 'Please, enter a valid email'
+
+  invalid_name:
+    name_validate_error: 'Special characters are not accepted'
+
+  access_code:
+    title: 'Access Code'
+    message_1: 'Hi, '
+    message_2: 'To start your navigation insert your access code below.'
+    placeholder: 'access code'
+    submit_button: 'validate code'
+    invalid_code: 'Invalid code! Try again please.'
+    expired_lot: 'Expired code!'
+    used_code: 'This code has already been used!'
+    button_back: 'Go Back'
+    change_code: 'Change Access Code'
+    access_denied: 'Unauthorized access!'
+    access_denied_message: 'We have identified an active connection linked with your profile. Internet access is allowed to one device at a time.'
+    access_denied_unique_access: 'Someone is already online using this access code.'
+    free_access_message: 'If you do not have an access code, click the button below and browse for free'
+    free_access_button: 'click here to start browsing'
+
+  auto_login:
+    hello: 'Hi'
+    welcome: ', welcome back.'
+    message_1: "We noticed that you've been at "
+    message_2: ' which belongs to'
+    message_3: '. Your last access was on'
+    message_4: "We noticed that you've been here before. Your last access using this device was on"
+    message_5: 'Click on the link down below to start browsing.'
+    not_me: "I'm not"
+
+  forgot_pass_page:
+    title: 'Forgot my password'
+    description: 'Please enter your data to the re-registration of the password '
+    password_sent: 'Your password has been changed and sent to your email as a reminder'
+    will_be_authenticated: "You are going to be autenticated in "
+    seconds: 'seconds'
+    cancel: 'Cancel'
+    continue: 'Continue'
+
+  forgot_email_page:
+    title: 'Forgot my email'
+    description: 'Please enter below the Passport used in the registration so that we can locate your registration'
+    email_not_found: 'Email not found, try again.'
+    message: 'The email used in registration is: '
+    search: 'search'
+    reset_pass: 'reset password'
+    connect: 'connect'
+
+  consent_term:
+    link: 'I accept the <a href="%consentTermPageUrl%">Consent Form</a> for the use of my data'
+    page_title: 'Term of Use and Consent'
+    page_content: >
+      <p>By this Term of Use and Consent, I authorize the treatment of the registered personal data, for purposes:</p>
+      %conditions%
+      <p>, under the Privacy Policy set out below.</p>
+      <p>I declare that this consent was given freely, expressly, individually, clearly, specifically and legitimately and that I am aware that if you wish to revoke this authorization, simply <a href="%formUrl%" target="_blank" style="text-decoration: underline;">click here</a>.</p>
+      <p>Thus, being aware and in accordance with the terms of this, I sign my consent by checking the field "I accept the consent form for the use of my data" in the registration form.</p>
+      <p>In case of doubt, contact should be made via email <a href="mailto:%admin_email%">%admin_email%</a>.</p>
+
+  terms_page:
+    page_title: 'Terms of use'
+    part_1: 'By this "TERMS OF USE", signed by %partner_name% and the USER of a portable computer (laptop) or mobile devices (Tablet, Smartphones, etc.), identified and qualified through registration, is aware through this term that should use the HotSpot system, with full responsibility of accesses performed on the Web.'
+    part_2: 'As a public place which offers free access to the internet, not be responsible, to %partner_name%, for possible unwanted access and misuse by the USER of the system offered, occurring misuse of access or possibly occur any damage either moral or material, these will be the responsibility of the USER, thus exempting %partner_name%, of any irregularity committed by him USER.'
+    part_3: 'USERS may not, be used in service now offered to stir, threaten, offend, shake the image, invade privacy or harm other members of the internet community and is strictly prohibited to use in sex site equipment and with any other benefit of obtaining illicit and immoral advantages of society for USER.'
+    part_4: '%partner_name% is free to answer for any possible irregularities committed by USERS.'
+    part_5: 'Thus, being aware and in accordance with the terms thereof, described above, I agree and I am aware of their legal effects of the law.'
+
+  social:
+    title_like: 'Like our page'
+    title_checkin: 'Share on Facebook'
+    title_like_and_checkin: 'Like and Share'
+    facebook_like: 'Like our page on facebook!'
+    facebook_checkin: "Do the Facebook Check-in telling your friends you're here!"
+
+  two_factor_auth:
+    title: 'Hello Guest'
+    error: 'Error while trying to validate your access. Try again.'
+
+  generic:
+    go_back: 'Return'
+    field_required: 'This field is required'
+
+  secret_answer:
+    title: "Security of your account"
+    info: "Select your security question below. This question and answer will help us verify your identity if you forget your password."
+    default_choice: "Select a security question."
+    button_text: "Continue"
+    placeholder: "Answer"
+
+  secret_answer_recovery:
+    title: "Security Question"
+    info: "Your account has a security question, you must enter the answer below:"
+    placeholder: "Answer"
+    button_text: "Continue"
+    error_title: "You are temporarily blocked"
+    error_info: "Try to access again in 10 minute(s)."
+    error_cancel: "Cancel"
+    retry_msg: "Incorrect answer. You have %tentativas% attempts left."
+    retry_block: "Incorrect answer. You have been blocked for 10 minutes."
+    title_pwd_only: "Register new password"
+    info_pwd_only: "Enter your new password below and confirm."
+
+  recovery_password_choice:
+    title: "By what method do you want to reset your password?"
+    email: "Email"
+    secret_answer: "Secret Question"
+    cancel: "Cancelar"
+
+  recovery_password_email:
+    title: "Password recovery via email"
+    p1_part1: "An email was sent to "
+    p1_part2: ". There you will find a message with a temporary password."
+    p2: "After receiving the temporary password, log in to your account using it. You will be prompted to set a new password once you log in for the first time"
+    back: "Back"
+    login: "Login"
+
+  authorize_error_url:
+    title: "Failed to Authenticate"
+    message: "A failure occurred in your authentication process. Click the button below to try again"
+    submit_input: "Try again"
+
+  authorize_load:
+    title: "Authentication"
+    message: "Authorizing visitors on the network..."
+
+  preview:
+    alert_text: "You are in a simulation environment. When you log out, you will not be authenticated to this Access Point's network or displayed as an online user."
+    title: "Preview Completed"
+    preview_done_info1: "The user journey experience flow has been finalized."
+    preview_done_info2: "This is the moment where the WiFi network visitor is redirected to authenticate on the network equipment."
+    
+
+mail_report:
+  subject: 'Review of your Mambo WiFi results'
+  wl_subject: 'Review of your Hotspot results'
+  intro_dominio: "This report to your account"
+  intro_1: 'Hello! This is a weekly report of your %companyName%. Here are some information regarding your hotspot on the past %amountOfDays% days.'
+  intro_2: 'This report shows you data of your visitors and accesses. You will find more information on your Mambo WiFi dashboard with your login and password.'
+  guests_title: 'Information about your visitors'
+  guests_tip: 'Find out you visist progress on the past %amountOfDays% days. You can find those informations as a report on your Mambo WiFi Dashboard, where you can filter those information by access points and period.'
+  total_signups_guests: 'TOTAL OF REGISTERED VISITORS '
+  all: 'FULL PERIOD'
+  period: 'PAST %amountOfDays% DAYS'
+  most_visited_hours: 'DAYTIME WITH MORE ACCESSES'
+  most_visited_days: 'AMOUNT OF VISITORS PER DAY'
+  unique_guests: 'SINGLE VISITORS'
+  unique_guests_info: 'Visitors that showed up only once'
+  returning_guests: 'RECURRENT VISITORS'
+  returning_guests_info: 'Visitors that came back frequently'
+  os: 'OPERATIONAL SYSTEM'
+  devices: 'DEVICES'
+  aps_most_visited: 'TOP 5 MOST VISITED ACCESS POINTS'
+  network_tip: 'Check out above your data traffic on the past %amountOfDays% days. You can find those informations as a report on your %companyName% Dashboard, where you can filter those information by access points and period.'
+  network_title: 'Network Report'
+  download: 'DOWNLOAD'
+  upload: 'UPLOAD'
+  download_upload: 'DOWNLOAD AND UPLOAD'
+  sms_title: 'SMS Report'
+  total_sms_send: 'Amount of SMS sent'
+  last_month: 'Last month'
+  current_month: 'Current month'
+  sms_cost: 'Price charged per SMS sent: R$ %smsCost%.'
+  contact_us: 'If you need any help or you did not signed up on %companyName%, please contact us by our e­mail'
+  signature_1: 'We will be glad to help.'
+  signature_2: 'Our best regards,'
+  signature_3: '%companyName% Team'
+  no_result: 'No data on this period.'
+  marco_civil: 'Hotspot according to the Marco Civil Bill. We save the visitors registration data, such as connection IP, Mac Adress, duration and internet connection time. The registration data are saved for a year, as the bill 12.965 determines since july 2014.'
+

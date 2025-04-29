@@ -1,0 +1,187 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/select2/select2.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Administradores'} %}
+
+<div class="innerLR">
+
+ <div class="widget widget-tabs border-bottom-none">
+    <!-- Widget heading -->
+    <div class="widget-head">
+        <ul>
+            <li class="active">
+                <a class="glyphicons edit" data-toggle="tab"><i></i>Novo</a>
+            </li>
+        </ul>
+    </div>
+    <!-- // Widget heading END -->
+    <div class="widget-body">
+
+        {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+        {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+        <!-- Widget -->
+        <div class="widget">
+
+            <!-- Widget heading -->
+            <div class="widget-head">
+                <h4 class="heading">Inclusão de novo usuário.</h4>
+            </div>
+
+            <div class="widget-body">
+
+                {{ form_errors(form) }}
+
+                <!-- Row -->
+                <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+
+                    <div class="span6">
+                        {{ form_row(form.username) }}
+                        {{ form_row(form.nome) }}
+                        {{ form_row(form.role) }}
+                        {{ form_row(form.status) }}
+                    </div>
+
+                    <div class="span6">
+                        {% if (logged_user.financialManager == true or logged_user.role.role == 'ROLE_MANAGER') and (app.session.get('isRegularDomain') != '0') %}
+                            <div class="control-group">
+                                <label class="control-label required">
+                                    Gestor  financeiro
+                                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-html="true"
+                                       data-content="Se habilitado o usuário poderá ter acesso ao módulo  financeiro e visualizar cobranças, notas fiscais e boletos." data-original-title="" title=""></i>
+                                </label>
+                                <div class="controls">
+                                    {{ form_widget(form.financial_manager) }}
+                                </div>
+                            </div>
+                        {% endif %}
+                        {{ form_row(form.receive_report_mail) }}
+                        <div id="language" style="display: block">
+                            {{ form_row(form.report_mail_language) }}
+                        </div>
+                    </div>
+
+                </div>
+                <!-- // Row END -->
+
+                <hr class="separator">
+
+                <!-- Row -->
+                <div class="row-fluid uniformjs" style="margin:0 auto;">
+                    <!-- Column -->
+                    <div class="span5" style="margin: 20px 50px ;">
+                        <h4 style="margin-bottom: 10px;">Privilégios de Acesso</h4>
+                        <label>
+                            <b>Perfil Administrador</b>
+                            <span>
+                                Usuários com privilégios de administrador possuem acesso à todos os módulos do sistema.
+                            </span>
+                        </label>
+
+                        <label>
+                            <b>Perfil Administrador - Limitado</b>
+                            <span>
+                            <span> Usuários com esse perfil possuem o mesmo acesso do Perfil Administrador, exceto a visualização e gestão de usuários.</span>
+                            </span>
+                        </label>
+
+                        <label>
+                            <b>Perfil Marketing</b>
+                            <span>
+                                Usuários com esse perfil possuem acesso às informações de visitantes e aos módulos de Templates, Campanhas e Relatórios.
+                            </span>
+                        </label>
+
+                        <label>
+                            <b>Perfil Usuário</b>
+                            <span> Usuários com esse perfil possuem acesso aos módulos de Visitantes, Pontos de acesso e Relatórios.</span>
+                        </label>
+
+                        <label>
+                            <b>Perfil Usuário - Limitado</b>
+                            <span> Usuários com esse perfil possuem o mesmo acesso do Perfil Usuário, exceto a visualização dos dados sensíveis do visitante e a criação de visitantes.</span>
+                        </label>
+
+                        <label>
+                            <b>Perfil Marketing - Limitado</b>
+                            <span> Usuários com esse perfil possuem o mesmo acesso do Perfil Marketing, exceto a visualização dos dados sensíveis do visitante e a criação de visitantes.</span>
+                        </label>
+
+                        <label>
+                            <b>Perfil Usuario - Basico</b>
+                            <span> Usuários com esse perfil possuem o mesmo acesso do Perfil Usuário Limitado, exceto a adição da opção de Visitantes e a ocultação da visualização de Regras de Acesso e Grupos de Pontos de Acesso.</span>
+                        </label>
+                    </div>
+                    <!-- // Column END -->
+
+                    <!-- Column -->
+                    <div class="span5" style="margin-top:20px;">
+                        <div id="newsletter_topics" class="gray">
+                            <h4>Envio da Senha</h4>
+                            <p>O usuário receberá um link no e-mail cadastrado para definição de sua senha.</p>
+                        </div>
+                    </div>
+                    <!-- // Column END -->
+                </div>
+                <!-- // Row END -->
+
+                <hr class="separator">
+
+                <!-- Form actions -->
+                <div class="form-actions right">
+
+                    <a href="{{ app.request.headers.get('referer') }}">
+                        <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                            Cancelar
+                        </button>
+                    </a>
+
+                    {{ form_widget(form.submit) }}
+
+                </div>
+                <!-- // Form actions END -->
+            </div>
+        </div>
+        <!-- // Widget END -->
+
+        {{ form_end(form) }}
+
+    </div>
+    <!-- // Tab content END -->
+
+    </div>
+    </div>
+	<!-- // Widget END -->
+ </div>
+{% endblock %}
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/select2/select2.js') }}"></script>
+    <script>
+    $(document).ready(function() {
+        var valLanguage = $("#wideti_AdminBundle_usuarios_receive_report_mail").val();
+
+        if(valLanguage == 0){
+            $("#language").css("display","none");
+        }else{
+            $("#language").css("display","block");
+        }
+
+      $("#wideti_AdminBundle_usuarios_receive_report_mail").click(function() {
+        var valLanguage = $("#wideti_AdminBundle_usuarios_receive_report_mail").val();
+
+        if(valLanguage == 0){
+            $("#language").css("display","none");
+        }else{
+            $("#language").css("display","block");
+        }
+      });
+    })
+
+    </script>
+{% endblock %}

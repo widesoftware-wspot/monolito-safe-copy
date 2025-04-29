@@ -1,0 +1,820 @@
+# API REST Mambo Wifi
+### Api para integração de sistema com o Mambo Wifi
+Bem vindo a API de integração do Mambo Wifi, qualquer dúvida com nossa integração, entre em contato com suporte@mambowifi.com
+
+# Group Autenticação
+## Como Autenticar na API
+A API Mambo Wifi é REST, então toda requisição deverá ser autenticada através de um token que deverá ser previamente gerado a partir do painel administrativo na opção "Integração via API".
+
+Você poderá criar token para dois tipos de permissão Leitura (GET) e  Escrita (POST , PUT e GET).
+
+A requisição poderá ser autenticada de duas maneiras, a primeira é enviando o token através do header "X-TOKEN" e a outra forma como demonstrado abaixo é enviar o token como parâmetro da requisição:
+
+https://meudominio.wspot.com.br/api/guests?token=meu_token_gerado
+
+# Group Acesso de Visitantes
+## Consultar dados de acesso [/api/access]
+### Buscar dados de acesso [GET]
+
+Este recurso da API tem como objetivo buscar os dados de acesso de seus visitantes. Como estes dados são muitos, este endpoint funciona como data stream.
++ Como ele funciona
+    - Faz a consulta utilizando os filtros listados abaixo
+    - Caso tenha resultados, eles serão mostrados em janelas de 100 em 100
+    - O retorno da pesquisa irá retornar os campos:
+        - <b>totalRegistries:</b> Total de acessos baseado nos filtros
+        - <b>nextToken:</b> Token utilizado para pegar a próxima janela de 100 registros, consecutivamente, até chegar no final dos registros.
+        - <b>data:</b> Os acessos buscados
+    - Para buscar os próximos 100 registros utilize o <b>"nextToken"</b> na requisição, ex: <b>/api/access?nextToken=asd786as8d6as8d</b>
+    - Ao adicionar o <b>"nextToken"</b> na requisição, você não poderá mudar os filtros, caso queira mudar o valor de algum filtro, deve fazer uma nova pesquisa sem o <b>"nextToken"</b>
+    - O <b>"nextToken"</b> possui uma válidade de 60 segundos, ou seja, após fazer uma consulta que possui <b>200 "totalRegistries"</b>, você já receberá os 100 primeiros registros, caso você demorar mais do que 60 segundos para consultar os próximos 100 registros, o token ficará inválido, sendo necessário inciar a operação novamente.
+    - Ao adicionar o <b>"nextToken"</b> na requisição, você pode remover o restantes dos filtros caso queria, pois os filtros ficam salvos na sessão do <b>"nextToken"</b> e não podem mais serem alterados.
+
++ Parameters
+    + from:`2018-01-01 00:00:00` (string, optional) - Data inicial para buscar os acessos
+        + Default: 30 dias atrás a partir de hoje.
+    + to:`2018-05-10 23:59:59` (string, optional) - Data final para buscar os acessos
+        + Default: Hoje às 23:59:59
+    + order:"desc" (string, optional) - Ordenação do resultado, baseado na data de "Start" do acesso
+        + Default: desc
+        + Members
+            + asc
+            + desc
+    + nextToken:"HSUSGDGSH6777877_788=" (string, optional) - Token utilizado para pegar os próximos 100 resultados
+    + guest:234 (integer, optional) - <b>"refId"</b> de um visitante, para buscar somente os acessos dele, no recurso de visitantes, ao buscar um visitante, você terá o <b>"refId"</b> que deve ser usado nesse campo para busca, o <b>"id"</b> do visitante não será válidao.
+    + identifier: (string, optional) - Identificador do ponto de acesso, para filtrar somente acessos deste ponto de acesso
+
++ Response 200 (application/json)
+    Quando é encontrado resultados baseados nos filtros, retorna o valor com os resultados, sem limitado a 100 resultados por consulta
+    o campo "totalRegistries" sempre será o total de registros baseados no filtro.
+    + Body
+    {
+        "totalRegistries": 450,
+        "nextToken": "AASD887AS6AS70ASU0D8UAS90D8AS09DAS8D",
+        "data": [
+            {
+                "id": 23,
+                "guest": 10437769,
+                "isEmployee": false,
+                "guestDevice": "E4-90-7E-B2-AB-28",
+                "guestIp": "10.97.8.173",
+                "nasIpAddress":"10.1.1.1",
+                "identifier": "64-d1-54-4b-a5-e4",
+                "friendlyName": "Meu ponto de acesso",
+                "start": "2018-06-04 23:58:40",
+                "stop": "2018-06-05 01:44:59",
+                "acctInputOctets": 633671,
+                "acctOutputOctets": 422854
+            }
+        ]
+    }
+
++ Response 404 (application/json)
+    Caso não seja encontrado nenhum resultado baseado nos filtros.
+    + Body
+    {
+        "totalRegistries": 0,
+        "nextToken": null,
+        "data": []
+    }
+
++ Response 400 (application/json)
+    Caso ocorra algum erro nos filtros no momento da busca.
+    + Body
+    {
+        "error": "Data inválida: 2018-01-333334, formato correto: Y-m-d H:i:s"
+    }
+
++ Response 500 (application/json)
+    Caso ocorra algum erro no servidor no momento da busca. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.
+    + Body
+    {
+        "error": "Ocorreu um problema em nosso serivor, nossa equipe ja foi notificada."
+    }
+
+
+# Group Pontos de Acesso
+
+## Atualizar ponto [/api/access-points/:id]
+### Atualizar ponto [PUT]
+
+Campos disponibilizados para atualização: "friendlyName", "local", "status", "templateId", "groupId".
+Você poderá enviar um, ou mais campos para atualização.
+
+Campos da requisição:
+- <b>friendlyName:</b> [String] É o nome do ponto de acesso.
+- <b>local:</b> [String] Apenas uma descrição para identificar o local onde o ponto de acesso esta fisicamente.
+- <b>status:</b> [Integer] Este campo é a definição de status do seu ponto de acesso pode ser "0" para intativo ou "1" para ativo.
+- <b>templateId:</b> [Integer] Associar o ponto de acesso a um template.
+- <b>groupId:</b> [Integer] Associar o ponto de acesso a um grupo. Lista de grupos poderá ser obtida pelo recurso "[GET] /api/access-point-groups".
+
++ Request Atualizar Ponto de Acesso (application/json)
+	+ Body
+        {
+        	"friendlyName": "Meu ponto de acesso",
+        	"local": "Ponto de acesso do salão",
+        	"status": 1,
+        	"templateId": 1,
+        	"groupId" : 1
+        }
+
++ Response 204 (application/json)
+    + Body
+        {}
+
++ Response 400 (application/json)
+    + Body
+        {
+            "friendlyName": "Campo obrigatório, deve ter de 2 a 100 caracteres",
+            "status": "Status inválido, deve ser 1 = Ativo ou 0 = Inativo",
+            "vendor": "Deve possuir um valor válido, consulte a documentação",
+            "templateId": "Template informado não existe",
+            "grupoId": "O grupo informado não existe"
+        }
+
++ Response 500 (application/json)
+    + Body
+        {
+            "error": "Ocorreu algum erro, nossa equipe já foi notificada."
+        }
+
+## Criar novo ponto de acesso [/api/access-points]
+### Criar novo ponto [POST]
+
+Para cadastrar o ponto de acesso via API você precisa respeitar os campos obrigatórios: "friendlyName", "vendor", "identifier", "groupId".
+
+Campos da requisição:
+- <b>friendlyName*:</b> [String] É o nome do ponto de acesso.
+- <b>vendor*:</b> [String] É o nome do fabricante do seu ponto de acesso, deve ser um nome compatível com o WSpot, esse campo deve ser qualquer valor da lista retornada pelo recurso "[GET] /api/access-points/vendors"
+- <b>identifier*:</b> [String] É o identificador que o ponto de acesso envia para o WSpot realizar operações como autenticação e log de acesso, esse identificador deverá respeitar o campo "mask" que é atribuído ao vendor, verificar no recurso "[GET] /api/access-points/vendors"
+- <b>local:</b> [String] Este campo é opcional, apenas uma descrição para identificar o local onde o ponto de acesso esta fisicamente.
+- <b>status*:</b> [Integer] Este campo é a definição de status do seu ponto de acesso pode ser "0" para intativo ou "1" para ativo.
+- <b>templateId:</b> [Integer] Caso você queira associar um ponto de acesso a um template, basta passar o Id do template neste campo, caso contrário, não coloque este campo na requisição pois o sistema tentará associar um template inexistente e dará erro.
+- <b>groupId*:</b> [Integer] Este campo é obrigatório, deve ser informado o grupo qual o ponto de acesso fará parte. Lista de grupos poderá ser obtida pelo recurso "[GET] /api/access-point-groups".
+
+\* Campos obrigatórios
+
++ Request Criar Visitante (application/json)
+	+ Body
+        {
+        	"friendlyName": "Meu ponto de acesso",
+        	"vendor": "mikrotik",
+        	"identifier": "64-D1-54-E3-2A-D4",
+        	"local": "Ponto de acesso do salão",
+        	"status": 1,
+        	"templateId": 1,
+        	"groupId": 1
+        }
+
++ Response 201 (application/json)
+    + Body
+        {
+            "id": 8,
+            "friendlyName": "Meu ponto de acesso",
+            "created": "2018-06-05 09:29:44",
+            "updated": "2018-06-05 09:29:44",
+            "vendor": "mikrotik",
+            "identifier": "64-D1-54-E3-2A-D4",
+            "local": "Ponto de acesso do salão",
+            "verified": false,
+            "status": 1,
+            "template": {
+                "id": 1,
+                "name": "Template padrão"
+            },
+            "group": {
+                "id": 1,
+                "name": "Grupo padrão"
+            }
+        }
+
++ Response 400 (application/json)
+    + Body
+        {
+            "friendlyName": "Campo obrigatório, deve ter de 2 a 100 caracteres",
+            "status": "Status inválido, deve ser 1 = Ativo ou 0 = Inativo",
+            "vendor": "Campo obrigatório, deve possuir um valor válido, consulte a documentação ",
+            "identifier": "Campo identifier é obrigatório",
+            "groupId": "O grupo informado não existe"
+        }
+
++ Response 500 (application/json)
+    + Body
+        {
+            "error": "Ocorreu algum erro, nossa equipe já foi notificada."
+        }
+
+## Todos pontos de acesso paginados [/api/access-points/vendors]
+### Listar vendors [GET]
+
+Esta lista é utilizada para cadastrar novos pontos de acesso, o vendor deve ser um desta lista respeitando o campo "mask" para preencher o "identifier".
+
++ Response 200 (application/json)
+    + Body
+        [
+            {
+                "vendor": "aerohive",
+                "mask": "HH-HH-HH-HH-HH-HH"
+            },
+            {
+                "vendor": "aruba",
+                "mask": "HH-HH-HH-HH-HH-HH"
+            },
+            {
+                "vendor": "cisco",
+                "mask": "HH-HH-HH-HH-HH-HH"
+            },
+            {
+                "vendor": "mikrotik",
+                "mask": ""
+            },
+            {
+                "vendor": "pfsense",
+                "mask": ""
+            },
+            {
+                "vendor": "ruckus-controlador",
+                "mask": "HH-HH-HH-HH-HH-HH"
+            },
+            {
+                "vendor": "ruckus-standalone",
+                "mask": ""
+            },
+            {
+                "vendor": "zyxel",
+                "mask": "HH-HH-HH-HH-HH-HH"
+            }
+        ]
+
+## Todos pontos de acesso paginados [/api/access-points]
+### Listar pontos de acesso [GET]
++ Parameters
+    + friendlyName:"Minha Ap" (string, optional) - Nome do ponto de acesso
+    + identifier:"identificador_da_ap" (string, optional) - Identificador do ponto de acesso
+    + status:1 (number, optional) - Status do ponto de acesso 1 - Ativo / 0 - Inativo
+        + Members
+            + 0
+            + 1
+    + page:1 (number, optional) - Página atual
+        + Default: 1
+    + limit:50 (number, optional) - Limite de resultado por página
+        + Default: 50
++ Response 200 (application/json)
+    + Body
+        [
+            {
+                "id": 1,
+                "friendlyName": "AP Teste 01",
+                "created": "2018-05-22 13:57:55",
+                "updated": "2018-05-22 14:22:03",
+                "vendor": "mikrotik",
+                "identifier": "11-11-11-11-11-11",
+                "local": "Teste Local 1",
+                "verified": true,
+                "status": 1,
+                "template": {
+                    "id": 1,
+                    "name": "Template padrão"
+                },
+                "group": {
+                    "id": 1,
+                    "name": "Grupo padrão"
+                }
+            },
+            {
+                "id": 2,
+                "friendlyName": "AP Teste 02",
+                "created": "2018-05-22 13:57:55",
+                "updated": "2018-05-22 14:33:52",
+                "vendor": "mikrotik",
+                "identifier": "2B-9C-E8-F4-4D-75",
+                "local": "Teste Local 2",
+                "verified": false,
+                "status": 0,
+                "template": {
+                    "id": null,
+                    "name": null
+                },
+                "group": {
+                    "id": 1,
+                    "name": "Grupo padrão"
+                }
+            }
+        ]
+
++ Response 404 (application/json)
+    Caso o grupo de ponto de acesso não exista grupos baseados nos filtros
+    + Body
+        []
+
++ Response 500 (application/json)
+Caso ocorra algum erro interno no servidor, nossa equipe será notificada automáticamente.
+    + Body
+        {
+            "error": "Ocorreu um erro, nossa equipe já foi notificada."
+        }
+
+## Detalhar ponto de acesso [/api/access-points/:id]
+### Detalhar ponto de acesso [GET]
++ Parameters
+    + id:12 (number, required) - Id do ponto de acesso
+
++ Response 200 (application/json)
+    + Body
+        {
+            "id": 1,
+            "friendlyName": "AP Teste 01",
+            "created": "2018-05-22 13:57:55",
+            "updated": "2018-05-22 14:22:03",
+            "vendor": "mikrotik",
+            "identifier": "11-11-11-11-11-11",
+            "local": "Teste Local 1",
+            "verified": true,
+            "status": 1,
+            "template": {
+                "id": 1,
+                "name": "Template Padrão"
+            },
+            "group": {
+                "id": 1,
+                "name": "Grupo padrão"
+            }
+        }
+
++ Response 404 (application/json)
+Resposta quando o id solicitado não existe no WSpot
+    + Body
+        {}
+
++ Response 400 (application/json)
+Resposta quando o id solicitado possui um formato inválido
+    + Body
+        {
+            "message": "Id inválido"
+        }
+
++ Response 500 (application/json)
+Caso ocorra algum erro interno no servidor, nossa equipe será notificada automáticamente.
+    + Body
+        {
+            "error": "Ocorreu um erro, nossa equipe já foi notificada."
+        }
+
+# Group Grupo de Pontos de Acesso
+## Listar grupos de pontos de acesso [/access-point-groups]
+### Listar grupos [GET]
+Lista todos ou um grupo(s) de ponto(s) de acesso.
++ Parameters
+	+ name: (string, optional) - Nome do grupo que será listado
+		+ Default:
+	+ limit:10 (number, optional) - Limite de grupos que será listado
+		+ Default:10
+	+ page:0 (number, optional) - Qual página deseja buscar, caso haja paginação
+		+ Default:0
++ Response 200 (application/json)
+		+ Body
+		[
+            {
+                 "id": 1,
+                 "name": "Grupo padrão",
+                 "isDefault": true,
+                 "template": {
+                     "id": 1,
+                     "name": Template padrão
+                 },
+                 "id": 2,
+                  "name": "Grupo funcionários",
+                  "isDefault": false,
+                  "template": {
+                      "id": 3,
+                      "name": Template funcionários
+                  },
+                 "id": 3,
+                  "name": "Grupo visitantes",
+                  "isDefault": false,
+                  "template": {
+                      "id": 2,
+                      "name": Template visitantes
+                  }
+            },
+		]
+
++ Response 404 (application/json)
+    Caso o grupo de ponto de acesso não exista grupos baseados nos filtros
+    + Body
+        []
+
+
++ Response 500 (application/json)
+Caso ocorra algum erro interno no servidor, nossa equipe será notificada automáticamente.
+        + Body
+        {
+             "error": "Ocorreu um erro, nossa equipe já foi notificada."
+        }
+
+# Group Visitantes
+## Todos visitantes paginados [/api/guests]
+### Listar todos visitantes [GET]
+No resultado do visitante o campo <b>"refId"</b> é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.
++ Parameters
+	+ limit:10 (number, optional) - Limite de visitantes que será listado
+		+ Default:20
+	+ page:0 (number, optional) - Qual página deseja buscar, caso haja paginação
+		+ Default:0
+	+ sort:"desc" (string, optional) - Ordem da listagem
+		+ Default:"desc"
+		+ Members
+			+ "desc"
+			+ "asc"
+	+ filter:"properties.email" (string, optional) - Nome do campo a ser buscado no cadastro do visitante, todos campos dentro de "properties", deve possuir "properties." antes do campo
+	+ value:"visitante@wspot.com.br" (string, optional) - Valor buscado, do campo especificado em "filter"
+
++ Response 200 (application/json)
+	+ Body
+		{
+		"page": 1,
+		"totalOfPages": 5,
+		"totalOfElements": 5,
+		"limitPerPage": 1,
+		"order": "desc",
+		"elements": [
+			{
+				"id": "586a7288024925001b054924",
+				"created": {
+					"date": "2017-01-02 13:32:22.206000",
+					"timezone_type": 3,
+					"timezone": "America/Sao_Paulo"
+				},
+				"group":"guest",
+				"validated": null,
+				"lastAccess": null,
+				"status": 2,
+				"locale": "pt_br",
+				"documentType": "CPF",
+				"authorizeEmail": null,
+				"registrationMacAddress": null,
+				"returning": null,
+				"properties": {
+				    "email": "visitante@wspot.com.br",
+					"name": "Spider Man",
+					"city": "Campinas",
+					"document": "31546840265"
+				},
+				"social": {},
+				"accessData": {},
+				"employee": null,
+				"refId": 18
+			}
+		],
+		"nextLink": "/app_dev.php/api/guests?page=2&limit=1&sort=desc",
+		"previusLink": null
+		}
+
+## Listar visitantes por data [/api/guests?filter=created&from=2017-07-10 12:00:00&to=2017-07-11 12:00:00]
+### Listar visitantes por data [GET]
+No resultado do visitante o campo <b>"refId"</b> é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.
+
++ Parameters
+	+ filter:"created" (string, optional) - Nome do campo a ser filtrado por range de data no cadastro do visitante, todos campos dentro de "properties", deve possuir "properties." antes do campo
+    + from:`2017-07-10 12:00:00` (string, optional) - Data inicial do range de data.
+    + to:`2017-07-11 12:00:00` (string, optional) - Data final do range de data.
+
++ Response 200 (application/json)
+	+ Body
+	{
+		"id": "586a7285024925001b054923",
+		"created": {
+			"date": "2017-07-11 10:32:20.271000",
+			"timezone_type": 3,
+			"timezone": "America/Sao_Paulo"
+		},
+		"group":"guest",
+		"validated": null,
+		"lastAccess": null,
+		"status": 1,
+		"locale": "pt_br",
+		"documentType": "CPF",
+		"authorizeEmail": null,
+		"registrationMacAddress": null,
+		"returning": null,
+		"properties": {
+		    "email": "visitante@wspot.com.br",
+			"name": "Iron Man",
+			"city": "Campinas",
+			"document": 84452652530
+		},
+		"social": {},
+		"accessData": {},
+		"employee": null,
+		"refId": 8
+	}
+
+## Buscar um visitante [/api/guests/{id}]
+### Buscar apenas um visitante [GET]
+No resultado do visitante o campo <b>"refId"</b> é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.
++ Parameters
+	+ id (string, required) - Id do visitante
+
++ Response 200 (application/json)
+	+ Body
+	{
+		"id": "586a7285024925001b054923",
+		"created": {
+			"date": "2017-01-02 13:32:20.271000",
+			"timezone_type": 3,
+			"timezone": "America/Sao_Paulo"
+		},
+		"group":"guest",
+		"validated": null,
+		"lastAccess": null,
+		"status": 2,
+		"locale": "pt_br",
+		"documentType": "CPF",
+		"authorizeEmail": null,
+		"registrationMacAddress": null,
+		"returning": null,
+		"properties": {
+		    "email": "visitante@wspot.com.br",
+			"name": "Iron Man",
+			"city": "Campinas",
+			"document": 84452652530
+		},
+		"social": {},
+		"accessData": {},
+		"employee": null,
+		"refId": 14,
+	}
+
+## Criar visitante [/api/guests/{locale}]
+### Criar Visitante [POST]
+
+Antes de criar um visitante, caso você possua campos personalizados em seu formulário, é necessário fazer uma requisição de campos customizados antes de enviar a requisição. No exemplo deste request possui os campos customizados "name", "city", "document" e "email".
+
+O campo "status" deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo], não é obrigatório, por padrão é 1.
+
+O campo "registrationMacAddress" é o Mac Address/IP referente ao ponto de acesso em que o visitante está se cadastrando. Essa informação será útil para carregarmos as configurações, que agora cada Grupo de Ponto de acesso possui suas configurações específicas. Caso nenhum valor seja informado nesse campo, carregaremos as configurações do Grupo padrão. Campo opcional.
+
++ Parameters
+	+ locale (string, optional) - Locale qual o visitante será salvo na Mambo Wifi
+		+ Default:"pt_br"
+		+ Members
+			+ "pt_br"
+			+ "en"
+			+ "es"
++ Request Criar Visitante (application/json)
+	+ Body
+        {
+            "password":"@#123&&*%SA",
+            "status" : 1,
+            "registrationMacAddress" : "99-99-99-99-99-99",
+            "properties":{
+                "email":"visitante@wspot.com.br",
+                "name":"Teste User",
+                "city" : "Campinas",
+                "document": "27658434817"
+            }
+        }
++ Response 201 (application/json)
+	+ Body
+		{
+			"id": "586a9b99024925fe1a054923",
+			"created": {
+				"sec": 1483381656,
+				"usec": 462000
+			},
+			"group":"guest",
+			"validated": null,
+			"lastAccess": null,
+			"status": 2,
+			"locale": "pt_br",
+			"documentType": "CPF",
+			"authorizeEmail": null,
+			"registrationMacAddress": null,
+			"returning": null,
+			"properties": {
+			    "email": "visitante@wspot.com.br",
+				"name": "Teste User",
+				"city": "Campinas",
+				"document": "27658434817"
+			},
+			"social": {},
+			"accessData": {},
+			"employee": null
+		}
+
+## Criar bulk de visitantes [/api/guests/bulk/{locale}]
+### Criar Visitante Bulk [POST]
+
+Antes de criar um visitante, caso você possua campos personalizados em seu formulário, é necessário fazer uma requisição de campos customizados antes de enviar a requisição. No exemplo deste request possui os campos customizados "name", "city", "document" e "email".
+
+O campo "status" deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo], não é obrigatório, por padrão é 1.
+
+O campo "registrationMacAddress" é o Mac Address/IP referente ao ponto de acesso em que o visitante está se cadastrando. Essa informação será útil para carregarmos as configurações, que agora cada Grupo de Ponto de acesso possui suas configurações específicas. Caso nenhum valor seja informado nesse campo, carregaremos as configurações do Grupo padrão. Campo opcional.
+
++ Parameters
+	+ locale (string, optional) - Locale qual o visitante será salvo no wspot
+		+ Default:"pt_br"
+		+ Members
+			+ "pt_br"
+			+ "en"
+			+ "es"
++ Request Criar Visitantes (application/json)
+	+ Body
+		[
+			{
+			"password":"123456",
+            "status" : 1,
+            "registrationMacAddress" : "99-99-99-99-99-99",
+			"properties":{
+			    "email":"visitante1@wspot.com.br",
+				"name":"Thor",
+				"city":"Campinas",
+				"document":27145444283
+				}
+			},
+			{
+			"password":"123456",
+            "status" : 1,
+            "registrationMacAddress" : "99-99-99-99-99-99",
+			"properties":{
+			    "email":"visitante2@wspot.com.br",
+				"name":"Hulk",
+				"city":"Campinas",
+				"document":84452652530
+				}
+			}
+		]
+
++ Response 200 (application/json)
+ 	+ Body
+		{
+			"hasErrors": false,
+			"successTotal": 2,
+			"errorsTotal": null,
+			"errors": []
+		}
+
+## Atualizar visitante [/api/guests/{locale}]
+### Atualizar Visitante [PUT]
+O campo "status" deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo].
+
++ Parameters
+	+ locale (string, optional) - Locale qual o visitante será salvo na Mambo Wifi
+		+ Default:"pt_br"
+		+ Members
+			+ "pt_br"
+			+ "en"
+			+ "es"
++ Request Atualizar visitante (application/json)
+	+ Body
+		{
+			"id" : "586a9b99024925054923",
+			"properties":{
+			    "email":"visitante@wspot.com.br",
+				"name":"Spider Man",
+				"city" : "São Paulo",
+				"document": "82877700682"
+			}
+		}
+
++ Response 200 (application/json)
+	+ Body
+	{
+		"id": "586a9b99024925054923",
+		"created": {
+			"sec": 1483383368,
+			"usec": 320000
+		},
+		"validated": null,
+		"lastAccess": null,
+		"group":"guest",
+		"status": 2,
+		"locale": "pt_br",
+		"documentType": "CPF",
+		"authorizeEmail": null,
+		"registrationMacAddress": null,
+		"returning": null,
+		"properties": {
+		    "email": "visitante@wspot.com.br",
+			"name": "Spider Man",
+			"city": "São Paulo",
+			"document": "82877700682"
+		},
+		"social": {},
+		"accessData": {},
+		"employee": null
+	}
+
+## Excluir visitante [/api/guests]
+### Excluir Visitante [DELETE]
+Atualmente a exclusão de visitantes via API não é permitida. Excluir um visitante impacta na exclusão de todos seus dados de acesso.
+Em caso de dúvida, favor contatar nossa equipe de suporte: suporte@mambowifi.com.
+
+## Alterar grupo de visitante [/api/guests/{locale}]
+### Alterar grupo de visitante [PUT]
+    O processo de alteração de grupo do visitante é similar a atualização dos dados de um visitante, a diferença é que você passa o atributo "group" com o "identifier" do grupo.
+    O "identifier" pode ser encontrado através do seu "painel administrativo > visitantes > grupos > detalhe do grupo".
+    O parâmetro "properties" deve ser enviado também, senão dara erro de validação dos campos customizados do seu WSpot.
+
++ Parameters
+	+ locale (string, optional) - Locale qual o visitante será salvo na Mambo Wifi
+		+ Default:"pt_br"
+		+ Members
+			+ "pt_br"
+			+ "en"
+			+ "es"
++ Request Atualizar grupo do visitante (application/json)
+	+ Body
+		{
+			"id" : "586a9b99024925054923",
+			"group": "identifier_do_novo_grupo",
+			"properties":{
+			    "email":"visitante@wspot.com.br",
+				"name":"Spider Man",
+				"city" : "São Paulo",
+				"document": "82877700682"
+			}
+		}
+
++ Response 200 (application/json)
+	+ Body
+	{
+		"id": "586a9b99024925054923",
+		"created": {
+			"sec": 1483383368,
+			"usec": 320000
+		},
+		"validated": null,
+		"lastAccess": null,
+		"group":"identifier_do_novo_grupo",
+		"status": 2,
+		"locale": "pt_br",
+		"documentType": "CPF",
+		"authorizeEmail": null,
+		"registrationMacAddress": null,
+		"returning": null,
+		"properties": {
+		    "email": "visitante@wspot.com.br",
+			"name": "Spider Man",
+			"city": "São Paulo",
+			"document": "82877700682"
+		},
+		"social": {},
+		"accessData": {},
+		"employee": null
+	}
+
+# Group Campos customizados
+## Listar campos [/api/guests/fields]
+### Listar campos [GET]
+Lista todos os campos customizados que existem no formulário de cadastro.
++ Response 200 (application/json)
+		+ Body
+		[{
+			"id": "585168a1e0e35b6aa83c9f6e",
+			"type": "document",
+			"name": {
+				"pt_br": "CPF",
+				"en": "Passport",
+				"es": "Pasaporte"
+			},
+			"identifier": "document",
+			"choices": null,
+			"validations": [
+				{
+					"type": "required",
+					"value": true,
+					"message": "wspot.signup_page.field_required",
+					"locale": [
+						"pt_br",
+						"en",
+						"es"
+					]
+				},
+				{
+					"type": "minlength",
+					"value": 10,
+					"message": "wspot.signup_page.field_document_min_characters_required",
+					"locale": [
+						"pt_br"
+					]
+				},
+				{
+					"type": "CpfValidator",
+					"value": {
+						"required": true
+					},
+					"message": "wspot.signup_page.field_invalid_document",
+					"locale": [
+						"pt_br"
+					]
+				}
+			],
+			"mask": {
+				"pt_br": "99999999999",
+				"en": "",
+				"es": ""
+			},
+			isUnique: true,
+			isLogin: false
+		}
+		]

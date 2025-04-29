@@ -1,0 +1,84 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+{% block header %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:0px;padding-right:30px;padding-top:0px; font-size:30px;line-height:48px;color:{{ whiteLabel.panelColor }};font-family:Arial;font-weight:bold; text-align: center;" colspan="2">{{ companyName | default("") }}</td>
+    </tr>
+{% endblock%}
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Olá, <a style="color: {{ whiteLabel.panelColor }}; font-weight: bold; text-decoration: none;">{{ guest.properties.name|default('wspot.default.guest'|trans) }}</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:0px;padding-right:30px;padding-top:20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Tudo bem?</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Você se cadastrou para acessar a rede Wi-Fi da(o) <b style="color: {{ whiteLabel.panelColor }};">{{ companyName }}</b></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:0px;padding-right:30px;padding-top:0px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">{{ text | raw}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        {% if fromEmail is not null %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Se tiver dificuldades ou problemas é só contactar o administrador da rede <b style="color: {{ whiteLabel.panelColor }};">{{ station }}</b></td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Grande abraço,</td>
+        </tr>
+
+        {% if isWhiteLabel == 0 %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Time Mambo WiFi</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">{{ companyName }}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,3 @@
+Wideti\DomainBundle\Entity\SmsGateway:
+  Wavy:
+    gateway: wavy

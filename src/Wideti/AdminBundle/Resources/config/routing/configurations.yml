@@ -1,0 +1,25 @@
+configurations_edit:
+    path:  /{groupId}
+    defaults: { _controller: wspot.admin.controller.configurations:editAction, groupId:'' }
+    options:
+      expose: true
+
+admin_configuration_facebook_page_validate:
+    path: /fb/validate-page
+    defaults: { _controller: wspot.admin.controller.configurations:validateFacebookIdAction }
+    requirements: { methods: post }
+    options:
+      expose: true
+
+admin_configuration_generate_mikrotik_script:
+    path: /generate/mikrotik
+    defaults: { _controller: wspot.admin.controller.configurations:mikrotikScriptGeneratorAction }
+    requirements: { methods: post }
+    options:
+      expose: true
+
+admin_checkSMS_custom_fields:
+    path: /{user}/verify_allowed_sms
+    defaults: { _controller: wspot.admin.controller.configurations:confirmationSMSAllowed }
+    options:
+        expose: true

@@ -1,0 +1,90 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block title %}
+    <title>{{ whiteLabel.companyName }} - {{ 'wspot.forgot_email_page.title'|trans }}</title>
+{% endblock %}
+
+{% block container %}
+    <section class="container forgetpass email singleBox">
+        <div id="locale" class="hide">{{ app.request.locale }}</div>
+
+        <div class="box-content">
+            <h1>{{ 'wspot.forgot_email_page.title'|trans }}</h1>
+
+            <div class="form">
+                <p>{{ 'wspot.forgot_email_page.description'|trans }}</p>
+
+                <input type="tel" id="document" name="document" class="span12 numbers" data-type="document" data-field-mask="99999999999" data-rule-required="true" placeholder="{{ 'wspot.login_page.signup_cpf_input'|trans }}" aria-required="true" maxlength="11">
+                <label id="document-error" class="error" for="document" style="display: none;"></label>
+
+                <button class="btnCancelar" id="search">{{ 'wspot.forgot_email_page.search'|trans }}</button>
+                <a style="background-color: #B26501; display: none; margin-top: 0px; margin-bottom: 6px; height: 22px; line-height: 22px;" id="loader" class="btnLoader"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+
+                <div id="result" style="display: none;">
+                    <p>{{ 'wspot.forgot_email_page.message'|trans }}</p>
+                    <p class="email"></p>
+                </div>
+
+                <div id="buttons" style="display: none;">
+                    <button class="btnCancelar" onClick="window.location.href='{{ path('frontend_forget_password', { 'nas': wspotNas}) }}'">{{ 'wspot.forgot_email_page.reset_pass'|trans }}</button>
+                    <button class="btnCancelar" onClick="window.location.href='{{ path('frontend_index', { 'nas': wspotNas, 'autoLogin': 0 }) }}'">{{ 'wspot.forgot_email_page.connect'|trans }}</button>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset(assets_path ~'/js/jquery.maskedinput.js')}}"></script>
+
+    <script>
+        $(document).ready(function(){
+
+            jQuery('#search').click(function(){
+
+                jQuery('#result').hide();
+                jQuery('#buttons').hide();
+
+                var document = $('#document').val();
+
+                if (document) {
+                    jQuery('#document-error').hide();
+                    jQuery(this).hide();
+                    jQuery('#loader').show();
+
+                    var route = Routing.generate('frontend_forget_email_check_guest');
+                    var data  = {
+                        'document': document
+                    };
+
+                    $.ajax({
+                        type: "POST",
+                        url: route,
+                        data: data,
+                        dataType : "json",
+                        success: function(response)
+                        {
+                            if (response.value) {
+                                jQuery('#result').show();
+                                jQuery('#result p.email').html(response.value.split("@")[0] + '@...');
+                                jQuery('#buttons').show();
+                            } else {
+                                jQuery('#document-error').html('{{ 'wspot.forgot_email_page.email_not_found'|trans }}');
+                                jQuery('#document-error').show();
+                            }
+
+                            jQuery('#search').show();
+                            jQuery('#loader').hide();
+                        }
+                    });
+                } else {
+                    jQuery('#document-error').html('{{ 'wspot.signup_page.field_required'|trans }}');
+                    jQuery('#document-error').show();
+                }
+
+            });
+
+        });
+    </script>
+{% endblock %}

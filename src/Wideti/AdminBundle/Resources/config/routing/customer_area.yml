@@ -1,0 +1,11 @@
+customer_area:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.customer_area:indexAction }
+    options:
+        expose: true
+
+customer_area_cancel:
+    path:  /cancel
+    defaults: { _controller: wspot.admin.controller.customer_area:cancelAction }
+    options:
+        expose: true

@@ -1,0 +1,253 @@
+{% include "FrontendBundle:General:templateSettings.html.twig" %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if app.session.get('wspotClient') != null %}
+        {% if app.session.get('wspotClient').isWhiteLabel == true %}
+            <link rel="icon" type="image/x-icon" href="{{ asset('favicon2.ico') }}" />
+        {% endif %}
+    {% endif %}
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="">
+
+    {% block title %}
+        <title>{{ whiteLabel.companyName }} - {{ 'wspot.login_page.welcome'|trans }}</title>
+    {% endblock %}
+
+    <link href="{{ asset('bundles/admin/frontend/css/glyphicons.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/bootstrap/css/bootstrap.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/frontend/css/default.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/frontend/css/custom.css')}}" rel="stylesheet" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        a.btn-facebook span, a.btn-twitter span {
+            bottom: -6px !important;
+        }
+
+        .btn-facebook i, .btn-twitter i {
+            top: 6px !important;
+            left: 8px !important;
+        }
+
+        input {
+            height: 35px !important;
+            border: none !important;
+        }
+    </style>
+</head>
+
+<body class="login">
+
+<header>
+    <div class="logo-box {{ (config.login_form == 0) ? "singleBox" }}">
+        {% if( template and template.partnerLogo ) and ('http' not in entity.logotipo) %}
+            <img id="logo-wspot" alt="{{ config.partner_name }}"
+                 src="{{ asset("https://" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ template.partnerLogo) }}">
+        {% else %}
+            <img id="logo-wspot" alt="{{ whiteLabel.companyName }}" src="{{ whiteLabel.logotipo }}" />
+        {% endif %}
+    </div>
+</header>
+<style>
+    {% if config.login_form == 0 %}
+    section.container div#loginBox.boxes{display: block;}
+    {% endif %}
+
+    section.container div.boxes h3 {
+        margin: 25px 0 20px;
+    }
+    input{
+        height: 30px !important;
+        width: 100%;
+    }
+    #wspot_signin_entrar{
+        border: medium none;
+        height: 32px;
+        margin: 10px 0;
+        width: 100%;
+    }
+    #wspot_signup_submit{
+        border: medium none;
+        height: 32px;
+        width: 100%;
+    }
+</style>
+
+{% set display = '' %}
+
+{% if (config.login_form == 1 and config.signup_form == 0) %}
+    {% set display = 'singleBox' %}
+{% elseif (config.login_form == 0 and config.signup_form == 1) %}
+    {% set display = 'singleBox' %}
+{% elseif (config.login_form == 0 and config.signup_form == 0) %}
+    {% set display = 'singleBox' %}
+{% endif %}
+
+<section class="container {{ display }}" {{ (config.translation == false) ? 'style="padding-top:20px;"' : '' }}>
+    <div id="defaultBox" class="boxes fullBox visible-phone">
+        {% if config.facebook_login %}
+            <div class="social-button-large">
+                <button class="btn btn-large btn-large-facebook btn-icon-stacked glyphicons facebook" type="button">
+                    <i></i>
+                    {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.facebook_account' | trans }}
+                </button>
+                <a id="loaderBtnLargeFacebook" class="btn-large btnLoaderFacebook" style="display: none;"><img src="{{ asset('bundles/admin/frontend/images/ico-loader.gif') }}" /></a>
+            </div>
+        {% endif %}
+
+        {% if config.twitter_login %}
+            <div class="social-button-large">
+                <button class="btn btn-large btn-blue-light btn-icon-stacked glyphicons twitter" type="button">
+                    <i></i>
+                    {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.twitter_account' | trans }}
+                </button>
+                <a id="loaderBtnLargeTwitter" class="btn-large btnLoaderTwitter" style="display: none;"><img src="{{ asset('bundles/admin/frontend/images/ico-loader.gif') }}" /></a>
+            </div>
+        {% endif %}
+
+        {% if config.login_form == 1 %}
+            <button id="loginAccount" class="btn btn-large btn-warning" type="button">{{ 'wspot.login_page.have_account'|trans }}</button>
+        {% endif %}
+        {% if config.signup_form == 1 %}
+            <button id="signupAccount" class="btn btn-large btn-info" type="button">{{ 'wspot.login_page.have_no_account'|trans }}</button>
+        {% endif %}
+    </div>
+
+    {% if config.login_form == 1 %}
+        <div id="loginBox" class="boxes {{ (display == 'singleBox') ? "fullBox" }}">
+            <div class="box-content">
+                <h3>{{ 'wspot.login_page.login_title'|trans }}</h3>
+
+                <input type="email" placeholder="E-mail">
+                <input type="password" maxlength="16" placeholder="Senha">
+
+                <div>
+                    <a href="#" id="forgotPassword" title="{{ 'wspot.login_page.forgot_password'|trans }}">{{ 'wspot.login_page.forgot_password'|trans }}</a>
+                </div>
+
+                <button class="btnLogin" id="wspot_signin_entrar">Conectar</button>
+
+                {% if config.facebook_login %}
+                    <div class="social-button">
+                        <a href="#" class="btn btn-icon-stacked btn-block btn-facebook glyphicons facebook hidden-phone">
+                            <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.facebook_account' | trans }}</b></span>
+                            <span class="strong"></span>
+                        </a>
+                        <a id="loaderBtnFacebook" class="btnFacebook btnLoader" style="display: none;"><img src="{{ asset('bundles/admin/frontend/images/ico-loader.gif') }}" /></a>
+                    </div>
+                {% endif %}
+
+                {% if config.twitter_login %}
+                    <div class="social-button">
+                        <a href="#" class="btn btn-icon-stacked btn-block btn-twitter glyphicons twitter hidden-phone">
+                            <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.twitter_account' | trans }}</b></span>
+                            <span class="strong"></span>
+                        </a>
+                        <a id="loaderBtnTwitter" class="btnTwitter btnLoader" style="display: none;"><img src="{{ asset('bundles/admin/frontend/images/ico-loader.gif') }}" /></a>
+                    </div>
+                {% endif %}
+
+                {% if config.signup_form == 1 %}
+                    <button type="button" name="signUpButton" style="background-color: #B26501;" id="btnCadastro">{{ 'wspot.login_page.click_here'|trans }}</button>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if config.signup_form == 1 %}
+        <div id="signUpBox" class="boxes {{ (display == 'singleBox') ? "fullBox" }}">
+            <div class="box-content">
+                <h3>{{ 'wspot.login_page.signup_title'|trans }}</h3>
+
+                <input type="email" placeholder="E-mail">
+                <input type="text" placeholder="Nome">
+                <input type="password" maxlength="16" placeholder="Senha">
+                <input type="password" maxlength="16" placeholder="Repita a senha">
+
+                <button id="wspot_signup_submit">Cadastrar</button>
+
+                <br/>
+                <br/>
+
+                {% if config.login_form == 0 and config.signup_form == 1 %}
+                    {% if config.facebook_login %}
+                        <div class="social-button">
+                            <a href="#" class="btn btn-icon-stacked btn-block btn-facebook glyphicons facebook hidden-phone">
+                                <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.facebook_account' | trans }}</b></span>
+                                <span class="strong"></span>
+                            </a>
+                            <a id="loaderBtnFacebook" class="btnFacebook btnLoader" style="display: none;"><img src="{{ asset('bundles/admin/frontend/images/ico-loader.gif') }}" /></a>
+                        </div>
+                    {% endif %}
+
+                    {% if config.twitter_login %}
+                        <div class="social-button">
+                            <a href="#" class="btn btn-icon-stacked btn-block btn-twitter glyphicons twitter hidden-phone">
+                                <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.twitter_account' | trans }}</b></span>
+                                <span class="strong"></span>
+                            </a>
+                            <a id="loaderBtnTwitter" class="btnTwitter btnLoader" style="display: none;"><img src="{{ asset('bundles/admin/frontend/images/ico-loader.gif') }}" /></a>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    {% if config.login_form == 0 and config.signup_form == 0 %}
+        <div id="loginBox" class="boxes fullBox">
+            <div class="box-content">
+                <h3>{{ 'wspot.login_page.welcome'|trans }}</h3>
+
+                {% if config.facebook_login %}
+                    <div class="social-button">
+                        <a href="#" class="btn btn-icon-stacked btn-block btn-facebook glyphicons facebook hidden-phone">
+                            <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.facebook_account' | trans }}</b></span>
+                            <span class="strong"></span>
+                        </a>
+                        <a id="loaderBtnFacebook" class="btnFacebook btnLoader" style="display: none;"><img src="{{ asset('bundles/admin/frontend/images/ico-loader.gif') }}" /></a>
+                    </div>
+                {% endif %}
+
+                {% if config.twitter_login %}
+                    <div class="social-button">
+                        <a href="#" class="btn btn-icon-stacked btn-block btn-twitter glyphicons twitter hidden-phone">
+                            <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.twitter_account' | trans }}</b></span>
+                            <span class="strong"></span>
+                        </a>
+                        <a id="loaderBtnTwitter" class="btnTwitter btnLoader" style="display: none;"><img src="{{ asset('bundles/admin/frontend/images/ico-loader.gif') }}" /></a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+</section>
+
+<footer id="terms-footer" style="font-size: 12px;">
+    <div style="position:relative;bottom: 30px; margin-bottom: -20px;">
+        {{ 'wspot.login_page.read_accept'|trans }}
+        <a href="#" title="{{ 'wspot.login_page.terms_use'|trans }}">
+            {{ 'wspot.login_page.terms_use'|trans }}
+        </a>
+    </div>
+
+    {% if( template and template.partnerLogo ) %}
+        <div class="logo-wspot-mini">
+            <img id="logo-wspot-mini" src="{{ whiteLabel.logotipo }}" alt="{{ whiteLabel.companyName }}" title="{{ whiteLabel.companyName }}" />
+        </div>
+    {% endif %}
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+
+{% set urlParams = app.request.query.all|merge(route_params|default({})) %}
+
+<div class="pagination pagination-small pull-right" style="margin: 0;">
+    <ul>
+      {% if pagination.total > 0 %}
+          {% if (pagination['currentPage'] != 1) and (pagination.total > 0) %}
+              <li class="prev">
+                  <a href="{{ path(route,{'page':1}|merge(urlParams) )}}" title="primeira página">
+                      &lt;&lt;
+                  </a>
+              </li>
+              <li>
+                  <a href="{{ path(route,{'page':pagination['previousPage']}|merge(urlParams) )}}" title="página anterior" >
+                      &lt;
+                  </a>
+              </li>
+          {% endif %}
+      {% endif %}
+
+      {% for page in pagination['pages']%}
+         {% if pagination['currentPage'] == page  %}
+             <li class="active">
+         {% else %}
+             <li>
+         {% endif %}
+                <a href="{{ path(route,{'page': page }|merge(urlParams) )}}">{{ page }}</a>
+            </li>
+      {% endfor %}
+
+      {% if pagination.total > 0 %}
+          {% if pagination['currentPage'] != pagination['lastPage'] %}
+             <li>
+                 <a href="{{ path(route,{'page':pagination['nextPage']}|merge(urlParams) )}}" title="próxima página">
+                     &gt;
+                 </a>
+             </li>
+          {% endif %}
+      {% endif %}
+    </ul>
+</div>
+
+<div class="clearfix"></div>

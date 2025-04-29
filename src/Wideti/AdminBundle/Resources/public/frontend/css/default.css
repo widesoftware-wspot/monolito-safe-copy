@@ -1,0 +1,1259 @@
+@font-face {
+    font-family: 'open_sanslight';
+    src: url('../fonts/opensans-light-webfont.eot');
+    src: url('../fonts/opensans-light-webfont.eot?#iefix') format('embedded-opentype'),
+        url('../fonts/opensans-light-webfont.woff') format('woff'),
+        url('../fonts/opensans-light-webfont.ttf') format('truetype'),
+        url('../fonts/opensans-light-webfont.svg#open_sanslight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'open_sanslight';
+}
+
+header {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+input,
+button,
+select,
+textarea {
+    font-family: 'open_sanslight';
+    border-radius: 0 !important;
+}
+
+header h1 {
+    background: url('../images/logo-mambo.png') left top no-repeat;
+    height: 76px;
+    margin: 0 auto;
+    margin-top: 52px;
+    margin-bottom: 50px;
+    text-indent: -9999px;
+    width: 179px;
+}
+
+section.container {
+    margin: 0 auto;
+    width: 576px;
+}
+
+section.container div#languageBox {
+    font-weight: bold;
+    margin-top: -20px;
+    text-align: right;
+    width: 100%;
+}
+
+section.container div#languageBox a {
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 25px;
+    text-decoration: none;
+}
+
+section.container div.boxes {
+    min-height: 480px;
+    width: 278px;
+    float: left;
+    color: #FFFFFF;
+    padding-bottom: 20px;
+}
+
+@media (max-width: 460px) {
+    section.container div.boxes {
+        min-height: 0;
+        width: 278px;
+        float: left;
+        color: #FFFFFF;
+        padding-bottom: 20px;
+    }
+}
+
+img#logo-partner {
+    float: right;
+    position: absolute;
+    right: 0;
+    top: 20px;
+}
+
+.logo-wspot-mini {
+    margin-top: 20px;
+}
+
+img#logo-wspot-mini {
+    left: 0;
+    top: 10px;
+    max-height: 45px;
+}
+
+section.container div.boxes h3 {
+    font-size: 26px;
+    font-weight: 300;
+    margin: 20px 0;
+    color: white;
+}
+
+section.container div.boxes span.errorBox,
+span.errorBox,
+#forgetPassword label.error .error,
+label.error {
+    border-radius: 3px;
+    display: inline-table;
+    background-color: #9f2323;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 2px 4px;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+
+section.container div.boxes span.success,
+span.success {
+    border-radius: 3px;
+    display: inline-table;
+    background-color: #008800;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 2px 4px;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+
+.label.label-important {
+    background: none repeat scroll 0 0 #9f2323 !important;
+    display: block;
+    margin-bottom: 4px;
+    line-height: 17px;
+}
+
+section.container div.boxes a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 0;
+}
+
+section.container div.boxes form {
+    font-size: 13px;
+    line-height: 22px;
+    margin: 0;
+}
+
+section.container div.boxes form input[type=text],
+section.container div.boxes form input[type=tel],
+section.container div.boxes form input[type=email],
+section.container div.boxes form input[type=password],
+section.container div.boxes form button,
+section.forgetpass div.form input,
+section.forgetpass div.form button,
+#btnCadastro,
+#wspot_loginonly_submit {
+    border: none;
+    height: 35px;
+    margin-bottom: 7px;
+    font-size: 15px;
+    width: 100%;
+}
+
+a.btn-default {
+    border: none;
+    height: 32px;
+    width: 76%;
+    font-size: 15px;
+    padding: 0 20px 0 13px;
+    background-color: #B26501 !important;
+    color: #FFFFFF !important;
+    display: block;
+    line-height: 30px;
+    margin: 0 auto;
+    font-weight: normal !important;
+}
+
+@media (max-width:350px) {
+    h4.resend {
+        left: 20px !important;
+    }
+}
+
+section.container div.boxes form label {
+    border-radius: 3px;
+    background: none repeat scroll 0 0 #9f2323 !important;
+    color: #ffffff;
+    display: inline-block;
+    font-size: 11.8px;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 2px 4px;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    vertical-align: baseline;
+    white-space: nowrap;
+    float: left;
+}
+
+p.error.terms,
+p.error.authorize_email,
+p.error.consent_term {
+    border-radius: 3px;
+    background: none repeat scroll 0 0 #9f2323 !important;
+    color: #ffffff;
+    display: table;
+    font-size: 11.8px;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 2px 4px;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    vertical-align: baseline;
+    white-space: nowrap;
+    float: inherit;
+    margin: 0;
+    position: relative;
+    bottom: 10px;
+    top: 0px;
+}
+
+section.container div.boxes form label.success {
+    background: none repeat scroll 0 0 #229922 !important;
+}
+
+section.container div.boxes form label.info {
+    background: none repeat scroll 0 0 #cb8f21 !important;
+}
+
+section.container div.boxes form button,
+section.forgetpass div.form button,
+section.forgetpass div.form a.btnCancelar {
+    color: #FFFFFF !important;
+    cursor: pointer;
+    margin-top: 15px;
+    padding: 0;
+}
+
+section.container div.boxes#loginBox,
+section.container div.boxes#checkinBox {
+    margin-right: 20px;
+}
+
+section.container div.boxes#loginBox button#btnCadastro,
+section.container div.boxes#signUpBox button#btnLoginBoxButton,
+section.container div.boxes#checkinBox button#btnCadastro {
+    display: none;
+    font-size: 15px;
+    height: 40px;
+    margin: 0;
+}
+
+section.container div.boxes#loginBox a:hover,
+section.container div.boxes#checkinBox a:hover {
+    text-decoration: underline;
+}
+
+section.terms,
+section.terms a {
+    color: #a1a1a1;
+    font-size: 13px;
+    width: 60%;
+}
+
+section.terms h2 {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+section.forgetpass {
+    color: #fff;
+    height: auto;
+    padding-bottom: 30px;
+    text-align: center;
+}
+
+section.forgetpass h1 {
+    font-size: 26px;
+    font-weight: normal;
+    padding-top: 15px;
+    color: white;
+}
+
+section.forgetpass div.resetPassSteps1 {
+    background: url('../images/bg-passo1.png') left top no-repeat;
+    height: 73px;
+    width: 167px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.resetPassSteps2 {
+    background: url('../images/bg-passo2.png') left top no-repeat;
+    height: 73px;
+    width: 167px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.resetPassSteps3 {
+    background: url('../images/bg-passo3.png') left top no-repeat;
+    height: 73px;
+    width: 167px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.resetPassSteps1_eng {
+    background: url('../images/bg-passo1_eng.png') left top no-repeat;
+    height: 73px;
+    width: 206px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.resetPassSteps2_eng {
+    background: url('../images/bg-passo2_eng.png') left top no-repeat;
+    height: 73px;
+    width: 206px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.resetPassSteps3_eng {
+    background: url('../images/bg-passo3_eng.png') left top no-repeat;
+    height: 73px;
+    width: 206px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.form {
+    font-size: 14px;
+    margin: 20px auto 0;
+}
+
+section.forgetpass div.form form {
+    margin-top: 15px;
+    margin-bottom: 0 !important;
+}
+
+section.forgetpass div.form button {
+    margin-top: 10px;
+}
+
+section.forgetpass div.form button.btnCancelar {
+    margin-top: 0;
+}
+
+footer {
+    clear: both;
+    color: #a1a1a1;
+    font-size: 13px;
+    line-height: 25px;
+    padding: 50px 20px 5px 20px;
+    text-align: center;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+}
+
+div.logo-box {
+    width: 576px;
+    margin: 10px auto 20px;
+    text-align: center;
+    position: relative;
+}
+
+img#logo-wspot {
+    margin: 15px 0;
+    max-width: 200px;
+}
+
+/* Self Registration disabled style */
+section.container div.boxes.fullBox {
+    width: 100%;
+}
+
+section.container div.boxes.fullBox form input[type=text],
+section.container div.boxes.fullBox form input[type=tel],
+section.container div.boxes.fullBox form input[type=email],
+section.container div.boxes.fullBox form input[type=password],
+section.container div.boxes.fullBox form button,
+section.forgetpass div.form input,
+section.forgetpass div.form button,
+#wspot_loginonly_submit {
+    width: 100%;
+    padding: 0;
+    padding-left: 7px;
+}
+
+section.container div.boxes.fullBox form {
+    margin-left: 0;
+    text-align: center;
+}
+
+section.container div.boxes.fullBox form div#boxTerms {
+    margin-left: 30px;
+    text-align: left;
+}
+
+section.container.singleBox,
+div.logo-box.singleBox {
+    width: 380px;
+}
+
+/* Desktops and laptops ----------- */
+@media (max-width:599px) {
+    header h1 {
+        margin: 15px auto 10px;
+    }
+
+    section.container {
+        width: 100%;
+    }
+
+    section.container div#languageBox {
+        margin: 0 auto;
+        width: 90%;
+    }
+
+    section.container div.boxes {
+        float: none;
+    }
+
+    section.container div.boxes {
+        padding-top: 5px;
+    }
+
+    section.container div.boxes {
+        margin: 0 auto;
+        width: 90%;
+    }
+
+    section.container div.boxes#signUpBox {
+        display: none;
+        min-height: 450px;
+    }
+
+    section.container div.boxes#loginBox button#btnCadastro,
+    section.container div.boxes#signUpBox button#btnLoginBoxButton {
+        display: block;
+    }
+
+    div.logo-box {
+        width: 90%;
+        text-align: center;
+    }
+
+    div.logo-box img#logo-wspot {
+        margin: 15px 0 0 0;
+        float: none;
+        width: 140px;
+    }
+
+    section.container div#loginBox.boxes {
+        margin: 0 auto;
+    }
+
+    section.container div#checkinBox.boxes {
+        margin: 0 auto;
+    }
+
+    section.container.singleBox,
+    div.logo-box.singleBox,
+    section.container.forgetpass {
+        width: 90% !important;
+    }
+
+    section.container div.boxes form button {
+        width: 100%;
+    }
+
+    section.forgetpass div.form input,
+    section.forgetpass div.form button {
+        width: 100%;
+    }
+
+    section.container.terms {
+        width: 80%;
+    }
+}
+
+@media (max-width:480px) {
+    div.logo-box {
+        text-align: center;
+        width: 90%;
+        margin-top: 15px;
+    }
+
+    div.logo-box img#logo-wspot {
+        margin: 15px 0 0 0;
+        float: none;
+    }
+
+    div.logo-box img#logo-partner {
+        margin: -30px -5px 0 0;
+    }
+
+    section.container div#languageBox {
+        margin: 0 auto;
+        width: 90%;
+    }
+
+    section.container div.boxes {
+        width: 90%;
+    }
+
+    section.container div#loginBox.boxes,
+    section.container div#checkinBox.boxes {
+        margin: 0 auto;
+    }
+
+    section.container div.boxes#signUpBox {
+        display: none;
+        min-height: 0;
+    }
+}
+
+@media (max-width:320px) {
+    div.logo-box.singleBox {
+        width: 280px;
+    }
+
+    section.container.singleBox {
+        width: 280px;
+    }
+
+    section.container div.boxes.fullBox form div#boxTerms {
+        margin-left: 10px;
+    }
+
+    img#logo-partner {
+        float: right;
+        position: absolute;
+        right: 5px;
+        top: 20px;
+        width: 50px;
+    }
+
+    img#logo-wspot-mini {
+        width: 70px;
+        top: 10px;
+    }
+}
+
+section.container div.boxes.fullBox form input#login_username {
+    margin-bottom: 3px;
+}
+
+section.container div.boxes.fullBox form {
+    text-align: center;
+    margin-bottom: 0;
+    margin: 0 auto;
+}
+
+section.container div.boxes.fullBox form div#boxTerms {
+    margin-left: 0px;
+    text-align: left;
+}
+
+.boxes.visible-phone {
+    width: 90% !important;
+    background-color: transparent !important;
+    margin: 0 auto !important;
+    min-height: 150px !important;
+    text-align: center !important;
+}
+
+.boxes.visible-phone .btn {
+    border-radius: 5px !important;
+    height: 70px;
+    margin-top: 20px !important;
+    width: 100%;
+    border: none;
+    font-size: 18px;
+    font-family: 'open_sanslight' !important;
+    box-shadow: 5px 6px 20px -1px #808080 !important
+}
+
+.boxes.visible-phone .btn.btn-warning {
+    background-image: linear-gradient(to bottom, #fbb450, #f89406);
+}
+
+.boxes.visible-phone .btn.btn-info {
+    background-image: linear-gradient(to bottom, #cecece, #9f9f9f);
+}
+
+.boxes.visible-phone .btn.btn-info:hover {
+    background-color: #9f9f9f;
+}
+
+@media (min-width: 600px) {
+    .boxes {
+        display: block !important;
+    }
+
+    .boxes.visible-phone {
+        display: none !important;
+    }
+}
+
+p.social_error {
+    background-color: #9f2323;
+    border-radius: 3px;
+    color: #ffffff;
+    display: inline-table;
+    font-size: 11.844px;
+    font-weight: bold;
+    line-height: 14px;
+    margin-top: 6px;
+    padding: 6px;
+    text-align: center;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    vertical-align: middle;
+    width: 95%;
+}
+
+.btn-icon-stacked span {
+    font-size: 13px;
+    line-height: normal;
+}
+
+.btn-facebook {
+    background-image: linear-gradient(to bottom, #0088cc, #5d7cb6);
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.btn-facebook i:before {
+    color: #fff;
+}
+
+.btn-facebook:hover,
+.btn-facebook:focus {
+    background: #5d7cb6;
+    color: #fff;
+}
+
+
+
+
+.btn-linkedin {
+    background-image: linear-gradient(to bottom, #0088cc, #5d7cb6);
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    border: none;
+    text-align: center;
+
+}
+
+.btn-linkedin i:before {
+    color: #fff;
+}
+
+.btn-linkedin:hover,
+.btn-linkedin:focus {
+    background: #5d7cb6;
+    color: #fff;
+}
+
+
+
+.btn-twitter {
+    background: #55ACEE;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.btn-twitter i:before {
+    color: #fff;
+}
+
+.btn-twitter:hover,
+.btn-twitter:focus {
+    background: #55ACEE;
+    color: #fff;
+}
+
+.btn-third {
+    background-image: linear-gradient(to bottom, #d35e6c, #e35e6c);
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.btn-third i:before {
+    color: #fff;
+}
+
+.btn-third:hover,
+.btn-third:focus {
+    background: #e35e6c;
+    color: #fff;
+}
+
+.btn-icon-stacked i:before {
+    left: auto;
+    position: relative;
+    text-align: center;
+    top: auto;
+}
+
+.btn-icon-stacked i {
+    display: block;
+    height: 24px;
+    left: 10px;
+    position: absolute;
+    top: 10px;
+    width: 24px;
+}
+
+a.btn-linkedin,
+a.btn-facebook,
+a.btn-twitter,
+a.btn-third {
+    height: 40px;
+    text-align: center;
+    text-decoration: none !important;
+}
+
+a.btn-linkedin span,
+a.btn-facebook span,
+a.btn-twitter span,
+a.btn-third span {
+    position: relative;
+    bottom: 8px;
+}
+
+.btn-linkedin i,
+.btn-facebook i,
+.btn-twitter i,
+.btn-third i {
+    top: 3px !important;
+    left: 8px !important;
+}
+
+a.btn-twitter {
+    height: 40px;
+    text-align: center;
+}
+
+.glyphicons i::before {
+    color: #ffffff;
+    line-height: 25px;
+}
+
+/* BTN PHONE */
+
+.btn-large-linkedin,
+.btn-large-facebook,
+.btn-large-third,
+.btn-large-login,
+.btn-large-signup {
+    border: medium none;
+    border-radius: 5px !important;
+    font-size: 18px;
+    height: 70px;
+    margin-top: 20px !important;
+    width: 100%;
+    padding: 11px 19px;
+    background-repeat: repeat-x;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    display: inline-block;
+    line-height: 20px;
+    margin-bottom: 0;
+    text-align: center;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    vertical-align: middle;
+}
+
+.btn-large-facebook {
+    background-image: linear-gradient(to bottom, #0088cc, #5d7cb6);
+    color: #ffffff;
+}
+
+.btn-large-facebook:hover {
+    background-color: #5d7cb6;
+    color: #ffffff;
+}
+
+
+.btn-large-linkedin {
+    background-image: linear-gradient(to bottom, #0088cc, #5d7cb6);
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.btn-large-linkedin:hover {
+    background-color: #5d7cb6;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+#loginBox>div>div:nth-child(3)>a.btn.btn-icon-stacked.btn-block.btn-linkedin.glyphicons.linked_in.hidden-phone {
+    text-decoration: none;
+    height: 3rem
+}
+
+.btn-blue-light {
+    background-image: linear-gradient(to bottom, #55ACEE, #7CBFEF);
+    color: #ffffff;
+}
+
+.btn-blue-light:hover {
+    background-color: #7CBFEF;
+    color: #ffffff;
+}
+
+.btn-large-third {
+    background-image: linear-gradient(to bottom, #d35e6c, #e35e6c);
+    color: #ffffff;
+}
+
+.btn-large-third:hover,
+.btn-large-third:focus {
+    background-color: #e35e6c;
+    color: #ffffff;
+}
+
+.btn-red {
+    background: #E85B45;
+    background-color: #E85B45;
+    background-image: linear-gradient(to bottom, #DF4A32, #E85B45);
+    color: #ffffff;
+}
+
+.btn-red:hover {
+    background-color: #E85B45;
+    color: #ffffff;
+}
+
+.btn-google-custom {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.btn-google-custom:hover {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.fa-google:before {
+    display: block;
+    height: 0px;
+    left: 0px;
+    position: relative;
+    top: 0px;
+    width: 24px;
+    font-family: 'Font Awesome 5 Brands' !important;
+    color: #ffffff;
+}
+
+.btn-large-linkedin.glyphicons i:before,
+.btn-large-facebook.glyphicons i:before,
+.btn-blue-light.glyphicons i:before,
+.btn-red.glyphicons i:before,
+.btn-large-third.glyphicons i:before {
+    color: #ffffff;
+    line-height: 50px;
+    margin-left: 6px;
+}
+
+a.btnNext,
+a.btnNext:hover {
+    background-color: #b26501;
+    border: medium none;
+    border-radius: 0 !important;
+    color: #ffffff;
+    cursor: pointer;
+    display: block;
+    font-family: "open_sanslight";
+    font-size: 15px;
+    height: 32px;
+    line-height: 30px;
+    margin: 0 auto 7px;
+    padding: 0 0 0 6px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.authorize_email {
+    margin-top: 5px;
+}
+
+#signUp_authorize_email {
+    position: relative;
+    bottom: 4px;
+    margin-right: 5px;
+}
+
+a.btnLoader,
+a.btnLoader:hover,
+a.btnLoaderFacebook,
+a.btnLoaderFacebook:hover,
+a.btnLoaderTwitter,
+a.btnLoaderTwitter:hover,
+a.btnLoaderInstagram,
+a.btnLoaderInstagram:hover,
+a.btnLoaderGoogle,
+a.btnLoaderGoogle:hover {
+    cursor: inherit;
+    margin-top: 15px;
+    height: 26px;
+    line-height: 25px;
+    text-align: center;
+    width: 100%;
+    border: none;
+    display: inline-block;
+    padding: 7px 0;
+    vertical-align: middle;
+    margin-bottom: 7px;
+}
+
+a.btnLoaderFacebook img,
+a.btnLoaderTwitter img,
+a.btnLoaderInstagram img a.btnLoaderGoogle img {
+    position: relative;
+}
+
+a.btn-large.btnLoader,
+a.btn-large.btnLoader:hover,
+a.btn-large.btnLoaderFacebook,
+a.btn-large.btnLoaderFacebook:hover,
+a.btn-large.btnLoaderTwitter,
+a.btn-large.btnLoaderTwitter:hover,
+a.btn-large.btnLoaderGoogle,
+a.btn-large.btnLoaderGoogle:hover,
+a.btn-large.btnLoaderInstagram,
+a.btn-large.btnLoaderInstagram:hover {
+    border: medium none;
+    border-radius: 5px !important;
+    cursor: inherit;
+    font-size: 18px;
+    height: 56px;
+    line-height: 56px;
+    margin-top: 20px !important;
+    margin-bottom: 0 !important;
+    width: 100%;
+}
+
+a.btn-large.btnLoaderFacebook,
+a.btn-large.btnLoaderFacebook:hover {
+    background-image: linear-gradient(to bottom, #0088cc, #5d7cb6) !important;
+}
+
+a.btn-large.btnLoaderTwitter,
+a.btn-large.btnLoaderTwitter:hover {
+    background-image: linear-gradient(to bottom, #55ACEE, #7CBFEF) !important;
+}
+
+a.btn-large.btnLoaderInstagram,
+a.btn-large.btnLoaderInstagram:hover {
+    background-image: linear-gradient(to bottom, #A52B76, #883A90);
+}
+
+a.btn-large.btnLoaderGoogle,
+a.btn-large.btnLoaderGoogle:hover {
+    background-color: #C0C0C0;
+    color: #000000;
+}
+
+.btnFacebook {
+    margin: 0 !important;
+    background-image: linear-gradient(to bottom, #0088cc, #5d7cb6) !important;
+    border: medium none;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.btnTwitter {
+    margin: 0 !important;
+    background-image: linear-gradient(to bottom, #55ACEE, #7CBFEF) !important;
+    border: medium none;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.btnInstagram {
+    margin: 0 !important;
+    background-image: linear-gradient(to bottom, #A52B76, #883A90);
+    border: medium none;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+.btnGoogle {
+    margin: 0 !important;
+    background-color: #C0C0C0;
+    border: medium none;
+    color: #000;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+span.icon.mobile {
+    float: left;
+    margin: -10px -10px;
+}
+
+
+a.btnLoaderForgetPass,
+a.btnLoaderForgetPass:hover {
+    border: medium none;
+    cursor: inherit;
+    display: inline-block;
+    height: 27px;
+    line-height: 26px;
+    padding: 4px 0;
+    text-align: center;
+    vertical-align: middle;
+    width: 100%;
+}
+
+#registrationBox form .text {
+    font-size: 16px;
+}
+
+#registrationBox form #signUp_submit,
+#registrationBox form #loaderBtnAutoLogin {
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+#registrationBox a.loaderBtnCadastro {
+    width: 100% !important;
+    margin-top: 15px !important;
+}
+
+#loaderBtnForgetPass {
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 7px;
+}
+
+#registrationBox #loaderBtnCadastro {
+    width: 100%;
+    margin-top: 15px;
+    margin-bottom: 30px;
+}
+
+@media (max-width:600px) {
+
+    section.container div#loginBox.boxes {
+        display: none;
+    }
+
+    .singleBox a.btnLoaderFacebook,
+    .singleBox a.btnLoaderFacebook:hover,
+    .singleBox a.btnLoaderTwitter,
+    .singleBox a.btnLoaderTwitter:hover,
+    .singleBox a.btnLoaderInstagram,
+    .singleBox a.btnLoaderInstagram:hover {
+        /*left: 20px;*/
+        position: relative;
+        width: 100% !important;
+    }
+
+    .singleBox a.btn-facebook,
+    .singleBox a.btn-twitter,
+    .singleBox a.btn-third {
+        width: 100% !important;
+    }
+}
+
+@media (min-width:600px) {
+
+    .singleBox a.btnLoaderFacebook,
+    .singleBox a.btnLoaderFacebook:hover,
+    .singleBox a.btnLoaderTwitter,
+    .singleBox a.btnLoaderTwitter:hover,
+    .singleBox a.btnLoaderInstagram,
+    .singleBox a.btnLoaderInstagram:hover {
+        left: 20px;
+        position: relative;
+    }
+}
+
+.social-button {
+    display: block;
+    padding-bottom: 8px;
+    margin: 0 auto;
+}
+
+.fullBox>.social-button {
+    position: relative;
+    right: 2px;
+}
+
+.social-button a.btn,
+.social-button a.btn:hover {
+    font-size: 50px;
+}
+
+#signUp_authorize_checkin,
+#checkinFacebook_authorize_checkin {
+    margin: 10px;
+}
+
+a.btnChangeData,
+a.btnHome,
+a.btnConfirmation {
+    cursor: pointer;
+    display: inline-block;
+    font-size: 15px;
+    font-weight: normal !important;
+    height: 40px;
+    line-height: 40px;
+    margin: 10px 0;
+    text-align: center;
+    width: 100%;
+}
+
+a.btnChangeData:hover,
+a.btnHome:hover,
+a.btnConfirmation:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#confirmation ul li {
+    background: #9f2323 none repeat scroll 0 0 !important;
+    border-radius: 3px;
+    color: #ffffff;
+    display: inline-block;
+    font-size: 11.8px;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 2px 4px;
+    position: relative;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    top: 20px;
+    vertical-align: baseline;
+    white-space: nowrap;
+}
+
+h4.resend {
+    border: 1px dashed;
+    font-size: 15px;
+    left: 30px;
+    padding: 8px 10px;
+    position: relative;
+    text-align: center;
+    top: 5px;
+    width: 78%;
+}
+
+#signUp_telefone,
+#signUp_documento,
+#confirmation_code {
+    color: #9f9f9f !important;
+}
+
+.authorizeEmail {
+    display: inline-flex;
+    margin-top: 5px;
+    line-height: 15px;
+}
+
+.authorizeEmail input {
+    float: left;
+    position: relative;
+}
+
+.authorizeEmail.social input {
+    float: left;
+    position: relative;
+}
+
+.authorizeEmail p {
+    left: 3px;
+    line-height: 15px;
+    position: relative;
+    top: 2px;
+    width: 100%;
+    font-size: 11.4px;
+}
+
+#btnCadastro {
+    color: #ffffff !important;
+    margin-left: 36px;
+    margin-top: 10px !important;
+    width: 100%;
+}
+
+.btnAccessCode {
+    width: 100% !important;
+}
+
+#wspot_signin_entrar {
+    height: 40px;
+}
+
+.social-buttons {
+    margin-top: 15px;
+}
+
+.box-content {
+    margin: 0 25px;
+}
+
+input {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.content-center {
+    margin: 30px 10px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.confirmation-loader {
+    margin-top: 30px;
+}
+
+.forget-email {
+    text-align: left !important;
+    border-radius: 0;
+}
+
+.forget-email a,
+.forget-email a:active,
+.forget-email a:hover {
+    font-size: 13px !important;
+    color: #FFFFFF;
+    font-weight: 600 !important;
+}
+
+section.forgetpass.email #result {
+    margin: 30px 0;
+}
+
+section.forgetpass.email #result p.email {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: center;
+}
+
+.table-description td {
+    background-color: #00aa00 !important;
+}
+
+.validateLabel {
+    border-radius: 3px;
+    background: none repeat scroll 0 0 #9f2323 !important;
+    color: #ffffff;
+    display: inline-block;
+    font-size: 11.8px;
+    font-weight: bold;
+    line-height: 14px;
+    padding: 2px 4px;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    vertical-align: baseline;
+    white-space: nowrap;
+    margin-right: 127px;
+}

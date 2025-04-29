@@ -1,0 +1,131 @@
+{% extends 'PanelBundle::layout.html.twig' %}
+
+{% block content %}
+    <h3 class="heading-mosaic">Gerenciamento de créditos para uso no SMS Marketing</h3>
+
+    <div class="innerLR">
+
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>Gerenciar</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="widget-body">
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+                <div class="widget">
+                    <div class="widget-body">
+                        <h4>Quantidade de créditos disponíveis: {{ entity.totalAvailable|default(0) }}</h4>
+
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                            <div class="span4">
+                                {{ form_row(form.totalAvailable) }}
+                            </div>
+                        </div>
+                        {{ form_errors(form) }}
+
+                        <div class="form-actions left">
+                            {{ form_widget(form.submit) }}
+                        </div>
+                    </div>
+
+                    <div class="widget-body" style="margin-top: 20px;">
+                        <div class="row">
+                            {% if (historic.purchased) %}
+                                <div class="span6">
+                                    <h4>Histórico de créditos adicionados</h4>
+                                    <table class="table table-condensed table-striped table-primary table-vertical-center checkboxs overflow-table" style="margin-top: 20px;">
+                                        <thead>
+                                        <tr>
+                                            <th class="center">Quantidade</th>
+                                            <th class="center">Data</th>
+                                            <th class="center">Remover</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for item in historic.purchased %}
+                                            <tr class="gradeX" id="{{ item.id }}">
+                                                <td class="center">{{ item.quantity }}</td>
+                                                <td class="center">{{ item.created|date('d/m/Y H:i:s') }}</td>
+                                                <td class="center">
+                                                    <a href="#" class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endif %}
+                            {% if (historic.used) %}
+                                <div class="span6">
+                                    <h4>Histórico de créditos utilizados</h4>
+                                    <table class="table table-condensed table-striped table-primary table-vertical-center checkboxs overflow-table" style="margin-top: 20px;">
+                                        <thead>
+                                        <tr>
+                                            <th class="center">Quantidade</th>
+                                            <th class="center">Data</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for item in historic.used %}
+                                            <tr class="gradeX" id="{{ item.id }}">
+                                                <td class="center">{{ item.quantity }}</td>
+                                                <td class="center">{{ item.created|date('d/m/Y H:i:s') }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result) {
+                    if (result) {
+                        var route = Routing.generate('panel_sms_credit_historic_delete', { id: id });
+
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                if (response.error != 'Exclusão não permitida.') {
+                                    parent.remove();
+                                }
+                                window.location.reload();
+
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

@@ -1,0 +1,53 @@
+name: Release tag
+
+on:
+  push:
+    tags:
+      - v*
+
+jobs:
+  create-artifact:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Get tag
+        id: tag
+        uses: dawidd6/action-get-tag@v1
+      
+      - name: Get repository name
+        run: echo "REPO_NAME=$(cut -d'/' -f2 <<< "${GITHUB_REPOSITORY}")" >> $GITHUB_ENV
+      
+      - name: print
+        run: echo TAG=${{steps.tag.outputs.tag}} ImageName=${REPO_NAME}
+        
+      - name: Docker Login OCIR
+        uses: docker/login-action@v1
+        with:
+          registry: ${{ secrets.OCI_REGISTRY_AUTH_URL }}
+          username: ${{ secrets.OCI_REGISTRY_USER }}
+          password: ${{ secrets.OCI_REGISTRY_PASSWORD }}
+
+      - uses: actions/setup-node@v2
+        with:   
+          node-version: '14'
+
+      - name: Build and Push
+        run: TAG=${{steps.tag.outputs.tag}} IMAGE_NAME=$REPO_NAME make build-docker-push
+
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: custom
+          fields: repo,message,author,eventName,ref,workflow,job,took # selectable (default: repo,message)
+          custom_payload: |
+            {
+              icon_emoji: ':octocat:',
+              attachments: [{
+                color: '${{ job.status }}' === 'success' ? 'good' : '${{ job.status }}' === 'failure' ? 'danger' : 'warning',
+                text: `Status: ${{ job.status }}\nRepo: ${process.env.AS_REPO}\nTag: ${{steps.tag.outputs.tag}}\nWorkflow: ${process.env.AS_WORKFLOW}\nJob: ${process.env.AS_JOB}\nRef: ${process.env.AS_REF}\nAuthor: ${process.env.AS_AUTHOR}\nTime of execution: ${process.env.AS_TOOK}`,
+              }]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+        if: always() # Pick up events even if the job fails or is canceled.

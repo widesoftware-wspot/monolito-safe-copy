@@ -1,0 +1,47 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <h3 class="heading-mosaic">Limpar Cache REDIS</h3>
+    <div class="innerLR">
+        <div class="row-fluid">
+            <div class="tab-content">
+                <br>
+                <h4>Acesso e execução permitido apenas para equipe de Desenvolvimento do Mambo WiFI.</h4><br>
+                <h4 style="color: red;">Cuidado! A execução dessas ações sem sua ciência, poderá ocasionar danos gravíssimos do Mambo WiFi.</h4>
+                <br><br>
+                <p>Operações que impactarão apenas o cliente <b>{{ app.session.get('wspotClient').domain }}.mambowifi.com</b></p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'wspotNas' }) }}" class="btn btn-primary confirmation">NAS</a></p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'config' }) }}" class="btn btn-primary confirmation">CONFIGURAÇÕES</a></p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'dashboard' }) }}" class="btn btn-primary confirmation">DASHBOARD</a></p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'report' }) }}" class="btn btn-primary confirmation">RELATÓRIOS</a></p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'whiteLabel' }) }}" class="btn btn-primary confirmation">WHITE LABEL</a></p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'template' }) }}" class="btn btn-primary confirmation">TEMPLATE</a></p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'all' }) }}" class="btn btn-primary confirmation">TUDO DESTE CLIENTE</a></p>
+                <br>
+                <p>Operação que impactará <b>TODOS</b> os clientes</p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'all_wspot' }) }}" class="btn btn-primary confirmation">TUDO DE TODOS CLIENTES</a></p>
+                <p><a href="{{ path('admin_cache_clear', { 'type': 'all_configs_wspot' }) }}" class="btn btn-primary confirmation">TUDAS CONFIGS DE TODOS CLIENTES</a></p>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script type="text/javascript">
+        var elems = document.getElementsByClassName('confirmation');
+        var confirmIt = function (e) {
+            if (!confirm('Tem certeza que deseja remover o cache?')) e.preventDefault();
+        };
+        for (var i = 0, l = elems.length; i < l; i++) {
+            elems[i].addEventListener('click', confirmIt, false);
+        }
+    </script>
+{% endblock %}

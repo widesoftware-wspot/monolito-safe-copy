@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>MediaElement.js 3.0 - audio/video unification library</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ asset(assets_path ~'/css/normalize.min.css')}}">
+</head>
+
+<body>
+<video id="video" width="640" height="360" style="max-width:100%;" preload="none" controls playsinline webkit-playsinline></video>
+
+<script src="{{ asset(assets_path ~'/js/hls.js')}}"></script>
+<script>
+    if (Hls.isSupported()) {
+        var video = document.getElementById('video');
+        var hls = new Hls();
+        // bind them together
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MEDIA_ATTACHED, function () {
+            console.log("video and hls.js are now bound together !");
+            hls.loadSource("//videos.wspot.com.br/fa1ffbbe-8c4a-4963-8280-2648a087c677/hls/campaign_dev_pos_1.m3u8");
+            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                console.log("manifest loaded, found " + data.levels.length + " quality level");
+            });
+        });
+    }
+</script>
+</body>
+</html>

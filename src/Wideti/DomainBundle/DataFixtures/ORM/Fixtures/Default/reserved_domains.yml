@@ -1,0 +1,72 @@
+Wideti\DomainBundle\Entity\ReservedDomain:
+  DomainHttp:
+    domain: http
+
+  DomainHttpwww:
+    domain: httpwww
+
+  DomainHttps:
+    domain: https
+
+  DomainHttpswww:
+    domain: httpswww
+
+  DomainWww:
+    domain: www
+
+  DomainFtp:
+    domain: ftp
+
+  DomainWspotSystem:
+    domain: wspot_system
+
+  DomainWSpot:
+    domain: wspot
+
+  DomainWideti:
+    domain: wideti
+
+  DomainHomolog:
+    domain: homolog
+
+  DomainTeste:
+    domain: teste
+
+  DomainTest:
+    domain: test
+
+  DomainPreProd:
+    domain: pre-prod
+
+  DomainProd:
+    domain: prod
+
+  DomainDemo:
+    domain: demo
+
+  DomainDev:
+    domain: dev
+
+  DomainSuporte:
+    domain: suporte
+
+  DomainSupport:
+    domain: support
+
+  DomainInternal:
+    domain: internal
+
+  DomainContratacao:
+    domain: contratacao
+
+  DomainPurchase:
+    domain: purchase
+
+  DomainPoc:
+    domain: poc
+
+  DomainApi:
+    domain: api
+
+  DomainAdmin:
+    domain: admin

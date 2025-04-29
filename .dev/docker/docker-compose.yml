@@ -1,0 +1,96 @@
+version: '3.9'
+
+services:
+  fluentd-audit:
+    container_name: fluentd-audit
+    platform: linux/x86_64 # Necessário para quem usa processador Apple (M1 e M2)
+    image: sa-saopaulo-1.ocir.io/grtenqmoni5x/wspot-fluentd-kafka-container-image:v0.0.1
+    ports:
+      - "24224:24224"
+    volumes:
+      - ./fluentd-audit/etc:/fluentd/etc
+
+  mongo:
+      container_name: mongo1
+      image: mongo:4.0.1
+      ports:
+        - "30021:27017"
+      restart: always
+
+  mysql:
+    container_name: mysql
+    platform: linux/x86_64 # Necessário para quem usa processador Apple (M1 e M2)
+    image: "percona:5.6.41-stretch"
+    command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./mysql:/etc/mysql/conf.d
+    environment:
+      MYSQL_ROOT_PASSWORD: a1b2c3
+
+  wspot:
+    platform: linux/x86_64 # Necessário para quem usa processador Apple (M1 e M2)
+    build:
+      context: wspot-dev
+      dockerfile: Dockerfile
+    container_name: wspot
+    env_file: ../../.env
+    environment: 
+      COMPOSER_PROCESS_TIMEOUT: 600
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./../../:/sites/wspot.com.br/:cached
+      # pasta web é montada em /tmp/wspot.com.br/web e seu conteudo é copiado para /sites/wspot.com.br/web através de um comando no Makefile
+      - ./../../web:/tmp/wspot.com.br/web:ro
+      - /sites/wspot.com.br/web
+      - /sites/wspot.com.br/vendor
+      - /sites/wspot.com.br/app/cache
+      - /sites/wspot.com.br/app/logs
+      - ./wspot-dev/fpm/confs_customizadas.ini:/etc/php/5.6/fpm/conf.d/confs_customizadas.ini
+      - ./wspot-dev/nginx/wspot.com.br:/etc/nginx/sites-enabled/wspot.com.br
+      - ./wspot-dev/nginx/certs:/etc/nginx/ssl/certs
+
+  api-mocks:
+    image: node:latest
+    container_name: api-mocks
+    working_dir: /home/node/app
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api-mocks/:/home/node/app
+    command: "make"
+
+  redis:
+    container_name: redis
+    image: redis:5.0.1-alpine
+    expose:
+     - 6379
+    ports:
+    - '6379:6379'
+
+  elasticsearch:
+    container_name: elasticsearch
+    platform: linux/x86_64 # Necessário para quem usa processador Apple (M1 e M2)
+    build:
+      context: elastic
+      dockerfile: Dockerfile
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    expose:
+      - 9200
+      - 9300
+    volumes:
+      - ./elastic:/usr/share/elasticsearch/config
+
+  rabbitmq:
+    container_name: rabbitmq
+    build:
+      context: rabbitmq
+      dockerfile: Dockerfile
+    ports:
+      - "5672:5672"
+      - "15672:15672"

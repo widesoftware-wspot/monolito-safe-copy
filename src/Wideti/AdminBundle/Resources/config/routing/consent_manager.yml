@@ -1,0 +1,27 @@
+consent_manager:
+  path: /
+  defaults: { _controller: wspot.admin.controller.consent_manager_controller:indexAction }
+
+create_consent:
+  path: /create
+  defaults: { _controller: wspot.admin.controller.consent_manager_controller:createConsent }
+  requirements: { methods: post }
+  methods: [POST]
+  options:
+      expose: true
+
+get_consent:
+  path: /get
+  defaults: { _controller: wspot.admin.controller.consent_manager_controller:getLastConsent }
+  requirements: { methods: get }
+  methods: [GET]
+  options:
+      expose: true
+
+get_conditions:
+  path: /get-conditions
+  defaults: { _controller: wspot.admin.controller.consent_manager_controller:getConditions }
+  requirements: { methods: get }
+  methods: [GET]
+  options:
+      expose: true

@@ -1,0 +1,28 @@
+Wideti\DomainBundle\Document\Guest\Guest:
+  Guest{1..1}:
+    mysql: <current()>
+    group: 'guest'
+    status: 1
+    locale: pt_br
+    documentType: CPF
+    registrationMacAddress: AA-BB-CC-11-22-33
+    setProperties:
+      - { name: "Visitante Teste", phone: "19988119316", document: "<numberBetween(11111111111, 22222222222)>", email: visitante@wspot.com.br }
+    returning: false
+    lastAccess: <dateTimeBetween('-1 days', 'now')>
+    password: "123456"
+    timezone: 'America/Sao_Paulo'
+
+  Guest{2..2}:
+    mysql: <current()>
+    group: 'employee'
+    status: 1
+    locale: pt_br
+    documentType: CPF
+    registrationMacAddress: DD-EE-FF-44-55-66
+    setProperties:
+      - { name: "Michael Douglas", phone: "19983211318", document: "<numberBetween(11111111111, 22222222222)>", email: michael.douglas@wideti.com.br }
+    returning: false
+    lastAccess: <dateTimeBetween('-1 days', 'now')>
+    password: "123456"
+    timezone: 'America/Sao_Paulo'

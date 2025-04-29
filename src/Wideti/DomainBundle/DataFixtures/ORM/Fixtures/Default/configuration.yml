@@ -1,0 +1,478 @@
+Wideti\DomainBundle\Entity\Configuration:
+  ConfigurationItem1:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "text"
+    label: "Nome da Empresa"
+    params: {"constraints":{"not_blank":{"message":"O preenchimento deste campo é obrigatório."}}}
+    key: "partner_name"
+    value: ""
+
+  ConfigurationItem2:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "internal"
+    label: "Diretório de uploads dentro do bucket"
+    params: null
+    key: "aws_folder_name"
+    value: "router"
+
+  ConfigurationItem3:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "choice"
+    label: "Modo"
+    params: {"choices": {"bridge":"bridge","router":"router"}}
+    key: "router_mode"
+    value: ""
+
+  ConfigurationItem4:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "text"
+    label: "URL de redirecionamento após login"
+    params: {"constraints":{"not_blank":{"message":"O preenchimento deste campo é obrigatório."}}}
+    key: "redirect_url"
+    value: ""
+
+  ConfigurationItem5:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "text"
+    label: "Remetente dos e-mails enviados para visitantes"
+    params: {"constraints":{"email":{"message":"Por favor, informe um e-mail válido.","checkMX":true},"not_blank":{"message":"O preenchimento deste campo é obrigatório."}}}
+    key: "from_email"
+    value: ""
+
+  ConfigurationItem6:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Multi-idiomas (PT/EN/ES)"
+    params: null
+    key: "translation"
+    value: true
+
+  ConfigurationItem7:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Solicitar opt-in dos visitantes"
+    params: null
+    key: "authorize_email"
+    value: false
+
+  ConfigurationItem8:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "text"
+    label: "Mensagem Português"
+    params: null
+    key: "content_authorize_email_pt"
+    value: "Quero receber novidades por email/sms"
+
+  ConfigurationItem9:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "text"
+    label: "Mensagem Inglês"
+    params: null
+    key: "content_authorize_email_en"
+    value: "I'd like to receive e-mail/sms content"
+
+  ConfigurationItem10:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "text"
+    label: "Mensagem Espanhol"
+    params: null
+    key: "content_authorize_email_es"
+    value: "Quiero recibir noticias por email/sms"
+
+  ConfigurationItem11:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "textarea"
+    label: "Termos de Uso em Inglês"
+    params: {"attr":{"class":"wysihtml5 span12","rows":15}}
+    key: "terms_en"
+    value: "By this \"TERMS OF USE\", signed by {{ partner_name }} and the USER of a portable computer&nbsp;(laptop) or mobile devices (Tablet, Smartphones, etc.), identified and qualified through registration, is aware through this term that should use the HotSpot system, with full responsibility of accesses performed on the Web.As a public place which offers free access to the internet, not be responsible, to&nbsp;{{ partner_name }}, for&nbsp;possible unwanted access and misuse by the USER of the system offered, occurring misuse of access or possibly occur any damage either moral or material, these will be the responsibility of the USER, thus exempting&nbsp;{{ partner_name }}, of any irregularity committed by him USER.USERS may not, be used in service now offered to stir, threaten, offend, shake the image, invade privacy or harm other members of the internet community and is strictly prohibited to use in sex site equipment and with any other benefit of obtaining illicit and immoral advantages of society for USER. {{ partner_name }}&nbsp;is free to answer for any possible irregularities committed by USERS.Thus, being aware and in accordance with the terms thereof, described above, firmo that makes a gift to their legal effects of the Law.<br>"
+
+  ConfigurationItem12:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "textarea"
+    label: "Termos de Uso em Português"
+    params: {"attr":{"class":"wysihtml5 span12","rows":15}}
+    key: "terms_pt_br"
+    value: "Pelo presente \"TERMO DE USO\", firmado entre {{ partner_name }} e pelo USUÁRIO de&nbsp;microcomputador portátil (Notebook) ou aparelhos móveis (Tablet, Celular, entre outros), identificado e qualificado através do cadastro, fica através do presente termo ciente de que deverá utilizar o sistema de HotSpot, com total responsabilidade dos acessos realizados na Rede.Por ser um local público que disponibiliza de forma gratuita o acesso a internet, não responsabilizar-se-á a&nbsp;{{ partner_name }}, por&nbsp;possíveis acessos indesejados bem como a má utilização por parte do USUÁRIO do sistema oferecido, ocorrendo o mal uso dos acessos ou eventualmente ocorrer quaisquer danos quer moral ou material, estes serão de inteira responsabilidade do USUÁRIO, eximindo dessa forma a&nbsp;{{ partner_name }}, de&nbsp;quaisquer irregularidade por ele USUÁRIO cometidas.Não poderão os USUÁRIOS, utilizar-se do serviço ora oferecido, para instigar, ameaçar, ofender, abalar a imagem, invadir a privacidade ou prejudicar outros membros da comunidade internet, bem como fica terminantemente proibido o uso em site de material de sexo, bem com quaisquer outros em benefício de se obter vantagens ilícitas e imorais em pról do USUÁRIO. Fica a&nbsp;{{ partner_name }}, isenta de&nbsp;responder por qualquer possível irregularidade cometidas por USUÁRIOS.Assim, estando ciente e de acordo com os termos deste, acima descritos, firmo o presente para que surta seus legais efeitos de Lei.<br>"
+
+  ConfigurationItem13:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "textarea"
+    label: "Termos de Uso em Espanhol"
+    params: {"attr":{"class":"wysihtml5 span12","rows":15}}
+    key: "terms_es"
+    value: "Por lo presente \"CONDICIONES DE USO\", firmado entre {{ partner_name }} y el USUARIO del micro portátil ordenador) y dispositivos móviles (Tablet, móvil, etc.), identificado y calificado por el registro, es a través de este término en cuenta que debe utilizar el sistema de HotSpot, con plena responsabilidad de los accesos realizados en network.Por ser un lugar público que prevé el acceso gratuito a internet, no se hace responsable de {{ partner_name }}, para su posible acceso no deseado y el mal uso por parte del USUARIO el sistema ofrecido, que se producen el mal uso de acceso o producirse cualquier daño, ya sea moral o material, posiblemente, será la responsabilidad del USUARIO, eximiendo de este modo {{ partner_name }}, de cualquier irregularidad por él cometidas. no podrán los USUARIOS, ser utilizado el servicio ofrece ahora, para instigar, amenazar, abusar, agite la imagen, invadir la privacidad o dañar a otros miembros de la comunidad de Internet y está estrictamente prohibido el uso en el sitio de materiales de sexo, así como cualquier otro para el beneficio de obtener pról USUARIO ilegal y ventajas inmorales. {{ partner_name }} está libre de la respuesta de los posibles irregularidades cometidas por USUÁRIOS. Assim, consciente y de acuerdo con los términos de, por encima, aight que esto asuste sus efectos jurídicos de Derecho.<br>"
+
+  ConfigurationItem14:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Formulário de Login"
+    params: null
+    key: "login_form"
+    value: true
+
+  ConfigurationItem15:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Formulário de Cadastro"
+    params: null
+    key: "signup_form"
+    value: true
+
+  ConfigurationItem16:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "checkbox"
+    label: "Facebook Login"
+    params: null
+    key: "facebook_login"
+    value: false
+
+  ConfigurationItem17:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "checkbox"
+    label: "Twitter Login"
+    params: null
+    key: "twitter_login"
+    value: false
+
+  ConfigurationItem18:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "text"
+    label: "Url que será compartilhada"
+    params: null
+    key: "facebook_share_url"
+    value: ""
+
+  ConfigurationItem19:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "checkbox"
+    label: "Compartilhar"
+    params: null
+    key: "facebook_share"
+    value: false
+
+  ConfigurationItem20:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "text"
+    label: "Mensagem do compartilhamento"
+    params: null
+    key: "facebook_share_message"
+    value: ""
+
+  ConfigurationItem21:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "text"
+    label: "Hashtag"
+    params: null
+    key: "facebook_share_hashtag"
+    value: ""
+
+  ConfigurationItem22:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "checkbox"
+    label: "Facebook Curtir"
+    params: null
+    key: "facebook_like"
+    value: false
+
+  ConfigurationItem23:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "text"
+    label: "Facebook page URL"
+    params: null
+    key: "facebook_like_url"
+    value: ""
+
+  ConfigurationItem24:
+    groupShortCode: "auto_login"
+    groupName: "Auto Login"
+    type: "checkbox"
+    label: "Auto-login"
+    params: null
+    key: "auto_login"
+    value: true
+
+  ConfigurationItem25:
+    groupShortCode: "auto_login"
+    groupName: "Auto Login"
+    type: "choice"
+    label: "Dias para login com 1-click"
+    params: {"choices": {"5":"5","15":"15","30":"30","180":"6 meses","365":"1 ano", "sempre":"sempre"}}
+    key: "auto_login_days"
+    value: 30
+
+  ConfigurationItem26:
+    groupShortCode: "auto_login"
+    groupName: "Auto Login"
+    type: "text"
+    label: "Texto de boas vindas do usuário (Português)"
+    params: {"attr":{"class":"placeholder_sms-en span11","rows":3,"maxlength":200}}
+    key: "auto_login_text_pt"
+    value: ""
+
+  ConfigurationItem27:
+    groupShortCode: "auto_login"
+    groupName: "Auto Login"
+    type: "text"
+    label: "Texto de boas vindas do usuário (Inglês)"
+    params: {"attr":{"class":"placeholder_sms-en span11","rows":3,"maxlength":200}}
+    key: "auto_login_text_en"
+    value: ""
+
+  ConfigurationItem28:
+    groupShortCode: "auto_login"
+    groupName: "Auto Login"
+    type: "text"
+    label: "Texto de boas vindas do usuário (Espanhol)"
+    params: {"attr":{"class":"placeholder_sms-en span11","rows":3,"maxlength":200}}
+    key: "auto_login_text_es"
+    value: ""
+
+  ConfigurationItem29:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "checkbox"
+    label: "Habilitar confirmação de cadastro"
+    params: null
+    key: "enable_confirmation"
+    value: false
+
+  ConfigurationItem30:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "checkbox"
+    label: "Confirmação via SMS"
+    params: null
+    key: "confirmation_sms"
+    value: false
+
+  ConfigurationItem31:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "textarea"
+    label: "Conteúdo Português"
+    params: {"attr":{"class":"placeholder_sms-pt span11","rows":3,"maxlength":160}}
+    key: "content_confirmation_sms_pt"
+    value: "Seja bem vindo a Mambo WiFi{ nome_da_empresa }. Este e o seu codigo de confirmacao: { codigo }"
+
+  ConfigurationItem32:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "textarea"
+    label: "Conteúdo Inglês"
+    params: {"attr":{"class":"placeholder_sms-en span11","rows":3,"maxlength":160}}
+    key: "content_confirmation_sms_en"
+    value: "Welcome to Mambo WiFi{ nome_da_empresa }. This is your confirmation code: { codigo }"
+
+  ConfigurationItem33:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "textarea"
+    label: "Conteúdo Espanhol"
+    params: {"attr":{"class":"placeholder_sms-es span11","rows":3,"maxlength":160}}
+    key: "content_confirmation_sms_es"
+    value: "Bienvenido a Mambo WiFi{ nome_da_empresa }. Este es su codigo de confirmacion: { codigo }"
+
+  ConfigurationItem34:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "checkbox"
+    label: "Confirmação via E-mail"
+    params: null
+    key: "confirmation_email"
+    value: false
+
+  ConfigurationItem35:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "text"
+    label: "Tempo limite para confirmação"
+    params: null
+    key: "confirmation_email_limit_time"
+    value: ""
+
+  ConfigurationItem36:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "text"
+    label: "Tempo de bloqueio"
+    params: null
+    key: "confirmation_email_block_time"
+    value: ""
+
+  ConfigurationItem37:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "textarea"
+    label: "Conteúdo Português"
+    params: {"attr":{"class":"placeholder_pt span11","rows":3}}
+    key: "content_confirmation_email_pt"
+    value: "Seja bem vindo a Mambo WiFi{ nome_da_empresa }. Para confirmar seu cadastro, clique no endereço a seguir: { url }"
+
+  ConfigurationItem38:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "textarea"
+    label: "Conteúdo Inglês"
+    params: {"attr":{"class":"placeholder_en span11","rows":3}}
+    key: "content_confirmation_email_en"
+    value: "Welcome to Mambo WiFi{ nome_da_empresa }. To confirm your registration, click on the following address: { url }"
+
+  ConfigurationItem39:
+    groupShortCode: "signup_confirmation"
+    groupName: "Confirmação de Cadastro"
+    type: "textarea"
+    label: "Conteúdo Espanhol"
+    params: {"attr":{"class":"placeholder_es span11","rows":3}}
+    key: "content_confirmation_email_es"
+    value: "Bienvenido a Mambo WiFi{ nome_da_empresa }. Para confirmar su registro, haga clic en la siguiente dirección: { url }"
+
+  ConfigurationItem40:
+    groupShortCode: "sms"
+    groupName: "SMS de Bem Vindo"
+    type: "checkbox"
+    label: "Habilitar SMS"
+    params: null
+    key: "enable_welcome_sms"
+    value: false
+
+  ConfigurationItem41:
+    groupShortCode: "sms"
+    groupName: "SMS de Bem Vindo"
+    type: "internal"
+    label: "Conteúdo SMS Português"
+    params: null
+    key: "content_welcome_sms_pt"
+    value: "Seja bem vindo a Mambo WiFi. Seguem seus dados para futuros acessos, usuario: {{ user }} e senha: {{ password }}"
+
+  ConfigurationItem42:
+    groupShortCode: "sms"
+    groupName: "SMS de Bem Vindo"
+    type: "internal"
+    label: "Conteúdo SMS Inglês"
+    params: null
+    key: "content_welcome_sms_en"
+    value: "Welcome to Mambo WiFi. Following your data for future accesses, username: {{ user }} and password: {{ password }}"
+
+  ConfigurationItem43:
+    groupShortCode: "sms"
+    groupName: "SMS de Bem Vindo"
+    type: "internal"
+    label: "Conteúdo SMS Espanhol"
+    params:
+    key: "content_welcome_sms_es"
+    value: "Bienvenido a Mambo WiFi. Siga sus datos de acceso en el futuro, del usuario: {{ user }} y Contraseña: {{ password }}"
+
+  ConfigurationItem44:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Solicitar leitura dos termos de uso"
+    params: null
+    key: "terms_required"
+    value: false
+
+  ConfigurationItem45:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Dispositivo único por cadastro"
+    params: null
+    key: "unique_device_per_mac"
+    value: "0"
+
+  ConfigurationItem46:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Habilitar e-mail de boas-vindas?"
+    params: null
+    key: "enable_welcome_email"
+    value: ""
+
+  ConfigurationItem47:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "checkbox"
+    label: "Google Login"
+    params: null
+    key: "google_login"
+    value: false
+
+  ConfigurationItem48:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Opt-in dos visitantes obrigatorio"
+    params: null
+    key: "request_optin"
+    value: false
+
+  ConfigurationItem49:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "textarea"
+    label: "Chamada para os Termos de Uso em Português"
+    params: {"attr":{"class":"placeholder_call_terms_pt span12","rows":2}}
+    key: "call_to_terms_pt"
+    value: "Ao se cadastrar você está de acordo com os { use_terms }."
+
+  ConfigurationItem50:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "textarea"
+    label: "Chamada para os Termos de Uso em Inglês"
+    params: {"attr":{"class":"placeholder_call_terms_en span12","rows":2}}
+    key: "call_to_terms_en"
+    value: "Signing up you are agreeing with our { use_terms }."
+
+  ConfigurationItem51:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "textarea"
+    label: "Chamada para os Termos de Uso em Espanhol"
+    params: {"attr":{"class":"placeholder_call_terms_es span12","rows":2}}
+    key: "call_to_terms_es"
+    value: "Al registrarse usted está de acuerdo con el { use_terms }."
+
+  ConfigurationItem52:
+    groupShortCode: "default"
+    groupName: "Default"
+    type: "checkbox"
+    label: "Habilitar restrição de idade para acesso ao WiFi"
+    params: {"attr":{"class":"placeholder_call_terms_es span12","rows":2}}
+    key: "age_restriction"
+    value: false
+
+  ConfigurationItem53:
+    groupShortCode: "auth_social"
+    groupName: "Autenticação Redes Sociais"
+    type: "checkbox"
+    label: "LinkedIn Login"
+    params: null
+    key: "linkedin_login"
+    value: false
+

@@ -1,0 +1,187 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/lightbox/lightbox.css')}}" rel="stylesheet" />
+    <style>
+        .popover.fade.bottom.in {
+            width: 300px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    {% set route = app.request.attributes.get('_route') %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Integração RD Station'} %}
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>
+                        {% if 'api_rd_station_new' in route %}Novo{% else %}Editar{% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="widget-body">
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+                <div class="row-fluid">
+                    <div class="span12 alert alert-yellow">
+                        {% if consent.hasError %}
+                            <p>Ao criar esta integração para seus visitantes você está de acordo com os items do seu termo de consentimento.</p>
+                        {% else %}
+                            <p>Ao criar esta integração para seus visitantes, você está de acordo com as finalidades de uso abaixo:</p>
+                            <ul>
+                                {% for condition in consent.conditions %}
+                                    <li>{{ condition.description }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row-fluid">
+                    <div class="span6">
+                        <div class="widget row-fluid">
+                            <div class="widget-body">
+                                <div class="row">
+                                    <div class="span12">
+                                        {{ form_row(form.title) }}
+
+                                        <div class="control-group">
+                                            <label class="control-label required" for="wspot_api_rd_station_token" aria-required="true" style="position:relative;top: 10px;">API Token:</label>
+                                            <span class="tooltip-wrapper" style="position:relative;top: 10px;">
+                                                <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Você pode encontrar a API Token dentro do seu painel da RD Station."></i>
+                                            </span>
+                                            <div class="controls" style="position:relative;bottom: 10px;">{{ form_widget(form.token) }}</div>
+                                        </div>
+
+                                        <div class="control-group">
+                                            <label class="control-label required" for="wspot_api_rd_station_token" aria-required="true" style="position:relative;bottom: 10px;">Habilitar Integração?</label>
+                                            <span class="tooltip-wrapper" style="position:relative;bottom: 10px;">
+                                                <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Quando ativado, todo visitante que for cadastrado no Mambo WiFi a partir dos Pontos de acesso vinculados à este grupo, serão também cadastrados (convertido) na conta do RD Station pertencente ao Token informado no campo acima."></i>
+                                            </span>
+                                            <div class="controls" style="position:relative;bottom: 20px;">{{ form_widget(form.enableAutoIntegration) }}</div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="span6">
+                        <div class="widget row-fluid">
+                            <div class="widget-head">
+                                <h4 class="heading"> Pontos de Acesso</h4>
+                            </div>
+                            <div class="widget-body">
+                                <div class="row">
+                                    <p style="margin-bottom: 20px; margin-left: 20px;">Aqui você pode escolher em quais pontos de acesso a integração com a RD Station estará ativa.</p>
+                                    <p style="margin-bottom: 20px; margin-left: 20px; color: red;">Importante: Não é permitido cadastrar mais de um registro/integração com o mesmo Ponto de Acesso / Todos Pontos de Acesso.</p>
+
+                                    {{ form_row(form.inAccessPoints) }}
+
+                                    <div class="access-points-block control-group">
+                                        {{ form_row(form.accessPoints) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{ form_errors(form) }}
+                    </div>
+                </div>
+
+                <div class="row-fluid">
+                    <div class="span6">
+                        <div class="widget row-fluid">
+                            <div class="widget-head">
+                                <h4 class="heading"> Envio em massa</h4>
+                            </div>
+                            <div class="widget-body">
+                                <div class="row">
+                                    <p style="margin-bottom: 20px; margin-left: 20px;">
+                                        Quer enviar todos os seus visitantes para sua conta na RD Station? Basta clicar no botão abaixo, que estará
+                                        disponível caso essa seja a primeira vez que realiza essa ação.
+                                        <br><br>
+                                        <b>Lembramos que só é permitido realizaro envio em massa apenas na primeira vez.</b>
+                                        <br><br>
+                                        {% if (manualIntegration) %}
+                                            <a class="btn btn-success" disabled="disabled"><i></i>Enviar todos visitantes para RD Station</a>
+                                        {% else %}
+                                            <a href="{{ path('api_rd_station_manual_integration', { 'token': entity.token }) }}" class="btn btn-success"><i></i>Enviar todos visitantes para RD Station</a>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% if error_msg is defined %}
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <div class="alert-danger" style="padding: 1em; border-radius: 9px;">
+                                {{ error_msg }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="separator line bottom"></div>
+
+                <div class="form-actions right">
+                    <a href="{{ path('api_rd_station') }}">
+                        <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                            Cancelar
+                        </button>
+                    </a>
+                    {{ form_widget(form.submit) }}
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script type="text/javascript">
+        function controlSelectAccessPoints()
+        {
+            var inAccessPoints  = $("#wspot_api_rd_station_inAccessPoints").val();
+            var accessPoints    = $(".access-points-block");
+
+            if (inAccessPoints != 1) {
+                accessPoints.addClass('hide');
+                return;
+            }
+            accessPoints.removeClass('hide');
+            dojo.query("#wspot_api_rd_station_accessPoints").chosen({batch_select:true});
+        }
+
+        jQuery('document').ready(function(){
+            controlSelectAccessPoints();
+
+            $('#wspot_api_rd_station_inAccessPoints').on('change', function(e){
+                controlSelectAccessPoints();
+            });
+        });
+    </script>
+{% endblock %}

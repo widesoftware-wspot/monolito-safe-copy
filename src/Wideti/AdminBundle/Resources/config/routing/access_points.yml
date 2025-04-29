@@ -1,0 +1,67 @@
+access_points:
+    path:  /{page}
+    defaults: { _controller: wspot.admin.controller.access_points:indexAction, page:1 }
+    requirements:
+        page: \d+
+
+access_points_new:
+    path:  /new/{group}
+    defaults: { _controller: wspot.admin.controller.access_points:newAction, group: '' }
+
+access_points_limit_reached:
+    path:  /limit
+    defaults: { _controller: wspot.admin.controller.access_points:limitReachedAction }
+
+access_points_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.access_points:editAction }
+
+access_points_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.access_points:deleteAction }
+    requirements: { methods: post|delete|get }
+
+access_points_manual:
+    path:  /manual-configuracao
+    defaults: { _controller: wspot.admin.controller.access_points:manualAction }
+    requirements: { methods: get }
+
+access_points_monitoring:
+    path: /{id}/monitoring
+    defaults: { _controller: wspot.admin.controller.access_points:monitoringAction }
+
+access_points_sites_blocking:
+    path: /{id}/sites-blocking
+    defaults: { _controller: wspot.admin.controller.access_points:sitesBlockingAction }
+
+access_points_import:
+    path:  /import
+    defaults: { _controller: wspot.admin.controller.access_points:importAction }
+    options:
+        expose: true
+
+client_download_mikrotik_files_accesspoints:
+    path:  /mikrotik/download/configfiles/{domain}
+    defaults: { _controller: wspot.panel.controler.client:downloadMikrotikFilesAction }
+
+client_download_unifi_files_accesspoints:
+    path:  /unifi/download/configfiles/{domain}
+    defaults: { _controller: wspot.panel.controler.client:downloadUnifiFilesAction }
+
+access_points_unifi_add:
+    path:  /unifi/add
+    defaults: { _controller: wspot.admin.controller.access_points:unifiAdd }
+    options:
+        expose: true
+
+access_points_unifi_update:
+    path:  /unifi/update
+    defaults: { _controller: wspot.admin.controller.access_points:unifiUpdate }
+    options:
+        expose: true
+
+access_points_unifi_validate:
+    path:  /unifi/validate
+    defaults: { _controller: wspot.admin.controller.access_points:unifiValidate }
+    options:
+        expose: true

@@ -1,0 +1,40 @@
+/web/.htaccess
+/web/config.php
+/web/bundles/
+/web/cache/*
+/app/bootstrap.php.cache
+/app/cache/*
+/app/config/parameters.yml
+/app/logs/*
+!app/cache/.gitkeep
+!app/logs/.gitkeep
+/build/
+/vendor/
+/bin/
+app/config/config_dev.yml
+app/config/parameters_backup.yml
+.env
+
+# vscode
+.vscode
+
+# PhpStorm
+.idea
+.travis.yml
+
+#netbeans
+nbproject
+
+*.php~
+
+Vagrantfile
+.vagrant/
+
+/wspot/
+
+.DS_Store
+
+*php_cs*
+
+# Dev Certificates
+# .dev/docker/wspot-dev/nginx/certs/cert.*

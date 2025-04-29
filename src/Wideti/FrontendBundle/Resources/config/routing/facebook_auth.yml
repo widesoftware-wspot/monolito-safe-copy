@@ -1,0 +1,23 @@
+facebook_auth_index:
+    path:  /facebook-login/{_locale}
+    defaults: { _controller: wspot.frontend.controller.facebook:indexAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+facebook_login:
+    path:  /facebook-complete-login/{_locale}
+    defaults: { _controller: wspot.frontend.controller.facebook:facebookCompleteLogin, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+facebook_auth_callback:
+    path:  /facebook-callback/{_locale}
+    defaults: { _controller: wspot.frontend.controller.facebook:callbackDefaultAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+publish_actions_facebook:
+    path:  /publish-actions/{_locale}
+    defaults: { _controller: wspot.frontend.controller.facebook:publishActions, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es

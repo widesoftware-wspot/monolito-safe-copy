@@ -1,0 +1,59 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">Sua exportação está pronta <a style="color: {{ whiteLabel.panelColor }}; font-weight: bold; text-decoration: none;">{{ user.nome }}!</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;font-size:25px;line-height:30px;color:#909090;font-family:Arial;">
+                            O relatório que você solicitou está pronto!<br>
+                            Ele ficará disponível até <strong>{{ expireDate|date('d/m/Y') }}</strong><br><br>
+                            Acesse o painel administrativo do seu {{ whiteLabel.companyName }}, entre no relatório correspondente e faça o download.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+ 
+{% endblock %}
+
+{% block footer %}
+    {% if not client.isWhiteLabel %}
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Se precisar de ajuda, por favor entre em contato conosco pelo email <a href="mailto:suporte@mambowifi.com" style="text-decoration: none; color: {{ whiteLabel.panelColor }}">suporte@mambowifi.com</a></td>
+            </tr>
+            </tbody>
+        </table>
+    {%  endif %}
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Teremos o maior prazer em ajud&aacute;-lo.</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Equipe {{ whiteLabel.companyName }}</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

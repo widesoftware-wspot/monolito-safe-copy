@@ -1,0 +1,9 @@
+fixtures
+purging
+README.md
+composer.json
+composer.lock
+changelog
+Dockerfile
+./docker
+npm-debug.log

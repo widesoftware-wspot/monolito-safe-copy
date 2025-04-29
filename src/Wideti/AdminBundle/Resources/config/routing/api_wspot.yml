@@ -1,0 +1,22 @@
+api_token:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.api_wspot:indexAction }
+
+api_token_new:
+    path:  /new
+    defaults: { _controller: wspot.admin.controller.api_wspot:newAction }
+    options:
+        expose: true
+
+api_token_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.api_wspot:editAction }
+    options:
+        expose: true
+
+api_token_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.api_wspot:deleteAction }
+    requirements: { methods: post|delete }
+    options:
+        expose: true

@@ -1,0 +1,282 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block dataTitle %}
+    Pontos de Acesso
+{% endblock %}
+
+{% block table %}
+    <div class="row-fluid">
+        <div class="heading-buttons">
+            <b>Dados Atualizados em: {{ "now"|date_modify("-1 day")|date("d/m/Y") }} </b>
+        </div>
+        <div class="span12 warning">
+            <p><b>Observações:</b></p>
+            <p>- Caso não tenha selecionado período de data, serão exibidos registros dos <b>últimos 30 dias</b>.</p>
+            <p>- Este relatório não contabiliza os visitantes pertencentes ao Grupo <b>Funcionários</b>.</p>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading glyphicons charts">
+                        <i></i>
+                        Visitas <span>Baseado em pontos de acesso</span>
+                    </h4>
+                </div>
+                <div class="widget-body">
+                    <div id="chart_donut_visits" style="height: 250px; text-align: center;">
+                        <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading glyphicons charts">
+                        <i></i>
+                        Cadastros <span>Baseado em pontos de acesso</span>
+                    </h4>
+                </div>
+                <div class="widget-body">
+                    <div id="chart_donut_records" style="height: 250px; text-align: center;">
+                        <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading">Pontos de acesso com mais visitas <span>Top 10</span></h4>
+                </div>
+                <div class="widget-body">
+                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Ponto de acesso</th>
+                            <th>Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for access in result %}
+                            <tr class="gradeX">
+                                <td>{{ access.key }}</td>
+                                <td>{{ access.totalVisits.value }} visitas</td>
+                            </tr>
+                        {% else %}
+                            <tr class="gradeX">
+                                <td colspan="6">Nenhum registro de visita neste período.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading">Pontos de acesso com mais cadastros <span>Top 10</span></h4>
+                </div>
+                <div class="widget-body">
+                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Ponto de acesso</th>
+                            <th>Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for data in result %}
+                            <tr class="gradeX">
+                                <td>{{ data.key }}</td>
+                                <td>{{ data.totalRegistrations.value }} cadastros</td>
+                            </tr>
+                        {% else %}
+                            <tr class="gradeX">
+                                <td colspan="6">Nenhum cadastro de visitante neste período.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if result | length > 0 %}
+        <div class="row-fluid">
+            <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+                <form name="export" method="get" action="{{ path('admin_export_access_points') }}" class="form-inline" novalidate="novalidate" target="_blank">
+                    <div class="modal-body">
+                        <input type="hidden" id="filters" name="filters" value="{{ path('admin_export_access_points', app.request.query.all) }}"/>
+                        <input type="hidden" id="fileFormat" name="fileFormat" value="" />
+                        <h3>Exportação de relatório</h3>
+                        <div class='span6'>
+                            <div class='control-group'>
+                                <label class='control-label required' for='endDate' aria-required='true'>Exportar no formato: </label>
+                                <div class='controls'>
+                                    <select name="charset" id="charset">
+                                        <option value="windows">Windows/Mac</option>
+                                        <option value="linux">Linux</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a id="close" data-handler="1" class="btn btn-default">Cancelar</a>
+                        <button id="export" type="submit" class="btn btn-primary">Exportar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    {% embed "AdminBundle::filesReportEmbed.html.twig" %}
+        {% block exportar %}
+            {% if result | length > 0 %}
+                <div class="loadReportFiles">
+                <h3>Download de Relatórios  &nbsp &nbsp<a data-toggle="tooltip" data-placement="top" data-original-title="Atualizar Listagem" id="refresh-report-list" class="glyphicons refresh" ><i></i></a></h3>
+                <div class="btn-group btn-block">
+                    <div class="leadcontainer">
+                        <button class="btn dropdown-lead btn-primary center">Exportar</button>
+                    </div>
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span> </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li class="center"><a class="file" data-format="Csv" data-placement="right" href="#">CSV</a></li>
+                        <li class="center"><a class="file" data-format="Xlsx" data-placement="right" href="#">EXCEL</a></li>
+                    </ul>
+                </div>
+            </div>
+                <div id="export-generating-alert"></div>
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.tooltip.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.pie2.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.resize.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.categories.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.time.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/demo/charts.helper.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot.report.files.js')}}"></script>
+
+    <script>
+        jQuery(document).ready(function(){
+            /**
+             * Ajax Load Report Files on S3
+             * Function created to view the generated reports that are available for download in S3.
+             */
+            loadReportFiles('{{ reportType }}');
+
+            $('#refresh-report-list').click(function(){
+                loadReportFiles('{{ reportType }}');
+            });
+
+            $('a.file').click(function() {
+                var format = $(this).data('format');
+
+                bootbox
+                    .dialog($('#modal'))
+                    .on('shown.bs.modal', function() {
+                        $('.bootbox.modal.fade.in').removeAttr('style');
+                        $('#modal').show();
+                        $('#fileFormat').val(format);
+                    })
+                ;
+            });
+
+            $('#close').click(function() {
+                bootbox.hideAll();
+                $('meta[http-equiv=refresh]').attr('content', '0');
+            });
+
+            $('#export').click(function() {
+                $('#export-generating-alert').addClass('alert alert-primary export-class');
+                $('#export-generating-alert').html('<center>Aguarde! Estamos processando</center>' +
+                                                 '<center>sua(s) solicitação(ões).</center>');
+                $('#listExport').html('');
+                bootbox.hideAll();
+
+                window.setTimeout(function(){
+                    $('#export-generating-alert').hide();
+                }, 5000);
+            });
+        });
+
+        dojo.ready(function() {
+            dojo.query("#dateFromToFilter_access_point").chosen({batch_select:true});
+        });
+
+        // daterange
+        if ($('#dateFromToFilter_date_from').length && $('#dateFromToFilter_date_to').length)
+        {
+            $( "#dateFromToFilter_date_from" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                changeMonth: false,
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#dateFromToFilter_date_to" ).datepicker( "option", "minDate", selectedDate );
+                }
+            });
+
+            $( "#dateFromToFilter_date_to" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                changeMonth: false,
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                numberOfMonths: 1
+            }).datepicker( "option", "minDate", $('#dateFromToFilter_date_to').val() );
+        }
+
+        charts.initVisitsPerApChart(
+            {{ jsonChart | json_encode | raw }}
+        );
+
+        charts.initRecordsPerApChart(
+            {{ jsonChart | json_encode | raw }}
+        );
+    </script>
+{% endblock %}

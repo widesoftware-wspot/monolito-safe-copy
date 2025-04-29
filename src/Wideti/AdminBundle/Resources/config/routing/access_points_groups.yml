@@ -1,0 +1,44 @@
+access_points_groups:
+    path:  /{page}
+    defaults: { _controller: wspot.admin.controller.access_points_groups:indexAction, page:1}
+    options:
+      expose: true
+    requirements:
+      page: \d+
+
+access_points_groups_new:
+    path:  /new
+    defaults: { _controller: wspot.admin.controller.access_points_groups:newAction }
+
+access_points_groups_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.access_points_groups:editAction }
+    options:
+      expose: true
+
+access_points_groups_show:
+    path:  /{id}/show/{page}
+    defaults: { _controller: wspot.admin.controller.access_points_groups:showAction, page: 1 }
+    options:
+      expose: true
+
+access_points_groups_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.access_points_groups:deleteAction }
+    requirements: { methods: post|delete }
+    options:
+      expose: true
+
+access_points_groups_change_parent:
+    path:  /change-parent
+    defaults: { _controller: wspot.admin.controller.access_points_groups:changeParentAction }
+    requirements: { methods: PUT }
+    options:
+      expose: true
+
+access_points_set_is_master:
+    path:  /set-is-master
+    defaults: { _controller: wspot.admin.controller.access_points_groups:setIsMasterAction }
+    requirements: { methods: PUT }
+    options:
+      expose: true

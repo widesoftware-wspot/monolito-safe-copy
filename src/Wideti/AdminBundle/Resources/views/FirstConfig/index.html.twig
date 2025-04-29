@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="ie lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="ie lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="ie lt-ie9"> <![endif]-->
+<!--[if gt IE 8]> <html class="ie gt-ie8"> <![endif]-->
+<!--[if !IE]><!--><html><!-- <![endif]-->
+<head>
+    <title>Mambo Wifi</title>
+
+    <link href="{{ asset('bundles/admin/frontend/js/first-config/node_modules/fullpage.js/dist/jquery.fullpage.css')}}" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <script src="https://use.fontawesome.com/7a860b23cb.js"></script>
+    <style>
+        .w-center{
+            text-align: center;
+        }
+
+        h1.w-title{
+            color: #ec213a;
+            font-weight: bold;
+        }
+
+        h4.w-title{
+            color: #ec213a;
+            font-weight: lighter;
+        }
+
+        .w-scroll-content {
+            overflow-y: auto;
+            height: 20em;
+        }
+
+        .w-page-description {
+            line-height: 1.6em;
+        }
+
+        .w-row-space {
+            margin-top: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="fullpage">
+
+        <div class="section">
+            <!-- Slide 1 | Tela de bem vindos -->
+            <div class="slide">
+                <div class="container">
+                    <div class="col-md-8 col-md-offset-2 w-center">
+                        <h1 class="w-center w-title">Bem vindo ao {{ whiteLabel.companyName }}</h1>
+                        <p class="text-muted w-page-description">Antes de começar a usar o sistema você precisa fazer uma configuração inicial para que tudo funcione do seu jeito!</p>
+                        <br />
+                        <a href="#configs/1" class="btn btn-success btn-small">Vamos lá!</a>
+                    </div>
+                </div>
+            </div>
+            <!-- ## FIM Slide 1 | Tela de bem vindos -->
+
+            <!-- Slide 2 | Configuração, seleção de campos para cadastro -->
+            <div class="slide">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <h1 class="w-title w-center">Passo 1</h1>
+                            <h4 class="text-muted w-center w-page-description">
+                                Aqui você vai escolher quais são os campos de cadastro que seus visitantes precisarão preencher para acessar sua rede. Estes são, também, os dados que o {{ whiteLabel.companyName }} vai armazenar para você! Não se preocupe, você poderá alterar isso depois, se quiser!
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="row w-row-space">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="w-center text-muted">Campos disponíveis</h4>
+                                </div>
+                                <div class="w-scroll-content" id="template-fields">
+                                    <!-- Component load -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="w-center text-muted">Selecionados</h4>
+                                </div>
+                                <div class="w-scroll-content" id="selected-fields">
+                                    <!-- Component load -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row w-row-space">
+                        <div class="col-md-12">
+                            <div class="text-center" role="group" aria-label="...">
+                                <a href="#configs/0" type="button" class="btn btn-warning"><i class="fa fa-arrow-left" aria-hidden="true"></i> Voltar</a>
+                                <a href="#configs/1" type="button" class="btn btn-default"><span class="text-muted">1/3</span></a>
+                                <a href="#configs/2" type="button" class="btn btn-success">Próximo <i class="fa fa-arrow-right" aria-hidden="true"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ## FIM Slide 2 | Configuração, seleção de campos para cadastro -->
+
+            <!-- Slide 3 | Configuração, seleção do campo de login -->
+            <div class="slide">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <h1 class="w-title w-center">Passo 2</h1>
+                            <h4 class="text-muted w-center w-page-description">
+                                Agora você precisa definir qual será o campo de autenticação do seu visitante. Isso significa que esse dado será o “login” dele. Essa escolha é muito importante, pois você NÃO conseguirá mudar depois que qualquer visitante fizer acesso.
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="row w-row-space">
+                        <div class="col-md-6 col-md-offset-3">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="w-center text-muted">Campos disponíveis para login</h4>
+                                </div>
+                                <div class="w-scroll-content" id="login-select-wrapper">
+                                    <!-- Component load -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row w-row-space">
+                        <div class="col-md-12">
+                            <div class="text-center" role="group" aria-label="...">
+                                <a href="#configs/1" type="button" class="btn btn-warning"><i class="fa fa-arrow-left" aria-hidden="true"></i> Voltar</a>
+                                <a href="#configs/2" type="button" class="btn btn-default"><span class="text-muted">2/3</span></a>
+                                <a href="#configs/3" type="button" class="btn btn-success">Próximo <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ##FIM Slide 3 | Configuração, seleção do campo de login -->
+
+            <!-- Slide 4 | Confirmação dos campos selecionados -->
+            <div class="slide">
+                <div class="container">
+
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <div id="alert-wrapper"></div>
+                            <h1 class="w-title w-center">Confirmação</h1>
+                            <h4 class="text-muted w-center w-page-description">
+                                Abaixo segue as opções selecionadas, confirme as opções, lembrando que após finalizar você conseguirá editar essas configurações através do painel administrativo.
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="row w-row-space">
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4">
+                            <h4 class="w-center w-title">Campos para cadastro</h4>
+                            <div class="w-scroll-content" id="confirm-signup-table-wrapper">
+                                <!-- Component load -->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="w-center w-title">Campo para autenticação</h4>
+                            <div id="confirm-signin-table-wrapper">
+                                <!-- Component load -->
+                            </div>
+                        </div>
+                        <div class="col-md-2"></div>
+                    </div>
+
+                    <div class="row w-row-space">
+                        <div class="col-md-12">
+                            <div id="finish-navigation-wrapper">
+                                <!-- Component load -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--##FIM Slide 4 | Confirmação dos campos selecionados -->
+
+        </div>
+    </div>
+
+    <script src="{{ asset('bundles/admin/frontend/js/first-config/node_modules/jquery/dist/jquery.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/first-config/node_modules/fullpage.js/dist/jquery.fullpage.js')}}"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/first-config/dist/bundle.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/jquery-ui.js') }}"></script>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/system/jquery-ui/css/smoothness/jquery-ui-1.9.2.custom.min.css')}}" rel="stylesheet" />
+
+    <script>
+
+        $(document).ready(function() {
+            $('#fullpage').fullpage({
+                controlArrows: false,
+                anchors:['configs'],
+                keyboardScrolling: false
+            });
+        });
+
+
+        $(document).click(function(){
+            $('#selected-fields table tbody#fields-cells').sortable({
+                stop: function(event, ui){
+                    document.querySelector('.field-row').click();
+                }
+            });
+        });
+
+        window.captiveType = "{{ captiveType|e('js') }}";
+
+
+    </script>
+</body>
+</html>

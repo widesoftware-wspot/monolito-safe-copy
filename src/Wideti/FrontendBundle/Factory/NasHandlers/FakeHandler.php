@@ -1,0 +1,74 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: eder
+ * Date: 06/06/18
+ * Time: 11:34
+ */
+
+namespace Wideti\FrontendBundle\Factory\NasHandlers;
+
+use Wideti\DomainBundle\Exception\NasWrongParametersException;
+use Wideti\DomainBundle\Helpers\NasHelper;
+use Wideti\FrontendBundle\Factory\Nas;
+use Wideti\FrontendBundle\Factory\NasHandlers\Dto\NasFormPostParameter;
+use Wideti\FrontendBundle\Factory\NasHandlers\ParameterValidator\ParameterValidator;
+
+class FakeHandler implements NasParameterHandler
+{
+    private $requestParameters;
+    private $vendorName;
+    private $fields;
+
+    /**
+     * @param array $requestParameters
+     * @param string $vendorName
+     * @param ParameterValidator $validator
+     * @throws NasWrongParametersException
+     */
+    public function __construct(array $requestParameters, $vendorName, ParameterValidator $validator)
+    {
+        $this->requestParameters = $requestParameters;
+        $this->vendorName = strtolower($vendorName);
+        $this->fields = $validator->validate();
+    }
+
+    /**
+     * @return Nas
+     */
+    public function buildNas()
+    {
+        $guestMac = NasHelper::makeMac($this->requestParameters[$this->fields->getGuestMacField()]);
+        $apMac = NasHelper::makeIdentity($this->requestParameters[$this->fields->getApMacField()]);
+
+        $builder = new NasBuilder();
+        return $builder->withAccessPointMacAddress($apMac)
+            ->withGuestDeviceMacAddress($guestMac)
+            ->withVendorName($this->vendorName)
+            ->withExtraParams($this->getExtraParams())
+            ->withVendorRawParameters($this->requestParameters)
+            ->withNasUrlPost($this->getNasUrlPost())
+            ->build();
+    }
+
+    /**
+     * @return NasFormPostParameter
+     */
+    public function getNasUrlPost()
+    {
+        return new NasFormPostParameter(
+            'http',
+            $this->requestParameters[$this->fields->getNasUrlPostField()],
+            null,
+            null
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getExtraParams()
+    {
+        return [];
+    }
+}

@@ -1,0 +1,83 @@
+
+MEMORY=6G
+
+help:
+	@echo "Informe uma option"
+
+start-env:
+	docker-compose -f docker/docker-compose-legacy.yml up -d
+
+start-env-rebuild:
+	docker-compose -f docker/docker-compose-legacy.yml up -d --build
+
+stop-env:
+	docker-compose -f docker/docker-compose-legacy.yml down
+
+send-guest-to-rabbit:
+	docker exec -it wspot php5.6 src/Wideti/DomainBundle/Cli/Maintenence/ReplayGuestsToRabbitMQ.php
+
+generate-accounting:
+	docker exec -it wspot php5.6 src/Wideti/DomainBundle/Cli/Development/PopulateElasticAccountings.php
+
+assets-install:
+	docker exec -it wspot php5.6 app/console assets:install --symlink web/
+	docker exec -it wspot npm --prefix src/Wideti/AdminBundle/Resources/public/frontend/js/first-config link typescript
+	docker exec -it wspot npm --prefix src/Wideti/AdminBundle/Resources/public/frontend/js/first-config install jquery
+
+clear-cache-dev:
+	docker exec -it wspot php5.6 app/console cache:clear --env=dev
+	docker exec -it wspot chmod -R 777 app/cache
+	docker exec -it wspot chmod -R 777 app/logs
+
+clear-cache-prod:
+	docker exec -it wspot php5.6 app/console cache:clear --env=prod
+	docker exec -it wspot chmod -R 777 app/cache
+	docker exec -it wspot chmod -R 777 app/logs
+
+composer-update:
+	docker exec -it wspot php5.6 -d memory_limit=$(MEMORY) composer.phar update
+
+composer-install:
+	docker exec -it wspot php5.6 -d memory_limit=$(MEMORY) composer.phar update
+
+generate-update-sql:
+	docker exec -it wspot php5.6 app/console doctrine:schema:update --dump-sql
+
+ambiente:
+	-docker exec -it wspot cp -a /tmp/wspot.com.br/web/ /sites/wspot.com.br/
+	docker exec -it wspot php5.6 -d memory_limit=$(MEMORY) composer.phar update
+	docker exec -it wspot php5.6 -d memory_limit=$(MEMORY) composer.phar install
+	-docker exec -it wspot php5.6 app/console doctrine:database:drop --force --env=dev
+	docker exec -it wspot php5.6 app/console doctrine:database:create --env=dev
+	docker exec -it wspot php5.6 app/console doctrine:schema:update --force --env=dev
+	docker exec -it wspot php5.6 app/console doctrine:fixtures:load --fixtures src/Wideti/DomainBundle/DataFixtures/ORM/Test --no-interaction --env=dev
+	docker exec -it wspot php5.6 app/console doctrine:mongodb:fixtures:load --fixtures src/Wideti/DomainBundle/DataFixtures/ODM/Test --no-interaction --env=dev
+	docker exec -it wspot php5.6 app/console assets:install --symlink web/ --env=dev	
+	
+	docker exec -it wspot php5.6 app/console cache:clear --env=dev
+	docker exec -it wspot chmod -R 777 app/cache
+	docker exec -it wspot chmod -R 777 app/logs
+
+	docker exec -it wspot npm --prefix src/Wideti/AdminBundle/Resources/public/frontend/js/first-config link typescript
+	docker exec -it wspot npm --prefix src/Wideti/AdminBundle/Resources/public/frontend/js/first-config install jquery
+	
+	# Remove all created indices from elasticsearch
+	echo "Removendo índices para criar os novos..."
+	@docker exec -t wspot curl -X DELETE http://elasticsearch:9200/*
+	# Remove all created templates from elasticsearch
+	@docker exec -t wspot curl -X DELETE http://elasticsearch:9200/_template/*
+	# Remove all created mappings from elasticsearch
+	@docker exec -t wspot curl -X DELETE http://elasticsearch:9200/_template/*
+	# Create templates for indices in elasticseaarch
+	@docker exec -t wspot curl -X PUT -H "Content-Type: application/json" --data "@.dev/data/elasticsearch/indices_templates/wspot_acct.json" http://elasticsearch:9200/_template/wspot_accts
+	@docker exec -t wspot curl -X PUT -H "Content-Type: application/json" --data "@.dev/data/elasticsearch/indices_templates/radius_policy.json" http://elasticsearch:9200/_template/radius_policy
+	@docker exec -t wspot curl -X PUT -H "Content-Type: application/json" --data "@.dev/data/elasticsearch/indices_templates/acct_ip_historic.json" http://elasticsearch:9200/_template/acct_ip_historic
+	@docker exec -t wspot curl -X PUT -H 'Content-Type: application/json' --data "@.dev/data/elasticsearch/indices_templates/report_visits_per_ap.json" http://elasticsearch:9200/_template/report_visits_registrations_per_ap
+	@docker exec -t wspot curl -X PUT -H 'Content-Type: application/json' --data "@.dev/data/elasticsearch/indices_templates/report_download_upload.json" http://elasticsearch:9200/_template/report_download_upload
+	@docker exec -t wspot curl -X PUT -H 'Content-Type: application/json' --data "@.dev/data/elasticsearch/indices_templates/report_visits_per_hour.json" http://elasticsearch:9200/_template/report_visits_registrations_per_hour
+	@docker exec -t wspot curl -X PUT -H 'Content-Type: application/json' --data "@.dev/data/elasticsearch/indices_templates/report_guests.json" http://elasticsearch:9200/_template/report_guests
+	@docker exec -t wspot curl -X PUT -H 'Content-Type: application/json' --data "@.dev/data/elasticsearch/indices_templates/erp_changelog.json" http://elasticsearch:9200/_template/erp_changelog
+
+
+wspot_logs:
+	docker exec wspot cat app/logs/dev.log

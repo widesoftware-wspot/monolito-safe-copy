@@ -1,0 +1,2521 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% set radius_server_one = '168.138.229.153' %}
+{% set radius_server_two = '168.138.226.107' %}
+{% set radius_server_secret = 'wide$123' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/fancybox/jquery.fancybox-1.3.4.css')}}" rel="stylesheet" />
+    <style>
+        .form-horizontal .nested-form > .control-group > .controls {
+            margin-left: 0px;
+        }
+
+        .btn-controller-validate {
+            width: 130px; 
+            height: 40px;
+            align-content: center;
+            color: rgb(255, 255, 255);
+            background-color: rgb(0, 190, 0);
+        }
+
+        .session-validate-unifi {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #unifi-controller-message {
+            background-color: none;
+            text-align: center;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 0 0 0 0 !important;
+            color: rgb(255,255,255);
+        }
+
+        .unifi-controller-error {
+            background-color: #9f2323 !important;
+        }
+
+        .unifi-controller-warning {
+            background: #dbb450 !important;
+        }
+
+        .unifi-controller-success {
+            background-color: rgb(0, 190, 0) !important;
+        }
+
+        .btn-controller-validate:hover {
+            color: rgb(255, 255, 255);
+            background-color: rgb(0, 190, 0);
+        }
+
+        .label-unifi-controller {
+            float: left;
+            margin-top: 5px;
+        }
+
+        div.unifi-propria {
+            margin-bottom: 16px;
+        }
+
+        div.unifi-choice {
+            margin-bottom: 16px;
+        }
+
+        div.unifi-propria label.error {
+            position: relative;
+            top: 2px;
+        }
+
+        .unifi-selecao-controller-cad {
+            width: 75%;
+        }
+
+        @media (max-width: 1440px) {
+            .unifi-selecao-controller-cad {
+                width: 75%;
+            }
+        }
+
+        @media (max-width: 1080px) {
+            .unifi-selecao-controller-cad {
+                width: 70%;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .unifi-selecao-controller-cad {
+                width: 60%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Pontos de acesso'} %}
+
+<div class="innerLR">
+    <div class="widget widget-tabs border-bottom-none">
+        <div class="widget-head">
+            <ul>
+                <li class="active">
+                    <a class="glyphicons edit" data-toggle="tab"><i></i>
+                    {% if app.request.attributes.get('_route') == 'access_points_new' %}
+                        Novo
+                    {% else %}
+                        Editar
+                    {% endif %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="widget-body">
+            {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+            {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+            <div class="widget-body">
+                <div class="row-fluid">
+                    <div class="span6">
+                        {{ form_row(form.status) }}
+                        {{ form_row(form.friendlyName) }}
+                        {% if form.deskbeeDevice is defined %}
+                            {{ form_row(form.deskbeeDevice) }}
+                        {% endif %}
+                        {{ form_row(form.vendor) }}
+
+                        <!-- Inicio - Botões para Cadastro da Controller Unifi -->
+                        <div class="control-group divUnifiControllerBTN hide">
+                            <label class="control-label" for="unifi-selecao-controller-cad"  id="unifi-label-selecao-controller">Controller</label>
+                            <div class="controls">
+                                {% if controllerUnifi  %}
+                                    {% if controllerUnifi.is_mambo == '1'  %}
+                                        <input type="text" class="unifi-selecao-controller-cad" name="unifi-selecao-controller-cad" id="unifi-selecao-controller-cad" value="Controller Mambo" disabled />
+                                    {% else %}
+                                        <input type="text" class="unifi-selecao-controller-cad" name="unifi-selecao-controller-cad" id="unifi-selecao-controller-cad" value="Controller Própria" disabled />
+                                    {% endif %}
+                                    <a id="lnkCtrlUnifi" class="btn btn-primary" style="height: 20px;" href="#unifi-controller-cadastro">Editar</a>
+                                {% else %}
+                                    <a id="lnkCtrlUnifi" class="btn btn-primary" href="#unifi-controller-cadastro">Cadastrar</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- Fim - Botões para Cadastro da Controller Unifi -->
+
+                        <div id="ap_extra_config" class="control-group" style="display: none;">
+                            <label class="control-label required" for="wspot_access_point_extraConfig" aria-required="false" id="wspot_label_ap_extra_config">Chave de Criptografia</label>
+                            <div class="controls">
+                                <input type="text" id="wspot_access_point_extraConfig" name="wspot_access_point[extraConfig]" required="required" class="span10" autocomplete="off" aria-required="false" value="{{ extraConfig }}" onchange="this.value=this.value.replaceAll(' ', '')">
+                            </div>
+                        </div>
+                        {{ form_row(form.identifier) }}
+                        {%  if client.isWhiteLabel == false %}
+                        <p style="position:relative; left: 53%; bottom: 38px;" class="help"><a href="https://suporte.mambowifi.com/support/solutions/articles/16000069119-descobrir-mac-dos-equipamentos-" target="_blank">Como descubro essa informação?</a></p>
+                        {%  endif  %}
+                        <div id="isValidate"></div>
+                    </div>
+
+                    <div class="span6">
+                        {% if group is null %}
+                            {{ form_row(form.group) }}
+                        {% endif %}
+                        {{ form_row(form.local) }}
+                        {% if form.shouldGetCoords is defined %}
+                            {{ form_label(form.shouldGetCoords, null, { 'label_attr': {'class': 'control-label tip'} }) }}
+                            <i class="icon-large icon-question-sign" tabindex="0" data-placement="right" role="button" data-toggle="popover" data-trigger="focus" data-content="Se marcado como sim, as coordenadas serão obtidas a partir do campo local, que precisa conter um endereço válido e preciso. Essas coordenadas serão usadas para renderizar o ponto de acesso no mapa de acessos" style="position: relative;top: 6px;"></i>
+                            <div class="controls" style="position: relative;bottom: 20px;">
+                                {{ form_widget(form.shouldGetCoords) }}
+                                {{ form_errors(form.shouldGetCoords) }}
+                            </div>
+                        {% endif %}
+                        {{ form_row(form.template) }}
+                        {% if form.publicIp is defined %}
+                            {{ form_row(form.publicIp) }}
+                        {% endif %}
+
+                        <div class="control-group  ">
+                            <label class="control-label required" for="wspot_access_point_vendor" aria-required="true">Fuso horário</label>
+                            <div class="controls ">
+                                <select class="span10" name="timezone" id="wspot_access_point_timezone">
+                                    <optgroup label="Brasil">
+                                        {% for brTimezone in brazilianTimezones %}
+                                            {% if newAction == false %}
+                                                {% if form.vars.value.timezone == brTimezone.zoneName %}
+                                                    <option value="{{ form.vars.value.timezone }}" selected="selected">{{ form.vars.value.timezone }}</option>
+                                                {% else %}
+                                                    <option value="{{ brTimezone.zoneName }}" >{{ brTimezone.zoneName }}</option>
+                                                {% endif %}
+                                            {% else %}
+                                                {% if brTimezone.zoneName == 'America/Sao_Paulo'%}
+                                                    <option value="{{ brTimezone.zoneName }}" selected="selected">{{ brTimezone.zoneName }}</option>
+                                                {% else %}
+                                                    <option value="{{ brTimezone.zoneName }}" >{{ brTimezone.zoneName }}</option>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </optgroup>
+                                    <optgroup label="Mundial">
+                                        {% for timezone in timezonesExceptBrazilian %}
+                                            {% if newAction == false %}
+                                                {% if timezone.zoneName == form.vars.value.timezone %}
+                                                    <option value="{{ timezone.zoneName }}" selected="selected">{{ timezone.zoneName }}</option>
+                                                {% else %}
+                                                    <option value="{{ timezone.zoneName }}">{{ timezone.zoneName }}</option>
+                                                {% endif %}
+                                            {% else %}
+                                                <option value="{{ timezone.zoneName }}">{{ timezone.zoneName }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <div class="controls">
+                                <a id="manual" class="btn btn-primary manual hide">
+                                    Configurar equipamento
+                                </a>
+                            </div>
+                        </div>
+
+                        <div style="display: none; height: 100px !important; overflow:auto !important;">
+                            <div id="aerohive" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Extreme - Aerohive - ExtremeCloud IQ</b> clicando <a target="_blank" id="compass" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 9</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Login URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/aerohive" : "https://#{client.domain}.mambowifi.com/aerohive" }}</li>
+                                            <li><strong>Use simple URL address:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }} </li>
+                                            <li><strong>Use simple URL address:</strong> {{ client.whiteLabel ? "https://#{client.domain}/aerohive" : "https://#{client.domain}.mambowifi.com/aerohive" }}</li>
+                                        </ul>
+                                        <br>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 18</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>IP Address/Domain name:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Shared Secret e Confirm Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        <br>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 19</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>IP Address/Domain name:</strong> {{ radius_server_two }}</li>
+                                            <li><strong>Shared Secret e Confirm Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="aruba" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Aruba</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000089522-configuracão-do-wspot-em-equipamentos-aruba-até-versões-6-4">aqui</a>.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 5</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>/aruba</li>
+                                            <li>{{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 6</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>IP Address:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Shared Key e Retype key:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>IP Address:</strong> {{ radius_server_two }}</li>
+                                            <li><strong>Shared Key e Retype key:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="aruba_v2" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Aruba v2</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000089522-configuracão-do-wspot-em-equipamentos-aruba-até-versões-6-4">aqui</a>.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 5</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>/aruba_v2</li>
+                                            <li>{{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 6</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>IP Address:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Shared Key e Retype key:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>IP Address:</strong> {{ radius_server_two }}</li>
+                                            <li><strong>Shared Key e Retype key:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="cambium" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Cambium</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000082305-configuracão-cambium-com-cnmaestro">aqui</a>.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 9</h5>
+                                        {% endif %}
+                                        <ol>
+                                            Authentication Server
+                                            <li>Host {{ radius_server_one }} Secret {{ radius_server_secret }}</li>
+                                            <li>Host {{ radius_server_two }}Secret {{ radius_server_secret }}</li>
+                                        </ol>
+                                        <ol>
+                                            Accounting Server
+                                            <li>Host {{ radius_server_one }} Secret {{ radius_server_secret }}</li>
+                                            <li>Host {{ radius_server_two }}Secret {{ radius_server_secret }}</li>
+                                        </ol>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 12</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>External page URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/cambium" : "https://#{client.domain}.mambowifi.com/cambium" }} </li>
+                                            <li><strong>Redirect URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="cisco" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="tab-content">
+                                        <div style="max-height: 600px; height: 100%;" class="tab-pane active">
+                                            <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                                {% if client.isWhiteLabel == false %}
+                                                <p>Confira o passo a passo para configuração do seu equipamento <b>Cisco - WLC</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000069464-configuracão-do-wspot-em-equipamentos-cisco-wlc-">aqui</a>.</p>
+                                                <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                                <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="row">
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 3 - Servidores RADIUS de autenticação e accounting</h5>
+                                                {% endif %}
+
+                                                Servidor primário
+                                                <ul>
+                                                    <li><strong>Server IP Address:</strong> {{ radius_server_one }}</li>
+                                                    <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                    <li><strong>Confirm Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                </ul>
+
+                                                Servidor secundário
+                                                <ul>
+                                                    <li><strong>Server IP Address:</strong> {{ radius_server_two }}</li>
+                                                    <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                    <li><strong>Confirm Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                </ul>
+
+                                                <br>
+
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 4 - Página de Autenticação</h5>
+                                                {% endif %}
+                                                <ul>
+                                                    <li><strong>Redirect URL after login:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                                    <li><strong>External Webauth URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/cisco" : "https://#{client.domain}.mambowifi.com/cisco" }}</li>
+                                                </ul>
+
+                                                <br>
+
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 5</h5>
+                                                {% endif %}
+                                                <ol>
+                                                    <li>{{ radius_server_one }}</li>
+                                                    <li>{{ radius_server_one }}</li>
+                                                </ol>
+                                                <ol start="9">
+                                                    <li>{{ radius_server_two }}</li>
+                                                    <li>{{ radius_server_two }}</li>
+                                                </ol>
+
+                                                <br>
+
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 7</h5>
+                                                {% endif %}
+                                                <ul>
+                                                    <li>{{ radius_server_one }}</li>
+                                                    <li>{{ radius_server_two }}</li>
+                                                </ul>
+                                                <br>
+
+                                                <h5>Regras - ACL</h5>
+
+                                                Regra #1
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: Any</li>
+                                                    <li>Destination: Any</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: 53 (DNS)</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Outbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #2
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: Any</li>
+                                                    <li>Destination: Any</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: 53 (DNS)</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Inbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #3
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: Any</li>
+                                                    <li>Destination: 54.232.255.112/255.255.255.255</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Outbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #4
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: 54.232.255.112/255.255.255.255</li>
+                                                    <li>Destination: Any</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Inbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #5
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: Any</li>
+                                                    <li>Destination: 52.92.72.0/255.255.255.0</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Outbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #6
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: 52.92.72.0/255.255.255.0</li>
+                                                    <li>Destination: Any</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Inbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #7
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: Any</li>
+                                                    <li>Destination: 52.92.73.0/255.255.255.0</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Outbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #8
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: 52.92.73.0/255.255.255.0</li>
+                                                    <li>Destination: Any</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Inbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #9
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: Any</li>
+                                                    <li>Destination: 52.92.74.0/255.255.255.0</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Outbound</li>
+                                                </ul>
+
+                                                <br>
+
+                                                Regra #10
+                                                <ul>
+                                                    <li>Action: Permit</li>
+                                                    <li>Source: 52.92.74.0/255.255.255.0</li>
+                                                    <li>Destination: Ant</li>
+                                                    <li>Protocol: Any</li>
+                                                    <li>Source Port: Any</li>
+                                                    <li>Dest Port: Any</li>
+                                                    <li>DSCP: Any</li>
+                                                    <li>Direction: Inbound</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="mikrotik" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+
+
+                                        <p><b><a href="https://suporte.mambowifi.com/a/solutions/articles/16000086490-atualizac%C3%A3o-do-mikrotik-router-os" target="_blank">Antes da configuração, atualize seu Mikrotik!</a></b></p>
+
+                                        <div class="tabsbar">
+                                            <ul>
+                                                <li class="tabActive1 active"><a href="#tab1"
+                                                       data-toggle="tab"><span
+                                                                style="text-align: center; color: black">Configuração Via Script</span></a>
+                                                </li>
+                                                <li class="tabActive2"><a id="tabActive2" href="#tab2"
+                                                                                         data-toggle="tab"><span style="text-align: center; color: black">Configuração Manual</span></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content">
+                                        <div style="max-height: 600px; height: 100%;" class="tab-pane active" id="tab1">
+                                            <div class="row">
+                                                <div class="control-group">
+
+                                                    <p style="background-color: #fff3cd;border-left: 5px solid #ffa000;color: #856404;padding: 15px;border-radius: 5px;align-items: center;">
+                                                        <strong style="color: #dc3545">ATENÇÂO! <i style="font-size: 18px;margin-right: 10px;">&#9888;</i></strong><br/>
+                                                        {% if client.isWhiteLabel %}
+                                                            O procedimento abaixo apagará todas as configurações atuais do seu Mikrotik e aplicará as configurações padrões do Hotspot.
+                                                        {% else %}
+                                                            O procedimento abaixo apagará todas as configurações atuais do seu Mikrotik e aplicará as configurações padrões do Mambo WiFi.
+                                                        {% endif %}
+                                                    <br/>
+                                                        <span>Caso não puder apagar alguma de suas definições, sugerimos utilizar o procedimento de <a style="cursor: pointer" id="idConfigManual">configuração manual</a>.</span>
+                                                    </p>
+                                                    <div><br/>
+                                                        <strong>Pré-requisitos:</strong>
+                                                        <p>&#9989; Certifique-se de que o cabo de rede com acesso à internet está conectado à porta ether2 do Mikrotik.</p>
+                                                        <p>&#9989; Verifique se a conexão com a internet está liberada e sem restrições (sem autenticação ou bloqueios).</p>
+                                                        <p>&#9989; Utilize o Winbox para acessar o Mikrotik.</p>
+                                                        <p>&#9989; Apagar Files e Configurações Default</p>
+                                                        <p>&#9989; Desativar o Modo Legacy</p>
+                                                    </div><br/>
+
+
+                                                    <label>
+                                                        Nome da Rede (SSID)
+                                                        <i class="icon-large icon-question-sign" tabindex="0" data-placement="right"
+                                                           role="button" data-toggle="popover" data-trigger="focus"
+                                                           data-content="Nome da rede WiFi. Caso seu equipamento não possua
+                                                    interface Wireless (Ex. RB750), deixe esse campo em branco. (Limite máximo de 32 caracteres)">
+                                                        </i>
+                                                    </label>
+
+                                                    <input type="text" name="ssid" id="mikrotik_ssid" maxlength="32">
+                                                    <div id="ssid_validate"></div>
+                                                </div>
+
+                                                <div class="control-group">
+                                                    <label>
+                                                        Rede:
+                                                        <i class="icon-large icon-question-sign" tabindex="0" data-placement="right"
+                                                           role="button" data-toggle="popover" data-trigger="focus"
+                                                           data-content="Rede que será aplicada para os visitante do hotspot.">
+                                                        </i>
+                                                    </label>
+
+                                                    10.97.
+                                                    <select name="mikrotik_network" id="mikrotik_network" style="width: 50px;">
+                                                        {% for i in range(0, 240, 16) %}
+                                                            <option value="{{ i }}">{{ i }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    0/20
+                                                </div>
+
+                                                <div class="control-group">
+                                                    <label>
+                                                        Senha de acesso administrativo do equipamento (Não é a senha do WiFi)
+                                                        <i class="icon-large icon-question-sign" tabindex="0" data-placement="right"
+                                                           role="button" data-toggle="popover" data-trigger="focus"
+                                                           data-content="Defina uma senha de acesso ao equipamento.
+                                                   Sugerimos a utilização de senha forte que consiste em caracteres
+                                                   alfanuméricos e especiais. Essa senha deverá ser utilizada em seus
+                                                   próximos acessos ao painel administrativo do Mikrotik, via Winbox ou
+                                                   Webfig. Caso a esqueça, um novo acesso só será possível redefinindo
+                                                   o equipamento com as definições de fábrica.">
+                                                        </i>
+                                                    </label>
+
+                                                    <input type="text" name="admin_access_password" id="mikrotik_admin_access_password" required="required">
+                                                    <label id="admin_access_password-error" class="error" for="admin_access_password">Campo obrigatório</label>
+                                                </div>
+
+                                                <div class="control-group">
+                                                    <button id="mikrotik_generate" type="button" class="btn btn-primary" data-dismiss="modal">Gerar Script</button>
+                                                    <br><br>
+                                                    <div class="script-box">
+                                                        <h3>
+                                                            Passo 1
+                                                        </h3>
+                                                        <label>Copie as linhas abaixo e cole no terminal do seu Mikrotik:</label>
+                                                        <textarea name="mikrotik_script" id="mikrotik_script_1" style="width: 600px; height: 200px;"></textarea>
+                                                        <h3>
+                                                            Passo 2
+                                                        </h3>
+                                                        <label>Agora copie a linha abaixo e cole novamente no seu terminal</label>
+                                                        <textarea name="mikrotik_script" id="mikrotik_script_2" style="width: 600px; height: 200px;"></textarea><br>
+                                                        <img src="{{ asset(assets_path ~'/images/imagem-manual-mikrotik.png') }}" style="margin-top: 10px; padding: 5px 0; border: solid 1px #000000"><br>
+                                                        <span>Se você visualizar uma mensagem diferente da imagem acima, clique no link abaixo para solucionar possíveis problemas de conexão.<br>
+                                                    <a href="https://suporte.mambowifi.com/a/solutions/articles/16000088127-soluc%C3%B5es-de-problema-falha-no-script">CLIQUE AQUI</a>
+                                                </span>
+                                                        <h3>
+                                                            Passo 3
+                                                        </h3>
+                                                        <label>Se a mensagem mostrada no seu Mikrotik estiver com o status "Finished" copie as linhas abaixo e cole no terminal do Mikrotik:</label>
+                                                        <textarea name="mikrotik_script" id="mikrotik_script_3" style="width: 600px; height: 200px;"></textarea>
+
+                                                    </div>
+                                                    <br>
+                                                    {% if client.isWhiteLabel %}
+                                                        <span> Seu roteador irá atualizar e reiniciar, aguarde cerca de 5 minutos para utilizar.
+                                                       Pronto! Seu roteador já está atualizado e pronto para ser usado com o Hotspot!
+                                                       Ah! Se por um acaso tiver alguma dúvida ou dificuldade, contate nosso suporte
+                                                       através do canto direito de sua tela, na etiqueta "Suporte e Ajuda" e descreva o
+                                                       problema que está ocorrendo! </span>
+                                                    {% else %}
+                                                        <span> Seu roteador irá atualizar e reiniciar, aguarde cerca de 5 minutos para utilizar.
+                                                       Pronto! Seu roteador já está atualizado e pronto para ser usado com o Mambo WiFi!
+                                                       Ah! Se por um acaso tiver alguma dúvida ou dificuldade, contate nosso suporte
+                                                       através do canto direito de sua tela, na etiqueta "Suporte e Ajuda" e descreva o
+                                                       problema que está ocorrendo! </span>
+                                                    {% endif %}
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane row-fluid" id="tab2">
+
+                                            <p>Utilize o tutorial em nossa base de conhecimento para realizar a configuração manual de seu equipamento Mikrotik. <a target="_blank" id="mikrotik" class="slide" title="Manual de configuração"> Clique aqui para acessar.</a></p>
+                                            <p>Para realizar o passo 26 do tutorial, <a href="{{ path('client_download_mikrotik_files_accesspoints', { 'domain': client.domain  }) }}"  target="_blank" title=""> clique aqui para baixar os arquivos necessários.</a></p>
+
+                                            <h5>Passo 24</h5>
+                                            <ul>
+                                                <li><strong>Address:</strong> {{ radius_server_one }}</li>
+                                                <li><strong>Secret:</strong> {{ radius_server_secret }}</li>
+                                            </ul>
+                                            <h5>Passo 25</h5>
+                                            <ul>
+                                                <li><strong>Address:</strong> {{ radius_server_two }}</li>
+                                                <li><strong>Secret:</strong> {{ radius_server_secret }}</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="intelbras" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        <p>
+                                            Para iniciar a configuração do seu quipamento Intelbras clique <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000122719-configurac%C3%A3o-ap-intelbras">aqui.</a>
+                                        </p>
+                                        <p>
+                                            No <b>passo 3</b> utlize as informações abaixo:
+                                        </p>
+                                        <table style="border: 1px solid #e0e0e0;">
+                                            <tr>
+                                               <td colspan="2" style="text-align: center; padding: 0.5em; background-color: #e0e0e0">Captive portal</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #414141; text-align: center;border: 1px solid #e0e0e0;">Endereço</td>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;">{{ (client.whiteLabel) ? "https://#{client.domain}/intelbras" : "https://#{client.domain}.mambowifi.com/intelbras" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align: center; padding: 0.5em; background-color: #e0e0e0">Radius</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #414141; text-align: center;border: 1px solid #e0e0e0;">IP primário</td>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;">{{ radius_server_one }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #414141; text-align: center;border: 1px solid #e0e0e0;">IP secundário</td>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;">{{ radius_server_two }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #414141; text-align: center;border: 1px solid #e0e0e0;">Senha/Secret</td>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;">{{ radius_server_secret }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align: center; padding: 0.5em; background-color: #e0e0e0">Walled garden - adicionar</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;" colspan="2">{{ radius_server_one }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;" colspan="2">{{ radius_server_two }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;" colspan="2">{{ client.whiteLabel ? client.domain : "#{client.domain}.mambowifi.com" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;" colspan="2">uploads.mambowifi.com</td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="intelbras_future" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        <p>
+                                            Para iniciar a configuração do seu quipamento Intelbras Future clique <a target="_blank" 
+                                            href="https://suporte.mambowifi.com/support/solutions/articles/16000194231">aqui.</a>
+                                        </p>
+                                        <p>
+                                            No <b>passo 3</b> utlize as informações abaixo:
+                                        </p>
+                                        <table style="border: 1px solid #e0e0e0;">
+                                            <tr>
+                                               <td colspan="2" style="text-align: center; padding: 0.5em; background-color: #e0e0e0">Captive portal</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #414141; text-align: center;border: 1px solid #e0e0e0;">Endereço</td>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;">{{ (client.whiteLabel) ? "https://#{client.domain}/intelbras_future" : "https://#{client.domain}.mambowifi.com/intelbras_future" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align: center; padding: 0.5em; background-color: #e0e0e0">Radius</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #414141; text-align: center;border: 1px solid #e0e0e0;">IP primário</td>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;">{{ radius_server_one }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #414141; text-align: center;border: 1px solid #e0e0e0;">IP secundário</td>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;">{{ radius_server_two }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #414141; text-align: center;border: 1px solid #e0e0e0;">Senha/Secret</td>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;">{{ radius_server_secret }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="text-align: center; padding: 0.5em; background-color: #e0e0e0">Walled garden - adicionar</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;" colspan="2">{{ radius_server_one }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;" colspan="2">{{ radius_server_two }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;" colspan="2">{{ client.whiteLabel ? client.domain : "#{client.domain}.mambowifi.com" }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 0.5em; color: #5d5d5d; text-align: center;border: 1px solid #e0e0e0;" colspan="2">uploads.mambowifi.com</td>
+                                            </tr>
+                                        </table>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="pfsense" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        <div class="tabsbar">
+                                            <ul>
+                                                <li class="tabActive3 active"><a href="#tab3"
+                                                                                 data-toggle="tab"><span
+                                                                style="text-align: center; color: black">Configuração Via Script</span></a>
+                                                </li>
+                                                <li class="tabActive4"><a id="tabActive4" href="#tab4"
+                                                                          data-toggle="tab"><span style="text-align: center; color: black">Configuração Manual</span></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-content">
+                                        <div style="max-height: 600px; height: 100%;" class="tab-pane active" id="tab3">
+                                            <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                                {% if client.isWhiteLabel == false %}
+                                                <p>Confira o passo a passo para configuração do seu equipamento <b>pfSense</b> clicando <a target="_blank" id="compass" class="slide">aqui</a>.</p>
+                                                <p>Informe o valor no campo abaixo e gere o script para realizar a configuração.</p>
+                                                <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="row">
+                                                <label>IP do PfSense</label>
+                                                <div class="control">
+                                                    <input type="text" name="iplan" id="pfsense_ip">
+                                                    <p>Insira no formato correto de IP, ex: 192.168.0.1</p>
+                                                </div>
+
+                                                <label>Versão do PfSense</label>
+                                                <div class="control">
+                                                    <select id="pfsenseVersionSelect">
+                                                        <option value=">=2.4.4" selected>2.4.4</option>
+                                                        <option value="<2.4.4">Anterior à 2.4.4</option>
+                                                    </select>
+                                                </div>
+                                                <br />
+                                                <div class="control-group" style="margin-top: 30px;">
+                                                    <a target="_blank" href="#"  onclick="pfsensedownload()" class="btn btn-primary" data-dismiss="modal">Gerar Script</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div style="max-height: 600px; height: 100%;" class="tab-pane" id="tab4">
+                                            <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 3</h5>
+                                                {% endif %}
+                                                <ul>
+                                                    <li><strong>Hostname or IP address:</strong> {{ radius_server_one }}</li>
+                                                    <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                    <li><strong>Hostname or IP address:</strong> {{ radius_server_two }}</li>
+                                                    <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="cisco-meraki-cloud" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Cisco Meraki Cloud</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000100143-cisco-meraki-cloud-configuracão">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 3</h5>
+                                        {% endif %}
+                                        <ol>
+                                            RADIUS for splash page
+                                            <li><strong>{{ radius_server_two }}</strong>  Secret <strong>{{ radius_server_secret }}</strong></li>
+                                            <li><strong>{{ radius_server_one }}</strong>  Secret <strong>{{ radius_server_secret }}</strong></li>
+                                        </ol>
+                                        <ul>
+                                            RADIUS accounting
+                                            <li>RADIUS Accounting is enabled</li>
+                                            <li style="list-style: none;">
+                                                <ol>
+                                                    <li><strong>{{ radius_server_two }}</strong>  Secret <strong>{{ radius_server_secret }}</strong></li>
+                                                    <li><strong>{{ radius_server_one }}</strong>  Secret <strong>{{ radius_server_secret }}</strong></li>
+                                                </ol>
+                                            </li>
+                                        </ul>
+
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 5</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>Or provide a URL where users will be redirected: <b>{{ client.whiteLabel ? "https://#{client.domain}/cisco_meraki_cloud" : "https://#{client.domain}.mambowifi.com/cisco_meraki_cloud" }}</b></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="watchguard" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>WatchGuard</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 3</h5>
+                                        {% endif %}
+                                        <ol>
+                                            RADIUS for splash page
+                                            <li><strong>{{ radius_server_two }}</strong>  Secret <strong>{{ radius_server_secret }}</strong></li>
+                                            <li><strong>{{ radius_server_one }}</strong>  Secret <strong>{{ radius_server_secret }}</strong></li>
+                                        </ol>
+                                        <ul>
+                                            RADIUS accounting
+                                            <li>RADIUS Accounting is enabled</li>
+                                            <li style="list-style: none;">
+                                                <ol>
+                                                    <li><strong>{{ radius_server_two }}</strong>  Secret <strong>{{ radius_server_secret }}</strong></li>
+                                                    <li><strong>{{ radius_server_one }}</strong>  Secret <strong>{{ radius_server_secret }}</strong></li>
+                                                </ol>
+                                            </li>
+                                        </ul>
+
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 5</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>Or provide a URL where users will be redirected: <b>{{ client.whiteLabel ? "https://#{client.domain}/watchguard" : "https://#{client.domain}.mambowifi.com/watchguard" }}</b></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="ruijie" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Ruijie Networks</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000192572-integra%C3%A7%C3%A3o-mambo-wifi-com-ruijie-reyee-cloud">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Configuração de Equipamento</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                            <li><b>External Web Portal URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/ruijie</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/ruijie</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            <li><b>Redirect URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/302</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/302</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="enterasys" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Extreme - Enterasys - IdentiFi</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000089523-configuracão-do-wspot-equipamentos-enterasys-extreme">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 1</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>Redirection URL: {{ client.whiteLabel ? "https://#{client.domain}/enterasys" : "https://#{client.domain}.mambowifi.com/enterasys" }} </li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 2</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Hostname/IP:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Layer 3,4 IP/subnet:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Layer 3,4 IP/subnet:</strong> {{ radius_server_two }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 10</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Send Successful Login To:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="motorola" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false%}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Extreme - Motorola - WiNG</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000077914-configuracão-do-wspot-na-controladora-motorola-rfs">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Login URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/motorola" : "https://#{client.domain}.mambowifi.com/motorola" }}</li>
+                                            <li><strong>Welcome URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 9</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>Host {{ radius_server_one }} - IP Address</li>
+                                            <li><strong>Secret:</strong> {{ radius_server_secret }}</li>
+                                            <li>Host {{ radius_server_two }} - IP Address</li>
+                                            <li><strong>Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 10</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>Host {{ radius_server_one }} - IP Address</li>
+                                            <li><strong>Secret:</strong> {{ radius_server_secret }}</li>
+                                            <li>Host {{ radius_server_two }} - IP Address</li>
+                                            <li><strong>Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 12</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>{{ radius_server_one }}</li>
+                                            <li>{{ radius_server_two }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="fortinet" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false%}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Fortinet</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000078401-configuracão-do-wspot-em-equipamentos-fortigate">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 1</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Primary Server IP/Name:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Primary Server Secret:</strong> {{ radius_server_secret }}</li>
+                                            <li><strong>Secundary Server IP/Name:</strong> {{ radius_server_two }}</li>
+                                            <li><strong>Secundary Server Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 3</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Authentication Portal:</strong> {{ client.whiteLabel ? "https://#{client.domain}/fortinet" : "https://#{client.domain}.mambowifi.com/fortinet" }}</li>
+                                            <li><strong>Redirect:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ruckus-controlador" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="tab-content">
+                                        <div style="max-height: 600px; height: 100%;" class="tab-pane active">
+                                            <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                                {% if client.isWhiteLabel == false %}
+                                                <p>Confira o passo a passo para configuração do seu equipamento <b>Ruckus com Controlador</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000069480-ruckus-controlador-zone-director-configuracão-do-wspot">aqui</a>.</p>
+                                                <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                                <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="row">
+                                                <h5>Passo 1 - Configurando os servidores Radius</h5>
+
+                                                <strong>AAA Servers</strong>
+
+                                                <div class="span12">
+
+                                                    <div class="row">
+
+                                                        <div class="span3">
+
+                                                            Passo 1
+                                                            <ul>
+                                                                First Server
+                                                                <li><strong>IP Address:</strong> {{ radius_server_one }}</li>
+                                                                <li><strong>Port:</strong> 1812</li>
+                                                                <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                                <li><strong>Confirm Secret:</strong> {{ radius_server_secret }}</li>
+                                                            </ul>
+
+                                                            <ul>
+                                                                Second Server
+                                                                <li><strong>IP Address:</strong> {{ radius_server_two }}</li>
+                                                                <li><strong>Port:</strong> 1812</li>
+                                                                <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                                <li><strong>Confirm Secret:</strong> {{ radius_server_secret }}</li>
+                                                            </ul>
+
+                                                        </div>
+                                                        <div class="span3">
+
+                                                            Passo 2
+
+                                                            <ul>
+                                                                First Server
+                                                                <li><strong>IP Address:</strong> {{ radius_server_one }}</li>
+                                                                <li><strong>Port:</strong> 1813</li>
+                                                                <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                                <li><strong>Confirm Secret:</strong> {{ radius_server_secret }}</li>
+                                                            </ul>
+
+                                                            <ul>
+                                                                Second Server
+                                                                <li><strong>IP Address:</strong> {{ radius_server_two }}</li>
+                                                                <li><strong>Port:</strong> 1813</li>
+                                                                <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                                <li><strong>Confirm Secret:</strong> {{ radius_server_secret }}</li>
+                                                            </ul>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                </div>
+
+                                                <h5><br>Configuração do Hotspot</h5>
+
+                                                <strong>Hotspot</strong>
+
+                                                <ul>
+                                                    <li><strong>Login Page:</strong> {{ client.whiteLabel ? "https://#{client.domain}/ruckus" : "https://#{client.domain}.mambowifi.com/ruckus" }}</li>
+                                                    <li><strong>Start Page: redirect to the following URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                                    <li><strong>Secret:</strong> {{ radius_server_secret }}</li>
+                                                </ul>
+
+                                                <br>
+
+                                                <strong>Walled Garden:</strong>
+
+                                                <ul>
+                                                    <li>*.{{ configDomain }}</li>
+                                                    <li>*.uploads.mambowifi.com</li>
+                                                    <li>{{ radius_server_one }}</li>
+                                                    <li>{{ radius_server_two }}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ruckus-standalone" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Ruckus Standalone</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000069501-ruckus-modo-standalone-">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Primary RADIUS Server:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Secondary RADIUS Server:</strong> {{ radius_server_two }}</li>
+                                            <li><strong>RADIUS Server Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Redirect unauth. user to:</strong> {{ client.whiteLabel ? "https://#{client.domain}/ruckus_standalone" : "https://#{client.domain}.mambowifi.com/ruckus_standalone" }}</li>
+                                            <li><strong>Redirect to:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 8</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>{{ radius_server_one }}</li>
+                                            <li>{{ radius_server_two }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="ruckus-cloud" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Ruckus Cloud</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000069501-ruckus-modo-standalone-">aqui</a>.</p>
+                                            <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                            <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Primary RADIUS Server:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Secondary RADIUS Server:</strong> {{ radius_server_two }}</li>
+                                            <li><strong>RADIUS Server Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Redirect unauth. user to:</strong> {{ client.whiteLabel ? "https://#{client.domain}/ruckus_cloud" : "https://#{client.domain}.mambowifi.com/ruckus_cloud" }}</li>
+                                            <li><strong>Redirect to:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 8</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>{{ radius_server_one }}</li>
+                                            <li>{{ radius_server_two }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="xirrus" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="tab-content">
+                                        <div style="max-height: 600px; height: 100%;" class="tab-pane active">
+                                            <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                                {% if client.isWhiteLabel == false %}
+                                                <p>Confira o passo a passo para configuração do seu equipamento <b>Xirrus</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000088085-configuracão-do-wspot-em-equipamentos-xirrus-ap-">aqui</a>.</p>
+                                                <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                                <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="row">
+                                                <ul>
+                                                    <li><strong>Landing Page URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/xirrus" : "https://#{client.domain}.mambowifi.com/xirrus" }}</li>
+                                                    <li><strong>Redirect URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                                </ul>
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 6</h5>
+                                                {% endif %}
+                                                <ul>
+                                                    <li>{{ radius_server_one }}</li>
+                                                    <li>{{ radius_server_two }}</li>
+                                                </ul>
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 7</h5>
+                                                {% endif %}
+                                                <ul>
+                                                    Abaixo de Primary:
+                                                    <li><strong>Host / IP Address:</strong> {{ radius_server_one }}</li>
+                                                    <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                    <li><strong>Verify Secret:</strong> {{ radius_server_secret }}</li>
+                                                </ul>
+                                                <ul>
+                                                    Abaixo de Secundary:
+                                                    <li><strong>Host / IP Address:</strong> {{ radius_server_two }}</li>
+                                                    <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                    <li><strong>Verify Secret:</strong> {{ radius_server_secret }}</li>
+                                                </ul>
+                                                <ul>
+                                                    Abaixo de <strong>Primary (Accounting):</strong>
+                                                    <li><strong>Host / IP Address:</strong> {{ radius_server_one }}</li>
+                                                    <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                    <li><strong>Verify Secret:</strong> {{ radius_server_secret }}</li>
+                                                </ul>
+                                                <ul>
+                                                    Abaixo de <strong>Secundary (Accounting):</strong>
+                                                    <li><strong>Host / IP Address:</strong> {{ radius_server_two }}</li>
+                                                    <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                                    <li><strong>Verify Secret:</strong> {{ radius_server_secret }}</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="unifi-ubiquiti" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Ubiquiti Unifi</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000125342-configura%C3%A7%C3%A3o-ubiquiti-unifi-com-wspot " class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                        <p>Para realizar o passo 6 do tutorial, <a href="{{ path('client_download_unifi_files_accesspoints', { 'domain': client.domain  }) }}"  target="_blank" title=""> clique aqui para baixar os arquivos necessários.</a></p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Passo 6</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                            <li><strong>Walled Garden:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Walled Garden:</strong> {{ radius_server_two }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="zyxel" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>ZyXEL</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000069491-configuracão-do-wspot-em-equipamentos-zyxel">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false%}
+                                            <h5>Passo 2</h5>
+                                        {% endif %}
+
+                                        Authentication Server Settings
+                                        <ul>
+                                            <li><strong>Authentication Port:</strong> 1812</li>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                        </ul>
+
+                                        Accounting Server Settings
+                                        <ul>
+                                            <li><strong>Authentication Port:</strong> 1813</li>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                        </ul>
+
+                                        {% if client.whiteLabel == false%}
+                                            <h5>Passo 5</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Login URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/zyxel" : "https://#{client.domain}.mambowifi.com/zyxel" }}</li>
+                                            <li><strong>Welcome URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="teltonika" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Teltônika</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000128798-configuração-de-teltonika-rut-com-wspot" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Passo 3</h5>
+                                        <ul>
+                                            {% if client.isWhiteLabel == false %}
+                                                <li>{{ client.domain }}.mambowifi.com/teltonika</li>
+                                                <li>{{ client.domain }}.mambowifi.com/302</li>
+                                            {% else %}
+                                                <li>{{ client.domain }}/teltonika</li>
+                                                <li>{{ client.domain }}/302</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Passo 4</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                        </ul>
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Passo 5</h5>
+                                        <ul>
+                                            <li>{{ radius_server_one }}</li>
+                                            <li>{{ radius_server_one }}</li>
+                                            <li>mambowifi.com</li>
+                                            <li>uploads.mambowifi.com</li>
+                                            {% if client.isWhiteLabel == false %}
+                                                <li>{{ client.domain }}.mambowifi.com</li>
+                                            {% else %}
+                                                <li>{{ client.domain }}</li>
+                                            {% endif %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="edgecore" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Edgecore</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000129972-configurac%C3%A3o-ap-edgecore-em-nuvem-eccloud" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Passo 6</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                        </ul>
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Passo 7</h5>
+                                        <ul>
+                                            <li><b>Captive portal URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/edgecore</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/edgecore</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            <li>
+                                                <b>Walled Garden:</b>
+                                                <ul>
+                                                    <li>mambowifi.com.br</li>
+                                                    <li>uploads.mambowifi.com.br</li>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tp-link" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Tp-Link v3</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000138191-configura%C3%A7%C3%A3o-de-omada-tp-link-com-hotspot-da-mambo-wifi" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Configuração de Equipamento</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                            <li><b>External Web Portal URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/tp_link</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/tp_link</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            <li><b>Redirect URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/302</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/302</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tp-link-cloud" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Tp-Link v3 Cloud</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000138191-configura%C3%A7%C3%A3o-de-omada-tp-link-com-hotspot-da-mambo-wifi" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Configuração de Equipamento</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                            <li><b>External Web Portal URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/tp_link_cloud</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/tp_link_cloud</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            <li><b>Redirect URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/302</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/302</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="row">
+                                        <h5>URL da Controller</h5>
+                                        <p>
+                                            A <b>URL da Controller</b> deve ser inserida utilizando apenas o protocolo <b>http</b>, não o https.
+                                            Enquanto a porta utilizada sempre deverá ser a porta equivalente a <b>8088</b> da controller, responsável por responder chamadas <b>http</b>.
+                                        </p>
+                                        <ul>
+                                            <li>
+                                                <b>Ex: http</b>://exemplo.com:<b>8088</b>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tp-link-v4" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Tp-Link v4</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000149624-configurac%C3%A3o-de-omada-vers%C3%A3o-4-tp-link-com-hotspot-da-mambo-wifi" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Configuração de Equipamento</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                            <li><b>External Web Portal URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/tp_link_v4</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/tp_link_v4</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            <li><b>Redirect URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/302</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/302</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tp-link-v4-cloud" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Tp-Link v4 Cloud</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000149624-configurac%C3%A3o-de-omada-vers%C3%A3o-4-tp-link-com-hotspot-da-mambo-wifi" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Configuração de Equipamento</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                            <li><b>External Web Portal URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/tp_link_v4_cloud</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/tp_link_v4_cloud</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            <li><b>Redirect URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/302</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/302</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tp-link-v5" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Tp-Link v5</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000149622-configurac%C3%A3o-de-omada-vers%C3%A3o-5-tp-link-com-hotspot-da-mambo-wifi" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Configuração de Equipamento</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                            <li><b>External Web Portal URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/tp_link_v5</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/tp_link_v5</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            <li><b>Redirect URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/302</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/302</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tp-link-v5-cloud" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Tp-Link v5 Cloud</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000149622-configurac%C3%A3o-de-omada-vers%C3%A3o-5-tp-link-com-hotspot-da-mambo-wifi">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <h5>Configuração de Equipamento</h5>
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                            <li><b>External Web Portal URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/tp_link_v5_cloud</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/tp_link_v5_cloud</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                            <li><b>Redirect URL:</b>
+                                                <ul>
+                                                    {% if client.isWhiteLabel == false %}
+                                                        <li>{{ client.domain }}.mambowifi.com/302</li>
+                                                    {% else %}
+                                                        <li>{{ client.domain }}/302</li>
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="row">
+                                        <h5>URL da Controller</h5>
+                                        <p>
+                                            A <b>URL da Controller</b> deve ser inserida utilizando apenas o protocolo <b>http</b>, não o https.
+                                            Enquanto a porta utilizada sempre deverá ser a porta equivalente a <b>8088</b> da controller, responsável por responder chamadas <b>http</b>.
+                                        </p>
+                                        <ul>
+                                            <li>
+                                                <b>Ex: http</b>://exemplo.com:<b>8088</b>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="huawei" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="tab-content">
+                                        <div style="max-height: 600px; height: 100%;" class="tab-pane active">
+                                            <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                                {% if client.isWhiteLabel == false %}
+                                                    <p>Confira o passo a passo para configuração do seu equipamento <b>Huawei - Cloud</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000140643-configurac%C3%A3o-do-huawei-cloudcampus-imaster-nce-com-o-hotspot-mambo-wifi">aqui</a>.</p>
+                                                    <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                                    <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                                {% endif %}
+                                            </div>
+
+                                            <div class="row">
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 4</h5>
+                                                {% endif %}
+
+                                                <ul>
+                                                    <li><strong>URL:</strong> {{ client.whiteLabel ? "#{client.domain}/huawei" : "#{client.domain}.mambowifi.com/huawei" }}</li>
+                                                </ul>
+                                                <br>
+
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 8</h5>
+                                                {% endif %}
+
+                                                Servidores Radius
+                                                <ul>
+                                                    {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                                </ul>
+                                                <br>
+
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 9</h5>
+                                                {% endif %}
+                                                <ul>
+                                                    <li><strong>URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                                </ul>
+
+                                                <br>
+
+                                                {% if client.whiteLabel == false %}
+                                                    <h5>Passo 10</h5>
+                                                {% endif %}
+                                                <ul>
+                                                    <li><strong>URL:</strong> {{ client.whiteLabel ? "https://#{client.domain}/huawei" : "https://#{client.domain}.mambowifi.com/huawei" }}</li>
+                                                </ul>
+                                                <br>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="openwifi" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Openwifi</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000151342-configura%C3%A7%C3%A3o-netexperience-openwifi-com-mambowifi" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                        </ul>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div id="grandstream" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Grandstream</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000152839-configura%C3%A7%C3%A3o-grandstream-ap-com-o-hotspot-mambo-wifi" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row">
+                                        <ul>
+                                            {% include "FrontendBundle:Includes:liRadiusServerList.html.twig" %}
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="draytek" class="box-ap-config">
+                                <div class="span12">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                            <p>Confira o passo a passo para configuração do seu equipamento <b>Draytek</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000156111-configura%C3%A7%C3%A3o-draytek-vigor-com-o-hotspot-mambo-wifi" class="slide">aqui</a>.</p>
+                                        {% endif %}
+                                    </div>
+                                    <div class="row">
+                                        <ul>
+                                            <li><b>Passo 4</b>
+                                                <ul>
+                                                    <li>colocar url do cliente com /draytek, <b>ex:</b> {{ client.whiteLabel ? "#{client.domain}/draytek" : "#{client.domain}.mambowifi.com/draytek" }}</li>
+                                                    <li>colocar url do cliente com /302, <b>ex:</b> {{ client.whiteLabel ? "#{client.domain}/302" : "#{client.domain}.mambowifi.com/302" }}</li>
+                                                </ul>
+                                            </li>
+                                            <li><b>Passo 8</b>:
+                                                <ul>
+                                                    <li><b>IP</b>: {{ radius_server_one}} e {{ radius_server_two }}</li>
+                                                    <li><b>Secret</b>: {{ radius_server_secret }}</li>
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="unifi-controller-cadastro" class="box-ap-config">
+                                <div class="span7" style="margin: 30px;">
+                                    <h3><strong>Controller Unifi</strong></h3>
+                                    <p>
+                                        Os IPs abaixo devem estar autorizados nas regras de entrada e saída do firewall, juntamente com a porta da controladora. Isso é necessário para validar a controladora e, posteriormente, possibilitar a autenticação, renovação e desconexão dos visitantes em sua rede.
+                                    </p>
+                                    <div>
+                                        <ul>
+                                            <li>144.22.197.135 &nbsp - TCP/UDP</li>
+                                            <li>144.22.166.76 &nbsp&nbsp&nbsp - TCP/UDP</li>
+                                            <li>168.138.229.153 - TCP/UDP</li>
+                                            <li>168.138.226.107 - TCP/UDP</li>
+                                        <ul>
+                                    </div>
+
+                                    
+                                    <label class="label-unifi-controller">Modelo</label>
+                                    <div class="control unifi-choice">
+                                        <!--<input type="text" name="unifi-modelo" id="unifi-modelo" style="margin-left: 90px; width: 350px;" value="Controladora Própria" disabled />-->
+                                        <select id="unifi-modelo" name="unifi-modelo" style="margin-left: 90px; width: 365px;">
+                                            <option value="propria" {{ (controllerUnifi) ? (controllerUnifi.is_mambo) ? "" : "selected" : "selected" }}>Controladora Própria</option>
+                                            <option value="mambo" {{ (controllerUnifi) ? (controllerUnifi.is_mambo) ? "selected" }}>Controladora Mambo</option>
+                                        </select>
+                                    </div>
+                                    <!--<input type="hidden" id="hdnTipoControllerUnifi" name="hdnTipoControllerUnifi" value="{{ (controllerUnifi) ? (controllerUnifi.is_mambo) ? "mambo" : "propria" : "" }}" />-->
+                                    <input type="hidden" id="hdnIdControllerUnifi" name="hdnIdControllerUnifi" value="{{ (controllerUnifi) ? controllerUnifi.id : "" }}" />
+
+                                    <label class="label-unifi-controller unifi-mambo {{ controllerUnifi ? controllerUnifi.is_mambo != '1' ? "hide" : "" : "hide" }}">Seleção de Controller</label>
+                                    <div class="control unifi-mambo {{ controllerUnifi ? controllerUnifi.is_mambo != '1' ? "hide" : "" : "hide" }}">
+                                        <select id="unifi-mambo-controller" name="unifi-mambo-controller" style="margin-left: 11px; width: 365px;">
+                                            {% for ctrl in unifiControllersMambo %}
+                                                <option value="{{ ctrl.id }}" {{ (controllerUnifi) ? (controllerUnifi.is_mambo) ? (controllerUnifi.id == ctrl.id) ? "selected"  }}>{{ ctrl.address }}:{{ ctrl.port }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <label class="label-unifi-controller unifi-propria {{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "hide" }}">URL da Controller</label>
+                                    <div class="control unifi-propria {{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "hide" }}" style="float: left">
+                                        <input type="text" name="unifi-controller-url" id="unifi-controller-url" placeholder="Digite a URL" style="margin-left: 33px; width: 230px;" on value="{{ (controllerUnifi) ? controllerUnifi.address : "" }}">
+                                        <input type="hidden" id="hdn-unifi-controller-url" name="hdn-unifi-controller-url" value="{{ (controllerUnifi) ? controllerUnifi.address : "" }}" class="hdnCtrlUnifi" />
+                                    </div>
+
+                                    <label class="label-unifi-controller unifi-propria {{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "hide" }}" style="margin-left: 15px; margin-right: 5px;">Porta</label>
+                                    <div class="control unifi-propria {{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "hide" }}">
+                                        <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, ''); this.value = this.value.replace(/(\..*)\./g, '$1');" name="unifi-controller-port" id="unifi-controller-port" style="width: 54px;" value="{{ (controllerUnifi) ? controllerUnifi.port : "" }}">
+                                        <input type="hidden" id="hdn-unifi-controller-port" name="hdn-unifi-controller-port" value="{{ (controllerUnifi) ? controllerUnifi.port : "" }}" class="hdnCtrlUnifi" />
+                                    </div>
+
+                                    <label class="label-unifi-controller unifi-propria {{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "hide" }}" title="O usuário precisa ter sua ROLE como SUPER ADMINISTRADOR">
+                                        Usuário
+                                        <i class="icon-large icon-question-sign" tabindex="0" data-placement="right" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="O usuário precisa ter sua ROLE como SUPER ADMINISTRADOR." data-original-title="" title=""></i>
+                                    </label>
+                                    <div class="control unifi-propria {{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "hide" }}" title="O usuário precisa ter sua ROLE como SUPER ADMINISTRADOR">
+                                        <input type="text" name="unifi-controller-user" id="unifi-controller-user" placeholder="Digite o usuário super administrador" style="margin-left: 72px; width: 350px;" value="{{ (controllerUnifi) ? controllerUnifi.username : "" }}">
+                                        <input type="hidden" id="hdn-unifi-controller-user" name="hdn-unifi-controller-user" value="{{ (controllerUnifi) ? controllerUnifi.username : "" }}" class="hdnCtrlUnifi" />
+                                    </div>
+
+                                    <label class="label-unifi-controller unifi-propria {{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "hide" }}">Senha</label>
+                                    <div class="control unifi-propria {{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "hide" }}">
+                                        <input type="password" name="unifi-controller-password" id="unifi-controller-password" placeholder="Digite sua senha" style="margin-left: 98px; width: 350px;" value="{{ (controllerUnifi) ? controllerUnifi.password : "" }}">
+                                        <input type="hidden" id="hdn-unifi-controller-password" name="hdn-unifi-controller-password" value="{{ (controllerUnifi) ? controllerUnifi.password : "" }}" class="hdnCtrlUnifi" />
+                                    </div>
+
+                                    <div id="div-btn-validar-controller" class="session-validate-unifi control-group unifi-propria" style="{{ controllerUnifi ? controllerUnifi.is_mambo == '1' ? "display: none;" }}">
+                                        <a onclick="controllerUnifiValidate()" class="btn btn-controller-validate" data-dismiss="modal">
+                                            Validar Controller
+                                        </a>
+                                        <p style="font-size: 10px;">(Obrigatório para seguir)</p>
+                                    </div>
+                                    <p id="unifi-controller-message"></p>
+
+                                    <div class="control-group" style="float: right;">
+                                        <br />
+                                        <a id="btnSalvarControllerUnifi" name="btnSalvarControllerUnifi" onclick="controllerUnifiSave()" class="btn btn-primary btn-salvar-controller btn-icon glyphicons circle_ok" data-dismiss="modal" {{ controllerUnifi ? controllerUnifi.is_mambo == '0' ? 'disabled="disabled"' : "" : 'disabled="disabled"' }}><i></i>Salvar</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="extreme-networks" class="box-ap-config">
+                                <div class="span12" style="margin: 30px;">
+                                    <div class="row" style="font-size: 15px; margin-bottom: 20px;">
+                                        {% if client.isWhiteLabel == false %}
+                                        <p>Confira o passo a passo para configuração do seu equipamento <b>Extreme - ExtremeCloud XIQ Controller</b> clicando <a target="_blank" href="https://suporte.mambowifi.com/support/solutions/articles/16000089523-configuracão-do-wspot-equipamentos-enterasys-extreme">aqui</a>.</p>
+                                        <p>Abaixo estão as informações solicitadas em alguns dos passos da configuração.</p>
+                                        <p>Em caso de dúvida, entre em contato com nosso <a href="javascript:FreshworksWidget('open', 'ticketForm');">suporte técnico.</a></p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="row">
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 1</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li>Redirection URL: {{ client.whiteLabel ? "https://#{client.domain}/extreme_cloud_xiq" : "https://#{client.domain}.mambowifi.com/extreme_cloud_xiq" }} </li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 2</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Hostname/IP:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Shared Secret:</strong> {{ radius_server_secret }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 7</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Layer 3,4 IP/subnet:</strong> {{ radius_server_one }}</li>
+                                            <li><strong>Layer 3,4 IP/subnet:</strong> {{ radius_server_two }}</li>
+                                        </ul>
+                                        {% if client.whiteLabel == false %}
+                                            <h5>Passo 10</h5>
+                                        {% endif %}
+                                        <ul>
+                                            <li><strong>Send Successful Login To:</strong> {{ client.whiteLabel ? "https://#{client.domain}/302" : "https://#{client.domain}.mambowifi.com/302" }}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                {{ form_errors(form) }}
+                <hr class="separator">
+
+                <div class="row-fluid">
+                    <div class="span12 alert alert-info">
+                        <b>Templates</b> cadastrados para pontos de acesso têm prioridade de exibição sobre os templates cadastrados para um grupo.
+                    </div>
+                </div>
+
+                <div class="row-fluid">
+                    <div class="span6">
+                        O <b>Nome</b> cadastrado aqui será usado nos relatórios e gráficos do sistema, a fim de facilitar a visualização
+                        dos dados e o entendimento das informações, evitando que o administrador tenha que memorizar o Mac Address/IP/Identificador de todos eles.<br><br>
+                    </div>
+                </div>
+
+                <hr class="separator">
+
+                <div class="form-actions right">
+                    {% if group %}
+                        <a href="{{ path('access_points_groups_edit', {'id': group.id} ) }}">
+                            <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>Cancelar</button>
+                        </a>
+                    {% else %}
+                        <a href="{{ app.request.headers.get('referer') }}">
+                            <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>Cancelar</button>
+                        </a>
+                    {% endif %}
+                    {{ form_widget(form.submit) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+</div>
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/maskedinput/jquery.maskedinput.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/fancybox/jquery.mousewheel-3.0.4.pack.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/fancybox/jquery.fancybox-1.3.4.pack.js')}}"></script>
+    <script type="text/javascript">
+        $('#timezoneSelect').on('change', function() {
+            var checked = $(this).find(":checked");
+            $('#wspot_access_point_utc').val(checked.text());
+        });
+
+        //FIX, por algum motivo está dando erro na hora do deploy do arquivo config_mikrotik.js
+        jQuery("#mikrotik_generate").click(function(){
+            var ssid                   = jQuery("#mikrotik_ssid").val();
+            var network                = jQuery("#mikrotik_network").val();
+            var admin_access_password  = jQuery("#mikrotik_admin_access_password").val();
+            var domain                 = "{{ app.session.get("wspotClient").domain }}";
+
+            if (!admin_access_password) {
+                jQuery("#admin_access_password-error").show();
+            } else {
+                jQuery("#admin_access_password-error").hide();
+
+                $.ajax({
+                    type: "POST",
+                    url: Routing.generate('admin_configuration_generate_mikrotik_script'),
+                    data: {
+                        ssid: ssid,
+                        network: network,
+                        admin_access_password: admin_access_password,
+                        domain: domain
+                    },
+                    success: function(response)
+                    {
+                        jQuery("#mikrotik_script_1").val(response['first-step']);
+                        jQuery("#mikrotik_script_2").val(response['second-step']);
+                        jQuery("#mikrotik_script_3").val("..\n..\n/import file-name=flash/mambowifi.rsc");
+                    }
+                });
+            }
+        });
+
+        function
+        pfsensedownload() {
+            if ($('#pfsense_ip').val() == "") {
+                $('#pfsense_ip').focus();
+                return false;
+            }
+            var version      = $('#pfsenseVersionSelect').val();
+            var domain       = "{{ app.session.get('wspotClient').domain }}";
+            var pfsenseIpLan = $('#pfsense_ip').val();
+            var host = window.location.host;
+            var shost = host.split('.')
+
+            if (version == '>=2.4.4') {
+
+                if(shost[1] == 'mambowifi'){
+                    window.open('https://www.mambowifi.com/configuration-scripts/pfsense/generate_xml_v244.php?domain=' + domain + '&ip=' + pfsenseIpLan, '_blank');
+                } else {
+                    window.open('https://www.wspot.com.br/configuration-scripts/pfsense/generate_xml_v244.php?domain=' + domain + '&ip=' + pfsenseIpLan, '_blank');
+                }
+
+
+            } else {
+                if (shost[1] == 'mambowifi') {
+                   window.open('https://www.mambowifi.com/configuration-scripts/pfsense/generate_xml.php?domain=' + domain + '&ip=' + pfsenseIpLan, '_blank');
+                } else {
+                   window.open('https://www.wspot.com.br/configuration-scripts/pfsense/generate_xml.php?domain=' + domain + '&ip=' + pfsenseIpLan, '_blank');
+                }
+            }
+        }
+
+        function clearErrorClass(){
+            $('.control-label').css("color", "#333333");
+            $('.control-group.error input').css("border-color", "#d8d9da");
+            $('.control-group.error input').css("box-shadow", "none");
+            $('.control-group.error input').css("color", "#a7a7a7");
+            $('.error.help-block').addClass('hide');
+        }
+
+        var objVendors  = JSON.parse('{{ vendors|raw }}');
+        function vendorParams(vendor){
+            if (vendor) {
+                var hasManual = objVendors[vendor].manual;
+                var apVendor = $('#wspot_access_point_vendor').val();
+                if (["winco"].includes(apVendor)){
+                    if (hasManual) {
+                        $('.btn.manual').show();
+                        $('a.manual').attr('target','_blank');
+                        $('a.manual').attr('href', '{{ path('access_points_manual') }}' + '?vendor=' + vendor);
+                        $("#manual").fancybox({});
+                        $('#manual').unbind('click.fb');
+                    } else {
+                        $('.btn.manual').hide();
+                    }
+                } else{
+                    if (hasManual) {
+                        $('.btn.manual').show();
+                        $('a.manual').attr('href', '#' + vendor);
+                        $('a.slide').attr('href', '{{ path('access_points_manual') }}' + '?vendor=' + vendor);
+                        $("#manual").fancybox({
+                            'titlePosition' : 'inside',
+                            'transitionIn'	: 'none',
+                            'transitionOut'	: 'none'
+                        });
+                    } else {
+                        $('.btn.manual').hide();
+                    }
+                }
+
+                $('.mask').html(objVendors[vendor].mask);
+
+                var mask = objVendors[vendor].mask;
+
+                if (mask) {
+                    $("#wspot_access_point_identifier").mask(mask, {
+                        'translation':
+                        {
+                            H:{
+                                pattern:/[A-Fa-f0-9]/
+                            }
+                        }
+                    });
+                } else {
+                    $("#wspot_access_point_identifier").unmask();
+                }
+
+                $('.divUnifiControllerBTN').hide();
+
+                if (vendor == 'mikrotik') {
+                    $('.control-label.identifier').html('Identificador');
+                    $('.help').css('bottom', '18px');
+                    ap_extra_config.style.display = 'none';
+                } else if (vendor == 'pfsense') {
+                    $('.control-label.identifier').html('IP do Equipamento');
+                    $('.help').css('bottom', '18px');
+                    ap_extra_config.style.display = 'none';
+                } else if (vendor == 'aerohive'){
+                    $('.control-label.identifier').html('Hostname da AP');
+                    $('.help').css('bottom', '18px');
+                    ap_extra_config.style.display = 'none';
+                } else if (vendor == 'ruckus-cloud') {
+                    wspot_label_ap_extra_config.innerText = "Chave de Criptografia";
+                    // wspot_access_point_extraConfig.placeholder = "";
+                    wspot_access_point_extraConfig.required = true;
+                    ap_extra_config.style.display = 'block';
+                } else if (['tp-link-cloud', 'tp-link-v4-cloud', 'tp-link-v5-cloud'].includes(vendor)) {
+                    wspot_access_point_extraConfig.required = true;
+                    wspot_label_ap_extra_config.innerHTML = "URL da Controller";
+                    // wspot_access_point_extraConfig.placeholder = '<scheme>://<dominio>:<porta>';
+                    ap_extra_config.style.display = 'block';
+                } else if (vendor == 'unifi-ubiquiti') {
+                    wspot_access_point_extraConfig.required = false;
+                    wspot_label_ap_extra_config.innerHTML = "URL da Controller (Opcional)";
+                    ap_extra_config.style.display = 'none';
+                    $('.divUnifiControllerBTN').show();
+                } else if (vendor == 'extreme-networks') {
+                    $('.control-label.identifier').html('Serial Number da AP');
+                    $('.help').css('bottom', '18px');
+                    ap_extra_config.style.display = 'none';
+                } else {
+                    $('.control-label.identifier').html('Mac Address do Equipamento');
+                    $('.help').css('bottom', '38px');
+                    ap_extra_config.style.display = 'none';
+                }
+            } else {
+                $('.btn.manual').hide();
+                $("#wspot_access_point_identifier").unmask();
+            }
+        }
+
+        function clearUnifiMessage() {
+            $("#unifi-controller-message").text("");
+            $("#unifi-controller-message").hide();
+            $("#unifi-controller-message").removeClass("unifi-controller-success");
+            $("#unifi-controller-message").removeClass("unifi-controller-error");
+            $("#unifi-controller-message").removeClass("unifi-controller-warning");
+        }
+        function addUnifiMessageError(text) {
+            $("#unifi-controller-message").text(text);
+            $("#unifi-controller-message").removeClass("unifi-controller-success");
+            $("#unifi-controller-message").addClass("unifi-controller-error");
+            $("#unifi-controller-message").removeClass("unifi-controller-warning");
+        }
+        function addUnifiMessageWarning(text) {
+            $("#unifi-controller-message").text(text);
+            $("#unifi-controller-message").removeClass("unifi-controller-success");
+            $("#unifi-controller-message").removeClass("unifi-controller-error");
+            $("#unifi-controller-message").addClass("unifi-controller-warning");
+        }
+        function addUnifiMessageSuccess(text) {
+            $("#unifi-controller-message").text(text);
+            $("#unifi-controller-message").addClass("unifi-controller-success");
+            $("#unifi-controller-message").removeClass("unifi-controller-error");
+            $("#unifi-controller-message").removeClass("unifi-controller-warning");
+        }
+
+        $(document).ready(function(){
+            $("#admin_access_password-error").hide();
+            $("#mikrotik_admin_access_password").mask('HHHHHHHHHHHH', {
+                'translation':
+                    {
+                        H:{
+                            pattern:/[A-Za-z0-9!@#$&*]/
+                        }
+                    }
+            });
+
+            $("#lnkCtrlUnifi").fancybox({
+                'titlePosition' : 'inside',
+                'transitionIn'	: 'none',
+                'transitionOut'	: 'none'
+            });
+
+            vendorParams($('#wspot_access_point_vendor').val());
+            {% if (entity.id) %}
+                {% if (entity.vendor) %}
+                    $('#wspot_access_point_vendor').prop('disabled', true);
+                {% endif %}
+                document.getElementById('wspot_access_point_identifier').readOnly = true;
+            {% endif %}
+
+            $('#wspot_access_point_vendor').on('change', function(){
+                vendorParams($(this).val());
+                modalController($(this).val());
+            });
+
+            $('#unifi-modelo').on('change', function(){
+                clearUnifiMessage();
+                changeUnifiCtrlBetweenMamboPropria ($(this).val());
+            });
+
+            $('#lnkCtrlEdit').on('click', function(){
+                changeUnifiCtrlBetweenMamboPropria ($('#unifi-modelo').val())
+            });
+
+            function changeUnifiCtrlBetweenMamboPropria (option) {
+                switch (option) {
+                    case 'mambo':
+                        $('.unifi-propria').addClass("hide");
+                        $('.unifi-mambo').removeClass("hide");
+                        $('.btn-salvar-controller').removeAttr('disabled');
+                        $("#div-btn-validar-controller").css("display", "none");
+                        break;
+                    case 'propria':
+                        $('.unifi-propria').removeClass("hide");
+                        $('.unifi-mambo').addClass("hide");
+                        $('.btn-salvar-controller').attr('disabled', 'disabled');
+                        $("#div-btn-validar-controller").css("display", "");
+                        break;
+                }
+            }
+
+            function modalController (vendor) {
+                if (vendor === "unifi-ubiquiti") {
+                    $("#lnkCtrlUnifi").fancybox({
+                        'titlePosition' : 'inside',
+                        'transitionIn'	: 'none',
+                        'transitionOut'	: 'none'
+                    });
+                }
+            }
+
+             $('#idConfigManual').on('click',function(e){
+                  $("#tabActive2").trigger('click');
+             });
+
+
+            $('#wspot_access_point_identifier').on('focusout', function(e){
+            var regexPattern = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ \b1234567890:._-]+$/;
+            if (!regexPattern.test($('#wspot_access_point_identifier').val()) && $('#wspot_access_point_identifier').val() != '' && !$(".error").hasClass('help-block')) {
+                $('#isValidate').html('Caracteres especiais não são aceitos');
+                $('#isValidate').addClass('validateLabel');
+                submitButtonControl(true, $(this));
+            } else {
+                $('#isValidate').removeClass('validateLabel');
+                $('#isValidate').empty();
+                submitButtonControl(false, $(this));
+            }
+        });
+        });
+
+        $('#mikrotik_ssid').on('keyup', function(e){
+            var regexPattern = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ \b1234567890:._-]+$/;
+            var mikrotik_ssid = $('#mikrotik_ssid');
+            if (!regexPattern.test(mikrotik_ssid.val()) && mikrotik_ssid.val() != '') {
+                $('#ssid_validate').html('Caracteres especiais podem gerar incompatibilidades e portanto não são aceitos');
+                $('#ssid_validate').addClass('validateLabel');
+                $('#mikrotik_generate').prop("disabled",true);
+            } else {
+                $('#ssid_validate').removeClass('validateLabel');
+                $('#ssid_validate').empty();
+                $('#mikrotik_generate').prop("disabled",false);
+            }
+            });
+
+        $('#unifi-controller-url').on("keyup", onChangeBlockSaveCtrlUnifi);
+
+        function isValidURL(url) {
+            var pattern = new RegExp('^(https?:\\/\\/)' +
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|' +
+                '((\\d{1,3}\\.){3}\\d{1,3})|' +
+                '(\\[[0-9a-fA-F:]+\\]))$', 'i');
+            return !!pattern.test(url);
+        }
+        $('#unifi-controller-url').on('input', function() {
+            var inputValue = $(this).val().trim();
+            clearUnifiMessage();
+            if (inputValue === '') {
+                addUnifiMessageError('Informe url da controller');
+            } else if (!isValidURL(inputValue)) {
+                addUnifiMessageError('Informe uma url válida para a controller');
+            } else {
+                clearUnifiMessage();
+            }
+        });
+        $('#unifi-controller-port').on("keyup", onChangeBlockSaveCtrlUnifi);
+        $('#unifi-controller-port').on('input', function() {
+            clearUnifiMessage();
+            var inputValue = $(this).val().trim();
+            if (inputValue === '') {
+                addUnifiMessageError('Informe a porta da controller');
+            } else {
+                clearUnifiMessage();
+            }
+        });
+        
+        $('#unifi-controller-user').on("keyup", onChangeBlockSaveCtrlUnifi);
+        $('#unifi-controller-user').on('input', function() {
+            clearUnifiMessage();
+            var inputValue = $(this).val().trim();
+            if (inputValue === '') {
+                addUnifiMessageError('Informe o username para acessar a controller');
+            } else {
+                clearUnifiMessage();
+            }
+        });
+        $('#unifi-controller-password').on("keyup", onChangeBlockSaveCtrlUnifi);
+        $('#unifi-controller-password').on('input', function() {
+            clearUnifiMessage();
+            var inputValue = $(this).val().trim();
+            if (inputValue === '') {
+                addUnifiMessageError('Informe a senha para acessar a controller');
+            } else {
+                clearUnifiMessage();
+            }
+        });
+
+        function controllerUnifiValidate() {
+            console.clear();
+            const url = "{{ urlCtrlUnifiValidate }}";
+            const ctrlUnifi = {};
+
+            if ($('#unifi-modelo').val() === "propria") {
+                let isValidated = true; 
+                const address = $('#unifi-controller-url');
+                if (address.val() === "") {
+                    addUnifiMessageError('Informe url da controller');
+                    address.focus();
+                    isValidated = false;
+                } else if (!isValidURL(address.val())) {
+                    addUnifiMessageError('Informe uma url válida para a controller');
+                    address.focus();
+                    isValidated = false;
+                }
+                ctrlUnifi.address = address.val();
+                
+                const port = $('#unifi-controller-port');
+                if (port.val() === "") {
+                    addUnifiMessageError('Informe a porta da controller');
+                    port.focus();
+                    isValidated = false;
+                }
+                ctrlUnifi.port = port.val();
+                
+                const username = $('#unifi-controller-user');
+                if (username.val() === "") {
+                    addUnifiMessageError('Informe o usuário para acessar a controller');
+                    username.focus();
+                    isValidated = false;
+                }
+                ctrlUnifi.username = username.val();
+                
+                const password = $('#unifi-controller-password');
+                if (password.val() === "") {
+                    addUnifiMessageError('Informe a senha para acessar a controller');
+                    password.focus();
+                    isValidated = false;
+                }
+                if (!isValidated) {
+                    $("#unifi-controller-message").show();
+                    return false;
+                }
+                ctrlUnifi.password = password.val();
+
+                addUnifiMessageWarning("Validando...");
+                $("#unifi-controller-message").show();
+
+                $.post( url, ctrlUnifi, (response) => {
+                    console.log(response);
+                    const statusCode = response.code;
+                    
+                    switch (statusCode) {
+                        case '200':
+                        case '201':
+                            addUnifiMessageSuccess(response.msg);
+                            $("#unifi-controller-message").show();
+                            $("#btnSalvarControllerUnifi").removeAttr("disabled");
+                            break;
+
+                        default:
+                            addUnifiMessageError(response.msg);
+                            $("#unifi-controller-message").show();
+                            break;
+                    }
+                })
+            }
+        }
+
+        function onChangeBlockSaveCtrlUnifi() {
+            const url = $('#unifi-controller-url');
+            const hdnUrl = $('#hdn-unifi-controller-url');
+            
+            const port = $('#unifi-controller-port');
+            const hdnPort = $('#hdn-unifi-controller-port');
+
+            const user = $('#unifi-controller-user');
+            const hdnUser = $('#hdn-unifi-controller-user');
+            
+            const password = $('#unifi-controller-password');
+            const hdnPassword = $('#hdn-unifi-controller-password');
+            
+            if (
+                (url.val() !== hdnUrl.val()) ||
+                (port.val() !== hdnPort.val()) ||
+                (user.val() !== hdnUser.val()) ||
+                (password.val() !== hdnPassword.val())
+            ) {
+                $("#btnSalvarControllerUnifi").attr("disabled", "disabled");
+                return false;
+            }
+        }
+
+        function controllerUnifiSave() {
+            if ($("#btnSalvarControllerUnifi").attr("disabled") !== undefined) {
+                return false;
+            }
+            const url = "{{ urlCtrlUnifiSaveEdit }}";
+            const ctrlUnifi = {};
+
+            $('#btnSalvarControllerUnifi').attr('disabled', 'disabled');
+
+            ctrlUnifi.id = $('#hdnIdControllerUnifi').val();
+            
+            if ($('#unifi-modelo').val() === "propria") {
+                ctrlUnifi.isMambo = 0;
+                let isValidated = true;
+                
+                const address = $('#unifi-controller-url');
+                if (address.val() === "") {
+                    addUnifiMessageError('Informe url da controller');
+                    address.focus();
+                    isValidated = false;
+                } else if (!isValidURL(address.val())) {
+                    addUnifiMessageError('Informe uma url válida para a controller');
+                    address.focus();
+                    isValidated = false;
+                }
+                ctrlUnifi.address = address.val();
+                
+                const port = $('#unifi-controller-port');
+                if (port.val() === "") {
+                    addUnifiMessageError('Informe a porta da controller');
+                    port.focus();
+                    isValidated = false;
+                }
+                ctrlUnifi.port = port.val();
+                
+                const username = $('#unifi-controller-user');
+                if (username.val() === "") {
+                    addUnifiMessageError('Informe o usuário para acessar a controller');
+                    username.focus();
+                    isValidated = false;
+                }
+                ctrlUnifi.username = username.val();
+                
+                const password = $('#unifi-controller-password');
+                if (password.val() === "") {
+                    addUnifiMessageError('Informe a senha para acessar a controller');
+                    password.focus();
+                    isValidated = false;
+                }
+                if (!isValidated) {
+                    $("#unifi-controller-message").show();
+                    return false;
+                }
+                ctrlUnifi.password = password.val();
+            }
+            else {
+                ctrlUnifi.isMambo = 1;
+                ctrlUnifi.idCtrlMambo = $('#unifi-mambo-controller').val();
+            }
+
+            addUnifiMessageWarning("Validando...");
+            $("#unifi-controller-message").show();
+
+            $.post( url, ctrlUnifi, (response) => {
+                console.log(response);
+                const statusCode = response.code;
+                
+                switch (statusCode) {
+                    case '200':
+                    case '201':
+                        $.gritter.add({
+                            title: response.msg
+                        });
+                        clearUnifiMessage();
+                        $('#hdn-unifi-controller-url').val(ctrlUnifi.url);
+                        $('#hdn-unifi-controller-port').val(ctrlUnifi.port);
+                        $('#hdn-unifi-controller-user').val(ctrlUnifi.user);
+                        $('#hdn-unifi-controller-password').val(ctrlUnifi.password);
+
+                        if (ctrlUnifi.isMambo === 1) {
+                            $("#btnSalvarControllerUnifi").removeAttr("disabled");
+                        }
+
+                        $("#fancybox-close").trigger("click");
+                        break;
+
+                    default:
+                        addUnifiMessageError(response.error);
+                        ("#unifi-controller-message").show();
+                        break;
+                }
+            })
+        }
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}
+

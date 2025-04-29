@@ -1,0 +1,355 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block heading %} Cadastros Por Dia {% endblock %}
+
+{% block dataTitle %}
+    Cadastros Por Dia
+{% endblock %}
+
+{% block table %}
+    <div class="row-fluid">
+        <div class="heading-buttons">
+            <b>Dados Atualizados em: {{ "now"|date_modify("-1 day")|date("d/m/Y") }} </b>
+        </div>
+        <div class="span12 warning">
+            <p><b>Observações:</b></p>
+            <p>- O período limite para consultas é de <b>30 dias</b>.</p>
+            <p>- Caso não tenha selecionado um período, serão exibidos registros dos <b>últimos 30 dias</b>.</p>
+            <p>- Este relatório não contabiliza os visitantes pertencentes ao Grupo <b>Funcionários</b>.</p>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading glyphicons charts"><i></i>Cadastros dia-a-dia</h4>
+                </div>
+                <div class="widget-body">
+                    <div id="register_per_day_total" style="height: 250px; text-align: center;">
+                        <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading glyphicons charts"><i></i>Por dia da semana</h4>
+                </div>
+                <div class="widget-body">
+                    <div id="register_per_day_group" style="height: 250px; text-align: center;">
+                        <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading">Listagem total</h4>
+                </div>
+                <div class="widget-body">
+                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Dia</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for key, value in totalList %}
+                            <tr class="gradeX">
+                                <td>{{ key }}</td>
+                                <td><a href="{{ path('admin_visitantes', { 'period': value.period }) }}">{{ value.total }} cadastros</a></td>
+                            </tr>
+                        {% else %}
+                            <tr class="gradeX">
+                                <td colspan="6">Nenhum registro de visita neste período.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading">Agrupados por dia da semana</h4>
+                </div>
+                <div class="widget-body">
+                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                        <thead>
+                        <tr>
+                            <th>Dia</th>
+                            <th>Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for key, value in perDayList %}
+                            <tr class="gradeX">
+                                <td>{{ key|days_of_week }}</td>
+                                <td>{{ value|default('0') }} cadastros</td>
+                            </tr>
+                        {% else %}
+                            <tr class="gradeX">
+                                <td colspan="6">Nenhum cadastro de visitante neste período.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        {% set accessPointFilter = app.request.get('dateFromToWithLimitFilter')['access_point'] is defined ? app.request.get('dateFromToWithLimitFilter')['access_point'] : "" %}
+        {% set dateFromFilter = app.request.get('dateFromToWithLimitFilter')['date_from'] is defined ? app.request.get('dateFromToWithLimitFilter')['date_from'] : "" %}
+        {% set dateToFilter = app.request.get('dateFromToWithLimitFilter')['date_to'] is defined ? app.request.get('dateFromToWithLimitFilter')['date_to'] : "" %}
+    </div>
+
+    {% embed "AdminBundle::filesReportEmbed.html.twig" %}
+        {% block exportar %}
+            {% if perDayList | length > 0 %}
+    <div class="loadReportFiles">
+        <h3>Download de Relatórios  &nbsp &nbsp<a data-toggle="tooltip" data-placement="top" data-original-title="Atualizar Listagem" id="refresh-report-list" class="glyphicons refresh" ><i></i></a></h3>
+            <div class="btn-group btn-block">
+                    <div class="leadcontainer">
+                        <button class="btn dropdown-lead btn-primary center">Exportar</button>
+                    </div>
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span> </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li class="center"><a class="file" data-format="Csv" data-placement="right" href="{{ path('admin_export_records_per_day',{
+                                'dateFromToWithLimitFilter[access_point]' : accessPointFilter,
+                                'dateFromToWithLimitFilter[date_from]' : dateFromFilter,
+                                'dateFromToWithLimitFilter[date_to]' : dateToFilter,
+                                'format':'Csv'
+                            })
+                            }}">CSV</a></li>
+                        <li class="center"><a class="file" data-format="Xlsx" data-placement="right" href="{{ path('admin_export_records_per_day',{
+                                'dateFromToWithLimitFilter[access_point]' : accessPointFilter,
+                                'dateFromToWithLimitFilter[date_from]' : dateFromFilter,
+                                'dateFromToWithLimitFilter[date_to]' : dateToFilter,
+                                'format':'Xlsx'
+                            })
+                            }}">EXCEL</a></li>
+                        <li class="center"><a class="file" data-format="Pdf" data-placement="right" href="{{ path('admin_export_records_per_day',{
+                                'dateFromToWithLimitFilter[access_point]' : accessPointFilter,
+                                'dateFromToWithLimitFilter[date_from]' : dateFromFilter,
+                                'dateFromToWithLimitFilter[date_to]' : dateToFilter,
+                                'format':'Pdf'
+                            })
+                            }}">PDF</a></li>
+                    </ul>
+                </div>
+        </div>
+
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot.report.files.js')}}"></script>
+
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script>
+        dojo.ready(function() {
+            dojo.query("#dateFromToWithLimitFilter_access_point").chosen({batch_select:true});
+        });
+
+        $('#dateFromToWithLimitFilter_date_from').on('change', function(){
+            var initDate = $(this).val();
+            var dmy = initDate.split("/");
+            var joindate = new Date(
+                    parseInt(dmy[2], 10),
+                    parseInt(dmy[1], 10) - 1,
+                    parseInt(dmy[0], 10)
+            );
+
+            joindate.setDate(joindate.getDate() + 30);
+
+            var maxDate = ("0" + joindate.getDate()).slice(-2) + "/" +
+                    ("0" + (joindate.getMonth() + 1)).slice(-2) + "/" +
+                    joindate.getFullYear();
+
+            $( "#dateFromToWithLimitFilter_date_to" ).datepicker({
+                maxDate: maxDate
+            }).datepicker("option", "maxDate", maxDate);
+
+        });
+
+        // daterange
+        if ($('#dateFromToWithLimitFilter_date_from').length && $('#dateFromToWithLimitFilter_date_to').length)
+        {
+            $( "#dateFromToWithLimitFilter_date_from" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                changeMonth: false,
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#dateFromToWithLimitFilter_date_to" ).datepicker( "option", "minDate", selectedDate );
+                }
+            }).datepicker( "option", "maxDate", $('#maxDate').text() );
+
+            $( "#dateFromToWithLimitFilter_date_to" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                changeMonth: false,
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#dateFromToWithLimitFilter_date_from" ).datepicker( "option", "maxDate", selectedDate );
+                }
+            }).datepicker( "option", "minDate", $('#dateFromToWithLimitFilter_date_to').val() );
+        }
+
+        var catTotalGraph       = {{ categories.totalGraph | json_encode | raw }};
+        var valuesTotalGraph    = {{ values.totalGraph | json_encode | raw }};
+        var catPerDayGraph      = {{ categories.perDayGraph | json_encode | raw }};
+        var valuesPerDayGraph   = {{ values.perDayGraph | json_encode | raw }};
+
+        $('#register_per_day_total').highcharts({
+            legend: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                categories: catTotalGraph
+            },
+            yAxis: [{
+                min: 0,
+                title: {
+                    text: ''
+                }
+            }, {
+                title: {
+                    text: ''
+                },
+                opposite: true
+            }],
+            tooltip: {
+                shared: true
+            },
+            plotOptions: {
+                column: {
+                    grouping: false,
+                    shadow: false,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Cadastros',
+                color: '{{ whiteLabel.panelColor }}',
+                data: valuesTotalGraph,
+                pointPadding: 0,
+                pointPlacement: -0.1
+            }],
+            lang: {
+                noData: "Nenhum registro de cadastro neste período."
+            }
+        });
+
+        $('#register_per_day_group').highcharts({
+            legend: {
+                enabled: false
+            },
+            credits: {
+                enabled: false
+            },
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                categories: catPerDayGraph
+            },
+            yAxis: [{
+                min: 0,
+                title: {
+                    text: ''
+                }
+            }, {
+                title: {
+                    text: ''
+                },
+                opposite: true
+            }],
+            tooltip: {
+                shared: true
+            },
+            plotOptions: {
+                column: {
+                    grouping: false,
+                    shadow: false,
+                    borderWidth: 0
+                }
+            },
+            series: [{
+                name: 'Cadastros',
+                color: '#444444',
+                data: valuesPerDayGraph,
+                pointPadding: -0.2,
+                pointPlacement: -0.1
+            }],
+            lang: {
+                noData: "Nenhum registro de cadastro neste período."
+            }
+        });
+
+        jQuery(document).ready(function(){
+            /**
+             * Ajax Load Report Files on S3
+             * Function created to view the generated reports that are available for download in S3.
+             */
+            loadReportFiles('{{ reportType }}');
+
+            $('#refresh-report-list').click(function(){
+                loadReportFiles('{{ reportType }}');
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends 'PanelBundle::dataList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block dataTitle %}
+    Controle de Cobrança de SMS
+{% endblock %}
+
+{% block filterBlock %}
+    <div class="filter-bar row-fluid margin-bottom-none">
+        {% block filter %}
+            {% set exportParams = app.request.query.all %}
+            {% form_theme filterForm 'AdminBundle:Form:fields.html.twig' %}
+            {{ form(filterForm, {'action': path('panel_user_sms_billing_control', exportParams)}) }}
+            {% set exportParams = exportParams|merge({'export': 1}) %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block thead %}
+    <div style="display: table; margin: 10px 0; position: relative; bottom: 10px;">
+        <a href="{{ path('panel_user_sms_billing_control_generate')}}" style="float: right; margin-top: 4px;" class="btn btn-success"><i></i>Verificar Cobranças Existentes</a>
+    </div>
+
+    {% if billingData != [] %}
+        <th class="center">ERP</th>
+        <th class="left">Cliente</th>
+        <th class="left">Domínio</th>
+        <th class="center">Fechamento</th>
+        <th class="center">De</th>
+        <th class="center">Até</th>
+        <th class="center">Envios</th>
+        <th class="center">Unitário</th>
+        <th class="center">Total</th>
+        <th class="center">Status</th>
+    {% endif %}
+{% endblock %}
+
+{% block tbody %}
+    {% if billingData == [] %}
+        <div>Não há dados para impressão.</div>
+    {% else %}
+        {% for key, clientsForBilling in billingData %}
+            {% for key2, billing in clientsForBilling %}
+                <tr class="gradeX">
+                    <td class="center">
+                        <a href="https://mambo.superlogica.net/clients/financeiro/sacados/id/{{ billing['erp_id'] }}" target="_blank">
+                            {{ billing['erp_id'] }}
+                        </a>
+                    </td>
+                    <td class="left">
+                        {{ billing['company'] }}
+                    </td>
+                    <td class="left">
+                        {{ billing['domain'] }}
+                    </td>
+                    <td class="center">
+                        {{ billing['closing_date'] }}
+                    </td>
+                    <td class="center">
+                        {{ billing['closing_date_start'] | date('d/m/Y') }}
+                    </td>
+                    <td class="center">
+                        {{ billing['closing_date_end'] | date('d/m/Y') }}
+                    </td>
+                    <td class="right" style="text-align: center";>
+                        {{ billing['sent_sms_number'] }}
+                    </td>
+                    <td class="right" style="text-align: center";>
+                        R$ {{ billing['cost_per_sms'] | number_format(2, ',') }}
+                    </td>
+                    <td class="right" style="text-align: center";>
+                        R$ {{ billing['amount_to_pay'] | number_format(2, ',') }}
+                    </td>
+                    <td class="center">
+                        <div id="status-box">
+                            {% if billing['status'] == 1 and billing['sent_sms_number'] != '0' %}
+                                <a id="{{ billing.id }}"
+                                   href="#" class="charge sent btn btn-success">Enviado</a>
+                            {% elseif (billing['status'] == 0 and billing['sent_sms_number'] != '0') %}
+                                <a id="{{ billing.id }}"
+                                   href="#" class="charge pending btn btn-danger">Pendente</a>
+                            {% else %}
+                                <a href="#" class="btn btn-info">Sem cobrança</a>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script>
+    $("#date_from").datepicker({
+        defaultDate: "1w",
+        dateFormat: 'dd/mm/yy',
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+        dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        nextText: 'Próximo',
+        prevText: 'Anterior',
+        changeMonth: false,
+        numberOfMonths: 1
+    });
+
+    $("#date_to").datepicker({
+        defaultDate: "1w",
+        dateFormat: 'dd/mm/yy',
+        dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+        dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+        dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+        monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+        monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+        nextText: 'Próximo',
+        prevText: 'Anterior',
+        changeMonth: false,
+        numberOfMonths: 1,
+    });
+
+    $('.charge').on('click', function() {
+        var id = $(this).attr('id');
+
+        bootbox.confirm("Deseja realmente alterar?", function(result) {
+            if (result) {
+                $.ajax({
+                    type: "POST",
+                    url: Routing.generate('panel_user_sms_billing_control_status', { id: id }),
+                    dataType : "json",
+                    success: function(response) {
+                        console.log(response);
+                        $('#' + response.id)
+                            .html(response.label)
+                            .toggleClass('pending sent btn-danger btn-success');
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

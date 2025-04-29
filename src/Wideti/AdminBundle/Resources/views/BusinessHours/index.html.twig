@@ -1,0 +1,179 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Horário de Funcionamento
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('business_hours_create')}}" style="margin: 0px 0 2px 0;" class="btn btn-primary btn-icon glyphicons circle_plus"><i></i>Cadastrar</a>
+{% endblock %}
+
+{% block filter %}
+    <div style="float: left; position:relative;left: 20px;top: 2px;">
+        {% if (enableActive == true) %}
+            <div>
+                {% if (moduleStatus == false) %}
+                    A funcionalidade está <b>desativada</b>, clique ao lado para ativar
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-content="Ao ativar essa funcionadalide, o horário de funcionamento da rede Wi-Fi será ativado."></i>
+                    <a href="{{ path('business_hours_module', {'status':'enable'}) }}" class="btn btn-success" style="margin-left: 10px; margin-bottom: 5px;" {{ enableActive }} ><i></i>Ativar</a>
+                {% else %}
+                    A funcionalidade está <b>ativada</b>, clique ao lado para desativar
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-content="Ao desativar essa funcionadade, o horário de funcionamento da rede Wi-Fi será desativado e o acesso será livre."></i>
+                    <a href="{{ path('business_hours_module', {'status':'disable'}) }}" class="btn btn-primary" style="margin-left: 10px; margin-bottom: 5px" ><i></i>Desativar</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div style="color: #e04545;">
+                Para ativar o módulo é preciso ter pelo menos um registro criado.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block thead %}
+    {% if (block == true) %}
+        <div style="margin-bottom: 20px; color: #e04545;">
+            Não é possível habilitar a funcionalidade caso um dos módulos abaixo estejam ativos:
+            <p>
+                <br><b>- Bloqueio por tempo / Validade de acesso (Grupo de visitantes)</b>
+                <br><b>- Confirmação de Cadastro por E-mail</b>
+                <br><b>- Código de Acesso</b>
+            </p>
+        </div>
+    {% endif %}
+
+    <th class="center">Segunda</th>
+    <th class="center">Terça</th>
+    <th class="center">Quarta</th>
+    <th class="center">Quinta</th>
+    <th class="center">Sexta</th>
+    <th class="center">Sábado</th>
+    <th class="center">Domingo</th>
+    <th class="center">Pontos de Acesso</th>
+    <th class="center" style="width: 90px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr id="{{ entity.id }}" class="gradeX">
+        {% if (entity.items) %}
+            <td class="center">
+                {% for period in entity.items.monday %}
+                    {{ period.from|slice(0, 5) ~ ' - ' ~ period.to|slice(0, 5) }}
+                    {% if not loop.last %}
+                        </br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="center">
+                {% for period in entity.items.tuesday %}
+                    {{ period.from|slice(0, 5) ~ ' - ' ~ period.to|slice(0, 5) }}
+                    {% if not loop.last %}
+                        </br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="center">
+                {% for period in entity.items.wednesday %}
+                    {{ period.from|slice(0, 5) ~ ' - ' ~ period.to|slice(0, 5) }}
+                    {% if not loop.last %}
+                        </br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="center">
+                {% for period in entity.items.thursday %}
+                    {{ period.from|slice(0, 5) ~ ' - ' ~ period.to|slice(0, 5) }}
+                    {% if not loop.last %}
+                        </br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="center">
+                {% for period in entity.items.friday %}
+                    {{ period.from|slice(0, 5) ~ ' - ' ~ period.to|slice(0, 5) }}
+                    {% if not loop.last %}
+                        </br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="center">
+                {% for period in entity.items.saturday %}
+                    {{ period.from|slice(0, 5) ~ ' - ' ~ period.to|slice(0, 5) }}
+                    {% if not loop.last %}
+                        </br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            <td class="center">
+                {% for period in entity.items.sunday %}
+                    {{ period.from|slice(0, 5) ~ ' - ' ~ period.to|slice(0, 5) }}
+                    {% if not loop.last %}
+                        </br>
+                    {% endif %}
+                {% endfor %}
+            </td>
+            {% endif %}
+            <td class="center">
+                {% if entity.inAccessPoints == 0 %}
+                    Todos
+                {% else %}
+                    <a href="javascript:void(0);"
+                    data-toggle="tooltip"
+                    data-original-title="{{ entity.accessPoints|aps_by_business_hours }}"
+                    data-placement="top">
+                        {{ entity.accessPoints|length }}
+                    </a>
+                {% endif %}
+            </td>
+            <td class="center">
+                <a href="{{ path('business_hours_edit', { 'id': entity.id }) }}" class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+                <a href="#" class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+            </td>
+        </tr>
+    {% else %}
+        <td colspan="4">Nenhum horário cadastrado</td>
+    {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result){
+
+                    if(result){
+                        var route = Routing.generate('business_hours_delete', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                if (response.message !== 'Exclusão não permitida') {
+                                    parent.remove();
+                                }
+                                window.location.reload();
+
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
+{% endblock %}

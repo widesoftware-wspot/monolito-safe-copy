@@ -1,0 +1,148 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+{% endblock %}
+
+{% block content %}
+
+    {% set route = app.request.attributes.get('_route') %}
+
+    {% include 'AdminBundle::header.html.twig' with {'title': 'White Label'} %}
+    <div>
+        <p style="padding: 0 10px;">Essa funcionalidade está visível apenas para usuários MANAGER do Mambo</p>
+    </div>
+
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-body">
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate' } }) }}
+                {% form_theme form with ['AdminBundle:Form:fields.html.twig', 'AdminBundle:Form:templateForm.html.twig', 'AdminBundle:Form:configForm.html.twig'] %}
+                {{ form_errors(form) }}
+
+                <div class="row-fluid">
+                    <div class="span7">
+                        <div class="widget row-fluid">
+                            <div class="widget-head">
+                                <h4 class="heading">Customizar</h4>
+                            </div>
+                            <div class="widget-body white-label">
+                                <div class="row">
+                                    <div class="span12">
+                                        <div class="row labels">
+                                            Nome da Empresa:
+                                            <span class="tooltip-wrapper">
+                                                <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="O valor definido neste campo substituirá todas as menções a Mambo WiFi. Ou seja, todos os locais em que estiver escrito Mambo WiFi, aparecerá o valor definido neste campo."></i>
+                                            </span>
+                                        </div>
+                                        <div class="row">
+                                            {{ form_widget(form.companyName) }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="position:relative;top: 25px;margin-bottom: 20px;">
+                                    <div class="span4">
+                                        <div class="row labels">
+                                            Cor de destaque:
+                                            <span class="tooltip-wrapper">
+                                                <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Cor de destaque do Painel Administrativo."></i>
+                                            </span>
+                                        </div>
+                                        <div class="row">
+                                            <div class="input-group color-group">
+                                                {{ form_widget(form.panelColor) }}
+                                                <span class="input-group-addon"><i></i></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span8" style="position: relative;left: 22px;">
+                                        <div class="row labels">
+                                            Logotipo:
+                                            <span class="tooltip-wrapper">
+                                                <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Conteúdo exibido no rodapé das páginas do Painel Administrativo. O conteúdo deve ser um <b>HTML</b> no formato sugerido já existente."></i>
+                                            </span>
+                                        </div>
+                                        <div class="row">
+                                            {{ form_widget(form.fileLogotipo) }}
+                                            <p style="color:#cb8f21;position: relative;bottom: 10px;">O logotipo deve ter dimensões máximas de 250 x 250 pixels.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="span12">
+                                        <div class="row labels">
+                                            Assinatura (HTML):
+                                            <span class="tooltip-wrapper">
+                                                <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Conteúdo exibido no rodapé das páginas do Painel Administrativo. O conteúdo deve ser um <b>HTML</b> no formato sugerido já existente.<br><br>O atriburo <b>{ano}</b> refere-se ao ano que é exibido no rodapé. Caso queira este campo, adicionar exatamente neste formato"></i>
+                                            </span>
+                                        </div>
+                                        <div class="row">
+                                            {{ form_widget(form.signature) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="span5 imageBox logo {{ entity.logotipo ? '' : 'hide' }}">
+                        <div class="widget row-fluid">
+                            <div class="widget-head">
+                                <h4 class="heading">
+                                    <a id="changeImage" data-id="{{ entity.id }}" class="{{ entity.logotipo ? '' : 'hide' }}" href="javascript:void(0);">Alterar Logotipo</a>
+                                </h4>
+                            </div>
+                            <div class="widget-body">
+                                <div id="currentImage">
+                                    {%  if ('http' in entity.logotipo) or ('/bundles/admin/' in entity.logotipo) %}
+                                        <img src="{{ entity.logotipo }}">
+                                    {%  else  %}
+                                        <img src="{{ asset("https://" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ entity.logotipo) }}">
+                                    {%  endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="separator line bottom"></div>
+
+                <div class="form-actions left">
+                    {{ form_widget(form.submit) }}
+                </div>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock%}
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/demo/custom_upload.js') }}"></script>
+
+    <script>
+        jQuery('document').ready(function(){
+            $(function(){
+                $('.color-group').colorpicker();
+            });
+
+            jQuery('#changeImage').on('click', function (e)
+            {
+                $('#wspot_white_label_fileLogotipo').click();
+            });
+        });
+
+        customScripts.init();
+    </script>
+{% endblock %}

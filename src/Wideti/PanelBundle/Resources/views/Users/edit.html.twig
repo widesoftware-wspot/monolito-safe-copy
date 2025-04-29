@@ -1,0 +1,62 @@
+{% extends 'PanelBundle::layout.html.twig' %}
+
+{% block content %}
+    <h3 class="heading-mosaic">Editar Cliente</h3>
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>Editar</a>
+                    </li>
+                </ul>
+            </div>
+            <span id="message-error"></span>
+            <div class="widget-body">
+                {{ form_start(edit_form, { 'attr': {'class': 'form-horizontal', novalidate: 'novalidate', 'id': 'clientForm'} }) }}
+                {% form_theme edit_form 'AdminBundle:Form:fields.html.twig' %}
+                <div class="widget">
+                    <div class="widget-head">
+                        <h4 class="heading">Edição de Usuário.</h4>
+                    </div>
+                    <div class="widget-body">
+                        {{ form_errors(edit_form) }}
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                            <div class="span6">
+                                {{ form_row(edit_form.username) }}
+                                {{ form_row(edit_form.nome) }}
+                                {{ form_row(edit_form.status) }}
+                                {{ form_row(edit_form.role) }}
+                                {{ form_row(edit_form.financial_manager) }}
+                                {{ form_row(edit_form.receive_report_mail) }}
+                                {{ form_row(edit_form.report_mail_language) }}
+                            </div>
+                        </div>
+                        <div class="form-actions right">
+                            <a href="{{ path('panel_user_list') }}">
+                                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                    Cancelar
+                                </button>
+                            </a>
+
+                            {{ form_widget(edit_form.submit) }}
+                        </div>
+                    </div>
+                </div>
+                {{ form_end(edit_form) }}
+            </div>
+        </div>
+    </div>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset(assets_path ~'/js/wspot.panel.user.validate.js')}}"></script>
+{% endblock %}

@@ -1,0 +1,235 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/lightbox/lightbox.css')}}" rel="stylesheet" />
+    <style>
+        .interval-item .span3 {
+            margin-bottom: 0px !important;
+        }
+        .interval-item {
+            margin-bottom: 20px !important;
+        }
+        .interval-item input {
+            width: 60px !important;
+        }
+        .remove-field, .add-interval {
+            width: 40px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+{% set route = app.request.attributes.get('_route') %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Horário de Funcionamento'} %}
+
+<div class="innerLR">
+    <div class="widget widget-tabs border-bottom-none">
+        <div class="widget-head">
+            <ul>
+                <li class="active">
+                    <a class="glyphicons edit" data-toggle="tab"><i></i>
+                    {% if 'access_code_new' in route %}Novo{% else %}Editar{% endif %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="widget-body">
+
+            {{ form_start(form, { 'attr': {'class': 'form-horizontal', 'id' : 'formId'} }) }}
+            {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+            <div class="row-fluid">
+                <div class="span6">
+                    <div class="widget row-fluid">
+                        <div class="widget-head">
+                            <h4 class="heading"> Dias e horários de funcionamento da rede Wi-Fi</h4>
+                        </div>
+                        <div class="widget-body">
+                            {% for day, translated in days %}
+                                <div class="row date">
+                                    <div class="span3" style="width: 120px;margin-bottom: 0px;">
+                                        <p style="margin: 6px 6px 6px 25px;">{{ translated }}</p>
+                                    </div>
+                                    <div class="interval-collection" data-max-items="3" data-prototype="{{ form_widget(form[day].vars.prototype)|e('html_attr') }}">
+                                        {% for index, formDay in form[day] %}
+                                            <div class="interval-item">
+                                                {% if index >= 1 %}
+                                                    <div class="span3" style="width: 115px;"></div>
+                                                {% endif %}
+                                                <div class="span3" id="{{ day ~ index ~ 'From' }}">
+                                                    {{ form_row(formDay.from, {'attr': {'class': 'span11 mask-hour from', 'onchange': 'checkHoursInput(this.id, "' ~ day ~ 'From", "' ~ day ~ 'To")'}}) }}
+                                                </div>
+                                                <div class="span3" id="{{ day ~ index ~ 'To' }}">
+                                                    {{ form_row(formDay.to, {'attr': {'class': 'span11 mask-hour to', 'onchange': 'checkHoursInput(this.id, "' ~ day ~ 'From", "' ~ day ~ 'To")'}}) }}
+                                                </div>
+                                                {% if index == 0 %}
+                                                    <button type="button" class="btn btn-sm btn-primary add-interval" data-day="{{ day }}">+</button>
+                                                {% endif %}
+                                                {% if index >= 1 %}
+                                                    <button type="button" class="btn btn-sm btn-primary remove-field"><i class="icon-trash icon-white"></i></button>
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="row">
+                                <div class="span11" style="margin: 20px;">
+                                    <hr class="separator">
+                                    <span>Caso algum dia não tenha funcionamento, preencha os campos com <b>00:00</b></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="span6">
+                    <div class="widget row-fluid">
+                        <div class="widget-head">
+                            <h4 class="heading"> Pontos de Acesso</h4>
+                        </div>
+                        <div class="widget-body">
+                            <div class="row">
+                                <p style="margin-bottom: 20px; margin-left: 20px;">Aqui você pode escolher em quais pontos de acesso essa configuração de horário de funcionamento estará ativa.</p>
+                                <p style="margin-bottom: 20px; margin-left: 20px; color: red;">Importante: Não é permitido cadastrar mais de uma faixa de horário com o mesmo Ponto de Acesso / Todos Pontos de Acesso.</p>
+
+                                {{ form_row(form.inAccessPoints) }}
+
+                                <div class="access-points-block control-group">
+                                    {{ form_row(form.accessPoints) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{ form_errors(form) }}
+                </div>
+            </div>
+
+            <div class="separator line bottom"></div>
+
+            <div class="form-actions right">
+                <a href="{{ path('business_hours') }}">
+                    <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                        Cancelar
+                    </button>
+                </a>
+                {{ form_widget(form.submit) }}
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+{% endblock%}
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js') }}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script type="text/javascript">
+        function checkHoursInput(objectId, startId,endId) {
+            var str_sub = objectId.substr(objectId.lastIndexOf("_")+1);
+            var start = $("#wspot_business_hours_"+startId+"").val().replace(':', '');
+            var end = $("#wspot_business_hours_"+endId+"").val().replace(':',  '');
+            console.log(start.length);
+            console.log(end.length);
+            if (start > end) {
+                $('#error-msg').remove();
+                $("#formId :input").prop("disabled", true);
+                $("#"+objectId).prop("disabled", false);
+                var error = $('<span id="error-msg"><label class="error">Horário inicial superior ao final</label></span>');
+                $("#"+str_sub).append(error);
+                $('#wspot_business_hours_submit').prop("disabled", true);
+            } else if (start === end && start !== '0000' && end !== '0000') {
+                $('#error-msg').remove();
+                $("#formId :input").prop("disabled", true);
+                $("#"+objectId).prop("disabled", false);
+                var error = $('<span id="error-msg"><label class="error">Horário inicial igual ao final</label></span>');
+                $("#"+str_sub).append(error);
+                $('#wspot_business_hours_submit').prop("disabled", true);
+            } else if (start.length < 4 || end.length < 4 || start > 2359 || end > 2359 || start < 0 || end < 0) {
+                $('#error-msg').remove();
+                $("#formId :input").prop("disabled", true);
+                $("#"+objectId).prop("disabled", false);
+                var error = $('<span id="error-msg"><label class="error">Formato de horário incorreto</label></span>');
+                $("#"+str_sub).append(error);
+                $('#wspot_business_hours_submit').prop("disabled", true);
+            } else {
+                $('#wspot_business_hours_submit').prop("disabled", false);
+                $("#"+objectId).prop("disabled", false);
+                $("#formId :input").prop("disabled", false);
+                $('#error-msg').remove();
+            }
+        }
+
+        function controlSelectAccessPoints()
+        {
+            var inAccessPoints  = $("#wspot_business_hours_inAccessPoints").val();
+            var accessPoints    = $(".access-points-block");
+
+            if (inAccessPoints != 1) {
+                accessPoints.addClass('hide');
+                return;
+            }
+            accessPoints.removeClass('hide');
+            dojo.query("#wspot_business_hours_accessPoints").chosen({batch_select:true});
+        }
+
+        jQuery('document').ready(function(){
+
+            controlSelectAccessPoints();
+
+            $('#wspot_business_hours_inAccessPoints').on('change', function(e){
+                controlSelectAccessPoints();
+            });
+
+            $('.mask-hour').mask('99:99', {selectOnFocus: true, clearIfNotMatch: true, placeholder:"__:__"});
+        });
+
+        $('.add-interval').click(function() {
+            var day = $(this).data('day');
+            var collection = $(this).closest('.interval-collection');
+            var maxItems = collection.data('max-items');
+            var itemCount = collection.children('.interval-item').length;
+            if (itemCount < maxItems) {
+                const prototype = collection.data('prototype');
+                var index = collection.children('.interval-item').length;
+
+                var newForm = prototype.replace(/__name__/g, index);
+                const newElement = document.createElement('div');
+                newElement.classList.add('interval-item');
+                newElement.innerHTML = '<div class="span3" style="width: 120px;"></div>' + newForm + '<button type="button" class="btn btn-sm btn-primary remove-field"><i class="icon-trash icon-white"></i></button>';
+                newElement.querySelectorAll('.control-group').forEach((controlGroup, index) => { 
+                    controlGroup.classList.add('span3');
+                    if (index == 1) {
+                        controlGroup.style.marginLeft = '6px';
+                    }
+                });
+                collection.append(newElement);
+            }
+        });
+
+        $('.interval-collection').on('click', function(event) {
+            if (event.target.classList.contains('remove-field')) {
+                event.target.parentElement.remove();
+            }
+            if (event.target.parentElement.classList.contains('remove-field')) {
+                event.target.parentElement.parentElement.remove();
+            }
+        });
+
+    </script>
+{% endblock %}

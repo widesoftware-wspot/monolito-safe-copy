@@ -1,0 +1,36 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="registrationBox" class="boxes complete fullBox">
+            <div class="box-content">
+                <h3>{{ textAuth|default("Login via IXC Provider") }}</h3><br/>
+                {% form_theme form 'FrontendBundle:Form:frontendCustomForm.html.twig' %}
+                {{ form_start(form, {attr: {novalidate: 'novalidate', 'id': 'signupForm'} }) }}
+
+                {% if error is defined %}
+                    {% set email_error = '<br><strong>' ~ error ~ '</strong>' %}
+                {% endif %}
+
+                <div class="text">
+
+                    <b>{{ data.name|default('') }}</b><br/>
+                    {{ subTextAuth|default("Digite as credenciais que você usa para se conectar na Central do Assinante") }} <br/><br/>
+                </div>
+
+                <a style="margin-left: 0 !important; display: none; height: 26px !important;" id="loaderBtnSignUp" class="btnLoader">
+                    <img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" />
+                </a>
+                {% if(error) %}
+                    <p class="social_error">{{ error }}</p>
+                {% endif %}
+                {{ form_errors(form) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+{% endblock %}

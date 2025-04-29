@@ -1,0 +1,22 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important; min-height: 400px;">
+            <div class="box-content">
+                <h3 style="font-size: 24px !important;">{{ 'wspot.block_per_time.title'|trans }}</h3>
+
+                <div class="content-center">
+                    {{ 'wspot.block_per_time.message_1'|trans }}<strong>{{ guest.properties.name|default('wspot.default.guest'|trans) }}</strong>.
+                    {% if (customMessage ) %}
+                        <br><br>
+                        <p>{{ customMessage }}</p>
+                        {{ 'wspot.block_per_time.message_3'|trans }}<strong>{{ period }}</strong>
+                    {% else %}
+                        {{ 'wspot.block_per_time.message_2'|trans }}<strong>{{ period }}</strong>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

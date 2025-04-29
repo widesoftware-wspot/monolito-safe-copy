@@ -1,0 +1,229 @@
+{% block style %}
+    {% if (template) %}
+        <style>
+            body {
+                {% if(template.backgroundImage or template.backgroundColor) %}
+                    background: url('{{ asset("https://" ~ aws_bucket_proxy_name ~"/Template/"~ template.backgroundImage) }}') {{ template.backgroundRepeat }} {{ template.backgroundPositionX }} {{ template.backgroundPositionY }} {{ template.backgroundColor }};
+                    {% if(template.backgroundRepeat == 'no-repeat') %}
+                        background-size: cover !important;
+                    {% endif %}
+                {% else %}
+                    background: url('{{ asset("bundles/admin/theme/images/mosaic-pattern.png") }}') repeat scroll 0 0 #fafafa;
+                {% endif %}
+                color: {{ template.fontColor }};
+            }
+
+            {% if(template.backgroundImage or template.backgroundColor) %}
+                {% for key, configurations in templateCSS %}
+                    {% for k, configuration in configurations %}
+
+                    @media only screen and (max-width: {{ configuration["maxWidth"] }}) and (orientation: {{ configuration["orientation"] }}) {
+                        body {
+                            background: url('{{ asset("https://" ~ aws_bucket_proxy_name ~"/Template/"~ configuration["imageName"]) }}') {{ template.backgroundRepeat }} {{ template.backgroundPositionX }} {{ template.backgroundPositionY }} {{ template.backgroundColor }} !important;
+                            {% if(template.backgroundRepeat == 'no-repeat') %}
+                                background-size: cover !important;
+                            {% endif %}
+                            color: {{ template.fontColor }} !important;
+                        }
+                    }
+
+                    {% endfor %}
+                {% endfor %}
+            {% else %}
+                background: url('{{ asset("bundles/admin/theme/images/mosaic-pattern.png") }}') repeat scroll 0 0 #fafafa;
+            {% endif %}
+
+            #languageBox, #languageBox a, #languageBox a:hover, footer {
+                color: {{ template.fontColor }} !important;
+            }
+            .content-terms > p{
+                color: {{ template.loginFontColor }} !important;
+            }
+            #terms {
+                color: {{ template.loginFontColor }} !important;
+            }
+            .language-box {
+                padding: 10px 0;
+                text-align: center;
+                color: {{ template.fontColor }};
+                background-color: rgba({{ template.loginBoxColor|hexToRgb }}, 1.0);
+                position: absolute;
+                top: 0;
+                width: 100%;
+                z-index: 1;
+            }
+
+            /* Login Box */
+            section.container div#loginBox.boxes,
+            section.container.terms,
+            #checkinBox{
+                background-color: rgba({{ template.loginBoxColor|hexToRgb }}, {{ (template.boxOpacity) ? "0.8" : "1.0" }}) !important;
+            }
+            .boxes.visible-phone #loginAccount{
+                background: {{ template.loginButtonColor }};
+                background-color: {{ template.loginButtonColor }};
+                background-image: linear-gradient(to bottom, {{ template.loginButtonColor }}, {{ template.loginButtonColor }}) !important;
+                color: {{ template.loginButtonFontColor }} !important;
+            }
+            .boxes.visible-phone #loginAccount:hover{
+                background-color: {{ template.loginButtonColor }} !important;
+                color: {{ template.loginButtonFontColor }} !important;
+            }
+            #loginBox h3,
+            #registrationBox h3,
+            #registrationBox .box-content,
+            a#forgotPassword,
+            form#signupForm,
+            form#signupForm a,
+            form#signupForm a:hover {
+                color: {{ template.loginFontColor }} !important;
+            }
+
+            /* do not group these rules */
+            *::-webkit-input-placeholder {
+                color: #999 !important;
+            }
+            *:-moz-placeholder {
+                /* FF 4-18 */
+                color: #999 !important;
+            }
+            *::-moz-placeholder {
+                /* FF 19+ */
+                color: #999 !important;
+            }
+            *:-ms-input-placeholder {
+                /* IE 10+ */
+                color: #999 !important;
+            }
+            .button-back{
+                font-weight:bold;
+                background: none;
+                border: none;
+            }
+
+            #wspot_signin_entrar,
+            #loaderBtnAutoLogin,
+            #signUp_submit,
+            #btnLoginBoxButton,
+            .button-back,
+            .btnHome,
+            .btnCancelar{
+                background-color: {{ template.loginButtonColor }} !important;
+                color: {{ template.loginButtonFontColor }} !important;
+            }
+
+            #loaderBtnLogin,
+            #loaderBtnForgetPass,
+            #loaderBtnCadastro,
+            #loaderBtnAutoLogin{
+                background-color: {{ template.loginButtonColor }} !important;
+                color: {{ template.loginButtonFontColor }} !important;
+            }
+
+            /* Cadastro Box */
+            section.container div#registrationBox.boxes,
+            section.container div#signUpBox.boxes {
+                background-color: rgba({{ template.signupBoxColor|hexToRgb }}, {{ (template.boxOpacity) ? "0.8" : "1.0"}}) !important;
+            }
+            .boxes.visible-phone #signupAccount{
+                background: {{ template.signupButtonColor }} !important;
+                background-color: {{ template.signupButtonColor }} !important;
+                background-image: linear-gradient(to bottom, {{ template.signupButtonColor }}, {{ template.signupButtonColor }}) !important;
+                color: {{ template.signupButtonFontColor }} !important;
+            }
+            .boxes.visible-phone #signupAccount:hover{
+                background-color: {{ template.signupButtonColor }} !important;
+                color: {{ template.signupButtonFontColor }} !important;
+            }
+            #signUpBox,
+            #signUpBox h3,
+            #signupForm,
+            #signupForm .signup-div-terms,
+            #signupForm .signup-div-terms *,
+            #signupForm a,
+            #signupForm a:hover
+            {
+                color: {{ template.signupFontColor }} !important;
+            }
+            #signupForm .chzn-results {
+                color: black !important;
+            }
+            #signupForm .chzn-container-multi  {
+                width: 100% !important;
+            }
+            #signupForm .chzn-drop {
+                width: 100% !important;
+            }
+            #signupForm .search-field {
+                width: 100% !important;
+            }
+            #signupForm .search-field > input {
+                width: 100% !important;
+                margin-bottom: 0;
+                font-size: 14px;
+            }
+            #wspot_signup_submit,
+            #wspot_loginonly_submit,
+            #social_media_registration_cadastrar,
+            #wspot_facebook_checkin_form_submit,
+            #loaderBtnSignUp,
+            #loaderBtnChange,
+            #loaderBtnResendSms,
+            #confirmation_submit,
+            #share-connect,
+            #wspot-fb-like,
+            #btnCadastro,
+            .btnConfirmation,
+            .btnChangeData{
+                background-color: {{ template.signupButtonColor }} !important;
+                color: {{ template.signupButtonFontColor }} !important;
+                height: 26px;
+            }
+
+            #loaderBtnSignUp img,
+            #loaderBtnChange img,
+            #loaderBtnLogin img,
+            #loaderBtnFacebook img,
+            #loaderBtnForgetPass img,
+            #loaderBtnCadastro img{
+                position: relative;
+                top: 0;
+            }
+
+            /* Terms */
+            section.terms, section.terms a{
+                color: {{ template.loginFontColor }} !important;
+            }
+
+            /* Forget Password */
+            section.forgetpass{
+                background-color: rgba({{ template.loginBoxColor|hexToRgb }}, {{ (template.boxOpacity) ? "0.8" : "1.0" }}) !important;
+            }
+            section.forgetpass h1,
+            section.forgetpass span.title,
+            section.forgetpass div.form,
+            section .content-center.autologin,
+            .not_me_link a{
+                color: {{ template.loginFontColor }} !important;
+            }
+            a.btnNext, a.btnNext:hover{
+                background-color: {{ template.loginButtonColor }} !important;
+                color: {{ template.loginButtonFontColor }} !important;
+            }
+            section.forgetpass div.form button.btnCancelar,
+            #frontend_recovery_password_submit{
+                background-color: {{ template.loginButtonColor }} !important;
+                color: {{ template.loginButtonFontColor }} !important;
+            }
+
+            #wspot_signup_properties_phone,
+            #social_media_registration_properties_phone,
+            #wspot_signup_properties_mobile,
+            #social_media_registration_properties_mobile,
+            #progressive_form_properties_phone,
+            #progressive_form_properties_mobile {
+                padding-left: 52px;
+            }
+        </style>
+    {% endif %}
+{% endblock %}

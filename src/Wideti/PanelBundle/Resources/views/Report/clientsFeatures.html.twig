@@ -1,0 +1,252 @@
+{% extends 'PanelBundle::reportList.html.twig' %}
+
+{% block heading %}
+    Clientes X Funcionalidades
+{% endblock %}
+
+{% block cards %}
+    <div class="box-generic">
+        <div class="">
+            <div class="tabs active openedBefore" id="overview">
+                <div class="row-fluid">
+                    <div class="span12" style="margin-bottom: 10px;">
+                        <div class="row-fluid">
+                            {% if searchBy is null %}
+                                <div class="span2">
+                                    <span class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalLogins }}</span><br>Clientes fizeram login</span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                                <div class="span2">
+                                    <span href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalTemplates }}</span><br>Clientes criaram templates<br/></span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                                <div class="span2">
+                                    <span href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalCampaigns }}</span><br>Clientes criaram campanhas</span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                                <div class="span2">
+                                    <span href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalAccountings }}</span><br>Clientes tiveram accountings</span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                                <div class="span2">
+                                    <span href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalBandwidths }}</span><br>Clientes utilizam limite de banda</span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                            {% elseif searchBy == 'login'%}
+                                <div class="span12">
+                                    <span class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalLogins }}</span><br>Clientes fizeram login</span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                            {% elseif searchBy == 'template'%}
+                                <div class="span12">
+                                    <span href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalTemplates }}</span><br>Clientes criaram templates<br/></span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                            {% elseif searchBy == 'campaign'%}
+                                <div class="span12">
+                                    <span href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalCampaigns }}</span><br>Clientes criaram campanhas</span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                            {% elseif searchBy == 'accounting'%}
+                                <div class="span12">
+                                    <span href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalAccountings }}</span><br>Clientes tiveram accountings</span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                            {% elseif searchBy == 'bandwidth'%}
+                                <div class="span12">
+                                    <span href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons group"><i></i></span>
+                                        <span class="txt"><span class="count" style="color: #496cad;">{{ totalBandwidths }}</span><br>Clientes utilizam limite de banda</span>
+                                        <div class="clearfix"></div>
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block filterBlock %}
+    {% block filter %}
+        <div class="row-fluid">
+            <div class="filter-bar margin-bottom-none">
+                <form name="wideti_adminBundle_usuarios_filter" method="get" action="" novalidate="novalidate">
+                    <div id="wideti_AdminBundle_usuarios_filter">
+                        <div>
+                            <label for="wideti_AdminBundle_usuarios_filter_filtro" class="required" aria-required="true">Listar:</label>
+                            <select id="search_by" name="search_by" aria-controls="DataTables_Table_0" class="form-control">
+                                <option selected value disabled>-- Selecione --</option>
+                                <option value="login">Login</option>
+                                <option value="template">Template</option>
+                                <option value="campaign">Campanha</option>
+                                <option value="accounting">Accounting</option>
+                                <option value="bandwidth">Limite de Banda</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="wideti_AdminBundle_usuarios_filter_filtro" class="required" aria-required="true">Exibir:</label>
+                            <select id="limitFilter" name="limitFilter" id="limitFilter" aria-controls="DataTables_Table_0" class="form-control">
+                                <option selected value disabled>-- Selecione --</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                                <option value="75">75</option>
+                                <option value="100">100</option>
+                                <option value="10000">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-animate btn-animate-side btn-primary"><span>
+                    <i class="icon wb-search" aria-hidden="true"></i> Filtrar</button>
+                    <div class="col-md-6"></div>
+                </form>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}
+
+{% block thead %}
+        <th style="width: 1px;text-decoration: none;">#</th>
+        <th style="width: 150px;text-decoration: none;">Razao Social</th>
+        <th style="width: 150px;text-decoration: none;">Domínio</th>
+        <th style="width: 150px;text-decoration: none;">Tag(s)</th>
+{% endblock %}
+
+{% block tbody %}
+
+    {% if searchBy is null %}
+        {% set k = 0 %}
+        {% for client in clients %}
+            <tr class="gradeX">
+                {% set k=k+1 %}
+                <td>{{ k }}</td>
+                <td>{{ client.company }}</td>
+                <td>{{ client.domain }}</td>
+                <td>
+                    {% if client.id in arrayLoginIds %}
+                        <span class="label label-success">Login</span>
+                    {% endif %}
+                    {% if client.id in arrayCreatedTemplateIds %}
+                        <span class="label label-success">Template</span>
+                    {% endif %}
+                    {% if client.id in arrayCreatedCampaignsIds %}
+                        <span class="label label-success">Campanha</span>
+                    {% endif %}
+                    {% if client.id in arrayAccountingsIds %}
+                        <span class="label label-success">Accounting</span>
+                    {% endif %}
+                    {% if client.id in arrayBandwidthIds %}
+                        <span class="label label-success">Limite de Banda</span>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    {% elseif searchBy == 'login'%}
+        {% set k = 0 %}
+        {% for client in clients %}
+            {% if client.id in arrayLoginIds %}
+            <tr class="gradeX">
+                {% set k=k+1 %}
+                <td>{{ k }}</td>
+                <td>{{ client.company }}</td>
+                <td>{{ client.domain }}</td>
+                <td>
+                    <span class="label label-success">Login</span>
+                </td>
+            </tr>
+            {% endif %}
+        {% endfor %}
+    {% elseif searchBy == 'template'%}
+        {% set k = 0 %}
+        {% for client in clients %}
+            {% if client.id in arrayCreatedTemplateIds %}
+                <tr class="gradeX">
+                    {% set k=k+1 %}
+                    <td>{{ k }}</td>
+                    <td>{{ client.company }}</td>
+                    <td>{{ client.domain }}</td>
+                    <td>
+                        <span class="label label-success">Template</span>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    {% elseif searchBy == 'campaign'%}
+        {% set k = 0 %}
+        {% for client in clients %}
+            {% if client.id in arrayCreatedCampaignsIds %}
+                <tr class="gradeX">
+                    {% set k=k+1 %}
+                    <td>{{ k }}</td>
+                    <td>{{ client.company }}</td>
+                    <td>{{ client.domain }}</td>
+                    <td>
+                        <span class="label label-success">Campanha</span>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    {% elseif searchBy == 'accounting'%}
+        {% set k = 0 %}
+        {% for client in clients %}
+            {% if client.id in arrayAccountingsIds %}
+                <tr class="gradeX">
+                    {% set k=k+1 %}
+                    <td>{{ k }}</td>
+                    <td>{{ client.company }}</td>
+                    <td>{{ client.domain }}</td>
+                    <td>
+                        <span class="label label-success">Accounting</span>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    {% elseif searchBy == 'bandwidth'%}
+        {% set k = 0 %}
+        {% for client in clients %}
+            {% if client.id in arrayBandwidthIds %}
+                <tr class="gradeX">
+                    {% set k=k+1 %}
+                    <td>{{ k }}</td>
+                    <td>{{ client.company }}</td>
+                    <td>{{ client.domain }}</td>
+                    <td>
+                        <span class="label label-success">Limite de Banda</span>
+                    </td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endblock %}

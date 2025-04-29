@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}Welcome!{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        {% if app.session.get('wspotClient') != null %}
+            {% if app.session.get('wspotClient').isWhiteLabel == true %}
+                <link rel="icon" type="image/x-icon" href="{{ asset('favicon2.ico') }}" />
+            {% endif %}
+        {% endif %}
+    </head>
+    <body>
+        {% block body %}{% endblock %}
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

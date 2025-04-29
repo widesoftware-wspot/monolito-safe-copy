@@ -1,0 +1,302 @@
+{% extends 'PanelBundle::dataList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block dataTitle %}
+    Listagem de clientes
+{% endblock %}
+
+{% block cards %}
+    {% if not is_granted("ROLE_SUPORT_LIMITED") %}
+    <div class="box-generic">
+        <div class="">
+            <div class="tabs active openedBefore" id="overview">
+                <div class="row-fluid">
+                    <div class="span12" style="margin-bottom: 10px;">
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <span class="widget-stats widget-stats-2">
+                                    <span class="glyphicons user_remove"><i></i></span>
+                                    <span class="txt"><span class="count" style="color: #496cad;">{{ numInactiveClients}}</span><br>Mambo WiFi Inativos</span>
+                                    <div class="clearfix"></div>
+                                </span>
+                            </div>
+                            <div class="span4">
+                                <span href="#" class="widget-stats widget-stats-2">
+                                    <span class="glyphicons group"><i></i></span>
+                                    <span class="txt"><span class="count" style="color: #496cad;">{{ numActiveClients}}</span><br>Mambo WiFi Ativos<br/></span>
+                                    <div class="clearfix"></div>
+                                </span>
+                            </div>
+                            <div class="span4">
+                                <span href="#" class="widget-stats widget-stats-2">
+                                    <span class="glyphicons user_add"><i></i></span>
+                                    <span class="txt"><span class="count" style="color: #496cad;">{{ numPocClients}}</span><br>Mambo WiFi em POC</span>
+                                    <div class="clearfix"></div>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabs" id="guests"></div>
+            <div class="tabs" id="network"></div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block addButton %}
+    {% if not is_granted("ROLE_SUPORT_LIMITED") %}
+        <a href="{{ path('panel_client_create')}}" style="margin: 4px 0 5px 5px;" class="btn btn-primary btn-icon glyphicons circle_plus pull-right">
+            <i></i>Cadastrar Cliente
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block filterBlock %}
+    <div class="filter-bar row-fluid margin-bottom-none">
+        {% block filter %}
+            {% set exportParams = app.request.query.all %}
+            {% form_theme filter 'AdminBundle:Form:fields.html.twig' %}
+            {{ form(filter, {'action': path('panel_client_list', exportParams)}) }}
+            {% set exportParams = exportParams|merge({'export': 1}) %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block thead %}
+    <th class="center" style="width: 1px;">
+        <input type="checkbox" class="checkbox" />
+    </th>
+    <th class="center" style="width: 300px;">Razão Social</th>
+    <th class="center" style="width: 150px;">Domínio</th>
+    <th class="center" style="width: 150px;">Plano</th>
+    <th class="center" style="width: 130px">AP's Contratadas</th>
+    <th class="center" style="width: 80px">Check Ap.</th>
+    <th class="center" style="width: 80px">Cadastro</th>
+    <th class="center" style="width: 150px">Ações</th>
+{% endblock %}
+
+{% block subtitle %}
+    <p style="font-weight: bolder">
+        <small>Legenda:</small> <span style="color: green">Ativo</span> | <span style="color: orange">POC</span> | <span style="color: red">Inativo</span>
+    </p>
+{% endblock %}
+
+{% block selectedAction %}
+    {% if not is_granted("ROLE_SUPORT_LIMITED") %}
+    <label class="strong">Aplicar à selecionado(s):</label>
+    <select class="selectpicker" data-style="btn-default btn-small" id="statusDomains">
+        <option selected value disabled>-- Selecione a opção --</option>
+        <option value="activate">Ativar domínios</option>
+        <option value="inactivate">Desativar domínios</option>
+    </select>
+    {% endif %}
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr class="gradeX">
+            {% if entity.status == 0 %}
+                {% set statusColor = "red" %}
+            {% endif %}
+            {% if entity.status == 1 %}
+                {% set statusColor = "green" %}
+            {% endif %}
+            {% if entity.status == 2 %}
+                {% set statusColor = "orange" %}
+            {% endif %}
+            <td>
+                <input type="checkbox" class="checkbox" name="client-ids" id="client-ids" value="{{ entity.id }}"/>
+            </td>
+
+            <td style="color: {{ statusColor }}">
+                {{ entity.company }}
+            </td>
+
+            {% if entity.isWhitelabel == 0 %}
+                <td>
+                    <a href="https://{{ entity.domain }}.mambowifi.com" target="_blank">
+                        {{ entity.domain }}
+                    </a>
+                </td>
+            {% else %}
+                <td>
+                    <a href="https://{{ entity.domain }}" target="_blank">
+                        {{ entity.domain }}
+                    </a>
+                </td>
+            {% endif %}
+
+            <td style="text-align: center">{{ entity.plan|upper }}</td>
+            <td style="text-align: center">{{ entity.contractedAccessPoints }}</td>
+            <td style="text-align: center">{{ entity.apCheck ? "Sim" : "Não" }}</td>
+            <td>{{ entity.created|date('d/m/Y') }}</td>
+
+            <td class="center">
+                {% if not is_granted("ROLE_SUPORT_LIMITED") %}
+                    <a href="{{ path('panel_sms_credit', { 'client': entity.id }) }}"
+                    class="btn-action glyphicons iphone btn-danger" title="Crédito SMS Marketing">
+                        <i></i>
+                    </a>
+                {% endif %}
+                <a href="javascript:void(0)" onclick="changeDomain({{ entity.id }});"
+                   class="btn-action glyphicons link btn-key changeDomain" title="Alterar domínio do cliente">
+                    <i></i>
+                </a>
+                <a href="{{ path('panel_client_show', { 'id': entity.id }) }}"
+                   class="btn-action glyphicons eye_open btn-info" title="Detalhes"><i></i>
+                </a>
+                {% if not is_granted("ROLE_SUPORT_LIMITED") %}
+                    <a href="{{ path('panel_client_edit', { 'id': entity.id }) }}" class="btn-action glyphicons pencil btn-success" title="Editar">
+                        <i></i>
+                    </a>
+                    {% if entity.status == 0 %}
+                        <a href="{{ path('panel_client_enable_wspot', { 'clientsIds': entity.id }) }}"
+                        class="btn-action glyphicons ok btn-key enable-domain-btn" title="Ativar domínio do cliente">
+                            <i></i>
+                        </a>
+                    {% endif %}
+                    {% if entity.status == 1 %}
+                        <a href="{{ path('panel_client_disable_wspot', { 'clientsIds': entity.id }) }}"
+                        class="btn-action glyphicons delete btn-danger disable-domain-btn" title="Inativar domínio do cliente">
+                            <i></i>
+                        </a>
+                    {% endif %}
+                    {% if entity.status == 2 %}
+                        <a href="{{ path('panel_client_disable_wspot', { 'clientsIds': entity.id }) }}"
+                        class="btn-action glyphicons delete btn-danger disable-domain-btn" title="Inativar domínio do cliente">
+                            <i></i>
+                        </a>
+                    {% endif %}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {{ knp_pagination_render(entities, 'AdminBundle::knp_pagination.html.twig') }}
+{% endblock %}
+
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        function changeDomain(clientId) {
+            var id = clientId;
+            bootbox.dialog("<h3>alterar o domínio (domain) do cliente</h3>" +
+            " Deseja realmente alterar o domínio do cliente? <br><br>" +
+            "<div class='newDomain'>Novo domínio: <input type='text' id='newDomain' class='input-mini' style='margin: 10px 0 10px 10px; width: 320px;'><br></div>"+
+            "<div class='clientEmail'>E-mail: <input type='text' id='clientEmail' class='input-mini' style='margin: 10px 0 10px 60px;width: 320px;'><br></div>"
+            , [{
+                "label" : "Continuar",
+                "class" : "btn-success",
+                "callback": function() {
+                    var newDomain   = jQuery('input#newDomain').val();
+                    var clientEmail = jQuery('input#clientEmail').val();
+                    var data     = {'id': id, 'newDomain': newDomain, 'clientEmail': clientEmail};
+                    var route    = Routing.generate('panel_client_change_domain');
+
+                    if (!newDomain) {
+                        $.gritter.add({
+                            title: 'Aviso!',
+                            text: 'É preciso informar o novo domínio do cliente.'
+                        });
+                    } else {
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.msg
+                                });
+                                window.setTimeout('location.reload()', 1000);
+                            }
+                        });
+                    }
+                }
+            }, {
+                "label" : "Cancelar",
+                "class" : "btn-danger"
+            }]);
+        }
+
+        $('#statusDomains').on('change', function (e) {
+            var comboSelect = $("#statusDomains :selected").val();
+            var ids = [];
+            var route;
+            var message;
+            if (comboSelect === 'activate') {
+                route = Routing.generate('panel_client_enable_wspot');
+                message = "<h3>Ativar os domínios dos clientes</h3>" +
+                    " Deseja realmente ativar o domínios dos clientes? <br><br>";
+            } else if (comboSelect === 'inactivate') {
+                route = Routing.generate('panel_client_disable_wspot');
+                message = "<h3>Desativar os domínios dos clientes</h3>" +
+                    " Deseja realmente desativar os domínios dos clientes? <br><br>";
+            }
+
+            $('input[name="client-ids"]:checked').each(function() {
+                ids.push(this.value);
+            });
+            var data = {clientsIds : ids};
+
+            bootbox.dialog(message
+            , [{
+                "label" : "Continuar",
+                "class" : "btn-success",
+                "callback": function() {
+                    $.ajax({
+                        type: 'POST',
+                        url: route,
+                        data: data,
+                        dataType: 'json',
+                        success: function(response)
+                        {
+                            $.gritter.add({
+                                title: 'Aviso!',
+                                text: response.msg
+                            });
+                            window.setTimeout('location.reload()', 1000);
+                        }
+                    })
+                }
+            }, {
+                "label" : "Cancelar",
+                "class" : "btn-danger"
+            }]);
+        });
+    </script>
+
+    <script type="text/javascript">
+        $('.enable-domain-btn').click(function(e) {
+            e.preventDefault();
+            href = $(this).attr('href');
+            return bootbox.confirm('Você tem certeza que deseja ativar o domínio ?', function(result) {
+                if (result) {
+                    window.location = href
+                }
+            });
+        });
+
+        $('.disable-domain-btn').click(function(e) {
+            e.preventDefault();
+            href = $(this).attr('href');
+            return bootbox.confirm('Você tem certeza que deseja desativar o domínio ?', function(result) {
+                if (result) {
+                    window.location = href
+                }
+            });
+        });
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

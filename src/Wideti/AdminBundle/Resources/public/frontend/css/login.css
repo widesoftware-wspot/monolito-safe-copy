@@ -1,0 +1,293 @@
+@font-face {
+    font-family: 'open_sanslight';
+    src: url('../fonts/opensans-light-webfont.eot');
+    src: url('../fonts/opensans-light-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/opensans-light-webfont.woff') format('woff'),
+    url('../fonts/opensans-light-webfont.ttf') format('truetype'),
+    url('../fonts/opensans-light-webfont.svg#open_sanslight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'open_sanslight';
+}
+
+header{
+    width: 100%;
+}
+
+header h1{
+    background: url('../images/logo-mambo.png') left top no-repeat;
+    height: 76px;
+    margin: 0 auto;
+    margin-top: 52px;
+    margin-bottom: 50px;
+    text-indent: -9999px;
+    width: 179px;
+}
+
+
+section.container{
+    margin: 0 auto;
+    width: 576px;
+}
+
+section.container div.boxes{
+    height: 404px;
+    width: 278px;
+    float: left;
+    color: #FFFFFF;
+}
+
+section.container div.boxes h3{
+    font-size: 26px;
+    font-weight: 300;
+    margin: 25px 0 0 30px;
+}
+
+section.container div.boxes span.errorBox{
+    display: block;
+    font-size: 14px;
+    line-height: 30px;
+    height: 30px;
+    margin-left: 30px;
+}
+
+section.container div.boxes a{
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+section.container div.boxes form{
+    font-size: 13px;
+    line-height: 22px;
+    margin-left: 30px;
+}
+
+section.container div.boxes form input[type=text],
+section.container div.boxes form input[type=tel],
+section.container div.boxes form input[type=email],
+section.container div.boxes form input[type=password],
+section.container div.boxes form button,
+section.forgetpass div.form input,
+section.forgetpass div.form button{
+    border: none;
+    height: 32px;
+    width: 183px;
+    margin-bottom: 7px;
+    font-size: 15px;
+    color: #ec213a;
+    padding: 0 20px 0 13px;
+}
+
+section.container div.boxes form label{
+    /*display: none;*/
+}
+
+section.container div.boxes form button, section.forgetpass div.form button, section.forgetpass div.form a.btnCancelar{
+    background-color: #b26501;
+    color: white;
+    cursor: pointer;
+    margin-top: 15px;
+    width: 217px;
+}
+
+section.container div.boxes#loginBox,
+section.container div.boxes#checkinBox{
+    background-color: #ec213a;
+    margin-right: 20px;
+}
+
+section.container div.boxes#signUpBox{
+    background-color: #9f9f9f;
+}
+
+section.container div.boxes#signUpBox form button{
+    background-color: #6f6f6f;
+}
+
+section.container div.boxes#signUpBox form input{
+    color: #9f9f9f;
+}
+
+/* WebKit browsers */
+section.container div.boxes#loginBox form input::-webkit-input-placeholder,
+section.container div.boxes#checkinBox form input::-webkit-input-placeholder{
+    color: #ec213a;
+}
+
+section.container div.boxes#signUpBox form input::-webkit-input-placeholder{
+    color: #9f9f9f;
+}
+
+/* Mozilla Firefox 19+ */
+section.container div.boxes#loginBox form input::-moz-placeholder,
+section.container div.boxes#checkinBox form input::-moz-placeholder{
+    color: #ec213a;
+}
+
+section.container div.boxes#signUpBox form input::-moz-placeholder{
+    color: #9f9f9f;
+}
+
+/* Internet Explorer 10+ */
+section.container div.boxes#signUpBox form input:-ms-input-placeholder {
+    color: #9f9f9f;
+}
+section.container div.boxes#loginBox form input::-ms-input-placeholder,
+section.container div.boxes#checkinBox form input::-ms-input-placeholder{
+    color: #ec213a;
+}
+
+section.container div.boxes#loginBox p,
+section.container div.boxes#checkinBox p{
+    font-size: 13px;
+    display: none;
+    margin: 0;
+}
+
+section.container div.boxes#loginBox a:hover,
+section.container div.boxes#checkinBox a:hover {
+    text-decoration: underline;
+}
+
+section.terms, section.terms a{
+    color: #a1a1a1;
+    font-size: 13px;
+    width: 60%;
+}
+
+section.terms h2{
+    font-size: 18px;
+    font-weight: bold;
+}
+
+section.forgetpass{
+    background-color: #ec213a;
+    color: #fff;
+    height: 405px;
+    text-align: center;
+    width: 574px;
+}
+
+section.forgetpass h1{
+    font-size: 26px;
+    font-weight: normal;
+    padding-top: 25px;
+}
+
+section.forgetpass div.resetPassSteps1{
+    background: url('../images/bg-passo1.png') left top no-repeat;
+    height: 73px;
+    width: 167px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.resetPassSteps2{
+    background: url('../images/bg-passo2.png') left top no-repeat;
+    height: 73px;
+    width: 167px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.resetPassSteps3{
+    background: url('../images/bg-passo3.png') left top no-repeat;
+    height: 73px;
+    width: 167px;
+    margin: 0 auto;
+}
+
+section.forgetpass div.form{
+    margin: 0 auto;
+    font-size: 14px;
+    width: 222px;
+    text-align: left;
+    margin-top: 20px;
+}
+
+section.forgetpass div.form form{
+    margin-top: 15px;
+}
+
+section.forgetpass div.form button{
+    margin-top: 10px;
+}
+
+section.forgetpass div.form button.btnCancelar{
+    background-color: white;
+    color: #B26501;
+    margin-top: 0;
+}
+
+footer{
+    clear: both;
+    color: #a1a1a1;
+    font-size: 13px;
+    line-height: 25px;
+    padding: 50px 20px 5px 20px;
+    text-align: center;
+}
+
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset;
+
+}
+
+div.logo-box{
+    width: 576px;
+    margin: 0 auto;
+    height:200px;
+}
+
+div.logo-box img { float:left;}
+
+img#logo-carnaval{margin-top: 40px;}
+
+img#logo-wspot{margin-left: 70px; margin-top: 80px;}
+
+img#logo-salvador{float: right; margin-top: 40px;}
+
+
+/* Desktops and laptops ----------- */
+@media (max-width:600px){
+    header h1{ margin: 15px auto 10px; }
+    section.container{ width: 100%;}
+    section.container div.boxes{ float:none; }
+    section.container div.boxes{padding-top: 5px;}
+    section.container div.boxes{margin: 0 auto; width: 90%;}
+    section.container div.boxes#signUpBox{ display: none; }
+    section.container div.boxes#loginBox p{ display: block;}
+    section.container div.boxes form input[type="text"], section.container div.boxes form input[type="email"], section.container div.boxes form input[type="password"], section.forgetpass div.form input {width: 80%}
+    section.container div.boxes form button{width: 90%;}
+    div.logo-box{ width: 90%; height: 140px; text-align: center;}
+    div.logo-box img{width: 120px;}
+    div.logo-box img#logo-wspot{margin: 50px 0; float:none;}
+    div.logo-box img#logo-carnaval{margin-top: 30px;}
+    div.logo-box img#logo-salvador{margin-top:15px;}
+    section.container div#loginBox.boxes{margin: 0 auto;}
+    section.container div.boxes h3{margin-left: 20px;}
+    section.container div.boxes form{margin-left: 20px;}
+
+}
+
+@media (max-width:480px){
+    div.logo-box{ text-align: center; width: 90%; height: 80px; margin-top: 15px;}
+    div.logo-box img{width: 80px;}
+    div.logo-box img#logo-wspot{margin: 20px 0 0 0; float:none;}
+    div.logo-box img#logo-carnaval{margin:0;}
+    div.logo-box img#logo-salvador{margin:0;}
+    section.container div.boxes{width: 90%;}
+    section.container div#loginBox.boxes{margin: 0 auto;}
+    section.container div.boxes h3{margin-left: 20px;}
+    section.container div.boxes form{margin-left: 20px;}
+
+    section.container div#loginBox.boxes{
+        background-color: red !important;
+    }
+
+}

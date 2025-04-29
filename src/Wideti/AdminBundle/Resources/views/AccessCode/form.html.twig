@@ -1,0 +1,367 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/lightbox/lightbox.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+
+{% set route = app.request.attributes.get('_route') %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Código de Acesso'} %}
+
+<div class="innerLR">
+    <div class="widget widget-tabs border-bottom-none">
+        <div class="widget-head">
+            <ul>
+                <li class="active">
+                    <a class="glyphicons edit" data-toggle="tab"><i></i>
+                    {% if 'access_code_new' in route %}Novo{% else %}Editar{% endif %}
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="widget-body">
+
+            {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+            {% form_theme form with ['AdminBundle:Form:fields.html.twig', 'AdminBundle:Form:templateForm.html.twig', 'AdminBundle:Form:configForm.html.twig'] %}
+
+            {{ form_errors(form) }}
+
+            <div class="row-fluid" style="margin-bottom: 30px;">
+
+                <div class="span6">
+                    {{ form_row(form.enable) }}
+
+                    {{ form_label(form.type, null, { 'label_attr': {'class': 'control-label tip'} }) }}
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="right" role="button" data-toggle="popover" data-trigger="focus" data-content="Selecione o tipo de código a ser gerado. No Pré definido você informará qual é o código que solicitaremos. Já no Aleatório o nosso sistema que gerará os códigos automaticamente e aleatoriamente." style="position: relative;top: 6px;"></i>
+                    <div class="controls" style="position: relative;bottom: 20px;">
+                        {{ form_widget(form.type) }}
+                        {{ form_errors(form.type) }}
+                    </div>
+
+                    <div class="predefined hide">
+                        {{ form_row(form.code) }}
+                        <div id="isValidate" style="margin-left: 145px"></div>
+                    </div>
+
+                    <div class="random hide">
+                        {{ form_row(form.quantity) }}
+                    </div>
+                    <br/>
+
+                    {{ form_label(form.connectionTime, null, { 'label_attr': {'class': 'control-label tip'} }) }}
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-content="Este campo é opcional. Você pode definir o tempo de conexão do usuário a partir do momento que ele confirmar o código de acesso." style="position: relative;top: 6px;"></i>
+                    <div class="controls" style="position: relative;bottom: 20px;">
+                        {{ form_widget(form.connectionTime) }}
+                        {{ form_errors(form.connectionTime) }}
+                    </div>
+
+                    {{ form_label(form.periodFrom, null, { 'label_attr': {'class': 'control-label tip'} }) }}
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-content="Este campo é opcional. Defina o tempo de início de vigência do código, ou seja, a data de início em que ele passará a valer e ser solicitado aos visitantes." style="position: relative;top: 6px;"></i>
+                    <div class="controls" style="position: relative;bottom: 20px;">
+                        {{ form_widget(form.periodFrom) }}
+                        {{ form_errors(form.periodFrom) }}
+                    </div>
+
+                    {{ form_label(form.periodTo, null, { 'label_attr': {'class': 'control-label tip'} }) }}
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-content="Este campo é opcional. Defina o tempo de fim de vigência do código, ou seja, a data de término em que solicitaremos o código aos visitantes." style="position: relative;top: 6px;"></i>
+                    <div class="controls" style="position: relative;bottom: 20px;">
+                        {{ form_widget(form.periodTo) }}
+                        {{ form_errors(form.periodTo) }}
+                    </div>
+
+                    {{ form_label(form.step, null, { 'label_attr': {'class': 'control-label tip'} }) }}
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-content="Lembre-se que para cada Ponto de acesso só é permitido escolher um tipo de solicitação (Primeira tela/Após o cadastro)." style="position: relative;top: 6px;"></i>
+                    <div class="controls" style="position: relative;bottom: 20px;">
+                        {{ form_widget(form.step) }}
+                        {{ form_errors(form.step) }}
+                    </div>
+
+                    <div class="login hide" style="color: red; position: relative; left: 20px; bottom: 10px;">Ao escolher esta opção o cliente/visitante deverá inserir o código na primeira tela, antes de visualizar a tela de login/cadastro.</div>
+                    <div class="signup hide" style="color: red; position: relative; left: 20px; bottom: 10px;">Ao escolher esta opção o cliente/visitante deverá inserir o código após efetuar o cadastro. Não será solicitado o código nos demais acessos desse cliente/visitante.</div>
+                </div>
+
+                <div class="span6">
+                    <h3 style="margin-left: 20px;">Pontos de Acesso</h3>
+                    <p style="margin-bottom: 20px; margin-left: 20px;">Aqui você pode escolher em quais pontos de acesso este lote de código de acesso funcionará.</p>
+
+                    {{ form_row(form.inAccessPoints) }}
+
+                    <div class="access-points-block control-group">
+                        {{ form_row(form.accessPoints) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="separator line bottom"></div>
+
+            <div class="row-fluid">
+                <div class="span7">
+                    <div class="widget row-fluid">
+                        <div class="widget-head">
+                            <h4 class="heading">
+                                Customização
+                                <span class="tooltip-wrapper">
+                                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="
+                                        Na listagem de códigos de acesso é permitido imprimir seus códigos criados para repassar aos seus visitantes ou até mesmo comercializar.
+                                        <br><br>
+                                        Assim, permitimos que você customize seu 'voucher de acesso' com o seu logotipo, cor de fundo e até mesmo um texto. Veja só como fica:
+                                        <br><br>
+                                        <img src='https://uploads.mambowifi.com/wideti/modelo_voucher_mambo.png'/>
+                                    "></i>
+                                </span>
+                            </h4>
+                        </div>
+                        <div class="widget-body white-label">
+                            <div class="row" style="position:relative;top: 25px;margin-bottom: 20px;">
+                                <div class="span4">
+                                    <div class="row labels">Cor de fundo:</div>
+                                    <div class="row">
+                                        <div class="input-group color-group">
+                                            {{ form_widget(form.backgroundColor) }}
+                                            <span class="input-group-addon"><i></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="span8" style="position: relative;left: 22px;">
+                                    <div class="row labels">Logotipo:</div>
+                                    <div class="row">
+                                        {{ form_widget(form.fileLogotipo) }}
+                                        <p style="color:#cb8f21;position: relative;bottom: 10px;">O logotipo deve ter dimensões máximas de 250 x 250 pixels.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="position:relative;bottom: 20px;">
+                                <div class="span4">
+                                    <div class="row labels">Cor da fonte:</div>
+                                    <div class="row">
+                                        <div class="input-group color-group">
+                                            {{ form_widget(form.fontColor) }}
+                                            <span class="input-group-addon"><i></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" style="position:relative;margin-bottom: 20px;">
+                                <div class="span12">
+                                    <div class="row labels">Texto:</div>
+                                    <div class="row">
+                                        <div class="input-group">
+                                            {{ form_widget(form.text) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="span5 imageBox logo {{ entity.logotipo ? '' : 'hide' }}">
+                    <div class="widget row-fluid">
+                        <div class="widget-head">
+                            <h4 class="heading">
+                                <a id="changeImage" data-id="{{ entity.id }}" class="{{ entity.logotipo ? '' : 'hide' }}" href="javascript:void(0);">Alterar Logotipo</a>
+                            </h4>
+                        </div>
+                        <div class="widget-body">
+                            <div id="currentImage">
+                                {%  if ('http' in entity.logotipo) or ('/bundles/admin/' in entity.logotipo) %}
+                                    <img src="{{ entity.logotipo }}">
+                                {%  else  %}
+                                    <img src="{{ asset("https://" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ entity.logotipo) }}">
+                                {%  endif %}                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row-fluid" style="margin-bottom: 30px;">
+                <div class="span6">
+                    <img src="https://uploads.mambowifi.com/wideti/modelo_voucher_mambo.png" />
+                </div>
+            </div>
+
+
+            <div class="form-actions right">
+                <a href="{{ path('access_code') }}">
+                    <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                        Cancelar
+                    </button>
+                </a>
+                {{ form_widget(form.submit) }}
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+{% endblock%}
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js') }}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/demo/custom_upload.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script type="text/javascript">
+
+        $('#wspot_access_code_code').on('focusout', function(e){
+            var regexPattern = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ \b0123456789]+$/;
+            if (!regexPattern.test($('#wspot_access_code_code').val()) && $('#wspot_access_code_code').val() != '' && !$(".controls").hasClass('error')) {
+                $('#isValidate').html('Caracteres especiais não são aceitos');
+                $('#isValidate').addClass('validateLabel');
+                submitButtonControl(true, $(this));
+            } else {
+                $('#isValidate').removeClass('validateLabel');
+                $('#isValidate').empty();
+                submitButtonControl(false, $(this));
+            }
+        });
+
+        $('#wspot_access_code_periodFrom').mask('99/99/9999');
+        $('#wspot_access_code_periodTo').mask('99/99/9999');
+
+        if ($('#wspot_access_code_periodFrom').length && $('#wspot_access_code_periodTo').length)
+        {
+            $( "#wspot_access_code_periodFrom" ).datepicker({
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                changeMonth: false,
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#wspot_access_code_periodTo" ).datepicker( "option", "minDate", selectedDate );
+                }
+            }).datepicker( "option", "maxDate", $('#maxDate').text() );
+
+            $( "#wspot_access_code_periodTo" ).datepicker({
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                changeMonth: false,
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#wideti_AdminBundle_campaign_startDate" ).datepicker( "option", "maxDate", selectedDate );
+                }
+            }).datepicker( "option", "minDate", $('#wspot_access_code_periodTo').val() );
+        }
+
+        function controlSelectAccessPoints()
+        {
+            var inAccessPoints      = $("#wspot_access_code_inAccessPoints").val();
+            var accessPoints        = $(".access-points-block");
+
+            if (!inAccessPoints) {
+                accessPoints.addClass('hide');
+                return;
+            }
+
+            accessPoints.removeClass('hide');
+
+            dojo.query("#wspot_access_code_accessPoints").chosen({batch_select:true});
+        }
+
+        function controlSelectType()
+        {
+            var type        = $('#wspot_access_code_type').val();
+            var predefined  = $('.predefined');
+            var random      = $('.random');
+
+            if (type === 'predefined') {
+                predefined.removeClass('hide');
+                random.addClass('hide');
+            } else {
+                random.removeClass('hide');
+                predefined.addClass('hide');
+            }
+        }
+
+        function controlStepTip()
+        {
+            var step    = $('#wspot_access_code_step').val();
+            var login   = $('.login');
+            var signup  = $('.signup');
+
+            if (step === 'login') {
+                login.removeClass('hide');
+                signup.addClass('hide');
+            } else {
+                signup.removeClass('hide');
+                login.addClass('hide');
+            }
+        }
+
+        $(document).ready(function(){
+            {% if (entity.id) %}
+                document.getElementById('wspot_access_code_type').disabled = true;
+                document.getElementById('wspot_access_code_quantity').readOnly = true;
+                document.getElementById('wspot_access_code_connectionTime').readOnly = true;
+            {% endif %}
+
+            controlStepTip();
+            controlSelectType();
+            controlSelectAccessPoints();
+
+            $('.label.label-important').each( function(){
+                if ($(this).text() == "Este campo deve ser preenchido.") {
+                }
+            });
+
+            $('#wspot_access_code_code').keypress(function (e) {
+                $(this).css('text-transform', 'uppercase');
+            });
+
+            $('input').keypress(function (e) {
+                var code = null;
+                code = (e.keyCode ? e.keyCode : e.which);
+                return (code == 13) ? false : true;
+            });
+
+            $('#wspot_access_code_type').on('change', function(e){
+                controlSelectType();
+            });
+
+            $('#wspot_access_code_step').on('change', function(e){
+                controlStepTip();
+            });
+
+            $('#wspot_access_code_inAccessPoints').on('change', function(e){
+                controlSelectAccessPoints();
+            });
+
+            $(function(){
+                $('.color-group').colorpicker();
+            });
+
+            jQuery('#changeImage').on('click', function (e)
+            {
+                $('#wspot_access_code_fileLogotipo').click();
+            });
+        });
+
+        customScripts.init();
+    </script>
+{% endblock %}

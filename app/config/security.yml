@@ -1,0 +1,112 @@
+security:
+    encoders:
+        Wideti\DomainBundle\Entity\Users: sha512
+        Wideti\AdminBundle\Security\User\WspotUserProvider: sha512
+        Symfony\Component\Security\Core\User\User: plaintext
+
+    role_hierarchy:
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_USER]
+        ROLE_ADMIN: [ROLE_USER, ROLE_ALLOWED_TO_SWITCH]
+
+    providers:
+        wspot_user_provider:
+            id: wspot.provider.user
+
+        wspot_token_api:
+            entity: { class: DomainBundle:ApiWSpot, property: token }
+
+        database_users:
+            entity: { class: DomainBundle:Users }
+
+    firewalls:
+
+        ap_validate:
+            methods: [ POST ]
+            pattern: ^/client_validate_ap
+            security: false
+
+        login_firewall:
+            pattern:   ^/$
+            anonymous: ~
+
+        password_firewall:
+            pattern:   ^/forgetmypass$
+            anonymous: ~
+
+        admin_secured_area:
+            pattern: ^/(admin|oauth-admin)
+            provider: wspot_user_provider
+            form_login:
+                check_path: login_check
+                login_path: login_admin
+                default_target_path: admin_dashboard
+                always_use_default_target_path: true
+                success_handler: wspot.security.pos_authenticator
+            logout:
+                path: logout_admin
+                target: login_admin
+            anonymous: ~
+
+        admin_oauth_login:
+            pattern: ^/oauth-admin/login$
+            security: false
+            anonymous: ~
+
+        admin_oauth_callback:
+            pattern: ^/oauth-admin/callback$
+            security: true
+            anonymous: ~
+
+        panel_secured_area:
+            pattern:    ^/panel
+            provider: wspot_user_provider
+            form_login:
+                check_path: login_check_panel
+                login_path: login_panel
+                default_target_path: panel_client_list
+                always_use_default_target_path: true
+            logout:
+                path:   logout_panel
+                target: login_panel
+            anonymous: ~
+
+        api_firewall:
+            pattern: ^/api
+            anonymous: ~
+            guard:
+                authenticators:
+                    - wspot.api.guard.token
+
+    access_control:
+        - { path: ^/admin/_gcb,                                 roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/spots-manager/auth,                   roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login,                                roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/auth-token, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/reseted_to_strong_password,           roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/create_password,                      roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/create_first_password,                roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/forgot_password,                      roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/reset_forgotten_password,             roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/reset_user_password,                  roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/relatorios/batch,                     roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/api-rdstation/conversions,            roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/api-egoi/subscribe,                   roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/notification,                         roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/visitantes/create,                    roles: [ROLE_ADMIN, ROLE_ADMIN_LIMITED, ROLE_USER, ROLE_MANAGER, ROLE_SUPORT_LIMITED, ROLE_USER_BASIC] }
+        - { path: ^/admin/accesspoints,                         roles: [ROLE_ADMIN, ROLE_ADMIN_LIMITED, ROLE_USER, ROLE_MARKETING, ROLE_MANAGER, ROLE_USER_LIMITED, ROLE_MARKETING_LIMITED, ROLE_SUPORT_LIMITED, ROLE_USER_BASIC] }
+        - { path: ^/admin/usuarios/reseted_to_strong_password,  roles: [ROLE_ADMIN, ROLE_ADMIN_LIMITED, ROLE_MARKETING, ROLE_MANAGER, ROLE_USER_LIMITED, ROLE_MARKETING_LIMITED, ROLE_SUPORT_LIMITED, ROLE_USER_BASIC] }
+        - { path: ^/admin/usuarios,                             roles: [ROLE_ADMIN, ROLE_MANAGER] }
+        - { path: ^/admin/template,                             roles: [ROLE_ADMIN, ROLE_ADMIN_LIMITED, ROLE_MARKETING, ROLE_MANAGER, ROLE_USER_LIMITED, ROLE_MARKETING_LIMITED, ROLE_SUPORT_LIMITED, ROLE_USER_BASIC] }
+        - { path: ^/admin/campaign,                             roles: [ROLE_ADMIN, ROLE_ADMIN_LIMITED, ROLE_MARKETING, ROLE_MANAGER, ROLE_USER_LIMITED, ROLE_MARKETING_LIMITED, ROLE_SUPORT_LIMITED, ROLE_USER_BASIC] }
+        - { path: ^/admin/config,                               roles: [ROLE_ADMIN, ROLE_ADMIN_LIMITED, ROLE_MARKETING, ROLE_MANAGER, ROLE_USER_LIMITED, ROLE_MARKETING_LIMITED, ROLE_SUPORT_LIMITED, ROLE_USER_BASIC] }
+        - { path: ^/admin,                                      roles: [ROLE_USER, ROLE_ADMIN_LIMITED, ROLE_MARKETING, ROLE_MANAGER, ROLE_USER_LIMITED, ROLE_MARKETING_LIMITED, ROLE_SUPORT_LIMITED, ROLE_USER_BASIC] }
+#PANEL
+        - { path: ^/panel/login,                                roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/panel/forgot_password,                      roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/panel/client/list,                          roles: [ROLE_PANEL_ADMIN, ROLE_MANAGER, ROLE_SUPORT_LIMITED] }
+        - { path: ^/panel/client/\d+/show,                      roles: [ROLE_PANEL_ADMIN, ROLE_MANAGER, ROLE_SUPORT_LIMITED] }
+        - { path: ^/panel/client/change_domain,                 roles: [ROLE_PANEL_ADMIN, ROLE_MANAGER, ROLE_SUPORT_LIMITED] }
+        - { path: ^/panel/,                                     roles: [ROLE_PANEL_ADMIN, ROLE_MANAGER] }
+# API
+        - { path: ^/api/api_client_validate_ap,                 roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api,                                        roles: [ROLE_API] }

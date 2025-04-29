@@ -1,0 +1,7 @@
+whitelabel_cert_feature_new:
+  path:  /
+  defaults: { _controller: wspot.panel.controler.whitelabel_cert:newAction }
+
+whitelabel_cert_feature_generate:
+  path:  /generate-whitelabel-cert
+  defaults: { _controller: wspot.panel.controler.whitelabel_cert:generateCertAction }

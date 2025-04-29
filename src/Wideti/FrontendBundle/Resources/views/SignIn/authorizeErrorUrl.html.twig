@@ -1,0 +1,247 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section id="sessionAuthorizeError" class="container singleBox" style="display: none;">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;">
+            <div class="box-content">
+                <h3 class="content-center">{{ 'wspot.authorize_error_url.title'|trans }}</h3>
+
+                <div class="content-center">
+                    {{ 'wspot.authorize_error_url.message'|trans }}
+                </div>
+                <form id="unifiForm" action="https://unifi-aaa.mambowifi.com/start-navigation" method="GET">
+                    <input type="hidden" name="action" value="autologin"/>
+                    {% for key, value in formData %}
+                        <input type="hidden" name="{{key}}" value="{{value}}"/>
+                    {% endfor %}
+                    
+                    <button type="submit" id="wspot_signin_entrar">{{ 'wspot.authorize_error_url.submit_input'|trans }}</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id="sessionConectando" class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;">
+            <div class="box-content">
+                <h3 class="content-center">{{ 'wspot.authorize_load.title'|trans }}</h3>
+
+                <div class="content-center">
+                    {{ 'wspot.authorize_load.message'|trans }}
+                </div>
+                <div id="debug" class="content-center" style="display: none;">
+                    
+                </div>
+                <a class="autoLogin btnLoader" style="width: 100% !important;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+            </div>
+        </div>
+    </section>
+    <script>
+        async function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function clearLocalStorage() {
+            localStorage.removeItem('getGoogle');
+            localStorage.removeItem('pageReload');
+            localStorage.removeItem('getGoogleSuccess');
+            localStorage.removeItem('authorizeTime');
+            localStorage.removeItem('authorizeUnifiSuccess');
+            localStorage.removeItem('failAuthorizeUnifi');
+        }
+        async function postLoggerAuthorizeUnifi() {
+            const formData = new FormData(unifiForm);
+            const params = new URLSearchParams(formData);
+            const data = { logger: {
+                    getGoogle: await getLocalStorage('getGoogle'),
+                    pageReload: await getLocalStorage('pageReload'),
+                    getGoogleSuccess: await getLocalStorage('getGoogleSuccess'),
+                    authorizeTime: await getLocalStorage('authorizeTime'),
+                    authorizeUnifiSuccess: await getLocalStorage('authorizeUnifiSuccess'),
+                    failAuthorizeUnifi: await getLocalStorage('failAuthorizeUnifi'),
+                    authorizeUrl: `https://unifi-aaa.mambowifi.com/start-navigation?${params.toString()}`
+                }
+            }
+            await postAuthorizeUnifi(data);
+        }
+        
+        async function redirect302(){
+
+            await postLoggerAuthorizeUnifi();
+            await clearLocalStorage();
+            await sleep(200);
+            return window.location = "{{ path('frontend_redirection_url') }}";
+        }
+
+
+        async function fetchWithTimeout() {
+            return new Promise((resolve, reject) => {
+                const timeoutId = setTimeout(() => {
+                reject(new Error('Request timed out'));
+                }, 1000);
+                fetch('https://www.google.com', { method: 'HEAD', mode: 'no-cors' })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    resolve(response);
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId); 
+                    reject(error);
+                });
+            });
+        }
+
+        async function getGoogleCom() {
+            return await fetchWithTimeout()
+                .then(response => {
+                    const opaque = response.type ==='opaque';
+                    if (opaque) {
+                        console.log('navegando:', opaque);
+                    }
+                    return opaque;
+                })
+                .catch(error => {
+                    console.error('Erro ao verificar conexão:', error);
+                    return false;
+                });
+        }
+        async function sumLocalStorage(key, newValue) {
+            const value = localStorage.getItem(key);
+            if (value) {
+                newValue = parseInt(value) + newValue;
+            }
+            localStorage.setItem(key, newValue);
+        }
+
+        async function getLocalStorage(key) {
+            const value = localStorage.getItem(key);
+            if (value) {
+                return parseInt(value);
+            }
+            return 0;
+        }
+
+        async function checkAllowAccess(returnTrue) {
+            let conectado = false;
+            let attempt = 0;
+            while (!conectado) {
+                // debug.innerHTML = `
+                //     <p><b style="color: green;">OK</b> - <b> google.com:</b> ${await getLocalStorage('getGoogleSuccess')}</p>
+                //     <p><b style="color: red;">Fail</b> - <b> google.com:</b> ${await getLocalStorage('getGoogle')-await getLocalStorage('getGoogleSuccess')}</p>
+                //     <p><b>Page Reload:</b> ${await getLocalStorage('pageReload')}</p>
+                //     <p><b>Tempo:</b> ${await getLocalStorage('authorizeTime')/1000}ms</p>
+                // `;
+
+                attempt+=1;
+                const inicio = performance.now();
+                // const totalAttempt = await getLocalStorage('getGoogle')
+                // if (totalAttempt >= 300) {
+                //     await redirect302();
+                //     return
+                // }
+                await sumLocalStorage('getGoogle', 1);
+                const success = await getGoogleCom()
+                if (success) {
+                    await sumLocalStorage('getGoogleSuccess', 1);
+                }
+                const getGoogleSuccess = await getLocalStorage('getGoogleSuccess')
+                if (getGoogleSuccess >= 5) {
+                    conectado = true;
+                    const fim = performance.now();
+                    await sumLocalStorage('authorizeTime', fim-inicio);
+                    break;
+                } else {
+                    await sleep(333);
+                    const fim = performance.now();
+                    await sumLocalStorage('authorizeTime', fim-inicio);
+                }
+                if (returnTrue && attempt >= 5) {
+                    conectado = true;
+                    return success
+                } else if (attempt >= 5) {
+                    await sumLocalStorage('pageReload', 1);
+                    await location.reload();
+                    return
+                }
+            }
+            return await redirect302();
+        }
+
+        async function attemptAuthorizeUnifi() {
+            let authorizeUnifiSuccess = localStorage.getItem('authorizeUnifiSuccess');
+            if (authorizeUnifiSuccess) {
+                await checkAllowAccess();
+                return
+            }
+            await clearLocalStorage();
+            let authorize = false;
+            let attempt = 0;
+            while (!authorize) {
+                const inicio = performance.now();
+                attempt +=1;
+                // debug.innerHTML = `
+                //     <p><b>Autorizando na controller</b></p>
+                //     <p><b>Tentativa:</b> ${await getLocalStorage('failAuthorizeUnifi')}</p>
+                //     <p><b>Tempo:</b> ${await getLocalStorage('authorizeTime')/1000}ms</p>
+                // `;
+                const auth = await authorizeUnifi();
+                if (auth) {
+                    await sumLocalStorage('getGoogleSuccess', 1);
+                    await sumLocalStorage('authorizeTime', performance.now()-inicio);
+                    authorize = auth
+                } else {
+                    await sumLocalStorage('authorizeTime', performance.now()-inicio);
+                    await sumLocalStorage('failAuthorizeUnifi', 1);
+                }
+        
+                if (!authorize) {
+                    authorize = await checkAllowAccess(true)
+                }
+            }
+            localStorage.setItem('authorizeUnifiSuccess', 1);
+            await checkAllowAccess();
+            return
+        }
+
+        async function authorizeUnifi() {
+            const formData = new FormData(unifiForm);
+            const params = new URLSearchParams(formData);
+            const data = { url: `https://unifi-aaa.mambowifi.com/start-navigation?${params.toString()}` };
+            return await postAuthorizeUnifi(data);
+        }
+
+
+
+        // return true em caso de sucesso na autorização
+        async function postAuthorizeUnifi(data) {
+            try {
+                const bodyFetch = JSON.stringify(data);
+                const urlFetch = window.location.origin+window.location.pathname;
+                const response = await fetch(urlFetch, { 
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: bodyFetch
+                })
+                .then((response) => response.json())
+                .then((data) => {
+                    return !data.error
+                });
+            } catch (error) {
+                console.error('[fail] Erro ao fazer a solicitação:', error);
+                return false
+            }
+            return false
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            {% if authorizeError %}
+                await attemptAuthorizeUnifi();
+            {% else %}
+                localStorage.setItem('authorizeUnifiSuccess', 1);
+                await checkAllowAccess();
+            {% endif %}
+        });
+    </script>
+{% endblock %}

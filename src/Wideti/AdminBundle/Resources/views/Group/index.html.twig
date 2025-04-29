@@ -1,0 +1,122 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Regras de Acesso
+{% endblock %}
+
+{% block buttonRight %}
+    {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MANAGER")) or is_granted("ROLE_USER_LIMITED")%}
+        <a href="{{ path('group_create')}}" style="margin: 0px 0 1px 0px;" class="btn btn-primary btn-icon glyphicons circle_plus">
+            <i></i>Cadastrar
+        </a>
+    {% endif %}
+{% endblock %}
+
+{%  block filter %}
+    {{ form_start(form, {'attr':{'class':'form-inline', 'novalidate': 'novalidate'} } ) }}
+        {{ form_row(form.name,{'attr':{"style":"width:auto"}}) }}
+
+        {% if btnCancel %}
+            <div>
+                <a title="Cancelar Filtro" href="{{ path('group_list') }}" class="btnSearchCancel glyphicons circle_remove"><i></i></a>
+            </div>
+        {% endif %}
+
+        {{ form_row(form.Filtrar) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block thead %}
+    <th class="center">Nome da regra</th>
+    <th class="center">Bloqueio por tempo</th>
+    <th class="center">Validade de acesso</th>
+    <th class="center">Limite de banda</th>
+    <th class="center">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in groups %}
+        <tr class="gradeX" id="row-{{ entity.id }}">
+            <td style="text-align: center;{% if entity.default %}color:blue{% endif %}">{{ entity.name }}</td>
+            <td style="text-align: center">{{ entity.isConfigActive("block_per_time") ? "Sim" : "Não" }}</td>
+            <td style="text-align: center">{{ entity.isConfigActive("validity_access") ? "Sim" : "Não" }}</td>
+            <td style="text-align: center">{{ entity.isConfigActive("bandwidth") ? "Sim" : "Não" }}</td>
+            <td class="center">
+                <a href="{{ path('group_show', { 'id': entity.id }) }}"
+                   class="btn-action glyphicons eye_open btn-info" title="Detalhes" ><i></i></a>
+
+                {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MANAGER") or is_granted("ROLE_USER_LIMITED")%}
+                    <a href="{{ path('group_edit', { 'id': entity.id }) }}"
+                       class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+
+                    {% if entity.default %}
+                        <a href="#"
+                           class="btn-action glyphicons remove_2 btn-danger not-removable" title="Exclusão não permitida">
+                            <i></i>
+                        </a>
+                    {% else %}
+                        <a href="#"
+                           class="btn-action glyphicons remove_2 btn-danger delete-row" title="Excluir" data-id="{{ entity.id }}">
+                            <i></i>
+                        </a>
+                    {% endif %}
+
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    <p style="color: grey">
+        <span style="width: 10px;height: 10px; background-color: blue;display:inline-block;border-radius: 5px"></span>
+        Regras reservadas do sistema não podem ser excluídas nem ter os nomes alterados.
+    </p>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('.delete-row').click(function(){
+                var id = $(this).data("id");
+                var data = {'id' : id};
+                var row = $('#row-' + id);
+                var confirmMessage = "Deseja realmente excluir?<br /> Todos os visitantes desta regra serão movidos para o Regra Visitantes";
+                bootbox.confirm(confirmMessage, function(result){
+
+                    if(result){
+                        var removeDialog = bootbox.dialog("Aguarde, estamos removendo a regra selecionado.")
+                        var route = Routing.generate('group_delete', {id: id});
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType: "json",
+                            success: function (response) {
+                                removeDialog.modal('hide')
+                                if (response.status == "error") {
+                                    bootbox.alert(response.message);
+                                }
+
+                                if (response.status == "success") {
+                                    row.remove();
+                                    bootbox.alert(response.message);
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+
+        $(".not-removable").on("click", function(){
+            bootbox.alert("As regra <span style='color: red'>Visitantes</span> e <span style='color: red'>Funcionários</span> não podem ser removidos.");
+        });
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

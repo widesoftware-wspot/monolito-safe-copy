@@ -1,0 +1,71 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;">
+            <div class="box-content">
+                <h3 class="content-center">{{ 'wspot.two_factor_auth.title'|trans }}</h3>
+
+                <div class="content-center">
+                    {{ message }}
+
+                    <br/>
+                    <br/>
+
+                    <form name="two_factor_auth_form" novalidate="novalidate" id="two_factor_auth_form" action="#">
+                        <input type="text" id="two_factor_auth_field" name="two_factor_auth_field" class="span12" placeholder="{{ field.names[locale] }}" >
+                        <label id="error-msg" class="error" for="two_factor_auth_field" style="display: none;">{{ 'wspot.signup_page.field_custom_required'|trans }}</label>
+                        <button type="submit" id="two_factor_auth_submit" name="two_factor_auth_submit">{{ 'wspot.forgot_pass_page.continue'|trans }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+    <script type="text/javascript">
+        var error = $('#error-msg');
+        var textField = $('#two_factor_auth_field');
+        var validationMessage = "{{ 'wspot.signup_page.field_custom_required'|trans }}";
+
+        $('#two_factor_auth_form').on('submit', function(event){
+            event.preventDefault();
+
+            if (textField.val().length < 1) {
+                error.html(validationMessage);
+                error.css('display',"block");
+                return;
+            }
+            error.css('display',"none");
+
+            var value       = textField.val();
+            var route       = Routing.generate('frontend_two_factor_auth_verify', {value:value});
+            var indexRoute  = Routing.generate('frontend_index');
+
+            $.ajax({
+                type: "GET",
+                url: route,
+                dataType : "json",
+                timeout: 5000,
+                success: function(response)
+                {
+                   window.location.href = indexRoute
+                },
+                error: function(response, status) {
+                    if (status == 'timeout') {
+                        error.html("{{ 'wspot.two_factor_auth.error'|trans }}");
+                        error.css('display', 'block');
+                    } else {
+                        var result = JSON.parse(response.responseText);
+                        error.html(result.message);
+                        error.css('display', 'block');
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

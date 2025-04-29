@@ -1,0 +1,112 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+{% endblock %}
+
+{% block content %}
+    {% set route = app.request.attributes.get('_route') %}
+    <ul class="breadcrumb">
+    </ul>
+        <div class="heading-buttons">
+            <h3>Financeiro</h3>
+        </div>
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-body">
+                <h4>{{ client.company }}</h4>
+                <p style="padding: 1em 0 1em 0">Status <b>{{ clientStatus }}</b>, criado em <b>{{ client.created|date("d/m/Y") }}</b></p>
+                <hr style="border: 1px dashed #b9b9b9" />
+                <p style="margin-top: 1em">Aqui você poderá</p>
+                <ul style="color: #5e6060">
+                    <li>Visualizar seu histórico de pagamentos</li>
+                    <li>Visualizar suas pendências</li>
+                    <li>Solicitar segunda via de boletos e notas fiscais</li>
+                    <li>Adquirir créditos para SMS Marketing</li>
+                    <li>Adquirir equipamentos WI-FI</li>
+                </ul>
+                {% if erpToken.hasError %}
+                    <div style="padding: 1em; border-radius: 8px;" class="alert-danger">
+                        <p>Ocorreu um erro durante a obtenção do token do usuário. Tente novamente mais tarde, ou entre em contato com nosso suporte.</p>
+                        <p><strong>Erro:</strong> [ {{ erpToken.errorMsg }} ]</p>
+                    </div>
+                    <div style="margin-bottom: 15em !important; margin-top: 1em !important;">
+                        <a disabled="disable" class="btn btn-success" onclick="Javascript.void(0)">Acessar área do cliente</a>
+                    </div>
+                {% else %}
+                    <div style="margin-bottom: 15em !important; margin-top: 1em !important;">
+                        <a class="btn btn-success" href="https://{{ superlogicaDomain }}.superlogica.net/clients/areadocliente?token={{ erpToken.token }}" target="_blank">Acessar área do cliente</a>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="widget-footer" style="padding-left: 1em; padding-top: 0.5em">
+                <p>Para solicitar o cancelamento de seu Mambo WiFi clique <a href="#" class="cancellation">aqui</a></p>
+            </div>
+        </div>
+    </div>
+
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+
+        $('document').ready(function(){
+            $('.cancellation').click(function() {
+                bootbox.dialog("<h3>Cancelamento da Mambo WiFi</h3>" +
+                    "Deseja realmente solicitar cancelamento de sua conta Mambo WiFi? <br><br>" +
+                    "Por favor, nos informe o motivo da solicitação de cancelamento: <br>" +
+                    "<textarea type='text' id='reason' style='margin: 10px 0; width: 380px;'></textarea><br>"+
+                    "<label id='reason-error' class='error' for='reason' style='position: relative; top: -6px;'>Campo obrigatório</label>"+
+                    "Ao confirmar, nossa equipe entrará em contato com você."
+                    , [{
+                        "label" : "Confirmar",
+                        "class" : "btn-primary",
+                        "callback": function() {
+                            var reason = $('textarea#reason').val();
+
+                            if (!reason) {
+                                $.gritter.add({
+                                    title: 'Erro!',
+                                    text: 'O motivo do cancelamento não foi informado. Tente novamente.'
+                                });
+                            } else {
+                                var data  = {'reason': reason};
+                                var route = Routing.generate('customer_area_cancel');
+
+                                $.gritter.add({
+                                    title: '',
+                                    text: 'Aguarde, a solicitação de cancelamento está sendo processada.'
+                                });
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: route,
+                                    data: data,
+                                    dataType : "json",
+                                    success: function(response)
+                                    {
+                                        $.gritter.add({
+                                            title: 'Aviso!',
+                                            text: response.msg
+                                        });
+                                    }
+                                });
+                            }
+                        }
+                    }, {
+                        "label" : "Cancelar",
+                        "class" : "btn-default"
+                    }]);
+            });
+        });
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

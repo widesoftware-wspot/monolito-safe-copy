@@ -1,0 +1,31 @@
+Wideti\DomainBundle\Entity\Segment:
+  Segment1:
+    name: "Agência de Marketing/Publicidade"
+  Segment2:
+    name: "Bares, Lanchonetes e Restaurantes"
+  Segment3:
+    name: "Tecnologia"
+  Segment4:
+    name: "Educação"
+  Segment5:
+    name: "Varejo"
+  Segment6:
+    name: "Comércio"
+  Segment7:
+    name: "Consultoria"
+  Segment8:
+    name: "Provedor de internet"
+  Segment9:
+    name: "Hotelaria"
+  Segment10:
+    name: "Saúde"
+  Segment11:
+    name: "Prefeitura"
+  Segment12:
+    name: "Shoppings"
+  Segment13:
+    name: "Setor de beleza"
+  Segment14:
+    name: "Outros"
+  Segment15:
+    name: "Instituição Financeira"

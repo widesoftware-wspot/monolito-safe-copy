@@ -1,0 +1,53 @@
+custom_fields_index:
+    path: /
+    defaults: { _controller: wspot.admin.controller.custom_fields:indexAction }
+
+custom_fields_ajax_templates:
+    path: /ajax/templates
+    defaults: { _controller: wspot.admin.controller.custom_fields:ajaxAllTemplateFields }
+    methods: [GET]
+    options:
+      expose: true
+
+custom_fields_ajax_save:
+    path: /ajax/fields
+    defaults: { _controller: wspot.admin.controller.custom_fields:ajaxSaveFields }
+    options:
+      expose: true
+
+custom_fields_ajax_to_login:
+    path: /ajax/fields-to-login
+    defaults: { _controller: wspot.admin.controller.custom_fields:ajaxFieldsToLogin }
+    methods: [GET]
+    options:
+      expose: true
+
+custom_fields_ajax_save_to_login:
+    path: /ajax/fields-to-login
+    defaults: { _controller: wspot.admin.controller.custom_fields:ajaxSaveFieldToLogin }
+    methods: [POST]
+    options:
+      expose: true
+
+custom_field_template_new:
+    path:  /new/
+    defaults: { _controller: wspot.admin.controller.custom_field_template:newAction }
+
+custom_field_template_edit:
+    path:  /{id}/edit/
+    defaults: { _controller: wspot.admin.controller.custom_field_template:editAction }
+    options:
+        expose: true
+
+custom_field_template_delete:
+    path:  /{id}/delete/
+    defaults: { _controller: wspot.admin.controller.custom_field_template:deleteAction}
+    options:
+        expose: true
+
+ask_retroactive_fields:
+    path:     /ask-retroative-fields
+    defaults: { _controller: wspot.admin.controller.custom_fields:changeAskRetroactiveFieldsAction}
+    methods: [POST]
+    options:
+      expose: true

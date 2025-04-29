@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <link href="{{ asset('bundles/admin/bootstrap/css/bootstrap.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/css/error.css')}}" rel="stylesheet" />
+    <title>Um erro ocorreu: {{ status_code }}</title>
+    {% if app.session.get('wspotClient') != null %}
+        {% if app.session.get('wspotClient').isWhiteLabel == true %}
+            <link rel="icon" type="image/x-icon" href="{{ asset('favicon2.ico') }}" />
+        {% endif %}
+    {% endif %}
+</head>
+<body class="page-404-full-page">
+
+    <div class="row">
+        <div class="col-md-12 page-404">
+            <div class="number">
+                401
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+            <div class="col-md-12 page-404">
+                <div class="details">
+                    <h3>Oops! Alguma coisa deu errado.</h3>
+                    <p>
+                        A rede Wi-Fi que você está tentando acessar está bloqueada ou inativa!<br>Entre em contato com o administrador.
+                    </p>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>

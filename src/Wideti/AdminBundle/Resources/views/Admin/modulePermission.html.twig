@@ -1,0 +1,11 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="module-permission">
+        <h1>Desculpe, você não possui permissão para acessar este módulo.</h1>
+
+        {% if (app.session.get('isRegularDomain') != false) %}
+            <h3>Entre em contato com <a href="mailto:comercial@mambowifi.com">comercial@mambowifi.com</a> para solicitar a ativação.</h3>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'PanelBundle::layout.html.twig' %}
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/panel/theme/css/custom.css')}}">
+    <h3 class="heading-mosaic">
+        {% block dataTitle %}
+        {% endblock %}
+    </h3>
+
+    {% block cards %}
+    {% endblock %}
+
+    <div class="innerLR">
+        <div class="innerLR">
+
+            {% block moduleConfig %}
+            {% endblock %}
+
+            <div class="row-fluid">
+            <div class="filter-bar margin-bottom-none filter-overflow">
+
+                {% block filter %}
+                {% endblock %}
+
+                {% block addButton %}
+                {% endblock %}
+
+                </div>
+
+            </div>
+            <!-- Widget -->
+            <div class="widget" style="margin-top: -1px;">
+                <div class="widget-body">
+                    <!-- Total bookings & sort by options -->
+                    <div class="separator bottom form-inline small">
+                        {% block messagebar %}
+                        {% endblock %}
+                    </div>
+
+                    <div>
+                        {% block subtitle %}
+
+                        {% endblock %}
+                    </div>
+                    <!-- Options -->
+                    <div class="separator top form-inline small">
+
+                        <!-- With selected actions -->
+                        {% block selectedAction %}
+                        {% endblock %}
+                    </div>
+                    <div class="overflow-div">
+                        <table class="table table-condensed table-striped table-primary table-vertical-center checkboxs overflow-table">
+                            <thead>
+                                <tr>
+                                {% block thead %}
+                                    <th style="width: 1%;" class="uniformjs"><input type="checkbox" /></th>
+                                    <th class="center"></th>
+                                {% endblock %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% block tbody %}
+                                <tr class="gradeX" id="">
+                                    <td class="center uniformjs"><input type="checkbox" /></td>
+                                    <td></td>
+                                </tr>
+                            {% endblock %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% block pagination %}
+            {% endblock %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

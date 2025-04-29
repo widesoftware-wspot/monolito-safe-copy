@@ -1,0 +1,27 @@
+data_controller:
+  path: /
+  defaults: { _controller: wspot.admin.controller.data_controller:indexAction }
+
+data_controller_create:
+  path: /create
+  defaults: { _controller: wspot.admin.controller.data_controller:createAction }
+  requirements: { methods: post }
+  methods: [POST]
+  options:
+      expose: true
+
+data_controller_update:
+  path: /update
+  defaults: { _controller: wspot.admin.controller.data_controller:updateAction }
+  requirements: { methods: put }
+  methods: [PUT]
+  options:
+    expose: true
+
+data_controller_get:
+  path: /find
+  defaults: { _controller: wspot.admin.controller.data_controller:findAction }
+  requirements: { methods: get }
+  methods: [GET]
+  options:
+    expose: true

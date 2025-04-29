@@ -1,0 +1,156 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Detalhe de acesso'} %}
+<h3 class="heading-mosaic">Detalhe de acesso</h3>
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+
+            <div class="widget-body">
+
+                <div class="row-fluid">
+                    <div class="span6">
+                        <!-- Widget -->
+                        <div class="widget">
+
+                            <div class="widget-head">
+                                <h4 class="heading">Dados do Visitante</h4>
+                            </div>
+
+                            <div class="widget-body">
+                                <!-- Table -->
+                                <table class="table table-condensed">
+                                    <tbody>
+                                        <tr>
+                                            <th class="right">Grupo</th>
+                                            <td>{{ guest|guest_group|default("Visitante") }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="right">Status</th>
+                                            <td>{{ guest.statusAsString }}</td>
+                                        </tr>
+                                        {% for key, field in customFields %}
+                                            <tr>
+                                                <th class="right">{{ key }}</th>
+                                                <td>{{ field|default("Não Informado") }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <th class="right">Data de Cadastro</th>
+                                            <td>{{ guest.created|date('d/m/Y H:i:s') }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="widget-head">
+                                <h4 class="heading">Dados da Autenticação do Visitante</h4>
+                            </div>
+
+                            <div class="widget-body">
+                                <!-- Table -->
+                                <table class="table table-condensed">
+                                    <tbody>
+                                        <tr>
+                                            <th class="right" style="width: 50%;">Dispositivo</th>
+                                            <td style="width: 50%;">{{ fingerprint.platform|default("Informação indisponível") }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="right">Sistema Operacional</th>
+                                            <td>{{ fingerprint.os|default("Informação indisponível") }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- // Widget END -->
+                    </div>
+
+                    <div class="span6">
+                        <!-- Widget -->
+                        <div class="widget">
+                            <div class="widget-head">
+                                <h4 class="heading">Dados do acesso</h4>
+                            </div>
+
+                            <div class="widget-body">
+                                <!-- Table -->
+                                <table class="table table-condensed">
+                                    <tbody>
+                                        <tr>
+                                            <th class="right listdetail">IP do Visitante</th>
+                                            <td class="listdetail">{{ access.framedipaddress }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="right">Inicio da Conexão</th>
+                                            <td>{{ access.acctstarttime | date("d/m/Y H:i:s")}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="right">Fim da Conexão</th>
+                                            <td>{{ (access.acctstoptime is defined) ? access.acctstoptime | date("d/m/Y H:i:s") : "Usuário Online" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="right">Tempo de Conexão</th>
+                                            <td>{{ (access.acctstoptime is defined) ? access.acctstarttime | dateDiff(access.acctstoptime) : "Usuário Online" }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="right">Download</th>
+                                            <td>{{ download | format_bytes }} </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="right">Upload</th>
+                                            <td>{{ upload | format_bytes }} </td>
+                                        </tr>
+
+                                        <tr>
+                                            <th class="right">Ponto de Acesso</th>
+                                            <td>{{ access_point }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th class="right">MAC Address do visitante</th>
+                                            <td>{{ access.callingstationid }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="widget-head">
+                                <h4 class="heading">IP's vinculados à este acesso</h4>
+                            </div>
+
+                            <div class="widget-body">
+                                <!-- Table -->
+                                <table class="table table-condensed">
+                                    <tbody>
+                                        <tr>
+                                            <th class="right" style="width: 50%;">IP</th>
+                                            <th class="left" style="width: 50%;">Data e Horário do acesso</th>
+                                        </tr>
+                                        {% for data in ipHistoric %}
+                                            <tr>
+                                                <td class="right">{{ data.ip|default("Informação indisponível") }}</td>
+                                                <td class="left">{{ data.dateTime|default("Informação indisponível") }}</td>
+                                            </tr>
+                                        {% else %}
+                                            <tr>
+                                                <td class="center" colspan="2">	Informação indisponível</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- // Widget END -->
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-actions right">
+                <a href="{{ app.request.headers.get('referer') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+                {% if (status == 'online') %}
+                    <a href="{{ path('admin_visitantes_detail_print', { 'accessId': access.id, 'status': 'online' }) }}" target="_blank" class="btn btn-icon btn-default glyphicons print"><i></i>Imprimir</a>
+                {% else %}
+                    <a href="{{ path('admin_visitantes_detail_print', { 'accessId': access.acctuniqueid, 'status': 'closed' }) }}" target="_blank" class="btn btn-icon btn-default glyphicons print"><i></i>Imprimir</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

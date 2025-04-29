@@ -1,0 +1,16 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;">
+            <div class="box-content">
+                <h3>{{ 'wspot.access_code.title'|trans }}</h3>
+
+                <div class="content-center">
+                    {{ 'wspot.access_code.used_code'|trans }}
+                </div>
+                <a class="btnChangeData" href="{{ path('frontend_two_factor_auth_accesscode') }}" style="margin-top: 30px;">{{ 'wspot.access_code.change_code'|trans }}</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block translation %}
+    {% if (config.translation == 1) %}
+        {% if app.session.get('preview') %}
+            <div style="background-color: #9f2323; color: #fff;text-align: center;padding: 1em; font-weight: bolder">
+                {{ 'wspot.preview.alert_text'|trans }}
+            </div>
+        {% else %}
+            <div class="language-box">
+                {{ 'wspot.default.selected_language'|trans }}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <style>
+        @media (max-width: 460px) {
+            body {
+                line-height: 15px !important;
+                font-size: 10pt;
+            }
+
+            #loginBox {
+                overflow: scroll;
+                overflow-x: hidden;
+                border-radius: 5px;
+                height: auto;
+                min-height: 55vh !important;
+                padding: 0 !important;
+            }
+
+            h1, h2, h3,
+            .content-center {
+                line-height: 26px !important;
+            }
+        }
+
+        h1, h2, h3,
+        .content-center {
+            line-height: 26px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block container %}
+    <section class="container singleBox">
+
+        <div id="loginBox" class="boxes fullBox" style="display: block !important; min-height: 0 !important;">
+            <div class="box-content">
+                <h3 style="font-size: 20px !important;">{{ 'wspot.auto_login.hello'|trans }} <strong>{{ guest.properties.name|default('wspot.default.guest'|trans) }}</strong>{{ 'wspot.auto_login.welcome'|trans }}</h3>
+
+                <div class="content-center autologin">
+                    {% if config.auto_login_text_pt != null or config.auto_login_text_en != null or config.auto_login_text_es != null%}
+                        {% if(app.request.get('_locale') == 'pt_br') %}
+                            {{ config.auto_login_text_pt }}
+                        {% elseif(app.request.get('_locale') == 'en')  %}
+                            {{ config.auto_login_text_en }}
+                        {% else %}
+                            {{ config.auto_login_text_es }}
+                        {% endif %}
+                        <br /><br />
+                        {{ 'wspot.auto_login.message_5'|trans }}
+                    {% else %}
+                        {% if(currentAccessPoint == lastAccessPointVisited) %}
+                            {{ 'wspot.auto_login.message_4'|trans }} <strong>{{ date }}</strong>.
+                        {% else %}
+                            {{ 'wspot.auto_login.message_1'|trans }} <strong>{{ calledStationName }}, </strong>
+                            {{ 'wspot.auto_login.message_2'|trans }} <strong>{{ config.partner_name }}</strong>
+                            {{ 'wspot.auto_login.message_3'|trans }} <strong>{{ date }}</strong>.
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <form action="{{ path('frontend_start_navigation') }}" method="POST">
+                    <input type="hidden" name="action" value="autologin"/>
+                    <input name="token" type="hidden" value="{{ token }}" />
+                    <a id="loaderBtnAutoLogin" class="autoLogin btnLoader" style="width: 100% !important; display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                    <button type="submit" id="wspot_signin_entrar">{{ 'wspot.login_page.login_submit_input'|trans }}</button>
+                </form>
+
+                {% if isUniqueDeviceEnabled == false %}
+                    <div class="not_me_link" style="margin: 20px 10px; text-align: center;">
+                        <a href="{{ path('frontend_index', { 'autoLogin': 0 }) }}">{{ 'wspot.auto_login.not_me'|trans }} {{ guest.properties.name|default('wspot.default.guest'|trans) }}.</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset(assets_path ~'/js/fingerprinting.js')}}"></script>
+
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            jQuery('#loaderBtnAutoLogin').hide();
+
+            jQuery('#wspot_signin_entrar').click(function(){
+                jQuery(this).hide();
+                jQuery('#loaderBtnAutoLogin').show();
+            });
+        });
+
+        setTimeout(function() {
+            $(".language-box").toggle("drop", {direction: 'up'}, 800);
+        }, 4000);
+
+    </script>
+{% endblock %}

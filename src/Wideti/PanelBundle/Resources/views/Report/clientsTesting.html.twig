@@ -1,0 +1,189 @@
+{% extends 'PanelBundle::reportList.html.twig' %}
+
+{% block heading %}
+    Mambo WiFi em POC
+{% endblock %}
+
+{% block cards %}
+    <div class="box-generic">
+        <div class="">
+            <div class="tabs active openedBefore" id="overview">
+                <div class="row-fluid">
+                    <div class="span12" style="margin-bottom: 10px;">
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <span href="#" class="widget-stats widget-stats-2">
+                                    <span class="glyphicons user_add"><i></i></span>
+                                    <span class="txt"><span class="count" style="color: #496cad;">{{ numPocClients}}</span><br>Mambo WiFi em POC</span>
+                                    <div class="clearfix"></div>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabs" id="guests"></div>
+            <div class="tabs" id="network"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block filterBlock %}
+    {% block filter %}
+        <div class="row-fluid">
+            <div class="filter-bar margin-bottom-none">
+
+                <form name="wideti_AdminBundle_usuarios_filter" method="get" action="" novalidate="novalidate">
+                    <div id="wideti_AdminBundle_usuarios_filter">
+                        <div>
+                            <label for="wideti_AdminBundle_usuarios_filter_filtro" class="required" aria-required="true">Listar:</label>
+                            <select id="search_by" name="search_by" aria-controls="DataTables_Table_0" class="form-control">
+                                <option selected value disabled>-- Selecione --</option>
+                                <option value="poc">Todas POCs</option>
+                                <option value="poc_30_days">POCs criadas há mais de 30 dias</option>
+                                <option value="poc_no_ap_config">POCs sem configuração de equipamentos (sem AP cadastrada)</option>
+                                <option value="poc_no_template">POCs sem template configurado</option>
+                                <option value="poc_3_days">POCs faltando 3 dias para terminar</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="wideti_AdminBundle_usuarios_filter_filtro" class="required" aria-required="true">Exibir:</label>
+                            <select id="limitFilter" name="limitFilter" aria-controls="DataTables_Table_0" class="form-control">
+                                <option selected value disabled>-- Selecione --</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                                <option value="75">75</option>
+                                <option value="100">100</option>
+                                <option value="10000">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-animate btn-animate-side btn-primary"><span>
+                    <i class="icon wb-search" aria-hidden="true"></i> Filtrar</button>
+                    <div class="col-md-6"></div>
+                </form>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}
+
+
+{% block tableHead %} Mambo WiFi em POC {% endblock %}
+
+{% block thead %}
+    <th style="width: 350px;text-decoration: none;">
+        {% if app.request.get('sort') == "c.company" and app.request.get('direction') == "asc" %}
+            <span>&#x25B2;</span>
+        {% elseif app.request.get('sort') == "c.company" and app.request.get('direction') == "desc" %}
+            <span>&#x25BC;</span>
+        {% else %}
+            <span>&udarr;</span>
+        {% endif %}
+        {{ knp_pagination_sortable(pagination , 'Razao Social', 'c.company') }}
+    </th>
+
+    <th style="width: 150px;text-decoration: none;">
+        {% if app.request.get('sort') == "c.domain" and app.request.get('direction') == "asc" %}
+            <span>&#x25B2;</span>
+        {% elseif app.request.get('sort') == "c.domain" and app.request.get('direction') == "desc" %}
+            <span>&#x25BC;</span>
+        {% else %}
+            <span>&udarr;</span>
+        {% endif %}
+        {{ knp_pagination_sortable(pagination , 'Domínio', 'c.domain') }}
+    </th>
+
+    <th style="width: 75px;text-decoration: none;">
+        {% if app.request.get('sort') == "c.created" and app.request.get('direction') == "asc" %}
+            <span>&#x25B2;</span>
+        {% elseif app.request.get('sort') == "c.created" and app.request.get('direction') == "desc" %}
+            <span>&#x25BC;</span>
+        {% else %}
+            <span>&udarr;</span>
+        {% endif %}
+        {{ knp_pagination_sortable(pagination , 'Data de cadastro', 'c.created') }}
+    </th>
+    <th style="width: 55px;">Tempo em POC</th>
+    <th style="width: 75px;text-decoration: none;">
+        {% if app.request.get('sort') == "c.pocEndDate" and app.request.get('direction') == "asc" %}
+            <span>&#x25B2;</span>
+        {% elseif app.request.get('sort') == "c.pocEndDate" and app.request.get('direction') == "desc" %}
+            <span>&#x25BC;</span>
+        {% else %}
+            <span>&udarr;</span>
+        {% endif %}
+        {{ knp_pagination_sortable(pagination , 'Fim da POC', 'c.pocEndDate') }}
+    </th>
+    <th style="width: 75px;">Último Acesso</th>
+    <th style="width: 75px;">
+        Acessos POC vencida
+    </th>
+{% endblock %}
+
+
+{% block tbody %}
+        {% for client in pagination %}
+            <tr class="gradeX">
+                <td><a title="Visualizar dados do Cliente" href="{{ path('panel_client_show', {'id': client.getId() }) }}">{{ client.getCompany() | slice(0,50)}}</a></td>
+                <td><a href="http://{{ client.getDomain() }}.mambowifi.com" target="_blank">
+                        {{ client.getDomain() }}
+                    </a></td>
+                <td>{{ client.getCreated() | date("d/m/Y") }}</td>
+
+                {% if date() > client.getPocEndDate() %}
+                    <td>
+                        <span class="label label-important" data-toggle="tooltip" data-original-title="Cliente com tempo de teste expirado" data-placement="top">
+                            {{ client.getCreated() | DateDiffInDays()  }}
+                        </span>
+                    </td>
+                {% else %}
+                    <td>{{ client.created | DateDiffInDays() }}</td>
+                {% endif %}
+
+                <td>{{ client.getPocEndDate() | date("d/m/Y") }}</td>
+                <td>
+                    {% for user in client.users %}
+                        {% if loop.last %}
+                            {{ user.UltimoAcesso() | date("d/m/Y") }}
+                        {% endif %}
+                    {% else %}
+                        Sem acesso
+                    {% endfor %}
+                </td>
+
+                <td>
+                    {% if client.users|length == 0 %}
+                        Nenhum
+                    {% else %}
+                        <a title="" href="{{ path('panel_client_show', {'id': client.getId() }) }}">
+                            <span class="label label-sucess" data-toggle="tooltip" data-original-title="Clique para ver usuários que visualizaram POC Vencida" data-placement="top"> {{ client.users|length }}
+                                {{  client.users|length == 1 ? 'Usuário' : 'Usuários' }}
+                        </span></a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr class="gradeX">
+                <td colspan="7">Nenhum cliente encontrado.</td>
+            </tr>
+        {% endfor %}
+
+{% endblock %}
+
+{% block pagination %}
+    <tfoot>
+        <tr>
+            <td colspan="8">
+                <div class="text-xs-right">
+                    <ul class="pagination" style="padding-top: 1px">
+                        {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+                    </ul>
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends 'PanelBundle::dataList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block dataTitle %}
+    Listagem de Usuários
+{% endblock %}
+
+{% block addButton %}
+    <a href="{{ path('panel_user_create')}}" style="margin: 4px 0 5px 5px;" class="btn btn-primary btn-icon glyphicons circle_plus pull-right">
+        <i></i>Cadastrar Usuário
+    </a>
+{% endblock %}
+
+{% block filterBlock %}
+    <div class="filter-bar row-fluid margin-bottom-none">
+        {% block filter %}
+            {% set exportParams = app.request.query.all %}
+            {% form_theme filter 'AdminBundle:Form:fields.html.twig' %}
+            {{ form(filter, {'action': path('panel_user_list', exportParams)}) }}
+            {% set exportParams = exportParams|merge({'export': 1}) %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block thead %}
+    <th class="center" style="width: 300px;">Nome</th>
+    <th class="center" style="width: 150px;">E-mail</th>
+    <th class="center" style="width: 130px">Último Acesso</th>
+    <th class="center" style="width: 150px">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr class="gradeX">
+            {% if entity.status == 0 %}
+                {% set statusColor = "red" %}
+            {% endif %}
+            {% if entity.status == 1 %}
+                {% set statusColor = "green" %}
+            {% endif %}
+
+            <td style="color: {{ statusColor }}">
+                {{ entity.nome }}
+            </td>
+            <td>
+                {{ entity.username }}
+            </td>
+            <td class="center">{{ entity.ultimoAcesso | date('d/m/Y H:i:s') }}</td>
+
+            <td class="center">
+                <a href="{{ path('panel_user_edit', { 'id': entity.id }) }}" class="btn-action glyphicons pencil btn-success"
+                   alt="Editar" title="Editar">
+                    <i></i>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {{ knp_pagination_render(entities, 'AdminBundle::knp_pagination.html.twig') }}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

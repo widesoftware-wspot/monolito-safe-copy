@@ -1,0 +1,86 @@
+Wideti\DomainBundle\Entity\Users:
+  Users0:
+    username: admin@wideti.com.br
+    nome: Admin
+    password: "QUd9mJIY6w+L/iqBlckIvXdzg/sNcxQpV2qxdR0emAREBWMZVJ9i5K8+ZF9IjFZjAlx/HfpUtC54MoY9rfbx7Q=="
+    twoFactorAuthenticationEnabled: 0
+    receiveReportMail: 0
+    financialManager: 0
+    status: 1
+    role: "@RoleManager"
+    reportMailLanguage: 0
+
+  Users1:
+    username: esqueciminhasenha@wideti.com.br
+    nome: Esqueci minha senha
+    password: "QUd9mJIY6w+L/iqBlckIvXdzg/sNcxQpV2qxdR0emAREBWMZVJ9i5K8+ZF9IjFZjAlx/HfpUtC54MoY9rfbx7Q=="
+    twoFactorAuthenticationEnabled: 0
+    receiveReportMail: 0
+    financialManager: 0
+    status: 1
+    role: "@RoleAdmin"
+    client: "@Client"
+    reportMailLanguage: 0
+
+  Users2:
+    username: user@wideti.com.br
+    nome: User
+    password: "QUd9mJIY6w+L/iqBlckIvXdzg/sNcxQpV2qxdR0emAREBWMZVJ9i5K8+ZF9IjFZjAlx/HfpUtC54MoY9rfbx7Q=="
+    twoFactorAuthenticationEnabled: 0
+    receiveReportMail: 0
+    financialManager: 0
+    status: 1
+    role: "@RoleUser"
+    client: "@Client"
+    reportMailLanguage: 0
+
+  Users3:
+    username: marketing@wideti.com.br
+    nome: Marketing
+    password: "QUd9mJIY6w+L/iqBlckIvXdzg/sNcxQpV2qxdR0emAREBWMZVJ9i5K8+ZF9IjFZjAlx/HfpUtC54MoY9rfbx7Q=="
+    twoFactorAuthenticationEnabled: 0
+    receiveReportMail: 0
+    financialManager: 0
+    status: 1
+    role: "@RoleMarketing"
+    client: "@Client"
+    reportMailLanguage: 0
+
+  Users4:
+    username: contato@wideti.com.br
+    nome: Admin
+    password: "QUd9mJIY6w+L/iqBlckIvXdzg/sNcxQpV2qxdR0emAREBWMZVJ9i5K8+ZF9IjFZjAlx/HfpUtC54MoY9rfbx7Q=="
+    twoFactorAuthenticationEnabled: 0
+    receiveReportMail: 0
+    financialManager: 1
+    status: 1
+    role: "@RoleManager"
+    reportMailLanguage: 0
+    idpId: '31f51eef-0dc5-4d53-a0c2-210ce1968c0c'
+    createdAtIdp: 1
+    resetedToStrongPassword: true
+
+  Users5:
+    username: adminlimited@mambowifi.com
+    nome: Admin Limitado
+    password: "QUd9mJIY6w+L/iqBlckIvXdzg/sNcxQpV2qxdR0emAREBWMZVJ9i5K8+ZF9IjFZjAlx/HfpUtC54MoY9rfbx7Q=="
+    twoFactorAuthenticationEnabled: 0
+    receiveReportMail: 0
+    financialManager: 0
+    status: 1
+    role: "@RoleAdminLimited"
+    client: "@Client"
+    reportMailLanguage: 0
+
+  Users6:
+    username: suportlimited@mambowifi.com
+    nome: Suporte - Limitado
+    password: "QUd9mJIY6w+L/iqBlckIvXdzg/sNcxQpV2qxdR0emAREBWMZVJ9i5K8+ZF9IjFZjAlx/HfpUtC54MoY9rfbx7Q=="
+    twoFactorAuthenticationEnabled: 0
+    receiveReportMail: 0
+    financialManager: 1
+    status: 1
+    role: "@RoleSuportLimited"
+    client: "@Client"
+    reportMailLanguage: 0
+    resetedToStrongPassword: true

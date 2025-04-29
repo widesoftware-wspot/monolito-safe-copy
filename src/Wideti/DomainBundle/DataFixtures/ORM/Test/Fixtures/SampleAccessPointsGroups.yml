@@ -1,0 +1,29 @@
+Wideti\DomainBundle\Entity\AccessPointsGroups:
+  Group1:
+    isDefault: true
+    groupName: Grupo padrão
+    client: "@Client"
+    parent: 0
+    parentConfigurations: false
+    isMaster: true
+  Group2:
+    isDefault: false
+    groupName: Grupo 2
+    client: "@Client"
+    parent: 1
+    parentConfigurations: true
+    isMaster: false
+  Group3:
+    isDefault: true
+    groupName: Grupo padrão
+    client: "@FacebookAuthTeste"
+    parent: 0
+    parentConfigurations: false
+    isMaster: true
+  Group4:
+    isDefault: true
+    groupName: Grupo padrão
+    client: "@TwitterAuthTeste"
+    parent: 0
+    parentConfigurations: false
+    isMaster: true

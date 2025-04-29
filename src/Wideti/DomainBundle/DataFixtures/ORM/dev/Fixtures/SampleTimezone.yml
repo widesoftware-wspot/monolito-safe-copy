@@ -1,0 +1,14 @@
+Wideti\DomainBundle\Entity\Timezone:
+  Timezone1:
+    zoneId: 1
+    abbreviation: 'LMT'
+    timeStart: '-1767214413'
+    gmtOffset: '-11188'
+    dst: '0'
+
+  Timezone2:
+    zoneId: 1
+    abbreviation: '-03'
+    timeStart: '-1767214412'
+    gmtOffset: '-10800'
+    dst: '0'

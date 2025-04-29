@@ -1,0 +1,47 @@
+blacklist_list:
+    path:  /{page}
+    defaults: { _controller: wspot.admin.controller.blacklist:indexAction, page:1}
+    options:
+        expose: true
+    requirements:
+            page: \d+
+
+blacklist_create:
+    path:  /create
+    defaults: { _controller: wspot.admin.controller.blacklist:createAction}
+    options:
+        expose: true
+
+blacklist_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.blacklist:editAction}
+    options:
+        expose: true
+
+blacklist_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.blacklist:deleteAction}
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+blacklist_block_guest_mac:
+    path:  /{mac}/block
+    defaults: { _controller: wspot.admin.controller.blacklist:blockGuestByMacAction}
+    requirements: { methods: post }
+    options:
+        expose: true
+
+blacklist_unblock_guest_mac:
+    path:  /{mac}/unblock
+    defaults: { _controller: wspot.admin.controller.blacklist:unblockGuestByMacAction}
+    requirements: { methods: post }
+    options:
+        expose: true
+
+blacklist_show:
+    path:  /{id}/show
+    defaults: { _controller: wspot.admin.controller.blacklist:showAction}
+    requirements: { methods: get }
+    options:
+        expose: true

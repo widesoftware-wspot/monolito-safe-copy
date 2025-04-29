@@ -1,0 +1,8 @@
+<script type="text/javascript">
+    {% for flashMessage in app.session.flashbag.get('notice') %}
+        $.gritter.add({
+            title: 'Aviso!',
+            text: ' {{ flashMessage }} '
+        });
+    {% endfor %}
+</script>

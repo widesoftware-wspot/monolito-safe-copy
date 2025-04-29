@@ -1,0 +1,28 @@
+{% block form_widget_compound %}
+    {% spaceless %}
+        {#<div {{ block('widget_container_attributes') }}>#}
+            {% if form.parent is empty %}
+                {{ form_errors(form) }}
+            {% endif %}
+            {{ block('form_rows') }}
+            {{ form_rest(form) }}
+        {#</div>#}
+    {% endspaceless %}
+{% endblock form_widget_compound %}
+
+{% block button_row %}
+    {% spaceless %}
+        {#<div>#}
+            {{ form_widget(form) }}
+        {#</div>#}
+    {% endspaceless %}
+{% endblock button_row %}
+
+{% block button_widget %}
+    {% spaceless %}
+        {% if label is empty %}
+            {% set label = name|humanize %}
+        {% endif %}
+        <button type="{{ type|default('button') }}" {{ block('button_attributes') }}><i></i>{{ label|trans({}, translation_domain) }}</button>
+    {% endspaceless %}
+{% endblock button_widget %}

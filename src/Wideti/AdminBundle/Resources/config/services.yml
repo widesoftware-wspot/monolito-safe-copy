@@ -1,0 +1,1030 @@
+services:
+
+    # ParamConverter
+    wspot.param_converter.mongodb:
+      class: Sensio\Bundle\FrameworkExtraBundle\Request\ParamConverter\DoctrineParamConverter
+      arguments: ["@doctrine_mongodb"]
+      tags:
+        - { name: request.param_converter }
+
+    wspot.param_converter.client:
+      class: Wideti\AdminBundle\Request\WspotParamConverter
+      arguments: ["@doctrine"]
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setSession, ["@session"] ]
+      tags:
+        - { name: request.param_converter, converter: client }
+
+    wspot.admin.controller.oauth:
+      class: Wideti\AdminBundle\Controller\OAuthAdminController
+      arguments:
+          - "@wspot.helper.controller"
+          - "%kernel.environment%"
+          - "%environments_available_subdomains%"
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setUserService, ["@core.service.user"] ]
+
+    # User Provider
+    wspot.provider.user:
+      class: Wideti\AdminBundle\Security\User\WspotUserProvider
+      arguments:
+        - "@core.service.cache"
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+    # Pos Authenticator
+    wspot.security.pos_authenticator:
+      class: Wideti\AdminBundle\Security\User\WspotUserPosAuthenticator
+      calls:
+        - [ setSecurityContext, ["@security.token_storage"] ]
+      arguments:
+        - "@core.service.user"
+        - "@session"
+        - "@router"
+        - "@logger"
+      public: false
+
+    # Controllers
+    wspot.admin.controller.spots_manager:
+      class: Wideti\AdminBundle\Controller\SpotsManagerController
+      arguments:
+        - "@doctrine.orm.entity_manager"
+        - "@wspot.helper.controller"
+        - "%manager_panels_auth_secret%"
+        - "%kernel.environment%"
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setPaginator, ["@knp_paginator"] ]
+
+    wspot.admin.controller.dashboard:
+        class: Wideti\AdminBundle\Controller\DashboardController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.configuration"
+          - "@core.service.erp"
+          - "@core.service.analytics"
+          - "@core.service.accesspoints"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setDashboardService, ["@core.service.dashboard"] ]
+          - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+
+    wspot.admin.controller.data_controller:
+        class: Wideti\AdminBundle\Controller\DataControllerController
+        arguments:
+          - "@core.service.auditoring.data_controller_service"
+        calls:
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+
+    wspot.admin.controller.consent_manager_controller:
+      class: Wideti\AdminBundle\Controller\ConsentManagerController
+      arguments:
+        - "@core.service.consent_manager_service"
+        - "@wspot.helper.controller"
+        - "@core.service.legal_base_manager_service"
+        - "@core.service.audit_log_internal"
+      calls:
+        - [ setTemplate, ["@templating"] ]
+        - [ setSession, ["@session"] ]
+
+    wspot.admin.controller.access_points_groups:
+        class: Wideti\AdminBundle\Controller\AccessPointsGroupsController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.client"
+          - "@core.service.group_hierarchy_count"
+          - "@core.service.accesspointsgroups"
+          - "@core.service.analytics"
+        calls:
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setAuthorizationChecker, [ "@security.authorization_checker" ] ]
+          - [ setEntityManager, [ "@doctrine.orm.entity_manager" ] ]
+
+    wspot.admin.controller.access_points:
+        class: Wideti\AdminBundle\Controller\AccessPointsController
+        arguments:
+          - "%ap_monitoring_grafana_url%"
+          - "@wspot.helper.controller"
+          - "@core.service.bulk_insert.access_points"
+          - "@core.service.timezone"
+          - "@core.service.analytics"
+          - "@core.service.access_point_monitoring"
+          - "@core.service.access_point_sites_blocking"
+          - "@core.service.ap_extra_config"
+          - "@core.repository.deskbee_device"
+          - "@core.service.controllers_unifi_service"
+          - "@core.service.clients_controllers_unifi_service"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setAccessPointsService, ["@core.service.accesspoints"] ]
+          - [ setSession, ["@session"] ]
+          - [ setMailerService, ["@core.service.mailer"] ]
+          - [ setEmailHeader, ["@core.service.email_header"] ]
+          - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+          - [ setVendor, ["@core.service.vendor"] ]
+          - [ setLogger, ["@logger"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setAuthorizationChecker, [ "@security.authorization_checker" ] ]
+
+    wspot.admin.controller.access_points_and_groups:
+        class: Wideti\AdminBundle\Controller\AccessPointsAndGroupsController
+        arguments: ["@core.service.search_access_points_and_groups"]
+        calls:
+          - [ setSession, ["@session"] ]
+
+    wspot.admin.controller.guest_password_recovery:
+        class: Wideti\AdminBundle\Controller\GuestPasswordRecoveryController
+        arguments:
+          - "@core.service.client"
+          - "@doctrine.orm.entity_manager"
+          - "@wspot.helper.controller"
+        calls:
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+
+    wspot.admin.controller.configurations:
+        class: Wideti\AdminBundle\Controller\ConfigurationsController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.sms"
+          - "%max_number_sms_sending_poc%"
+          - "@core.service.accesspointsgroups"
+          - "@core.service.get_access_points_groups"
+          - "@core.service.get_contract_by_type"
+          - "@core.service.get_user_that_confirmed_sms_cost_contract_service"
+          - "@core.service.client"
+          - "@core.service.analytics"
+          - "@core.service.custom_fields"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setContractService, ["@core.service.contract"] ]
+          - [ setFacebookAppId, ["%facebook_app_id%"] ]
+          - [ setFacebookAppSecret, ["%facebook_app_secret%"] ]
+          - [ setAuthorizationChecker, [ "@security.authorization_checker" ] ]
+
+    wspot.admin.controller.report:
+        class: Wideti\AdminBundle\Controller\ReportController
+        arguments:
+          - "@core.service.configuration"
+          - "%max_auto_download%"
+          - "%max_report_lines_poc%"
+          - "@wspot.helper.controller"
+          - "@core.service.guest"
+          - "@wifi_mode"
+          - "@core.repository.call_to_action_access_data"
+          - "@core.service.auditor"
+          - "@core.service.get_consent_gateway"
+          - "@core.service.legal_base_manager_service"
+          - "@core.service.disconnect_guest_producer"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setReportBuilder, ["@core.service.report_builder"] ]
+          - [ setSession, ["@session"] ]
+          - [ setPaginator, ["@knp_paginator"] ]
+          - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+          - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+          - [ setReportService, ["@core.service.report"] ]
+          - [ setLogger, ["@logger"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+          - [ setReportRepository, ["@core.repository.elasticsearch.report"] ]
+          - [ setAuthorizationChecker, ["@security.authorization_checker"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+
+    wspot.admin.controller.users:
+        class: Wideti\AdminBundle\Controller\UsersController
+        arguments: ["@wspot.helper.controller", "@core.service.analytics","@wspot.2fa.helper"]
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setUserService, ["@core.service.user"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setSession, ["@session"] ]
+          - [ setAuthorizationChecker, ["@security.authorization_checker"] ]
+
+    wspot.admin.controller.visitantes:
+        class: Wideti\AdminBundle\Controller\GuestsController
+        arguments:
+          - "@core.service.configuration"
+          - "@file_uploader"
+          - "%max_auto_download%"
+          - "%bounce_validator_active%"
+          - "%max_report_lines_poc%"
+          - "@wspot.helper.controller"
+          - "@core.service.cache"
+          - "@core.service.credential_check"
+          - "@core.service.entity_logger"
+          - "@core.service.analytics"
+          - "@core.service.guest_devices"
+          - "@core.service.auditor"
+          - "@core.service.get_consent_gateway"
+          - "@core.service.legal_base_manager_service"
+          - "@core.service.audit_log_internal"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setGuestService, ["@core.service.guest"] ]
+          - [ setWifiMode, ["@wifi_mode"] ]
+          - [ setSession, ["@session"] ]
+          - [ setAuthorizationChecker, ["@security.authorization_checker"] ]
+          - [ setPaginator, ["@knp_paginator"] ]
+          - [ setRadcheckService, ["@core.service.radcheck"] ]
+          - [ setBlacklistService, ["@core.service.blacklist"] ]
+          - [ setRadacctService, ["@core.service.radacct"] ]
+          - [ setReportService, ["@core.service.report"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+          - [ setLogger, ["@logger"]]
+
+    wspot.admin.controller.template:
+        class: Wideti\AdminBundle\Controller\TemplateController
+        arguments: ["@wspot.helper.controller", "@core.service.configuration", "@core.service.analytics"]
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setTemplateService, ["@core.service.template"] ]
+          - [ setFileUpload, ["@file_uploader"] ]
+          - [ setSession, ["@session"] ]
+
+    wspot.admin.controller.contract:
+        class: Wideti\AdminBundle\Controller\ContractController
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setSession, ["@session"] ]
+          - [ setContractService, ["@core.service.contract"] ]
+
+    wspot.admin.controller.campaign:
+        class: Wideti\AdminBundle\Controller\CampaignController
+        arguments:
+          - "%aws_bucket_name%"
+          - "%video_bucket_source_on_s3%"
+          - "@wspot.helper.controller"
+          - "@core.service.configuration"
+          - "@validator"
+          - "@file_uploader"
+          - "@core.service.search_access_points_and_groups"
+          - "@core.service.persist_call_to_action"
+          - "@doctrine.orm.entity_manager"
+          - "@core.service.campaign"
+          - "@core.service.module"
+          - "@logger"
+          - "@core.service.active_campaign_count_service"
+          - "@core.service.inactive_campaign_count_service"
+          - "@core.service.analytics"
+          - "@core.service.media_image"
+          - "@core.service.media_video"
+        calls:
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setPaginator, ["@knp_paginator"] ]
+
+    wspot.admin.controller.sms_marketing:
+      class: Wideti\AdminBundle\Controller\SmsMarketingController
+      arguments:
+        - "@wspot.helper.controller"
+        - "@core.service.configuration"
+        - "@core.service.module"
+        - "@logger"
+        - "@core.service.analytics"
+        - "@core.service.sms_marketing"
+        - "@core.service.sms_marketing_report"
+        - "@core.service.url_shortner_report"
+        - "@core.service.url_shortner"
+        - "@core.service.sms_credit"
+        - "@wspot.helper.sms_marketing_helper"
+        - "@core.service.erp"
+      calls:
+        - [ setTemplate, ["@templating"] ]
+        - [ setSession, ["@session"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+
+    wspot.admin.controller.segmentation:
+      class: Wideti\AdminBundle\Controller\SegmentationController
+      arguments:
+        - "@wspot.helper.controller"
+        - "@core.service.module"
+        - "@core.repository.segmentation"
+        - "@core.service.api_wspot"
+        - "@segmentation.create"
+        - "@segmentation.edit"
+        - "@segmentation.delete"
+        - "@segmentation.export"
+        - "@segmentation.resolver"
+        - "@core.repository.guest"
+        - "@core.service.custom_fields"
+        - "@logger"
+        - "@core.service.auditor"
+      calls:
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setSession, ["@session"] ]
+        - [ setPaginator, ["@knp_paginator"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+    wspot.admin.controller.logs:
+        class: Wideti\AdminBundle\Controller\LogsController
+        arguments: ["@wspot.helper.controller"]
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setAuthorizationChecker, ["@security.authorization_checker"] ]
+
+    wspot.admin.controller.access_code:
+        class: Wideti\AdminBundle\Controller\AccessCodeController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.cache"
+          - "@core.service.access_code"
+          - "@core.service.analytics"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setGroupService, ["@core.service.group"]]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+          - [ setContainer, ["@service_container"] ]
+
+    wspot.admin.controller.blacklist:
+        class: Wideti\AdminBundle\Controller\BlacklistController
+        arguments: ["@wspot.helper.controller", "@core.service.analytics"]
+        calls:
+          - [ setBlacklistService, ["@core.service.blacklist"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+
+    wspot.admin.controller.business_hours:
+        class: Wideti\AdminBundle\Controller\BusinessHoursController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.cache"
+          - "@core.service.analytics"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setBusinessHoursService, ["@core.service.business_hours"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setGroupService, ["@core.service.group"]]
+
+    wspot.admin.controller.deskbee_integration:
+        class: Wideti\AdminBundle\Controller\DeskbeeIntegrationController
+        arguments:
+          - "@wspot.helper.controller"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+
+    wspot.admin.controller.hubsoft_integration:
+        class: Wideti\AdminBundle\Controller\HubsoftIntegrationController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.hubsoft"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+    wspot.admin.controller.Ixc_integration:
+        class: Wideti\AdminBundle\Controller\IxcIntegrationController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.Ixc"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+    wspot.admin.controller.smartlocation:
+        class: Wideti\AdminBundle\Controller\SmartLocationController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.smart_location"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+
+    wspot.admin.controller.sso_integration:
+        class: Wideti\AdminBundle\Controller\SsoIntegrationController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.oauth_login"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+
+    wspot.admin.controller.api_wspot:
+        class: Wideti\AdminBundle\Controller\ApiWSpotController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.api_wspot"
+          - "@core.service.analytics"
+          - "@core.service.get_consent_gateway"
+          - "@core.service.auditor"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+
+    wspot.admin.controller.custom_field_template:
+        class: Wideti\AdminBundle\Controller\CustomFieldTemplateController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.custom_fields"
+        calls:
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+
+    wspot.admin.controller.api_rd_station:
+        class: Wideti\AdminBundle\Controller\ApiRDStationController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.cache"
+          - "@core.service.analytics"
+          - "@core.service.get_consent_gateway"
+          - "@core.service.auditor"
+          - "@core.service.rd_integration_validator"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setApiRDStationService, ["@core.service.api_rd_station"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setLogger, ["@logger"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+    wspot.admin.controller.api_egoi:
+        class: Wideti\AdminBundle\Controller\ApiEgoiController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.cache"
+          - "@core.service.analytics"
+          - "@core.service.get_consent_gateway"
+          - "@core.service.auditor"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setApiEgoiService, ["@core.service.api_egoi"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setLogger, ["@logger"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+    wspot.admin.controller.custom_fields:
+        class: Wideti\AdminBundle\Controller\CustomFieldsController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.cache"
+          - "@core.service.custom_fields"
+          - "@doctrine_mongodb.odm.default_document_manager"
+          - "@core.service.analytics"
+          - "@doctrine.orm.entity_manager"
+        calls:
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+
+    wspot.admin.controller.cache:
+        class: Wideti\AdminBundle\Controller\CacheController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.cache"
+        calls:
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setTemplate, ["@templating"] ]
+
+    wspot.admin.controller.white_label:
+        class: Wideti\AdminBundle\Controller\WhiteLabelController
+        arguments: ["@wspot.helper.controller", "@core.service.white_label"]
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+
+    wspot.admin.controller.wspot_faker:
+        class: Wideti\AdminBundle\Controller\WSpotFakerController
+        arguments: ["@doctrine.orm.entity_manager", "@wspot.helper.controller", "@core.service.wspot_faker", "@session", "@core.service.client"]
+
+    wspot.admin.controller.wspot_poc_token_purchase:
+      class: Wideti\AdminBundle\Controller\ClientChangePlanController
+      arguments:
+        - "@core.service.client"
+        - "@doctrine.orm.entity_manager"
+        - "@wspot.helper.controller"
+        - "%api_purchase_wspot_url%"
+
+    wspot.admin.controller.customer_area:
+        class: Wideti\AdminBundle\Controller\CustomerAreaController
+        arguments: ["@wspot.helper.controller", "@core.service.module", "@core.service.erp", "@core.service.client_status", "@core.service.client_logs", "@logger", "%superlogica_domain%"]
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setSession, ["@session"] ]
+          - [ setMailerService, ["@core.service.mailer"] ]
+          - [ setEmailHeader, ["@core.service.email_header"] ]
+
+    wspot.admin.controller.exports:
+        class: Wideti\AdminBundle\Controller\ExportsController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.auditor"
+          - "@core.service.get_consent_gateway"
+          - "@core.service.audit_log_internal"
+        calls:
+          - [ setReportService, ["@core.service.report"] ]
+          - [ setSession, ["@session"] ]
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+    wspot.admin.controller.group:
+        class: Wideti\AdminBundle\Controller\GroupController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.module"
+          - "@doctrine.orm.entity_manager"
+          - "@core.service.cache"
+          - "@service_container"
+          - "@core.service.accesspoints"
+          - "@core.service.accesspointsgroups"
+          - "@core.service.custom_fields"
+          - "@core.service.analytics"
+          - "@core.service.auditor"
+          - "@core.service.legal_base_manager_service"
+          - "@core.service.audit_log_internal"
+        calls:
+            - [ setGroupService, ["@core.service.group"] ]
+            - [ setTemplate, ["@templating"] ]
+            - [ setSession, ["@session"] ]
+            - [ setAuthorizationChecker, ["@security.authorization_checker"] ]
+
+    wspot.admin.controller.maintenance_page:
+        class: Wideti\AdminBundle\Controller\MaintenancePageController
+        arguments: ["@wspot.helper.controller"]
+        calls:
+            - [ setTemplate, ["@templating"] ]
+
+    wspot.admin.controller.first_config:
+        class: Wideti\AdminBundle\Controller\FirstConfigController
+        arguments: ["@core.service.firts_config","@wspot.helper.controller", "@core.service.configuration", "@core.service.client"]
+        calls:
+         - [ setTemplate, ["@templating"] ]
+         - [ setSession, ["@session"]]
+
+    wspot.admin.controller.notification:
+        class: Wideti\AdminBundle\Controller\NotificationController
+        arguments: ["@core.service.notification.ap_wrong_config","@doctrine.orm.entity_manager"]
+
+    wspot.admin.controller.legal_base_manager:
+        class: Wideti\AdminBundle\Controller\LegalBaseManagerController
+        calls:
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+        arguments: ["@core.service.legal_base_manager_service", "@security.authorization_checker"]
+
+    wspot.admin.controller.api_docs:
+      class: Wideti\AdminBundle\Controller\ApiDocsController
+      calls:
+        - [ setTemplate, ["@templating"] ]
+        - [ setSession, ["@session"] ]
+
+
+    # Form
+    wspot.form.configuration:
+        class: Wideti\AdminBundle\Form\SetupType
+        arguments: ["%facebook_app_id%", "%facebook_app_secret%", "@core.service.configuration"]
+        calls:
+            - [ setSession, ["@session"] ]
+            - [ setModuleService, ["@core.service.module"] ]
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+            - [ setGroupService, ["@core.service.group"]]
+            - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+        tags:
+            - { name: form.type, alias: setup }
+
+    wspot.form.config:
+        class: Wideti\AdminBundle\Form\ConfigType
+        tags:
+            - { name: form.type, alias: config }
+        calls:
+          - [ setSession, ["@session"] ]
+
+    wspot.form.report_filter:
+        class: Wideti\AdminBundle\Form\Type\Reports\ReportFilterType
+        calls:
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        tags:
+            - { name: form.type, alias: reportsFilter }
+
+    wspot.form.guests_filter:
+        class: Wideti\AdminBundle\Form\Type\Guest\GuestFilterType
+        calls:
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        tags:
+            - { name: form.type, alias: visitantes }
+
+    wspot.form.guest:
+        class: Wideti\AdminBundle\Form\GuestType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+            - [ setLogger, ["@logger"] ]
+            - [ setTranslatorService, ["@translator"]]
+        tags:
+            - { name: form.type, alias: wspot_guest }
+
+    wspot.form.access_point:
+        class: Wideti\AdminBundle\Form\AccessPointsType
+        calls:
+            - [ setVendor, ["@core.service.vendor"] ]
+        tags:
+            - { name: form.type, alias: wspot_access_point }
+
+    wspot.form.blacklist:
+        class: Wideti\AdminBundle\Form\BlacklistType
+        tags:
+            - { name: form.type, alias: wspot_blacklist_form }
+
+    wspot.form.blacklist_filter:
+        class: Wideti\AdminBundle\Form\BlacklistFilterType
+        tags:
+            - { name: form.type, alias: wspot_blacklist_form_filter }
+
+    wspot.form.group_filter:
+            class: Wideti\AdminBundle\Form\GroupFilterType
+            tags:
+                - { name: form.type, alias: wspot_group_form_filter }
+
+    wspot.form.business_hours:
+        class: Wideti\AdminBundle\Form\BusinessHoursType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setBusinessHoursService, ["@core.service.business_hours"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_business_hours }
+    wspot.form.custom_field_template:
+        class: Wideti\AdminBundle\Form\CustomFieldTemplateType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_custom_field_template }
+
+    wspot.form.deskbee_integration:
+        class: Wideti\AdminBundle\Form\DeskbeeIntegrationType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_deskbee_integration }
+
+    wspot.form.hubsoft_integration:
+        class: Wideti\AdminBundle\Form\HubsoftIntegrationType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setSession, ["@session"] ]
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        tags:
+            - { name: form.type, alias: wspot_hubsoft_integration }
+
+    wspot.form.Ixc_integration:
+      class: Wideti\AdminBundle\Form\IxcIntegrationType
+      calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setSession, ["@session"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      tags:
+          - { name: form.type, alias: wspot_Ixc_integration }
+
+    wspot.form.report.campaign_filter:
+      class: Wideti\AdminBundle\Form\Type\Reports\CampaignReportFilterType
+      arguments:
+          - "@doctrine.orm.entity_manager"
+      tags:
+          - { name: form.type, alias: campaignReportFilter }
+
+    wspot.form.report.download_upload_filter:
+      class: Wideti\AdminBundle\Form\Type\Reports\downloadUploadFilterType
+      arguments:
+          - "@doctrine.orm.entity_manager"
+      tags:
+          - { name: form.type, alias: downloadUploadFilter }
+
+    wspot.form.report.date_from_to_filter:
+      class: Wideti\AdminBundle\Form\Type\Reports\DateFromToType
+      arguments:
+          - "@doctrine.orm.entity_manager"
+      tags:
+          - { name: form.type, alias: dateFromToFilter }
+    
+    wspot.form.report.date_from_to_with_limit_filter:
+      class: Wideti\AdminBundle\Form\Type\Reports\DateFromToWithLimitType
+      arguments:
+          - "@doctrine.orm.entity_manager"
+      tags:
+          - { name: form.type, alias: dateFromToWithLimitFilter }
+
+    wspot.form.report.guest_filter:
+      class: Wideti\AdminBundle\Form\Type\Reports\GuestReportFilterType
+      arguments:
+          - "@core.service.custom_fields"
+      tags:
+          - { name: form.type, alias: guestReportsFilter }
+    
+    wspot.form.smart_location:
+        class: Wideti\AdminBundle\Form\SmartLocationType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: smart_location }
+
+    wspot.form.sso_integration:
+        class: Wideti\AdminBundle\Form\SsoIntegrationType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setSession, ["@session"] ]
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        tags:
+            - { name: form.type, alias: wspot_sso_integration }
+
+    wspot.form.access_points_groups:
+        class: Wideti\AdminBundle\Form\AccessPointsGroupsType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        tags:
+            - { name: form.type, alias: access_point_group }
+
+    wspot.form.api_rd_station:
+        class: Wideti\AdminBundle\Form\ApiRDStationType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setApiRDStationService, ["@core.service.api_rd_station"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_api_rd_station }
+
+    wspot.form.api_egoi:
+        class: Wideti\AdminBundle\Form\ApiEgoiType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setApiEgoiService, ["@core.service.api_egoi"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_api_egoi }
+
+    wspot.form.wspot_access_code_settings:
+        class: Wideti\AdminBundle\Form\AccessCodeSettingsType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setBusinessHoursService, ["@core.service.business_hours"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_access_code_settings }
+
+    wspot.form.wspot_users_type:
+        class: Wideti\AdminBundle\Form\UsersType
+        arguments: ["@core.repository.user"]
+        tags:
+          - { name: form.type, alias: wideti_AdminBundle_usuarios }
+
+    wspot.form.wspot_access_code:
+        class: Wideti\AdminBundle\Form\AccessCodeType
+        calls:
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_access_code }
+
+    wspot.form.white_label:
+        class: Wideti\AdminBundle\Form\WhiteLabelType
+        tags:
+            - { name: form.type, alias: wspot_white_label }
+
+    wspot.form.facebook_checkin:
+        class: Wideti\FrontendBundle\Form\FacebookCheckinType
+        tags:
+            - { name: form.type, alias: wspot_facebook_checkin_form }
+
+    wspot.form.guest.search.group:
+        class: Wideti\AdminBundle\Form\GuestGroupFindType
+        calls:
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        tags:
+            - {name: form.type, alias: wspot_guest_group_find}
+
+    wspot.form.sms_marketing.filter_guests:
+      class: Wideti\AdminBundle\Form\Type\SmsMarketing\SmsMarketingFilterGuestType
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      tags:
+        - { name: form.type, alias: wspot_sms_marketing_filter_guests }
+
+    wspot.form.campaign.filter:
+      class: Wideti\AdminBundle\Form\CampaignFilterType
+      arguments:
+        - "@doctrine.orm.entity_manager"
+      tags:
+        - { name: form.type, alias: CampaignFilterType }
+
+    wspot.form.campaign.image:
+      class: Wideti\AdminBundle\Form\CampaignMediaImageType
+      arguments:
+        - "@doctrine.orm.entity_manager"
+      tags:
+        - { name: form.type, alias: campaign_step_media_image }
+
+    wspot.form.campaign.video:
+      class: Wideti\AdminBundle\Form\CampaignMediaVideoType
+      arguments:
+        - "@doctrine.orm.entity_manager"
+      tags:
+        - { name: form.type, alias: campaign_step_media_video }
+
+    wspot.form.campaign:
+      class: Wideti\AdminBundle\Form\CampaignType
+      arguments:
+        - "@doctrine.orm.entity_manager"
+      tags:
+        - { name: form.type, alias: wideti_AdminBundle_campaign }
+    # Others
+
+    login_listener:
+        class: 'Wideti\AdminBundle\Listener\LoginListener'
+        arguments: ['@security.token_storage', '@doctrine', "@core.service.authorization_token", "@core.service.cache"]
+        calls:
+           - [ setAuthorizationChecker, ["@security.authorization_checker"] ]
+        tags:
+            - { name: 'kernel.event_listener', event: 'security.interactive_login' }
+
+    captcha_listener:
+        class: 'Wideti\AdminBundle\Listener\CaptchaListener'
+        arguments: ["@form.factory", "@wspot.helper.controller", "@twig"]
+        calls:
+            - [ setSession, ["@session"] ]
+            - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request, priority: 10 }
+
+    audit_log_listener:
+        class: 'Wideti\AdminBundle\Listener\AuditLogListener'
+        arguments: ["@core.service.audit_log_internal", "@request_stack"]
+        calls:
+            - [ setSession, ["@session"] ]
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+            - [ setSecurityContext, ["@security.token_storage"] ]
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+    
+    audit_log_odm_listener:
+        class: 'Wideti\AdminBundle\Listener\AuditLogODMListener'
+        arguments: ["@core.service.audit_log_internal", "@request_stack"]
+        calls:
+            - [ setSession, ["@session"] ]
+            - [ setSecurityContext, ["@security.token_storage"] ]
+        tags:
+            - { name: doctrine_mongodb.odm.event_listener, event: onFlush }
+
+    wspot.2fa.helper:
+      class: 'Wideti\AdminBundle\Helpers\TwoFactorAuthentication'
+      arguments: [ "@doctrine.orm.entity_manager" ]
+
+    login_2fa_check:
+      class: 'Wideti\AdminBundle\Listener\TwoFactorAuthenticationCheck'
+      arguments: [ '@wspot.2fa.helper' ]
+      tags:
+        - { name: 'kernel.event_listener', event: 'security.interactive_login' }
+
+    login_2fa_validator:
+      class: 'Wideti\AdminBundle\Listener\TwoFactorAuthenticationValidator'
+      arguments: [ '@wspot.2fa.helper','@security.token_storage','@templating','@router' ]
+      tags:
+        - { name: kernel.event_listener, event: kernel.request }
+
+    exception_listener:
+        class: 'Wideti\AdminBundle\Listener\ExceptionListener'
+        calls:
+            - [ setTemplate, ["@templating"] ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 200 }
+
+    first_config_listener:
+        class: 'Wideti\AdminBundle\Listener\FirstConfigListener'
+        arguments: ['@wspot.helper.controller', '@core.service.client', '@twig']
+        calls:
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
+
+    spot_manager_auth_listener:
+        class: 'Wideti\AdminBundle\Listener\SpotManagerAuthListener'
+        arguments:
+          - "@doctrine.orm.entity_manager"
+          - "@wspot.helper.controller"
+        calls:
+          - [ setSession, [ "@session" ] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+        tags:
+          - { name: kernel.event_listener, event: kernel.request }
+
+    consent_listener:
+      class: 'Wideti\AdminBundle\Listener\ConsentListener'
+      arguments:
+        - '@wspot.helper.controller'
+        - '@core.service.client'
+        - '@templating'
+        - "@core.service.get_consent_gateway"
+        - "@core.service.legal_base_manager_service"
+      calls:
+        - [ setSession, [ "@session" ] ]
+      tags:
+        - { name: kernel.event_listener, event: kernel.request }
+
+    kernel.listener.admin_request_listener:
+        class: Wideti\AdminBundle\Listener\AdminRequestListener
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.analytics"
+        calls:
+            - [ setSession, ["@session"] ]
+            - [ setRouter, ["@router"] ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
+
+    authorization_token_cookie_listener:
+      class: 'Wideti\AdminBundle\Listener\AuthorizationTokenCookieListener'
+      arguments:
+        - "@core.service.authorization_token"
+        - "@router"
+      tags:
+        - { name: kernel.event_listener, event: kernel.response }
+ 
+    kernel.listener.strong_password_verify_listener:
+        class: Wideti\AdminBundle\Listener\StrongPasswordVerifyListener
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.analytics"
+          - "@security.token_storage"
+        calls:
+            - [ setSession, ["@session"] ]
+            - [ setRouter, ["@router"] ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }

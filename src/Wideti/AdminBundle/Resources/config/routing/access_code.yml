@@ -1,0 +1,44 @@
+access_code:
+    path:  /list/{block}
+    defaults: { _controller: wspot.admin.controller.access_code:indexAction, block:false }
+    options:
+        expose: true
+
+access_code_module:
+    path:  /{status}/module
+    defaults: { _controller: wspot.admin.controller.access_code:moduleConfigAction }
+    options:
+        expose: true
+
+access_code_new:
+    path:  /new
+    defaults: { _controller: wspot.admin.controller.access_code:newAction }
+    options:
+        expose: true
+
+access_code_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.access_code:editAction }
+    options:
+        expose: true
+
+access_code_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.access_code:deleteAction}
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+access_code_preferences:
+    path:  /{id}/preferences
+    defaults: { _controller: wspot.admin.controller.access_code:preferencesAction }
+    options:
+        expose: true
+
+access_code_exportcsv:
+    path: /{id}/export-codes
+    defaults: { _controller: wspot.admin.controller.access_code:exportCodesCSVAction }
+
+access_code_print:
+    path:  /{id}/print
+    defaults: { _controller: wspot.admin.controller.access_code:printAction }

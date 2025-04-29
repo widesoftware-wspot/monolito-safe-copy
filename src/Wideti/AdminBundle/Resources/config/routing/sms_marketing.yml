@@ -1,0 +1,51 @@
+sms_marketing:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.sms_marketing:indexAction }
+
+sms_marketing_add_credit:
+    path: /credit
+    defaults: { _controller: wspot.admin.controller.sms_marketing:addCreditAction }
+
+sms_marketing_stats:
+    path:  /{id}/stats
+    defaults: { _controller: wspot.admin.controller.sms_marketing:statsAction }
+
+sms_marketing_new:
+    path:  /new
+    defaults: { _controller: wspot.admin.controller.sms_marketing:newAction }
+    options:
+        expose: true
+
+sms_marketing_search_guests:
+    path:  /search-guests
+    defaults: { _controller: wspot.admin.controller.sms_marketing:searchGuestsAction }
+    requirements: { methods: post }
+    options:
+        expose: true
+
+sms_marketing_url_shortner:
+    path:  /url-shortner
+    defaults: { _controller: wspot.admin.controller.sms_marketing:urlShortnerAction }
+    requirements: { methods: post }
+    options:
+        expose: true
+
+sms_marketing_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.sms_marketing:editAction }
+    options:
+        expose: true
+
+sms_marketing_send:
+    path:  /{id}/send
+    defaults: { _controller: wspot.admin.controller.sms_marketing:sendAction }
+    requirements: { methods: post }
+    options:
+        expose: true
+
+sms_marketing_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.sms_marketing:deleteAction }
+    requirements: { methods: post|delete }
+    options:
+        expose: true

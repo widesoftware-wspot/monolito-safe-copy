@@ -1,0 +1,349 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{{ asset(assets_path ~'/css/default.css')}}" rel="stylesheet">
+    <link href="{{ asset('bundles/admin/theme/css/campaign.css')}}" type="text/css" rel="stylesheet" />
+
+    <script src="{{ asset(assets_path ~'/js/jquery.min.js')}}"></script>
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery.bgluminance.js')}}"></script>
+    <style>
+        {% if callToAction is not null and callToAction.status == 1 and callToAction.campaignType == 1 %}
+            .flex-start_flex-start {
+                -ms-flex-item-align: start!important;
+                align-self: flex-start!important;
+            }
+
+            .flex-start_flex-end {
+                -webkit-box-pack: end!important;
+                -ms-flex-pack: end!important;
+                justify-content: flex-end!important;
+            }
+
+            .flex-start_center {
+                -webkit-box-pack: center!important;
+                -ms-flex-pack: center!important;
+                justify-content: center!important;
+            }
+
+            .center_flex-start {
+                -ms-flex-item-align: start!important;
+                align-self: flex-start!important;
+                -webkit-box-align: center!important;
+                -ms-flex-align: center!important;
+                align-items: center!important;
+            }
+
+            .center_flex-end {
+                -webkit-box-pack: end!important;
+                -ms-flex-pack: end!important;
+                justify-content: flex-end!important;
+                -webkit-box-align: center!important;
+                -ms-flex-align: center!important;
+                align-items: center!important;
+            }
+
+            .center_center {
+                -webkit-box-pack: center!important;
+                -ms-flex-pack: center!important;
+                justify-content: center!important;
+                -webkit-box-align: center!important;
+                -ms-flex-align: center!important;
+                align-items: center!important;
+            }
+
+            .flex-end_flex-start {
+                -webkit-box-orient: vertical!important;
+                -webkit-box-direction: normal!important;
+                -ms-flex-direction: column!important;
+                flex-direction: column!important;
+
+                -webkit-box-pack: end!important;
+
+                -ms-flex-pack: end!important;
+
+                justify-content: flex-end!important;
+                -webkit-justify-content: flex-end!important;
+            }
+
+            .flex-end_flex-end {
+                -webkit-box-orient: vertical!important;
+                -webkit-box-direction: normal!important;
+                -ms-flex-direction: column!important;
+                flex-direction: column!important;
+                -webkit-box-pack: end!important;
+                -ms-flex-pack: end!important;
+                justify-content: flex-end!important;
+                -webkit-box-align: end!important;
+                -ms-flex-align: end!important;
+                align-items: end!important;
+            }
+
+            .flex-end_flex-end button {
+                margin-left: auto!important;
+            }
+
+            .flex-end_center {
+                -webkit-box-orient: vertical!important;
+                -webkit-box-direction: normal!important;
+                -ms-flex-direction: column!important;
+                flex-direction: column!important;
+                -ms-flex-pack: end!important;
+                justify-content: flex-end!important;
+                -webkit-box-align: center!important;
+                -ms-flex-align: center!important;
+                align-items: center!important;
+                -webkit-box-pack: end!important;
+            }
+
+            @media only screen and (orientation: landscape ) {
+                #callToAction {
+                    font-size: {{ callToAction.landscapeButtonLabelSize }}px;
+                    color: {{ callToAction.landscapeButtonLabelColor }};
+                    border-color: {{ callToAction.landscapeButtonColor }};
+                    width: {{ callToAction.landscapeButtonWidth }}px;
+                    height: {{ callToAction.landscapeButtonSize }}px;
+                    background-color: {{ callToAction.landscapeButtonColor }};
+                    cursor: pointer;
+                }
+
+                {% if not campaign.preLoginFullSize %}
+                    #container-image {
+                        width: 50% !important;
+                        height: 100% !important;
+                    }
+
+                    {% if (device == "PC") %}
+                        #container-campaign {
+                            width: 100% !important;
+                            height: 60% !important;
+                            left: 50%;
+                            top: 50%;
+                            transform: translate(-50%, -50%);
+                        }
+                    {% else %}
+                        #container-campaign {
+                            width: 75% !important;
+                        }
+                    {% endif %}
+                {% endif %}
+            }
+
+            @media only screen and (orientation: portrait ) {
+                #callToAction {
+                    font-size: {{ callToAction.portraitButtonLabelSize }}px;
+                    color: {{ callToAction.portraitButtonLabelColor }};
+                    border-color: {{ callToAction.portraitButtonColor }};
+                    height: {{ callToAction.portraitButtonSize }}px;
+                    width: {{ callToAction.portraitButtonWidth }}px;
+                    background-color: {{ callToAction.portraitButtonColor }};
+                    cursor: pointer;
+                }
+
+                {% if not campaign.preLoginFullSize %}
+                    #container-image {
+                        width: 100%;
+                        height: 100%;
+                    }
+                {% endif %}
+            }
+        {% endif %}
+        {% set host = app.request.httpHost %}
+    </style>
+</head>
+<body style="background-color: {{ campaign.bgColor }}">
+    <div class="content">
+        <div id="warning-message">
+            {{ 'wspot.campaign.loading_message'|trans }}
+        </div>
+        <div id="campaign">
+            <div id="container-image">
+                <div id="container-campaign" style="margin:0 auto;position: absolute;width: 100%;height: 100%;" class="{{ (device == "PC") ? landscapeClass : portraitClass }}">
+                    {% if callToAction is not null and callToAction.status == 1 and callToAction.campaignType == 1 %}
+                        <button id="callToAction" style="border-radius: 5px !important;">{{ callToAction.label }}</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        window.onscroll = function () { window.scrollTo(0, 0); };
+
+        $('#warning-message').bgColorLuminance("{{ campaign.bgColor }}", -0.4);
+
+        /**
+         * Define o tamanho vertical da imagem de campanha
+         */
+        var messageBoxHeight = $('#warning-message').outerHeight(true);
+        var totalBodyHeight = $('body').outerHeight(true);
+        var campaignHeight = totalBodyHeight - messageBoxHeight;
+        $('#campaign').css('height', campaignHeight + "px");
+
+        var device = "{{ device }}";
+        var campaignBox = $('#campaign');
+        var campaignImage = $('#container-image');
+        var campaignContainer = $("#container-campaign");
+        var currentImageIndexMobile = 0;  // Inicializa o índice para a rotação de imagens
+        var currentImageIndexDesktop = 0;  // Inicializa o índice para a rotação de imagens
+        // var updateInterval= ({{campaign.preLoginMediaTime}}+3)*1000/{{totalMobileImages}}
+        var totalMobileImages = {{totalMobileImages}} > 0 ? {{totalMobileImages}} : 1;  // Garantir que seja pelo menos 1
+        var totalDesktopImages = {{totalDesktopImages}} > 0 ? {{totalDesktopImages}} : 1;  // Garantir que seja pelo menos 1
+        var updateIntervalMobile = ({{campaign.preLoginMediaTime}} + 3) * 1000 / totalMobileImages;
+        var updateIntervalDesktop = ({{campaign.preLoginMediaTime}} + 3) * 1000 / totalDesktopImages;
+
+
+
+        // URLs das imagens mobile
+        var mobileImages = [
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.preLoginMediaMobile) }}",
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.preLoginMediaMobile2) }}",
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.preLoginMediaMobile3) }}"
+        ];
+
+        // URLs das imagens desktop
+        var desktopImages = [
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.preLoginMediaDesktop) }}",
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.preLoginMediaDesktop2) }}",
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.preLoginMediaDesktop3) }}"
+        ]
+
+
+
+
+
+        if (device === "PC") {
+            updateImageDesktop();  // Inicializa a primeira imagem de mobile
+            setInterval(updateImageDesktop, updateIntervalDesktop);  // Alterna entre as imagens a cada 4 segundos
+        }
+
+        if (device === "winPhone" || device === "Mobile") {
+            updateImageMobile();  // Inicializa a primeira imagem de mobile
+            setInterval(updateImageMobile, updateIntervalMobile);  // Alterna entre as imagens a cada 4 segundos
+
+        }
+
+        function updateImageDesktop() {
+
+            // Atualiza a imagem de fundo com a próxima imagem na sequência
+            campaignImage.css('background', 'url(' + desktopImages[currentImageIndexDesktop] + ') no-repeat center center');
+            campaignImage.css('background-size', 'contain');  // Faz com que a imagem cubra todo o container
+            currentImageIndexDesktop = (currentImageIndexDesktop + 1) % {{totalDesktopImages}};  // Atualiza o índice circularmente
+            
+
+    }
+
+
+        function updateImageMobile() {
+
+            // Atualiza a imagem de fundo com a próxima imagem na sequência
+            campaignImage.css('background', 'url(' + mobileImages[currentImageIndexMobile] + ') no-repeat center center');
+            campaignImage.css('background-size', 'contain');  // Faz com que a imagem cubra todo o container
+            currentImageIndexMobile = (currentImageIndexMobile + 1) % {{totalMobileImages}};  // Atualiza o índice circularmente
+
+    }
+
+
+        campaignBox.css('height', '100%');
+        campaignBox.css('width', '100%');
+
+        campaignImage.css('height', '100%');
+        campaignImage.css('width', '100%');
+        campaignImage.css('position', 'relative');
+        // campaignImage.css('background', 'url(' + img + ') no-repeat center center');
+
+        campaignImage.css('background-size', '100% 100%');
+        campaignImage.css('-webkit-background-size', '100% 100%');
+        campaignImage.css('-moz-background-size', '100% 100%');
+        campaignImage.css('-o-background-size', '100% 100%');
+
+        {% if campaign.preLoginFullSize %}
+            campaignBox.css('margin', '1px 1px');
+        {% else %}
+            campaignImage.css({
+                'background-size' : 'contain',
+                '-webkit-background-size' : 'contain',
+                '-moz-background-size' : 'contain',
+                '-o-background-size' : 'contain',
+                'margin' : '0 auto'
+            });
+
+            campaignContainer.css({
+                'width'  : '90%',
+                'margin' : '0 auto'
+            });
+        {% endif %}
+
+        window.onload = function () {
+            counterElement({{ campaign.preLoginMediaTime }});
+
+            var counter = {{ campaign.preLoginMediaTime }};
+            var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            var postUrl = Routing.generate('campaign_count_view') + '/{{ campaign.id }}/{{ guestMacAddress }}/{{ accessPoint }}';
+
+            setTimeout(function () {
+                request.open('POST', postUrl, true);
+                request.onreadystatechange = function () {
+                    if (request.readyState == 4) {
+                        if (request.status == 200) {
+                            window.location.href = "{{ urlRedirect }}";
+                        }
+                    }
+                };
+                request.send("campaign={{ campaign.id }}");
+            }, (counter*1000));
+        };
+
+        host = "{{ host }}";
+        function counterElement(seconds) {
+            var warningMessage = $("#warning-message");
+            if(host == "suaempresa.wspot.com.br" ||host == "suaempresa.mambowifi.com"){
+                warningMessage.html('{{"wspot.campaign.count_message_simulate"|trans }}: <span id="time-count"></span>');
+            }else{
+                warningMessage.html('{{"wspot.campaign.count_message"|trans }}: <span id="time-count"></span>');
+            }
+
+            var counter = $("#time-count");
+            counter.html(seconds);
+
+            var control = seconds;
+            setInterval(function () {
+                counter.html(control);
+                if (control !== 0) {
+                    control--;
+                }
+            }, 1000);
+        }
+
+        {% if callToAction is not null and callToAction.status == 1 and callToAction.campaignType == 1 %}
+            $("#callToAction").on("click", function() {
+                CallToActionButtonAfterBeingClicked();
+                $.ajax({
+                    type: "POST",
+                    url: Routing.generate('frontend_register_call_to_action', {
+                        type: "1",
+                        url: "{{ callToAction.redirectUrl|url_encode|default("null") }}",
+                        macAddress: "{{ guestMacAddress }}",
+                        apMacAddress: "{{ accessPoint }}",
+                        guest: 0,
+                        campaign: "{{ campaign.id }}"
+                    }),
+                    dataType : "json",
+                    // success: function(response) {
+                    //     console.log(response);
+                    // }
+                });
+            });
+
+            function CallToActionButtonAfterBeingClicked() {
+                $("#callToAction")
+                    .prop("disabled", true)
+                    .css({
+                        "background-color" : "rgba(220, 220, 220, 0.5)",
+                        "color" : "rgba(220, 220, 220, 0.7)"
+                    });
+            }
+        {% endif %}
+    </script>
+</body>
+</html>

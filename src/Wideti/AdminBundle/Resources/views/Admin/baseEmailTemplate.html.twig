@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head lang="pt-BR">
+    <meta charset="UTF-8">
+    <title>{%  block title %} Bem-vindo ao Hotspot {{ config.partner_name|default(whiteLabel.companyName) }} {% endblock %}</title>
+</head>
+<body>
+<table cellspacing="0" bgcolor="#f1f1f1" align="center" width="100%" style="background-color:#f1f1f1;padding-top:0px;padding-right:0px;padding-left:0px;padding-bottom:0px;border-top-width:0px;border-right-width:0px;border-bottom-width:0px;border-left-width:0px">
+    <tbody>
+    <tr>
+        <td bgcolor="#f1f1f1" align="center" style="background-color:#f1f1f1;padding-right:20px;padding-top:0;padding-left:20px;padding-bottom:20px;text-align:center">
+            <div align="center" style="max-width:800px;margin-top:0;margin-right:auto;margin-bottom:0;margin-left:auto;padding-top:0;padding-right:10px;padding-bottom:0;padding-left:10px">
+                <table cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" width="656" style="background-color:#ffffff;padding-bottom:0px;padding-right:0px;padding-top:0px;padding-left:0px;width:656px!important;max-width:800px;margin-bottom:0;margin-right:0;margin-top:0;margin-left:0;font-family:Arial;font-size:11px;color:#565656;text-align:left">
+                    <tbody>
+                    <tr>
+                        <td bgcolor="#565656" width="100%" style="background-color:#f1f1f1">
+                            <table cellspacing="0" cellpadding="0" border="0" bgcolor="#f1f1f1" width="656" style="background-color:#f1f1f1">
+                                <tbody>
+                                <tr>
+                                    <td align="right" width="182">
+                                        <table cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 11px; color: #909090; text-align: right;">
+                                            <tbody>
+                                            <tr>
+                                                <td height="30" width="182"></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center" width="100%">
+                            <table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center" width="100%" style="padding-right:0px;padding-bottom:0px;padding-left:0px;padding-top:0px;border-right-width:0px;border-bottom-width:0px;border-top-width:0px;border-left-width:0px;text-align:left;margin-left:0;margin-bottom:0;margin-top:0;margin-right:0;background-color:#ffffff;font-family:Arial;font-weight:100;font-size:14px;color:#444444;line-height:0px">
+                                <tbody>
+                                {% block header %}
+                                    <tr>
+                                        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:40px;font-size:30px;line-height:48px;color:{{ whiteLabel.panelColor }};font-family:Arial;font-weight:bold; text-align: center;" colspan="2">{{ companyName | default("") }}</td>
+                                    </tr>
+                                {% endblock %}
+
+                                {% block content %}{% endblock %}
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:30px;padding-bottom:0px;padding-right:30px;padding-top:40px;">
+                            {% block footer %}{% endblock %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-left:30px;padding-bottom:70px;padding-right:30px;padding-top:40px;">
+                            {% block signature %}{% endblock %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#f1f1f1" width="100%" style="background-color:#f1f1f1;padding-bottom:50px;padding-top:40px; text-align: center;">
+                            <table cellspacing="0" cellpadding="0" border="0" bgcolor="#f1f1f1" width="656" style="background-color:#f1f1f1">
+                                <tbody>
+                                <tr>
+                                    <td align="center">
+                                        <table cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 11px; color: #909090; text-align: center;">
+                                            <tbody>
+                                            <tr>
+                                                <td style="text-align: center;padding-bottom: 20px;">
+                                                    <a href="https://forms.gle/UZtbHLb2JNrnCcX27" target="_blank">
+                                                        Desejo me descadastrar e não consinto com a utilização dos meus dados.
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: center;">
+                                                    Hotspot de acordo com o Marco Civil da Internet. Registramos os dados de cadastro do
+                                                    visitante, IP da conexão, MAC Address, horários e duração das conexões à internet.
+                                                    Os registros de conexão são por armazenados por um ano, como determina a Lei 12.965,
+                                                    em vigor desde junho de 2014.
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td bgcolor="#f1f1f1" width="100%" style="background-color:#f1f1f1;padding-bottom:20px;text-align: center;">
+                            <table cellspacing="0" cellpadding="0" border="0" bgcolor="#f1f1f1" width="656" style="background-color:#f1f1f1; border-bottom: 1px solid #e5e5e5;">
+                                <tbody>
+                                <tr>
+                                    <td align="center">
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    {% if (whiteLabel.companyName == 'WSpot') or (whiteLabel.companyName == 'Mambo WiFi') %}
+                        <tr>
+                            <td bgcolor="#f1f1f1" width="100%" style="background-color:#f1f1f1;padding-bottom:30px;padding-top:10px; text-align: center;">
+                                <table cellspacing="0" cellpadding="0" border="0" bgcolor="#f1f1f1" width="656" style="background-color:#f1f1f1">
+                                    <tbody>
+                                    <tr>
+                                        <td align="center">
+                                            <table cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 18px; font-weight:bold;color: #6d6d6d; text-align: center;">
+                                                <tbody>
+                                                <tr>
+                                                    <td style="font-size:11px;line-height:11px;color:#6d6d6d;font-family:Arial;"><a href="http://www.mambowifi.com" target="_blank" style="text-decoration: none; color: #ec213a">www.mambowifi.com</a></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

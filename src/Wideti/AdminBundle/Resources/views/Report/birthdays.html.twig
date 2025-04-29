@@ -1,0 +1,176 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block dataTitle %}
+    Aniversariantes do Mês
+{% endblock %}
+
+{% block filterBlock %}
+    <div class="filter-bar row-fluid margin-bottom-none">
+        {% block filter %}
+            {% set exportParams = app.request.query.all %}
+            {% form_theme filter 'AdminBundle:Form:fields.html.twig' %}
+            {{ form(filter, {'action': path('admin_birthdays_reports', exportParams)}) }}
+            {% set exportParams = exportParams|merge({'export': 1}) %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block resultsInfo %}
+    <div style="margin-bottom: 10px;">
+        {{ (count) ? "Foram encontrados "~ count ~" visitantes" : "Nenhum resultado encontrado" }}
+    </div>
+{% endblock %}
+
+{% block thead %}
+    {% for customField in customFieldNames %}
+        <th>{{ customField.name.pt_br }}</th>
+    {% endfor %}
+{% endblock %}
+
+{% block tbody %}
+    {% if guests %}
+        {% for guest in pagination %}
+            <tr class="gradeX">
+                {% for customField in customFieldNames %}
+
+                    {% if customField.identifier in guest.properties|keys %}
+
+                        <td>{{ guest.properties[customField.identifier] }}</td>
+
+                    {% else %}
+                        <td> - </td>
+                    {% endif %}
+
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr class="gradeX">
+            <td colspan="6">Nenhum registro encontrado.</td>
+        </tr>
+    {% endif %}
+    <div id="modal-export-success" style="display: none;" class="modal fade in" tabindex="-1" style="overflow:hidden;" aria-hidden="false">
+        <div class="modal-body">
+            <h1>Atenção!</h1>
+            <p id="flashMessage" style="font-size: 15px;"></p>
+        </div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block pagination %}
+    {% if guests | length > 0 %}
+        {% if(client.status == 2) %}
+            <div class="poc-report-lines">
+                <p>Apenas {{ maxReportLines }} resultados serão exibidos pois sua conta está em período de Teste.</p>
+            </div>
+        {% endif %}
+
+        <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+            <form name="export" method="get" action="{{ path('admin_export_birthdays') }}" class="form-inline" novalidate="novalidate">
+                <div class="modal-body">
+                    <input type="hidden" id="filters" name="filters" value="{{ path('admin_export_birthdays', app.request.query.all) }}"/>
+                    <input type="hidden" id="fileFormat" name="fileFormat" value="" />
+                    <h3>Exportação de relatório</h3>
+                    <div class='span6'>
+                        <div class='control-group'>
+                            <label class='control-label required' for='endDate' aria-required='true'>Exportar no formato: </label>
+                            <div class='controls'>
+                                <select name="charset" id="charset">
+                                    <option value="windows">Windows/Mac</option>
+                                    <option value="linux">Linux</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="close" data-handler="1" class="btn btn-danger">Cancelar</a>
+                    <button id="export" type="submit" class="btn btn-success">Exportar</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+    {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+
+    {% embed "AdminBundle::filesReportEmbed.html.twig" %}
+        {% block exportar %}
+            {% if guests | length > 0 %}
+                <div class="loadReportFiles">
+                    <h3>Download de Relatórios  &nbsp &nbsp<a data-toggle="tooltip" data-placement="top" data-original-title="Atualizar Listagem" id="refresh-report-list" class="glyphicons refresh" ><i></i></a></h3>
+                    <div class="btn-group btn-block">
+                        <div class="leadcontainer">
+                            <button class="btn dropdown-lead btn-primary center">Exportar</button>
+                        </div>
+                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span> </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li class="center"><a class="file" data-format="Csv" data-placement="right" href="#">CSV</a></li>
+                            <li class="center"><a class="file" data-format="Xlsx" data-placement="right" href="#">EXCEL</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="export-generating-alert"></div>
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/maskedinput/jquery.maskedinput.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot.report.files.js')}}"></script>
+
+    <script>
+        jQuery(document).ready(function(){
+            /**
+             * Ajax Load Report Files on S3
+             * Function created to view the generated reports that are available for download in S3.
+             */
+            loadReportFiles('{{ reportType }}');
+
+            $('#refresh-report-list').click(function(){
+                loadReportFiles('{{ reportType }}');
+            });
+
+            $('a.file').click(function() {
+                var format = $(this).data('format');
+
+                bootbox
+                        .dialog($('#modal'))
+                        .on('shown.bs.modal', function() {
+                            $('.bootbox.modal.fade.in').removeAttr('style');
+                            $('#modal').show();
+                            $('#fileFormat').val(format);
+                        })
+                ;
+            });
+
+            $('#close').click(function() {
+                bootbox.hideAll();
+                $('meta[http-equiv=refresh]').attr('content', '0');
+            });
+
+             $('#export').click(function() {
+                $('#export-generating-alert').addClass('alert alert-primary export-class');
+                $('#export-generating-alert').html('<center>Aguarde! Estamos processando</center>' +
+                                                 '<center>sua(s) solicitação(ões).</center>');
+                $('#listExport').html('');
+                bootbox.hideAll();
+
+                window.setTimeout(function(){
+                    $('#export-generating-alert').hide(); 
+                }, 5000);
+            });
+        });
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+    {% include 'AdminBundle::export-confirmation.html.twig' %}
+{% endblock %}

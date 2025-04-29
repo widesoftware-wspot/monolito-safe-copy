@@ -1,0 +1,164 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block javascript %}
+    {{ parent() }}
+    {% include 'AdminBundle::alerts.js.twig' %}
+    <script  type="text/javascript" src="{{ asset('bundles/admin/frontend/js/hidenshow_twofactor.js')}}"> </script>#}
+{% endblock %}
+
+{% block content %}
+    <h3 class="heading-mosaic">Perfil</h3>
+
+    <div class="innerLR">
+
+        <div class="widget widget-tabs border-bottom-none">
+            <!-- Widget heading -->
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a href="{{ path('admin_profile_edit') }}" class="glyphicons edit"><i></i>Editar</a>
+                    </li>
+                </ul>
+                 <ul>
+                    <li>
+                        <a href="{{ path('admin_profile_password_edit') }}" class="glyphicons edit"><i></i>Redefinição de senha</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- // Widget heading END -->
+            <div class="widget-body">
+
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+                <!-- Widget -->
+                <div class="widget">
+                    <!-- Widget heading -->
+                    <div class="widget-head">
+                        <h4 class="heading">Edição de dados cadastrais</h4>
+                    </div>
+                    <!-- // Widget heading END -->
+                    <div>
+                        {{ form_errors(form) }}
+                        {% for flashMessage in app.session.flashbag.get('notice') %}
+                            <div class="strong" style="height: 20px; color: green;">
+                                {{ flashMessage }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="widget-body">
+                        <!-- Row -->
+                        <div class="row-fluid" style="margin: 0 0 0 0;">
+
+                            <div class="span6">
+                                {{ form_row(form.username) }}
+                                {{ form_row(form.nome) }}
+                                {{ form_row(form.receive_report_mail) }}
+                                {{ form_row(form.two_factor_authentication_enabled) }}
+
+                            </div>
+
+                            <div class="span6">
+                                {{ form_row(form.report_mail_language) }}
+                            </div>
+
+                        </div>
+                        <!-- // Row END -->
+                        <hr class="separator" id="two_factor_authentication_row_separator">
+
+                        <div class="row-fluid" style="margin: 20px 20px 20px 20px;" id="two_factor_authentication_row">
+                            <div class="span6" >
+                                    <h4 style="margin-bottom: 10px;">2 Factor Authentication (2FA)</h4>
+                                    <label>
+                                        {% if isWhiteLabel == 1 %}
+                                            <span>
+                                                A Autenticação de 2 Etapas (2FA) é um recurso que adiciona uma camada extra
+                                                de segurança à sua conta Hotspot.</br>
+                                            </span>
+                                        {% else %}
+                                            <span>
+                                                A Autenticação de 2 Etapas (2FA) é um recurso que adiciona uma camada extra
+                                                de segurança à sua conta Mambo WiFi.</br>
+                                            </span>
+                                        {% endif %}
+                                    </label>
+                                    <label>
+                                        {% if isWhiteLabel == 1 %}
+                                            <span>
+                                                Com o 2FA ativado, sempre que realizar o acesso ao Hotspot com login e senha
+                                                você será direcionado para uma nova página (a segunda etapa de autenticação),
+                                                na qual precisará inserir um código de verificação gerado pelo Google
+                                                Authenticator (APP para Smartphone).
+                                            </span>
+                                        {% else %}
+                                            <span>
+                                                Com o 2FA ativado, sempre que realizar o acesso a Mambo WiFi com login e senha
+                                                você será direcionado para uma nova página (a segunda etapa de autenticação),
+                                                na qual precisará inserir um código de verificação gerado pelo Google
+                                                Authenticator (APP para Smartphone).
+                                            </span>
+                                        {% endif %}
+
+                                    </label>
+                                    <label>
+                                        <span>
+                                            Para ativar este recurso, baixe o Google Authenticator em seu smartphone,
+                                            faça a leitura do QR Code ao lado e insira o código de confirmação
+                                            fornecido pelo APP. Pronto, agora sua conta está ainda mais protegida!
+                                        </span>
+                                    </label>
+
+                                {% if isWhiteLabel == 0 %}
+                                    <label>
+
+                                        <span>
+                                            <p><a href="https://suporte.mambowifi.com/support/solutions/articles/16000124485-ativando-a-autentica%C3%A7%C3%A3o-em-2-fatores-na-sua-conta-de-administra%C3%A7%C3%A3o-do-wspot" target="_blank" >
+                                                > Veja mais detalhes sobre como ativar o 2FA aqui.
+                                            </a></p>
+                                        </span>
+                                    </label>
+                                {% endif %}
+
+                                </div>
+
+                            <div class="span6">
+                                <div class="control-group ">
+                                    <label class="control-label"></label>
+                                    <img style="Padding: 0 0 0 16px;" id="user_profile_two_factor_authentication_qrcodeurl"
+                                          name="user_profile_two_factor_authentication_qrcodeurl"
+                                          src="{{ qrcodeURL }}" />
+                                </div>
+                                {{ form_row(form.two_factor_authentication_code) }}
+
+                            </div>
+                        </div>
+
+                        <hr class="separator">
+
+                        <!-- Form actions -->
+                        <div class="form-actions right">
+                            <a href="{{ app.request.headers.get('referer') }}">
+                                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                    Cancelar
+                                </button>
+                            </a>
+
+                            {{ form_widget(form.submit) }}
+                        </div>
+                        <!-- // Form actions END -->
+                    </div>
+                </div>
+                <!-- // Widget END -->
+
+                {{ form_end(form) }}
+
+
+            </div>
+            <!-- // Tab content END -->
+
+        </div>
+    </div>
+    <!-- // Widget END -->
+    </div>
+{% endblock %}

@@ -1,0 +1,52 @@
+template:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.template:indexAction }
+
+template_new:
+    path:  /new
+    defaults: { _controller: wspot.admin.controller.template:newAction }
+    options:
+        expose: true
+
+template_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.template:editAction }
+    options:
+        expose: true
+
+template_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.template:deleteAction }
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+template_logopartner_remove:
+    path: /{id}/remove_logo_partner
+    defaults: { _controller: wspot.admin.controller.template:removeLogoPartnerAction }
+    options:
+        expose: true
+
+template_backgroundimage_remove:
+    path: /{id}/remove_background_image
+    defaults: { _controller: wspot.admin.controller.template:removeBackgroundImageAction }
+    options:
+        expose: true
+
+template_backgroundportraitimage_remove:
+    path: /{id}/remove_background_portrait_image
+    defaults: { _controller: wspot.admin.controller.template:removeBackgroundPortraitImageAction }
+    options:
+        expose: true
+
+template_preview:
+    path: /{id}/preview
+    defaults: { _controller: wspot.admin.controller.template:previewAction }
+    options:
+        expose: true
+
+template_render_preview:
+    path: /{id}/render
+    defaults: { _controller: wspot.admin.controller.template:renderTemplateAction }
+    options:
+        expose: true

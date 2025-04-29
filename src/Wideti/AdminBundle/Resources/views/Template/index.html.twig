@@ -1,0 +1,92 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Templates
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('template_new')}}" style="margin: 0px 0 2px 0;"
+       class="btn btn-primary btn-icon glyphicons circle_plus">
+        <i></i>Cadastrar</a>
+{% endblock %}
+
+{% block thead %}
+    <th class="center">Nome do Template</th>
+    <th class="center" style="width: 90px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr id="{{ entity.id }}" class="gradeX">
+            <td>{{ entity.name }}</td>
+            <td class="center">
+                <a href="{{ path('template_preview', {'id': entity.id}) }}" class="btn-action glyphicons eye_open btn-info" title="Visualizar Template"><i></i></a>
+
+                <a href="{{ path('template_edit', { 'id': entity.id }) }}"
+                   class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+
+                {% if entity.id == firstTemplate %}
+                    <a href="#"
+                       class="btn-action glyphicons remove_2 btn-danger"
+                       data-toggle="tooltip"
+                       data-original-title="Não é permitido excluir o template padrão."
+                       data-placement="top" >
+                        <i></i>
+                    </a>
+                {% else %}
+                    <a href="#"
+                       class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+                {% endif %}
+            </td>
+        </tr>
+    {% else %}
+        <td>Nenhum Template cadastrado</td>
+    {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result){
+
+                    if(result){
+
+                        var route = Routing.generate('template_delete', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                var title;
+
+                                if (response.type == 'success') {
+                                    title = 'Aviso!';
+                                    parent.remove();
+                                } else {
+                                    title = "Erro ao tentar excluir!";
+                                }
+
+                                $.gritter.add({
+                                    title: title,
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

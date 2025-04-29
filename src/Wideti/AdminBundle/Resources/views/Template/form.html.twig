@@ -1,0 +1,713 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.css" integrity="sha512-087vysR/jM0N5cp13Vlp+ZF9wx6tKbvJLwPO8Iit6J7R+n7uIMMjg37dEgexOshDmDITHYY5useeSmfD1MYiQA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        #imageModal {
+            visibility: hidden;
+            opacity: 0;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100vw; /* Ocupa toda a largura da tela */
+            height: 100vh; /* Ocupa toda a altura da tela */
+            background-color: rgba(0, 0, 0, 0.5); /* Fundo escurecido */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            margin: 0;
+        }
+
+
+    #imageModal.visible {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    #filePartnerLogoForm {
+        visibility: hidden;
+    }
+    #filePartnerLogoForm.visible{
+        visibility: visible;
+        opacity: 1;
+    }
+
+    #imageModal .modal-content {
+        background-color: white;
+        border: none !important; /* Remove qualquer borda */
+        padding: 20px;
+        border-radius: 10px;
+        position: relative;
+        width: 650px;
+        max-width: 90%;
+        height: 86vh;
+        max-height: 86vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .close {
+        position: absolute;
+        right: 15px;
+        top: 10px;
+        cursor: pointer;
+    }
+
+    .toolbar-buttons .ui-slider {
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    .toolbar-buttons .ui-slider .ui-slider-handle{
+        width: auto;
+        min-width: 1.2em;
+    }
+
+    #imagePreview {
+        display: block;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain; /* Mantém a proporção sem cortar */
+        margin: auto; /* Centraliza dentro do modal */
+    }
+    .cropper-modal {
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        position: absolute !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important; /* Move para o centro */
+        background-color: rgba(0, 0, 0, 0.5) !important; /* Ajuste conforme necessário */
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Templates'} %}
+
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-body">
+
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate' } }) }}
+                {% form_theme form with ['AdminBundle:Form:fields.html.twig', 'AdminBundle:Form:templateForm.html.twig', 'AdminBundle:Form:configForm.html.twig'] %}
+                {{ form_errors(form) }}
+
+                <div class="tabsbar">
+                    <ul>
+                        <li class="glyphicons picture active"><a href="#tab1" data-toggle="tab"><i></i>Template, Logotipo e Background<strong></strong></a></li>
+                        <li class="glyphicons brush"><a href="#tab2" data-toggle="tab"><i></i> <span>Cores</span></a></li>
+                        {% if entity.id %}
+                            <li class="glyphicons eye_open"><a href="{{ path("template_preview",{'id':entity.id}) }}"><i></i> <span>Visualizar</span></a></li>
+                        {% endif%}
+                    </ul>
+                </div>
+
+                <div class="tab-content">
+                    <div class="tab-pane row-fluid active" id="tab1">
+                        <h4>Informações Gerais</h4><br>
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <div class="widget row-fluid colors">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Dados do Template</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12">
+                                            {{ form_row(form.name) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <br>
+                        <h4>Logotipo e Plano de fundo</h4><br>
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <div class="widget row-fluid">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Logotipo</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12 upload template">
+                                            <button type="button" id="openModalButton" class="btn btn-default">Enviar Imagem</button>
+                                            <span id="checkIcon" style="color: #4CAF50; font-size: 36px; display: none;">&#10003</span>
+                                            <div style="display: none">{{ form_widget(form.filePartnerLogo) }}</div>
+                                            <div>{{ form_errors(form.filePartnerLogo) }}</div>
+                                            <p style="color:#cb8f21">Faça upload do seu logotipo nos formatos Jpg, Jpeg ou PNG.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br>
+
+                                <div class="widget row-fluid">
+                                    <div class="widget-head">
+                                        <h4 class="heading">
+                                            Imagem do fundo na Horizontal - Aspect Ratio 16:9
+                                        </h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12 upload">
+                                            {{ form_widget(form.fileBackgroundImage) }}
+                                            <span style="color:#cb8f21">
+                                                <b>Divisão entre largura e altura da imagem deve ser igual a 1,77.</b>
+                                                Exemplos de resoluções:
+                                                <ul>
+                                                    <li>1920 x 1080</li>
+                                                    <li>1760 x 990</li>
+                                                    <li>1280 x 720</li>
+                                                    <li>1024 x 576</li>
+                                                </ul>
+                                            </span>
+                                            <p style="color:#cb8f21">Imagem deve possuir no máximo 2MB.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="widget row-fluid">
+                                    <div class="widget-head">
+                                        <h4 class="heading">
+                                            Imagem do fundo na Vertical - Aspect Ratio 9:16
+                                        </h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12 upload">
+                                            {{ form_widget(form.fileBackgroundPortraitImage) }}
+                                            <span style="color:#cb8f21">
+                                                <b>Divisão entre largura e altura da imagem deve ser igual a 0,56.</b>
+                                                Exemplos de resoluções:
+                                                <ul>
+                                                    <li>1080 x 1920</li>
+                                                    <li>990 x 1760</li>
+                                                    <li>720 x 1280</li>
+                                                    <li>576 x 1024</li>
+                                                </ul>
+                                            </span>
+                                            <p style="color:#cb8f21">Imagem deve possuir no máximo 2MB.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br />
+
+                                <div class="widget row-fluid">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Posicionamento da imagem de fundo</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="row">
+                                            <div class="span12">
+                                                <div class="widget-body left">
+                                                    <h5>Repetir</h5>
+                                                    <div data-toggle="buttons-radio" class="btn-group">
+                                                        <button data-value="no-repeat" class="btn btn-primary repeat {% if(entity.backgroundRepeat == 'no-repeat') %}active{% endif %}" type="button">Não</button>
+                                                        <button data-value="repeat-x" class="btn btn-primary repeat {% if(entity.backgroundRepeat == 'repeat-x') %}active{% endif %}" type="button">Horizontal</button>
+                                                        <button data-value="repeat-y" class="btn btn-primary repeat {% if(entity.backgroundRepeat == 'repeat-y') %}active{% endif %}" type="button">Vertical</button>
+                                                        <button data-value="repeat" class="btn btn-primary repeat {% if(entity.backgroundRepeat == 'repeat') %}active{% endif %}" type="button">Ambos</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="span6">
+                                                <div class="widget-body left">
+                                                    <h5>Posicionamento Horizontal</h5>
+                                                    <div data-toggle="buttons-radio" class="btn-group">
+                                                        <button data-value="left" class="btn btn-primary positionX {% if(entity.backgroundPositionX == 'left') %}active{% endif %}" type="button">Esquerda</button>
+                                                        <button data-value="center" class="btn btn-primary positionX {% if(entity.backgroundPositionX == 'center') %}active{% endif %}" type="button">Centro</button>
+                                                        <button data-value="right" class="btn btn-primary positionX {% if(entity.backgroundPositionX == 'right') %}active{% endif %}" type="button">Direita</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="span6">
+                                                <div class="widget-body left">
+                                                    <h5>Posicionamento Vertical</h5>
+                                                    <div data-toggle="buttons-radio" class="btn-group">
+                                                        <button data-value="top" class="btn btn-primary positionY {% if(entity.backgroundPositionY == 'top') %}active{% endif %}" type="button">Topo</button>
+                                                        <button data-value="center" class="btn btn-primary positionY {% if(entity.backgroundPositionY == 'center') %}active{% endif %}" type="button">Centro</button>
+                                                        <button data-value="bottom" class="btn btn-primary positionY {% if(entity.backgroundPositionY == 'bottom') %}active{% endif %}" type="button">Fundo</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <section id="background-image-landscape-section">
+                                <div class="span6 imageBox logo {{ entity.partnerLogo or entity.backgroundImage ? '' : 'hide' }}">
+                                    <div class="widget row-fluid">
+                                        <div class="widget-head">
+                                            <h4 class="heading">
+                                                <a id="removeLogoPartner" data-id="{{ entity.id }}" class="{{ entity.partnerLogo ? '' : 'hide' }}" href="javascript:void(0);">Remover Logotipo</a>
+                                                <b class="split {{ entity.partnerLogo ? '' : 'hide' }}" style="color: #000; font-weight: normal">|</b>
+                                                <a id="removeBackgroundImage" data-id="{{ entity.id }}" class="{{ entity.backgroundImage ? '' : 'hide' }}" href="javascript:void(0);">
+                                                    Remover Imagem do Background (Horizontal)
+                                                </a>
+                                            </h4>
+                                        </div>
+                                        <div class="widget-body">
+                                            <div id="currentImagePartnerLogo">
+                                                {% if(entity.partnerLogo) %}
+                                                    <img src="{{ asset("https://" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ entity.partnerLogo) }}">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <br />
+
+                            <section id="background-image-portrait-section">
+                                <div class="span6 imageBox logo {{ entity.backgroundPortraitImage ? '' : 'hide' }}">
+                                    <div class="widget row-fluid">
+                                        <div class="widget-head">
+                                            <h4 class="heading">
+                                                <a id="removeBackgroundPortraitImage" data-id="{{ entity.id }}" class="{{ entity.backgroundPortraitImage ? '' : 'hide' }}" href="javascript:void(0);">
+                                                    Remover Imagem do Background (Vertical)
+                                                </a>
+                                            </h4>
+                                        </div>
+
+                                        <div class="widget-body background-portrait-image"></div>
+                                    </div>
+                                </div>
+                            </section>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane row-fluid" id="tab2">
+                        <h4>Cores</h4><br>
+                        <div class="row-fluid">
+                            <div class="span4">
+                                <div class="widget row-fluid colors">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Definições Gerais</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12">
+                                            {{ form_widget(form.backgroundColor) }}
+                                            {{ form_widget(form.fontColor) }}
+
+                                            <div class="control-group">
+                                                <label for="wideti_AdminBundle_template_fontColor" class="control-label">Transparência dos boxes de Login e Cadastro</label>
+                                                <div class="controls">{{ form_widget(form.boxOpacity) }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="span4">
+                                <div class="widget row-fluid colors">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Box de Login</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12">
+                                            {{ form_widget(form.loginBoxColor) }}
+                                            {{ form_widget(form.loginFontColor) }}
+                                            {{ form_widget(form.loginButtonColor) }}
+                                            {{ form_widget(form.loginButtonFontColor) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="span4">
+                                <div class="widget row-fluid colors">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Box de Cadastro</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12">
+                                            {{ form_widget(form.signupBoxColor) }}
+                                            {{ form_widget(form.signupFontColor) }}
+                                            {{ form_widget(form.signupButtonColor) }}
+                                            {{ form_widget(form.signupButtonFontColor) }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="widget-body">
+                    <hr class="separator">
+
+                    <div class="form-actions right">
+                        <a href="{{ path('template') }}">
+                            <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                Cancelar
+                            </button>
+                        </a>
+                        {{ form_widget(form.submit) }}
+                    </div>
+                </div>
+
+                <div id="bgimage" class="hide" data-bgimage="{{ entity.backgroundImage }}"></div>
+                <div id="bgportraitimage" class="hide" data-bgportraitimage="{{ entity.backgroundPortraitImage }}"></div>
+                <div id="bgcolor" class="hide" data-bgcolor="{{ entity.backgroundColor }}"></div>
+            </div>
+
+
+
+
+        </div>
+        {{ form_end(form) }}
+        <div>
+            <!-- Modal -->
+            <div id="imageModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+
+                    <br><br>
+                    <button style="margin: 10px; display: block" id="customFileButton" class="btn btn-default">Selecionar imagem</button>
+
+                    <!-- Input de arquivo escondido -->
+                    <input type="file" id="inputImage" style="display: none;" accept="image/*">
+
+                    <script>
+                        const customFileButton = document.getElementById('customFileButton');
+                        const fileInputImage = document.getElementById('inputImage');
+
+                        customFileButton.addEventListener('click', function() {
+                            event.preventDefault();
+                            fileInputImage.click();
+                        });
+                    </script>
+                    <div id="imageStyle" style="display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height:90%; max-height: 90%; ">
+                        <i id="iconPlaceholder" class="fas fa-image" style="font-size: 5rem; color: gray;"></i>
+                    <img id="imagePreview" style="width:55vh; max-width: 100%; height:60vh; max-height: 60vh; border-radius: 10px; object-fit: contain;display: none">
+                    </div>
+                    <form name="toolbarForm">
+                        <div class="toolbar-cropper toolbar-buttons" style="align-content: center; align-items: stretch">
+
+                            <div id="zoom-slider" style=" max-width: 30% ; margin: 20px auto; padding: 0"></div>
+
+                        </div>
+                    </form>
+                    <button id="cropButton" type="button" style="display: none;" class="btn btn-icon btn-primary">Cortar</button>
+                </div>
+            </div>
+
+            <img id="croppedImagePreview" style="width:55vh; max-width: 100%; height:60vh; max-height: 60vh; border-radius: 10px; object-fit: contain;visibility: hidden">
+        </div>
+    </div>
+
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/demo/custom_upload.js') }}"></script>
+
+    <script>
+        $('document').ready(function() {
+            $('.btn-primary.repeat').click(function() {
+                $('#wideti_AdminBundle_template_backgroundRepeat')
+                    .val($(this)
+                    .data('value'));
+            });
+
+            $('.btn-primary.positionX').click(function() {
+                $('#wideti_AdminBundle_template_backgroundPositionX')
+                    .val($(this)
+                    .data('value'));
+            });
+
+            $('.btn-primary.positionY').click(function() {
+                $('#wideti_AdminBundle_template_backgroundPositionY')
+                    .val($(this)
+                    .data('value'));
+            });
+
+            $(function(){
+                $('.control-group.color')
+                    .colorpicker();
+            });
+
+            var bgimage = $('#bgimage').data('bgimage'),
+                bgportraitimage = $('#bgportraitimage').data('bgportraitimage'),
+                bgcolor = $('#bgcolor').data('bgcolor');
+
+            if(bgimage) {
+                $('.imageBox.logo .widget-body')
+                    .css("background", "url({{ asset("https://" ~ aws_bucket_proxy_name ~"/Template/template_" ~ domain ~ "_" ~ entity.id ~ entity.backgroundImageHash ~ "_horizontal_100.jpeg") }}) {{ entity.backgroundRepeat }} {{ entity.backgroundPositionX }} {{ entity.backgroundPositionY }}");
+            } else {
+                if(bgcolor){
+                    $('.imageBox.logo .widget-body')
+                        .css("background-color", "{{ entity.backgroundColor }}");
+                } else {
+                    $('.imageBox.logo .widget-body')
+                        .css("background", "url({{ asset('bundles/admin/theme/images/mosaic-pattern.png') }})");
+                }
+            }
+
+            if (bgportraitimage) {
+                $('.widget-body .background-portrait-image')
+                    .css("background", "url({{ asset("https://" ~ aws_bucket_proxy_name ~"/Template/template_" ~ domain ~ "_" ~ entity.id ~ entity.backgroundPortraitImageHash ~ "_vertical_100.jpeg") }}) {{ entity.backgroundRepeat }} {{ entity.backgroundPositionX }} {{ entity.backgroundPositionY }}");
+            } else {
+                if(bgcolor){
+                    $('.widget-body .background-portrait-image')
+                        .css("background-color", "{{ entity.backgroundColor }}");
+                } else {
+                    $('.widget-body .background-portrait-image')
+                        .css("background", "url({{ asset('bundles/admin/theme/images/mosaic-pattern.png') }})");
+                }
+            }
+
+
+            $('#removeLogoPartner').click('click', function()
+            {
+                var id  = $(this).data('id');
+                var url = Routing.generate('template_logopartner_remove', { id: id });
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function(response)
+                    {
+                        $('#removeLogoPartner').hide();
+                        $('.split').hide();
+                        $('#currentImagePartnerLogo')
+                            .html('')
+                            .hide('slow');
+
+                        $.gritter.add({
+                            title: 'Aviso!',
+                            text: response.message
+                        });
+                    }
+                })
+            });
+
+            $('#removeBackgroundImage').click(function()
+            {
+                var id  = $(this).data('id');
+                var url = Routing.generate('template_backgroundimage_remove', { id:id });
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function(response)
+                    {
+                        $('#timeOnScreen').val(0);
+                        $('#background-image-landscape-section').hide('slow');
+
+                        $.gritter.add({
+                            title: 'Aviso!',
+                            text: response.message
+                        });
+                    }
+                })
+            });
+
+            $('#removeBackgroundPortraitImage').click(function()
+            {
+                $.ajax({
+                    type: "POST",
+                    url: Routing.generate('template_backgroundportraitimage_remove', {
+                        id: $(this).data('id')
+                    }),
+                    success: function(response)
+                    {
+                        $('#timeOnScreen').val(0);
+                        $('#background-image-portrait-section').hide('slow');
+
+                        $.gritter.add({
+                            title: 'Aviso!',
+                            text: response.message
+                        });
+                    }
+                })
+            });
+        });
+
+        customScripts.init();
+    </script>
+
+
+<script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/demo/custom_upload.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.js" integrity="sha512-lR8d1BXfYQuiqoM/LeGFVtxFyspzWFTZNyYIiE5O2CcAGtTCRRUMLloxATRuLz8EmR2fYqdXYlrGh+D6TVGp3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+ <script>
+const openModalButton = document.getElementById('openModalButton');
+const modal = document.getElementById('imageModal');
+const closeModal = document.querySelector('.close');
+const inputImage = document.getElementById('inputImage');
+const imagePreview = document.getElementById('imagePreview');
+const cropButton = document.getElementById('cropButton');
+const fileInput = document.querySelector('input[type="file"][id*="filePartnerLogo"]');
+const croppedImagePreview = document.getElementById('croppedImagePreview');
+const zoomSlider = document.getElementById('zoomSlider')
+const iconPlaceholder = document.getElementById('iconPlaceholder')
+
+
+let cropper;
+
+// Abre o modal ao clicar no botão
+openModalButton.addEventListener('click', function () {
+    modal.classList.add('visible');
+});
+
+// Fecha o modal ao clicar no "X"
+closeModal.addEventListener('click', function () {
+    modal.classList.remove('visible');
+});
+
+// Fecha o modal ao clicar fora do conteúdo
+window.addEventListener('click', function (event) {
+    if (event.target !== modal) {
+        modal.classList.remove('visible');
+    }
+});
+
+// Redimensiona a imagem
+function resizeImage(image, maxWidth, maxHeight) {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+
+    let newWidth = image.width;
+    let newHeight = image.height;
+
+    // Ajusta a largura se for maior que maxWidth
+    if (newWidth > maxWidth) {
+        newHeight = (maxWidth / newWidth) * newHeight;
+        newWidth = maxWidth;
+    }
+
+    // Ajusta a altura se for maior que maxHeight
+    if (newHeight > maxHeight) {
+        newWidth = (maxHeight / newHeight) * newWidth;
+        newHeight = maxHeight;
+    }
+
+    canvas.width = newWidth;
+    canvas.height = newHeight;
+    ctx.drawImage(image, 0, 0, newWidth, newHeight);
+
+    return canvas.toDataURL();
+}
+
+// Quando o usuário escolhe uma imagem
+inputImage.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                iconPlaceholder.style.display = 'none';
+
+                // Redimensiona a imagem para 250x250 antes do Cropper
+                const resizedImageDataUrl = resizeImage(img, 250, 250);
+
+                imagePreview.src = resizedImageDataUrl;
+                imagePreview.style.display = 'block';
+                cropButton.style.display = 'block';
+
+                // Destroi o cropper se já existir
+                if (cropper) {
+                    cropper.destroy();
+                }
+
+                // Inicia o cropper com limites para a área de corte
+                cropper = new Cropper(imagePreview, {
+                    aspectRatio: NaN,
+                    viewMode: 2,
+                    dragMode: 'move',
+                    cropBoxResizable: true,
+                    center: true,
+                    autoCropArea: 1,
+                    zoom: function (e) {
+                        var ratioDesktop = Math.round(event.detail.ratio * 100) / 10;
+                        if (ratioDesktop == 1) {
+                            ratioDesktop = 0;
+                        }
+                    }
+                });
+
+                // Configura o slider de zoom
+                $('#zoom-slider').slider({
+                    min: 0.1,
+                    max: 4,
+                    value: 1,
+                    step: 0.01,
+                    slide: function (event, ui) {
+                        if (cropper) {
+                            cropper.zoomTo(ui.value);
+                        }
+                    }
+                });
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Depois que o usuário cortar a imagem, você pode obter a imagem cortada e redimensionada
+cropButton.addEventListener('click', function () {
+    const canvas = cropper.getCroppedCanvas({
+        width: 250, // Redimensiona para 250px de largura
+        height: 250, // Redimensiona para 250px de altura
+    });
+
+    const croppedImage = canvas.toDataURL(); // Obtém a imagem cortada em base64
+    croppedImagePreview.src = croppedImage; // Exibe a imagem cortada
+    croppedImagePreview.style.display = 'block'; // Exibe a imagem cortada
+});
+
+// Quando o botão de cortar for clicado
+cropButton.addEventListener('click', function () {
+    if (!fileInput) {
+        console.error("Campo filePartnerLogo não encontrado!");
+        return;
+    }
+
+    if (cropper) {
+        cropper.getCroppedCanvas({
+            fillColor: 'transparent'
+        }).toBlob((blob) => {
+            const file = new File([blob], "cropped-image.png", { type: "image/png" });
+
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+
+            fileInput.files = dataTransfer.files;
+
+            const objectURL = URL.createObjectURL(blob);
+            croppedImagePreview.src = objectURL;
+            croppedImagePreview.style.display = 'block';
+
+            document.getElementById('checkIcon').style.display = 'inline';
+            modal.classList.remove('visible');
+        }, "image/png");
+    }
+});
+
+    </script>
+{% endblock %}

@@ -1,0 +1,5 @@
+Wideti\DomainBundle\Entity\ApiWSpotContracts:
+  Contract:
+    api: "@ApiWSpot"
+    key: 'requestPerMonth'
+    value: 1000

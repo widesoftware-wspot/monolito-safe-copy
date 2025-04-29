@@ -1,0 +1,129 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Bloqueio de Dispositivos
+    <span class="tooltip-wrapper">
+        <i class="icon-large icon-question-sign" tabindex="0"
+           data-placement="bottom" role="button" data-toggle="popover"
+           data-trigger="click" data-html="true"
+           {% if client.isWhiteLabel %}
+               data-content="<strong>Os sistemas com versões iOS 14, Android 10, Windows 10 e superiores possuem o recurso de Mac Address randomizado, que pode impactar o uso desta funcionalidade."></i>
+           {% else %}
+                data-content="<strong>Os sistemas com versões iOS 14, Android 10, Windows 10 e superiores possuem o recurso de Mac Address randomizado, que pode impactar o uso desta funcionalidade.<strong><br><a href='https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000100471-bloqueio-de-dispositivos' target='_blank'>Saiba mais<a/>"></i>
+           {% endif %}
+
+    </span>
+    <style>
+        .popover.fade.bottom.in{
+            top: 15px !important;
+            left: -122.5px !important;
+            display: block !important;
+            width: 254px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block buttonRight %}
+    {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER")) or is_granted("ROLE_MANAGER") %}
+        <a href="{{ path('blacklist_create')}}" style="margin: 0px 0px 5px 0px;" class="btn btn-primary btn-icon glyphicons circle_plus">
+            <i></i>Cadastrar
+        </a>
+    {% endif %}
+{% endblock %}
+
+{%  block filter %}
+    {{ form_start(form, {'attr':{'class':'form-inline', 'novalidate': 'novalidate'} } ) }}
+    {{ form_row(form.macAddress,{'attr':{"style":"width:auto"}}) }}
+
+    {% if btnCancel %}
+        <div>
+            <a title="Cancelar Filtro" href="{{ path('blacklist_list') }}" class="btnSearchCancel glyphicons circle_remove"><i></i></a>
+        </div>
+    {% endif %}
+
+    {{ form_row(form.Filtrar) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block thead %}
+    <th class="center">Mac bloqueado</th>
+    <th class="center">Data do bloqueio</th>
+    <th class="center">Bloqueado por</th>
+    <th class="center">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in pagination %}
+        <tr class="gradeX" id="{{ entity.id }}">
+            <td>{{ entity.macAddress }}</td>
+            <td class="center">{{ entity.created|date('d/m/Y H:i')  }}<div class="timezone">{{ entity.created.timezone }}</div></td>
+            <td>{{ entity.createdBy }}</td>
+            <td class="center">
+                <a href="{{ path('blacklist_show', { 'id': entity.id }) }}"
+                   class="btn-action glyphicons eye_open btn-info" title="Detalhes" ><i></i></a>
+
+                {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MANAGER")%}
+                    <a href="{{ path('blacklist_edit', { 'id': entity.id }) }}"
+                       class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+
+                    <a href="#"
+                       class="btn-action glyphicons remove_2 btn-danger delete-row" title="Desbloquear">
+                        <i></i>
+                    </a>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+ {% block pagination %}
+
+     {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+
+ {% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript">
+    $(document).ready(function(){
+
+        $('tr.gradeX td.center a.delete-row').click(function(){
+            var id = $(this).parent().parent().attr('id');
+            var data = {'id' : id};
+            var parent = $(this).parent().parent();
+
+            bootbox.confirm("Deseja realmente desbloquear?", function(result){
+
+                if(result){
+                    var route = Routing.generate('blacklist_delete', {id: id});
+                    $.ajax({
+                        type: "POST",
+                        url: route,
+                        data: data,
+                        dataType: "json",
+                        success: function (response) {
+                            var title;
+
+                            if (response.type == 'success') {
+                                title = 'Aviso!';
+                                parent.remove();
+                            } else {
+                                title = "Erro ao tentar Desbloquear!";
+                            }
+
+                            $.gritter.add({
+                                title: title,
+                                text: response.message
+                            });
+                        }
+                    });
+                }
+            });
+        });
+
+    });
+
+</script>
+
+{% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

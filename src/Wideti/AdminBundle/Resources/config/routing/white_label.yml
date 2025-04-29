@@ -1,0 +1,9 @@
+white_label_edit:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.white_label:editAction }
+
+white_label_module:
+    path:  /{status}/module
+    defaults: { _controller: wspot.admin.controller.white_label:moduleConfigAction }
+    options:
+        expose: true

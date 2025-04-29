@@ -1,0 +1,274 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('bundles/admin/frontend/css/tokenresources.css') }}">
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Segmentação de Visitantes'} %}
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>
+                            {% if app.request.attributes.get('_route') == 'segmentation_new' %}
+                                Novo
+                            {% else %}
+                                Editar
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="widget-body">
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+                <style>
+                    .segmentation .span6.div-left {
+                        border-right: 1px solid #c2ccd1;
+                        padding-right: 40px;
+                    }
+
+                    .segmentation .datePicker {
+                        position: relative;
+                        left: 22px;
+                        bottom: 10px;
+                    }
+
+                    .segmentation .datePicker .span3 p {
+                        position: relative;
+                        top: 6px;
+                    }
+
+                    .segmentation .datePicker .span3.to {
+                        margin-left: 30px;
+                    }
+
+                    .segmentation .span6.div-right {
+                        padding-left: 40px;
+                    }
+
+                    .segmentation .span6.div-right p.total {
+                        margin: 10px 0;
+                        font-size: 20px;
+                    }
+
+                    .segmentation .span6.div-right h5 {
+                        margin: 10px 0;
+                    }
+
+                    .segmentation .span6.div-right h5 {
+                        margin: 10px 0;
+                    }
+
+                    .segmentation .span6.div-right p.guest {
+                        margin: 4px 0;
+                    }
+                </style>
+
+                <div class="widget-body segmentation">
+                    <p>{{ form_errors(form) }}</p>
+                    <div class="row-fluid">
+                        <div class="span6 div-left">
+                            {{ form_row(form.title) }}
+                            {{ form_row(form.filter) }}
+
+                            <div class="control-group">
+                                <label class="control-label">Período</label>
+                                <div class="row datePicker">
+                                    <div class="span3">
+                                        <p>De: </p>
+                                        {{ form_widget(form.startDate) }}
+                                    </div>
+                                    <div class="span3 to">
+                                        <p>Até:</p>
+                                        {{ form_widget(form.endDate) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="span6 div-right">
+                            <div class="center loader-box hide" style="margin-top: 30px;">
+                                <h3>Carregando...</h3>
+                                <br>
+                                <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" alt="" class="loader-post" />
+                            </div>
+
+                            <div class="preview-box">
+                                <p class="total">Total desta Segmentação: <b id="total">0</b></p>
+                                <h5 id="preview-title"></h5>
+                                <div id="preview"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br><br>
+
+                    <!-- Form actions -->
+                    <div class="form-actions right">
+                        <a href="{{ path('segmentation') }}">
+                            <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                Cancelar
+                            </button>
+                        </a>
+                        {{ form_widget(form.submit) }}
+                    </div>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        function getPreview() {
+            $("#total").html("");
+            $("#preview-title").html("");
+            $("#preview").html("");
+
+            var filter    = $('#wspot_segmentation_filter').val();
+            var startDate = $('#wspot_segmentation_startDate').val();
+            var endDate   = $('#wspot_segmentation_endDate').val();
+
+            if (filter.length && startDate.length && endDate.length) {
+                var df = startDate.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+                var dateFrom = df[3] + '-' + df[2] + '-' + df[1];
+
+                var dt = endDate.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+                var dateTo = dt[3] + '-' + dt[2] + '-' + dt[1];
+
+                var clientId = "{{ clientId }}";
+
+                var data = {
+                    "client": clientId,
+                    "userId": {{ user.id }},
+                    "type": "ALL",
+                    "items": {
+                        "default": {
+                            [filter] : {
+                                "identifier": filter,
+                                "equality": "RANGE",
+                                "type": "date",
+                                "value": dateFrom + '|' + dateTo
+                            }
+                        }
+                    }
+                };
+
+                $('.preview-box').hide();
+                $('.loader-box').show();
+
+                $.ajax({
+                    type: "POST",
+                    url: Routing.generate('api_segmentation_preview', {token: '{{ token }}'}),
+                    data: JSON.stringify(data),
+                    dataType : "json",
+                    success: function(response)
+                    {
+                        $('.loader-box').hide();
+                        $('.preview-box').show();
+
+                        var count = response.count;
+                        var preview = response.preview;
+
+                        if (!preview.length) {
+                            $("#preview-title").html("Nenhum visitante encontrado para esta Segmentação");
+                        } else {
+                            $("#preview-title").html('Amostra de 10 visitantes desta Segmentação');
+                        }
+
+                        $("#total").html(count);
+                        $.each(preview, function(k, v) {
+                            var route = Routing.generate('admin_visitantes_show', { id: v.id });
+                            $("#preview").append("<p class='guest'><a href=" + route +">" + v.field + "</a></p>");
+                        });
+                    }
+                });
+            }
+        }
+
+        jQuery('document').ready(function(){
+            {% if app.request.attributes.get('_route') == 'segmentation_edit' %}
+                getPreview();
+            {% endif %}
+
+            $('#wspot_segmentation_startDate').on('change', function(){
+                var initDate = $(this).val();
+                var dmy = initDate.split("/");
+                var joindate = new Date(
+                        parseInt(dmy[2], 10),
+                        parseInt(dmy[1], 10) - 1,
+                        parseInt(dmy[0], 10)
+                );
+
+                joindate.setDate(joindate.getDate() + 30);
+
+                var maxDate = ("0" + joindate.getDate()).slice(-2) + "/" +
+                        ("0" + (joindate.getMonth() + 1)).slice(-2) + "/" +
+                        joindate.getFullYear();
+
+                $( "#wspot_segmentation_endDate" ).datepicker({
+                    maxDate: maxDate
+                }).datepicker("option", "maxDate", maxDate);
+
+            });
+
+            if ($('#wspot_segmentation_startDate').length && $('#wspot_segmentation_endDate').length)
+            {
+                $( "#wspot_segmentation_startDate" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    changeMonth: false,
+                    numberOfMonths: 1,
+                    onClose: function( selectedDate ) {
+                        $( "#wspot_segmentation_endDate" ).datepicker( "option", "minDate", selectedDate );
+                    }
+                }).datepicker( "option", "maxDate", $('#maxDate').text() );
+
+                $( "#wspot_segmentation_endDate" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    changeMonth: false,
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    numberOfMonths: 1,
+                    onClose: function( selectedDate ) {
+                        $( "#wspot_segmentation_startDate" ).datepicker( "option", "maxDate", selectedDate );
+                    }
+                }).datepicker( "option", "minDate", $('#wspot_segmentation_endDate').val() );
+            }
+
+            $('#wspot_segmentation_filter').on('change', function(){
+                getPreview();
+            });
+            $('#wspot_segmentation_startDate').on('change', function(){
+                getPreview();
+            });
+            $('#wspot_segmentation_endDate').on('change', function(){
+                getPreview();
+            });
+        });
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}
+

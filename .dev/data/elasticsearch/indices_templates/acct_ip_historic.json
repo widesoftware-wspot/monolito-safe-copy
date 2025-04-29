@@ -1,0 +1,50 @@
+{
+  "template":"acct_ip_historic_*",
+  "settings":{
+    "number_of_shards":"5",
+    "number_of_replicas":"1"
+  },
+  "aliases":{
+    "acct_ip_historic_all":{
+
+    },
+    "acct_ip_historic_last_30_days":{
+      "filter":{
+        "range":{
+          "datetime":{
+            "gte":"now-30d"
+          }
+        }
+      }
+    }
+  },
+  "mappings":{
+    "historic":{
+      "_all":{
+        "enabled":false
+      },
+      "properties":{
+        "datetime":{
+          "format":"yyyy-MM-dd HH:mm:ss",
+          "type":"date"
+        },
+        "acctuniqueid":{
+          "index":"not_analyzed",
+          "type":"string"
+        },
+        "ip":{
+          "index":"not_analyzed",
+          "type":"string"
+        },
+        "client_id":{
+          "index":"not_analyzed",
+          "type":"integer"
+        },
+        "username":{
+          "index":"not_analyzed",
+          "type":"integer"
+        }
+      }
+    }
+  }
+}

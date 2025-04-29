@@ -1,0 +1,128 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+{% block header %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:0px;padding-right:30px;padding-top:0px; font-size:30px;line-height:48px;color:#ec213a;font-family:Arial;font-weight:bold; text-align: center;" colspan="2">{{ companyName | default("") }}</td>
+    </tr>
+{% endblock%}
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-top:10px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Olá, {{ user.nome }}! Tudo bem?</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    {% if isWhiteLabel == 1 %}
+                        <td style="padding-right:20px;padding-top:10px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Você aceitou os termos de uso e ativou o serviço de <b>envio de SMS</b> pelo <b style="color: #ec213a;">Hotspot</b>.</td>
+                    {% else %}
+                        <td style="padding-right:20px;padding-top:10px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Você aceitou os termos de uso e ativou o serviço de <b>envio de SMS</b> pelo <b style="color: #ec213a;">Mambo WiFi</b>.</td>
+                    {% endif %}
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-top:10px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Lembramos que este serviço tem um custo extra de {{ smsCost }} por SMS enviado.</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-top:10px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Veja os <b>termos de uso do serviço</b> abaixo:</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-top:10px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">CONTRATO{{ (contract.type == 1) ? ' - Envio de SMS' }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 30px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 10px;font-size:15px;line-height:30px;color:#909090;font-family:Arial;text-align: justify;">{{ message|raw }}</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    {% if isWhiteLabel == 1 %}
+                        <td style="padding-right:20px;padding-top:00px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Você pode cancelar este serviço a qualquer momento no seu painel do <b style="color: #ec213a;">Hotspot</b>.</td>
+                    {% else %}
+                        <td style="padding-right:20px;padding-top:00px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Você pode cancelar este serviço a qualquer momento no seu painel do <b style="color: #ec213a;">Mambo WiFi</b>.</td>
+                    {% endif %}
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    {% if isWhiteLabel == 0 %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-top:10px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Caso tenha algum problema ou precise de ajuda, é so entrar em contato com nosso time de Sucesso do cliente pelo e-mail <b style="text-decoration: none; color: #ec213a;"><a style="text-decoration: none; color: inherit;">comercial@mambowifi.com</a></b>.</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    {% endif %}
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Estamos à disposição!</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Grande abraço,</td>
+        </tr>
+        <tr>
+
+            {% if isWhiteLabel == 0 %}
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Time Mambo WiFi</td>
+            {% else %}
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Time Hotspot</td>
+            {% endif %}
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

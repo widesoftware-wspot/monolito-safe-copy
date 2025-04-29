@@ -1,0 +1,40 @@
+Wideti\DomainBundle\Entity\Roles:
+  RoleSuperAdmin:
+    name: Super Administrator
+    role: ROLE_SUPER_ADMIN
+
+  RoleAdmin:
+    name: Administrador
+    role: ROLE_ADMIN
+
+  RoleAdminLimited:
+    name: Administrador - Limitado
+    role: ROLE_ADMIN_LIMITED
+
+  RoleUser:
+      name: Usuario
+      role: ROLE_USER
+
+  RoleMarketing:
+      name: Marketing
+      role: ROLE_MARKETING
+
+  RoleManager:
+      name: Manager
+      role: ROLE_MANAGER
+
+  RoleUserLimited:
+    name: Usuario - Limitado
+    role: ROLE_USER_LIMITED
+
+  RoleMarketingLimited:
+    name: Marketing - Limitado
+    role: ROLE_MARKETING_LIMITED
+
+  RoleSuportLimited:
+    name: Suporte - Limitado
+    role: ROLE_SUPORT_LIMITED
+
+  RoleUserBasic:
+    name: Usuario - Basico
+    role: ROLE_USER_BASIC

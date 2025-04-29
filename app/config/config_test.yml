@@ -1,0 +1,53 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+
+parameters:
+    test_api_token: c165e22c6fa9c9dd8547aaea79efe884
+    test_api_url: "dev.wspot.com.br/app_dev.php"
+
+    # Para RODAR em pre-prod estes parametros devem estar comentados
+    database_host: mysql
+    database_name: radius_wspotv3
+    database_user: root
+    database_password: a1b2c3
+    mailer_transport: gmail
+    mailer_host: 64.233.186.109
+    mailer_user: joker@wideti.com.br
+    mailer_password: abc123
+    email_developers_recipient: joker@wideti.com.br
+    assets_path: 'bundles/admin/frontend'
+
+    elastic_hosts:
+        - elasticsearch
+
+    elastic_log_index: logs
+    elastic_log_type: changelog
+
+    mongodb_server1: mongo-2-1
+    mongodb_port1: 27017
+    mongodb_server2: mongo-2-2
+    mongodb_port2: 27017
+    mongodb_server3: mongo-2-3
+    mongodb_port3: 27017
+    mongodb_options:
+        authSource: admin
+        readPreference: primaryPreferred
+        replicaSet: rs2
+    mongodb_database: dev
+
+    cache_active: false
+    cache_host: 'redis://redis'
+    cache_port: 6379
+
+    policy_cache_active: true
+    policy_cache_host: 127.0.0.1
+    policy_cache_port: 6379
+
+    bounce_validator_active: false
+    pagination_limit_number: 10
+    redis_dsn_cluster: 'redis:6379'

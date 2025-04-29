@@ -1,0 +1,34 @@
+api_rd_station:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.api_rd_station:indexAction }
+
+api_rd_station_new:
+    path:  /create
+    defaults: { _controller: wspot.admin.controller.api_rd_station:createAction }
+    options:
+        expose: true
+
+api_rd_station_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.api_rd_station:editAction }
+    options:
+        expose: true
+
+api_rd_station_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.api_rd_station:deleteAction }
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+api_rd_station_manual_integration:
+    path:  /manual-integration
+    defaults: { _controller: wspot.admin.controller.api_rd_station:manualIntegrationAction }
+    options:
+        expose: true
+
+api_rd_station_conversions:
+    path:  /conversions
+    defaults: { _controller: wspot.admin.controller.api_rd_station:sendConversionsToRDAction }
+    requirements: { methods: post|get }
+

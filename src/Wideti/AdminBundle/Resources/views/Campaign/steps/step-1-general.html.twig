@@ -1,0 +1,764 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/lightbox/lightbox.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/css/campaign.css')}}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Campanhas'} %}
+    {% if not isWhiteLabel %}
+        <div
+            id="modal-banner" class="modal fade in" tabindex="-1" style="display: none; overflow:hidden; padding: 10px" aria-hidden="false">
+            <div class="modal-body" style="cursor:pointer;">
+                <a href="https://suporte.mambowifi.com/support/solutions/articles/16000101339-campanhas" target="_blank">
+                    <img class="display-mobile" src="{{ asset('bundles/admin/frontend/images/novidade-modulo-campanhas.png') }}" />
+                    <img class="display-desktop" src="{{ asset('bundles/admin/frontend/images/novidade-modulo-campanhas.png') }}" />
+                </a>
+            </div>
+            <div>
+                <label><input type="checkbox" id="dont_show_again"> Não ver essa mensagem novamente</label>
+            </div>
+            <div class="pull-right">
+                <button id="closeForm" type="button" class="btn btn-danger">Fechar</button>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons circle_question_mark" ><i></i>
+                            Ajuda com campanhas
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="widget-body">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <p class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                    > Onde minha campanha será apresentada? Nome da Rede (SSID), Pontos de Acesso ou Grupos de Pontos de Acesso.
+                                </a>
+                            </p>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse" style="height: 0px;">
+                            <div class="panel-body">
+                                <hr />
+                                <p class="text-muted">
+                                    Quando você cadastra uma nova campanha você pode selecionar entre diversas formas dela ser apresentada,
+                                    conforme lista abaixo:
+                                </p>
+                                <ul>
+                                    <li>Por nome de Rede (SSID)</li>
+                                    <li>Por ponto de acesso</li>
+                                    <li>Por grupo de ponto de acesso</li>
+                                    <li>Para todos pontos de acesso</li>
+                                </ul>
+                                <p class="text-muted">
+                                    Mas como saber qual campanha será realmente apresentada para meu visitante caso eu tenha mais de uma campanha
+                                    cadastrada ao mesmo tempo? <br />
+                                    Abaixo segue a ordem de prioridade para o carregamente de uma campanha para seu visitante:
+                                </p>
+                                <ol>
+                                    <li>SSID e Ponto de acesso <small>(caso você tenha uma campanha por SSID e ponto acesso juntos)</small></li>
+                                    <li>Nome de Rede (SSID)</li>
+                                    <li>Ponto de acesso</li>
+                                    <li>Grupo de ponto de acesso</li>
+                                    <li>Todos pontos de acesso</li>
+                                </ol>
+                                <p class="text-muted">
+                                    A ordem acima será seguida caso exista mais de uma campanha por ponto de acesso! Vamos a um exemplo prático.
+                                </p>
+                                <p>
+                                    Suponha que temos a campanha <b>"Campanha de Ano Novo"</b> e <b>"Campanha de Natal"</b> que estão ativas na mesma vigência e temos o <b>"Ponto de acesso 1"</b>
+                                    que faz parte do grupo de ponto de acesso <b>"Meus pontos"</b>. A <b>"Campanha de Ano Novo"</b> você selecionou para apresentar no <b>"Ponto de acesso 1"</b>,
+                                    já a <b>"Campanha de Natal"</b> para apresentar no grupo <b>"Meus pontos"</b>, porém como as duas estão na mesma data de vigência todos os visitantes que acessarem sua rede através do <b>"Ponto de acesso 1"</b> irão visualizar apenas a <b>"Campanha de Ano Novo"</b> pois de acordo
+                                    com a ordem de prioridade pontos de acesso tem preferência sobre grupos de pontos de acesso, ou seja, os visitantes que acessarem pelo <b>"Ponto de acesso 1"</b> nunca visualizarão
+                                    a <b>"Campanha de Natal"</b> mesmo o ponto de acesso fazendo parte do grupo <b>"Meus pontos"</b>. Seja cauteloso ao criar campanhas com a mesma data de vigência.
+                                </p>
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <p class="panel-title">
+                                <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+                                    > Quais fabricantes permitem campanha por nome de Rede (SSID)?
+                                </a>
+                            </p>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse" style="height: 0px;">
+                            <div class="panel-body">
+                                <hr />
+                                <p>
+                                    Alguns fabricantes infelizmente não enviam a informação de SSID para nosso sistema, desta forma
+                                    não é possível carregar campanhas por SSID.
+                                </p>
+                                <p>Os fabricantes a seguir <b>NÃO</b> funcionam campanha por SSID:</p>
+                                <ul>
+                                    <li>Cisco</li>
+                                    <li>Coovachilli</li>
+                                    <li>Mikrotik</li>
+                                    <li>PfSense</li>
+                                    <li>Zyxel</li>
+                                </ul>
+                                <hr />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        {% form_theme form with ['AdminBundle:Form:fields.html.twig', 'AdminBundle:Form:templateForm.html.twig'] %}
+        {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+
+        <div id="formScreen" style="display: block;">
+            <div class="widget widget-tabs border-bottom-none">
+                <div class="widget-body" >
+                    {% set errors = [1] %}
+                    {% for error in form.vars.errors %}
+                        {% set errors = error.cause %}
+                    {% endfor %}
+
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <div>
+                                <h2>Vamos começar!</h2>
+                                <p class="red-txt">Preencha as informações gerais e selecione o período e também os locais de exibição.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="widget-body">
+                        <div class="row-fluid">
+                            {% if entity.endDate|date('Y-m-d') < 'now'|date('Y-m-d') %}
+                                <div class="span12">
+                                    <div class="alert alert-yellow expired">
+                                        O período da sua campanha <strong>expirou</strong>, atualize a data final
+                                        caso queira continuar com esta campanha.
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div class="expire" style="visibility: hidden">O período da sua campanha <strong>expirou</strong>, atualize a data final
+                                caso queira continuar com esta campanha.</div>
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="span6">
+                                <div class="widget row-fluid colors">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Informações Gerais</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12">
+                                            {% if entity.id is not null %}
+                                                {{ form_row(form.status) }}
+                                            {% endif %}
+                                            {{ form_row(form.name) }}
+                                            {{ form_row(form.ssid) }}
+                                            <div class="control-group">
+                                                <label class="control-label required">
+                                                    Template
+                                                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-html="true"
+                                                       data-content="Ao selecionar um template na campanha ele irá sobrepor o template do ponto de acesso, caso exista." data-original-title="" title=""></i>
+                                                </label>
+                                                <div class="controls">
+                                                    {{ form_widget(form.template) }}
+                                                </div>
+                                            </div>
+
+                                            {{ form_row(form.redirectUrl, {'attr': {'placeholder': 'Ex: http://www.google.com' }}) }}
+
+                                            <div class="control-group">
+                                                <label class="control-label" for="wideti_AdminBundle_campaign_bgColor">
+                                                    {{ form_label(form.bgColor) }}
+                                                </label>
+                                                <div class="controls input-group color-group">
+                                                    {{ form_widget(form.bgColor) }}
+                                                    <span class="input-group-addon"><i></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="span6">
+                                <div class="widget row-fluid">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Período e Horários de Exibição da Campanha</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="row date">
+                                            <div class="span3">
+                                                {{ form_row(form.startDate) }}
+                                            </div>
+                                            <div class="span3">
+                                                {{ form_row(form.endDate) }}
+                                            </div>
+                                        </div>
+
+                                        <div class="span12">
+                                            <button class="btn btn-primary" id="btnAddHours" type="button">Adicionar Horário de Exibição <i class="fa fa-plus"></i></button>
+                                        </div>
+
+                                        <div class="span12 campaignHours" data-prototype="{{ form_widget(form.campaignHours.vars.prototype)|e }}">
+                                            {% for campaignHours in form.campaignHours %}
+                                                <div class="row campaignHours-item">
+                                                    {{ form_row(campaignHours.startTime) }}
+                                                    {{ form_row(campaignHours.endTime) }}
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="span11" style="margin: 20px 30px;">
+                                            <hr class="separator">
+                                            <label>
+                                                <span>É obrigatório informar um <b>Período de Data</b> que a campanha será exibida, bem como ao menos uma faixa de <b>Horário de Exibição.</b></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <div class="widget row-fluid colors">
+                                    <div class="widget-head">
+                                        <h4 class="heading"> Onde esta campanha irá aparecer</h4>
+                                    </div>
+                                    <div class="widget-body">
+                                        <div class="span12">
+                                            <ul class="ap-list-pills" id="ap-pills-container">
+                                                {#load by js #}
+                                            </ul>
+                                            <div>
+                                                <hr class="divider" />
+                                                <a data-toggle="modal" href="#ap-groups-modal" class="btn btn-primary" id="btnAddApGroup" type="button">Selecionar pontos e grupos</a>
+                                                <a class="btn btn-default" id="btnAddApGroup" type="button" onclick="clearStore(); return false;">Limpar seleção</a>
+                                                {{ form_widget(form.apsAndGroups) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="separator">
+
+        <div class="form-actions right">
+            <a href="{{ path('campaign') }}">
+                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                    Cancelar
+                </button>
+            </a>
+
+            {% if (entity.id) %}
+                {{ form_widget(form.submitAndExit) }}
+            {% endif %}
+
+            {{ form_widget(form.submit) }}
+        </div>
+    </div>
+
+    <!-- Modal select ap and ap group -->
+    <div class="modal fade" id="ap-groups-modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding: 10px 10px 0 10px">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Busca de pontos de acesso e grupos</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="padding: 5px; text-align: center">
+                        <input style="padding: 5px; margin: 0;"
+                               title="Search box"
+                               type="text"
+                               name="search-ap-and-groups"
+                               id="search-ap-and-groups"
+                               onkeyup="onKeyPressSearchInput($('#search-ap-and-groups').val());" />
+                        <button class="btn btn-default" onclick="selectAllInApiList(); return false;">Selecionar todos da lista</button>
+                    </div>
+                    <div>
+                        <hr class="divider" />
+                        <table class="table table-condensed">
+                            <thead>
+                            <tr>
+                                <th class="center">Nome</th>
+                                <th class="center">Tipo</th>
+                                <th class="center">Ação</th>
+                            </tr>
+                            </thead>
+                            <tbody id="ap-search-container"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    {{ form_end(form) }}
+{% endblock%}
+
+{% block javascript %}
+{{ parent() }}
+
+<script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/maskedinput/jquery.maskedinput.js')}}"></script>
+<script src="{{ asset('bundles/admin/theme/scripts/plugins/lightbox/lightbox.js')}}"></script>
+<script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js')}}"></script>
+<script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+<script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+<script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+<script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+<script type="text/javascript">
+    function toDate(dateString) {
+        var splitDate = dateString.split("/");
+        return new Date(splitDate[2], splitDate[1] -1,splitDate[0]);
+    }
+
+    $(function(){
+        $('.color-group').colorpicker();
+    });
+
+    function controlSelectAccessPoints()
+    {
+        var inAccessPoints  = $("#wideti_AdminBundle_campaign_inAccessPoints").val();
+        var accessPoints    = $(".access-points-block");
+        var groupsBlock     = $(".groups-block");
+
+        if (inAccessPoints == 1) {
+            accessPoints.removeClass('hide');
+            dojo.query("#wideti_AdminBundle_campaign_accessPoints").chosen({batch_select:true});
+            groupsBlock.addClass('hide');
+            return;
+        }
+
+        if (inAccessPoints == 2) {
+            groupsBlock.removeClass('hide');
+            dojo.query("#wideti_AdminBundle_campaign_accessPointsGroups").chosen({batch_select:true});
+            accessPoints.addClass('hide');
+            return;
+        }
+
+        accessPoints.addClass('hide');
+        groupsBlock.addClass('hide');
+    }
+
+    jQuery('document').ready(function(){
+        
+        $('.mask-hour').mask('99:99', {selectOnFocus: true, clearIfNotMatch: true, placeholder:"__:__"});
+
+        controlSelectAccessPoints();
+
+        $('.label.label-important').each( function(){
+            if ($(this).text() == "Este campo deve ser preenchido.") {
+                $('.btn.btn-primary.banner').addClass('active');
+            }
+        });
+
+        $('input').keypress(function (e) {
+            var code = null;
+            code = (e.keyCode ? e.keyCode : e.which);
+            return (code == 13) ? false : true;
+        });
+
+        jQuery(window).load(function(){
+            if (jQuery('.campaignHours').children().length == 0) {
+                jQuery('button#btnAddHours').click();
+                jQuery('#wideti_AdminBundle_campaign_campaignHours_0_startTime').val('00:00');
+                jQuery('#wideti_AdminBundle_campaign_campaignHours_0_endTime').val('23:59');
+            }
+        });
+
+        var $collectionHolder;
+
+        $collectionHolder = $('div.campaignHours');
+
+        // add a delete link to all of the existing tag form li elements
+        $collectionHolder.find('div.campaignHours-item').each(function() {
+            addTagFormDeleteLink($(this));
+        });
+
+        // count the current form inputs we have (e.g. 2), use that as the new
+        // index when inserting a new item (e.g. 2)
+        $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+        $('button#btnAddHours').on("click", function(){
+            // add a new tag form (see next code block)
+            addTagForm($collectionHolder);
+        });
+
+        if ($('#wideti_AdminBundle_campaign_startDate').length && $('#wideti_AdminBundle_campaign_endDate').length)
+        {
+            $( "#wideti_AdminBundle_campaign_startDate" ).datepicker({
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                changeMonth: false,
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#wideti_AdminBundle_campaign_endDate" ).datepicker( "option", "minDate", selectedDate );
+                }
+            }).datepicker( "option", "maxDate", $('#maxDate').text() );
+
+            $( "#wideti_AdminBundle_campaign_endDate" ).datepicker({
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                changeMonth: false,
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#wideti_AdminBundle_campaign_startDate" ).datepicker( "option", "maxDate", selectedDate );
+                }
+            }).datepicker( "option", "minDate", $('#wideti_AdminBundle_campaign_endDate').val() );
+        }
+
+    });
+
+    function addTagForm($collectionHolder) {
+        var prototype = $collectionHolder.data('prototype');
+        var index = $collectionHolder.data('index');
+        var newForm = prototype.replace(/__name__/g, index);
+
+        $collectionHolder.data('index', index + 1);
+        var $newFormLi = $('<div class="row campaignHours-item add"></div>').append(newForm);
+
+        if (jQuery('.campaignHours').children().length > 0) {
+            addTagFormDeleteLink($newFormLi);
+        }
+
+        $collectionHolder.append($newFormLi);
+    }
+
+    function addTagFormDeleteLink($tagFormLi) {
+        var $removeFormA = $('<div class="span2"><a class="btn red remove" type="button"><i class="fa fa-times"></i> Remover</a></div>');
+
+        $tagFormLi.append($removeFormA);
+
+        $removeFormA.on('click', function(e) {
+
+            if ($('.campaignHours-item').length == 2) {
+                $removeFormA.remove();
+            }
+
+            var count = $('.campaignHours-item').length;
+
+            if(count == 1){
+                $('.alert-schedule').show({
+                    delay: { show: 1000 }
+                });
+            }else{
+                // remove the li for the tag form
+                $tagFormLi.remove();
+            }
+
+        });
+    }
+
+    $('.full-size-helper').on('click', function () {
+        var message = "" +
+            "<h4>Usar tela inteira?</h4>" +
+            "<p><b>SIM</b> - A imagem aparecerá na tela inteira do navegador do visitante, porém em alguns dispositivos a imagem pode sofrer cortes nas laterais para se adequar a resolução da tela.</p>" +
+            "<p><b>NÃO</b> - A imagem preencherá a tela no máximo de sua resolução, a parte que a imagem não cobrir será preenchida pela cor de fundo previamente selecionada.</p>";
+
+        bootbox.dialog(
+            message, [
+                {
+                    "label" : "Ok, entendi!",
+                    "class" : "btn-success",
+                    "callback": function() {
+                    }
+                }
+            ]);
+    });
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////// Access Points selection Pill Container ///////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    var TYPE_AP = 'ap';
+    var TYPE_GROUP = 'group';
+
+    var pillStore = [];
+    var apListApi = [];
+    var timeout = '';
+
+    function createLineInSearchList(pill, hasInStore) {
+        var line = $('<tr></tr>');
+
+        if (hasInStore) {
+            line.addClass('ap-selected-line');
+        }
+
+        var columnName = $('<td class="center"></td>').html(pill.name);
+        var columnType = $('<td class="center"></td>').html(pill.type === TYPE_AP ? "Ponto de acesso" : "Grupo");
+        var columnAction = $('<td class="center"></td>').html(
+            hasInStore
+                ? createRemoveButtonSearchList(pill.id, pill.type)
+                : createAddButtonSearchList(pill.id, pill.type)
+        );
+
+        line.append([columnName, columnType, columnAction]);
+
+        return line;
+    }
+
+    function createRemoveButtonElement(id, type) {
+        var btn = $('<a></a>')
+            .attr({href: "#", onclick: "removePillFromStore(" + id + ", \'" + type + "\'); return false;"})
+            .addClass('ap-list-remove-btn')
+            .html('x');
+
+        if (type === TYPE_AP) {
+            btn.addClass('ap-remove-btn-style')
+        } else {
+            btn.addClass('group-remove-btn-style')
+        }
+        return btn;
+    }
+
+    function createAddButtonElement(id, type) {
+        return $('<a></a>')
+            .attr({href: "#", onclick: "addPillToStore(" + id + ", \'" + type + "\'); return false;"})
+            .addClass('ap-list-add-btn')
+            .html('+');
+    }
+
+    function createRemoveButtonSearchList(id, type) {
+        return $('<a></a>')
+            .attr({href: "#", onclick: "removePillFromStore(" + id + ", \'" + type + "\'); return false;"})
+            .addClass('ap-search-list-remove-button')
+            .html('Remover');
+    }
+
+    function createAddButtonSearchList(id, type) {
+        return $('<a></a>')
+            .attr({href: "#", onclick: "addPillToStore(" + id + ", \'" + type + "\'); return false;"})
+            .addClass('ap-search-list-add-button')
+            .html('Adicionar');
+    }
+
+    function createPillBox(pill) {
+        var pillBox = $('<li></li>');
+
+        if (!pill) {
+            pillBox
+                .append('<span>Todos os pontos de acesso</span> ');
+            pillBox.addClass('all-ap-pill-box')
+            return pillBox;
+        }
+
+        if (pill.type === TYPE_AP) {
+            pillBox.addClass('ap-pill-box');
+            pillBox
+                .append('<span>' + pill.name + '</span> ')
+                .append(createRemoveButtonElement(pill.id, pill.type))
+                .append('<span class="pill-ap-type-title">Ponto de acesso</span>');
+        }
+
+        if (pill.type === TYPE_GROUP) {
+            pillBox.addClass('ap-group-pill-box');
+            pillBox
+                .append('<span>' + pill.name + '</span> ')
+                .append(createRemoveButtonElement(pill.id, pill.type))
+                .append('<span class="pill-group-type-title">Grupo</span>');
+        }
+
+        return pillBox;
+    }
+
+    function removePillFromStore(id, type) {
+        for (var i=0; i < pillStore.length; i++) {
+            if (id === pillStore[i].id && type === pillStore[i].type) {
+                pillStore.splice(i,1);
+            }
+        }
+        renderAllView();
+    }
+
+    function addPillToStore(id, type) {
+        var pill = getApOrGroupByIdIn(id, type,  apListApi);
+        if (!existsInStore(pill)) {
+            pillStore.push(pill);
+        }
+
+        renderAllView();
+    }
+
+    function renderPillContainer() {
+        var pillContainer = $('#ap-pills-container');
+        var apsAndGroupsField = $('#wideti_AdminBundle_campaign_apsAndGroups');
+
+        pillContainer.html("");
+        apsAndGroupsField.val('');
+
+        if (pillStore.length === 0) {
+            pillContainer.append(createPillBox(null));
+        }
+
+        for (var i = 0; i < pillStore.length; i++) {
+            var pill = pillStore[i];
+            var pillBox = createPillBox(pill);
+            pillContainer.append(pillBox);
+        }
+
+        apsAndGroupsField.val(JSON.stringify(pillStore));
+    }
+
+    function renderSearchList() {
+        var searchListContainer = $('#ap-search-container');
+        searchListContainer.html('');
+
+        if (apListApi.length === 0) {
+            searchListContainer.append('<tr><td colspan="3"><p style="text-align: center; color: #74726f;margin-top: 10px">"0" resultados, use o campo de pesquisa acima, para buscar.<p></td></tr>')
+        }
+
+        for (var i=0 ; i < apListApi.length ; i++) {
+            var ap = apListApi[i];
+            var hasInStore = existsInStore(ap);
+            var item = createLineInSearchList(ap, hasInStore);
+            searchListContainer.append(item);
+        }
+    }
+
+    function renderAllView() {
+        renderPillContainer();
+        renderSearchList();
+    }
+
+    function existsInStore(pill) {
+        for (var i = 0; i < pillStore.length; i++) {
+            if (pill.id === pillStore[i].id && pill.type === pillStore[i].type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function getApOrGroupByIdIn(id, type, list) {
+        for (var i = 0; i < list.length; i++) {
+            if (id === list[i].id && type === list[i].type) {
+                return list[i];
+            }
+        }
+        return null;
+    }
+
+    function clearStore() {
+        pillStore = [];
+        renderAllView();
+    }
+
+    function selectAllInApiList() {
+        for (var i = 0; i < apListApi.length; i++) {
+            addPillToStore(apListApi[i].id, apListApi[i].type);
+        }
+        renderAllView();
+    }
+
+    function getApiAccessPointAndGroups(searchText, cb) {
+        var route = Routing.generate('access_points_get_aps_and_groups_select_box', {name: searchText});
+        $.ajax({
+            type: "GET",
+            url: route,
+            dataType : "json",
+            success: function(response)
+            {
+                cb(response, null);
+            },
+            error: function (error) {
+                cb(null, error);
+            }
+        });
+    }
+
+    function loadApListApi(searchText) {
+        getApiAccessPointAndGroups(searchText, function(result, error){
+            if (error) {
+                console.log(error)
+            }
+            apListApi = result;
+            renderAllView()
+        });
+    }
+
+    function loadApAndGroupListOnUpdade(campaignId, cb) {
+        var route = Routing.generate('access_points_and_groups_get_by_campaign_id', {id: campaignId});
+        $.ajax({
+            type: "GET",
+            url: route,
+            dataType : "json",
+            success: function(response)
+            {
+                cb(response, null);
+            },
+            error: function (error) {
+                cb(null, error);
+            }
+        });
+    }
+
+    function onKeyPressSearchInput(searchText) {
+        if (timeout) {
+            window.clearTimeout(timeout);
+        }
+
+        timeout = window.setTimeout(function() {
+            loadApListApi(searchText); },
+             2000
+        );
+    }
+
+    var campaignId = null;
+
+    {% if entity.id %}
+        campaignId = {{ entity.id }};
+    {% endif %}
+
+    if (campaignId) {
+        loadApAndGroupListOnUpdade(campaignId, function(result, error) {
+            if (error) {
+                console.log(error);
+            }
+            pillStore = result;
+            renderAllView();
+        });
+    } else {
+        renderAllView();
+    }
+</script>
+{% endblock %}

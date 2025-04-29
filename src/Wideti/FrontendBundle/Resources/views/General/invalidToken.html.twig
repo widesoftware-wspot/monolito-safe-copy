@@ -1,0 +1,19 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important; min-height: 400px;">
+            <div class="box-content">
+                <h3>{{ 'wspot.confirmation.invalid_token'|trans }}</h3>
+
+                <div class="content-center">
+                    {{ 'wspot.confirmation.invalid_token_message_1'|trans }}
+                    <br><br>
+                    {{ 'wspot.confirmation.invalid_token_message_2'|trans }} <a href="mailto:{{ fromEmail }}" style="text-decoration: none;">{{ fromEmail }}</a>
+                </div>
+
+                <a class="btnChangeData" href="{{ path('frontend_index') }}" style="margin-top: 30px;">{{ 'wspot.confirmation.button_home'|trans }}</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block dataTitle %}
+    Métricas | SMS Marketing
+{% endblock %}
+
+{% block filterBlock %}
+{% endblock %}
+
+{% block table %}
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-body">
+                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                        <tr>
+                            <th>Status</th>
+                            <td>
+                                <span class="statusColor {{ entity.status|lower }}">{{ entity.status|translate_status }}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Lote</th>
+                            <td>{{ entity.lotNumber }}</td>
+                        </tr>
+                        <tr>
+                            <th>Responsável</th>
+                            <td>{{ entity.adminUserId|find_user }}</td>
+                        </tr>
+                        <tr>
+                            <th>Criada em</th>
+                            <td><span title="America/Sao_Paulo" data-toggle="tooltip" data-placement="top">{{ entity.createdAt|date('d/m/Y H:i', 'America/Sao_Paulo') }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Enviada em</th>
+                            <td><span title="America/Sao_Paulo" data-toggle="tooltip" data-placement="top">{{ entity.sentAt|date('d/m/Y H:i', 'America/Sao_Paulo') }}</span></td>
+                        </tr>
+                        <tr>
+                            <th>Total enviado</th>
+                            <td>{{ entity.totalSms }}</td>
+                        </tr>
+                        <tr>
+                            <th>Total entregue na operadora</th>
+                            <td>{{ stats.totalSent + stats.totalDelivered }} ({{ (((stats.totalSent + stats.totalDelivered)/stats.total)*100)|number_format(2) }}%)</td>
+                        </tr>
+                        <tr>
+                            <th>Total entregue no destinatário</th>
+                            <td>{{ stats.totalDelivered }} ({{ ((stats.totalDelivered/stats.total)*100)|number_format(2) }}%)</td>
+                        </tr>
+                        <tr>
+                            <th>Total de falha</th>
+                            <td>{{ stats.totalError }} ({{ ((stats.totalError/stats.total)*100)|number_format(2) }}%)</td>
+                        </tr>
+                        {% if (urlOpeningRate) %}
+                            <tr>
+                                <th>Total de clicks na URL</th>
+                                <td>{{ urlOpeningRate }} ({{ ((urlOpeningRate/stats.totalDelivered)*100)|number_format(2) }}%)</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="widget-body">
+        <hr class="separator">
+        <div class="form-actions right">
+            <a href="{{ path('sms_marketing') }}">
+                <button type="button" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>
+                    Voltar
+                </button>
+            </a>
+        </div>
+    </div>
+{% endblock %}

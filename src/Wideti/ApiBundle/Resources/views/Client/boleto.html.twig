@@ -1,0 +1,78 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;padding-bottom:20px;font-size:25px;line-height:30px;color:#909090;font-family:Arial;text-align: justify;">
+                            Olá {{ data.admin.fullName }}.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#909090;font-family:Arial;text-align: justify;">
+                            Seja bem vindo do Mambo WiFi!<br>
+                            Ficamos muito felizes em ter você como nosso cliente!
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#909090;font-family:Arial;text-align: justify;">
+                            Abaixo você encontra seu boleto para pagamento da primeira mensalidade do sistema.
+                            Sua conta será ativada em definitivo quando identificarmos o pagamento. <br>
+                            Isso geralmente ocorre um dia após o pagamento.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550">
+                <tbody>
+                    <tr>
+                        <td style="padding: 10px 0px 5px 0px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">
+                            <a href="{{ data.boletoUrl }}" style="color: #ffffff;font-weight: normal;text-decoration: none;background-color: #ec213a;padding: 10px;border-radius: 5px;" target="_blank">Visualizar Boleto</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:20px;color:#909090;font-family:Arial;">
+                    Em caso de dúvidas ou se não solicitou a assinatura do Mambo WiFi, por favor entre em contato
+                    conosco pelo e-mail <a href="mailto:suporte@mambowifi.com" style="text-decoration: none; color: #ec213a">suporte@mambowifi.com</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Um abraço</td>
+            </tr>
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Time do Mambo WiFi</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes complete fullBox changeData" style="display: block !important;">
+            <div class="box-content">
+                <h3>{{ 'wspot.change_user_data.title'|trans }}</h3>
+
+                <div class="content-center">
+                    {% if 'phone' in app.request.get('fields') and 'register' in app.request.get('fields') %}
+                        <p>{{ 'wspot.change_user_data.invalid_phone_message_register'|trans }}</p>
+                    {% elseif 'phone' in app.request.get('fields') and 'welcome' in app.request.get('fields') %}
+                        <p>{{ 'wspot.change_user_data.invalid_phone_message_welcome'|trans }}</p>
+                    {% elseif 'mobile' in app.request.get('fields') and 'register' in app.request.get('fields') %}
+                        <p>{{ 'wspot.change_user_data.invalid_phone_message_register'|trans }}</p>
+                    {% elseif 'mobile' in app.request.get('fields') and 'welcome' in app.request.get('fields') %}
+                        <p>{{ 'wspot.change_user_data.invalid_phone_message_welcome'|trans }}</p>
+                    {% endif %}
+                </div>
+
+                {% form_theme form 'FrontendBundle:Form:frontendCustomForm.html.twig' %}
+                {{ form_start(form, {attr: {novalidate: 'novalidate', 'id': 'changeForm'} }) }}
+
+                {{ form(form) }}
+
+                <a style="background-color: #6f6f6f; display: none;" id="loaderBtnChange" class="btnLoader">
+                    <img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" />
+                </a>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+
+    <script src="{{ asset(assets_path ~'/js/jquery.maskedinput.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/fingerprinting.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery.validate.min.js')}}"></script>
+
+    <script type="text/javascript">
+        // i18n phone flags and country code
+        // https://github.com/jackocnr/intl-tel-input#options
+        $(document).ready(function() {
+            var phoneField = $('#wspot_change_properties_phone');
+            var mobileField = $('#wspot_change_properties_mobile');
+
+            var phoneCodeField = $('#wspot_change_country-code-phone');
+            var mobileCodeField = $('#wspot_change_country-code-mobile');
+
+            // add field to phone input
+            phoneField.intlTelInput({
+                initialCountry: 'BR',
+                preferredCountries: ['br']
+            });
+
+            mobileField.intlTelInput({
+                initialCountry: 'BR',
+                preferredCountries: ['br']
+            });
+
+            // Add the first code on page load, by default is Br (55)
+            phoneCodeField.val(phoneField.intlTelInput("getSelectedCountryData").dialCode);
+            mobileCodeField.val(mobileField.intlTelInput("getSelectedCountryData").dialCode);
+
+            // on change country, change de value of input hidden
+            phoneField.on('countrychange', function(e, countryData){
+                phoneCodeField.val(countryData.dialCode);
+            });
+
+            mobileField.on('countrychange', function(e, countryData){
+                mobileCodeField.val(countryData.dialCode);
+            });
+        });
+
+        $("#changeForm").validate({
+            rules: {
+                'wspot_change[properties][phone]': {
+                    required: true,
+                    {% if(app.request.locale == 'pt_br') %}
+                    minlength: 10
+                    {% endif %}
+                },
+                'wspot_change[email]': {
+                    required: true,
+                    email: true
+                }
+            },
+            messages: {
+                'wspot_change[properties][phone]': {
+                    required: "{{ 'wspot.signup_page.field_required'|trans }}",
+                    {% if(app.request.locale == 'pt_br') %}
+                    minlength:  "Telefone/Celular deve ter DDD + telefone"
+                    {% endif %}
+                },
+                'wspot_change[email]': {
+                    required: "{{ 'wspot.signup_page.field_required'|trans }}",
+                    email: "{{ 'wspot.signup_page.field_valid_email'|trans }}"
+                }
+            },
+            submitHandler: function(form) {
+                form.submit();
+                jQuery('#wspot_change_alterar').hide();
+                jQuery('#loaderBtnChange').show();
+            }
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,9 @@
+Wideti\DomainBundle\Entity\Users:
+  Users1:
+    username: contato@wideti.com.br
+    nome: WIDETI
+    password: <encodeUserPassword(@self,"ws@oqp!123")>
+    receiveReportMail: 1
+    status: 1
+    role: @RoleAdmin
+    client: @Client1

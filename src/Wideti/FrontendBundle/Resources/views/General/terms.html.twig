@@ -1,0 +1,35 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block title %}
+    <title>{{ whiteLabel.companyName }} - {{ 'wspot.terms_page.page_title'|trans }}</title>
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <style>
+        @media (max-width: 460px) {
+            #terms {
+                overflow: scroll;
+                overflow-x: hidden;
+                border-radius: 5px;
+                max-height: 70vh;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block container %}
+    <section id="terms" class="container terms">
+        <h2>{{ 'wspot.terms_page.page_title'|trans }} - {{ whiteLabel.companyName }} - {{ config.partner_name }}</h2>
+        <div class="content-terms">
+            <p>{{ terms | replace({'{{ partner_name }}' : config.partner_name}) | raw }}</p>
+        </div>
+        <p style="padding-top:.2em;text-align:center;">
+            <button class="btn button-back" onclick="window.history.back();">< {{ 'wspot.generic.go_back'|trans }}</button>
+        </p>
+    </section>
+
+{% endblock %}
+
+{% block footer %}{% endblock %}

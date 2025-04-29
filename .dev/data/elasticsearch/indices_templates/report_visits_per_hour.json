@@ -1,0 +1,66 @@
+{
+  "template": "report_visits_registrations_per_hour_*",
+  "settings": {
+    "number_of_shards": 1,
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "case_insensitive": {
+            "filter": ["lowercase"],
+            "type": "custom",
+            "tokenizer": "keyword"
+          }
+        }
+      }
+    }
+  },
+  "aliases": {
+    "report_visits_registrations_per_hour_all" : {},
+    "report_visits_registrations_per_hour_last_30_days":{
+      "filter": {
+        "range": {
+          "date": {
+            "gte": "now-30d"
+          }
+        }
+      }
+    }
+  },
+  "mappings":{
+    "report" : {
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "friendlyName": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "identifier": {
+          "type" : "string",
+          "analyzer": "case_insensitive"
+        },
+        "clientId": {
+          "type":"integer",
+          "index":  "not_analyzed"
+        },
+        "date": {
+          "type": "date",
+          "format": "yyyy-MM-dd"
+        },
+        "hour": {
+          "type":"string",
+          "index":  "not_analyzed"
+        },
+        "totalVisits": {
+          "type":"integer",
+          "index":  "not_analyzed"
+        },
+        "totalRegistrations": {
+          "type":"integer",
+          "index":  "not_analyzed"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+api_egoi:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.api_egoi:indexAction }
+
+api_egoi_lists:
+    path:  /lists/{token}
+    defaults: { _controller: wspot.admin.controller.api_egoi:getListsAction }
+    requirements: { methods: post|get }
+    options:
+        expose: true
+
+api_egoi_new:
+    path:  /create
+    defaults: { _controller: wspot.admin.controller.api_egoi:createAction }
+    options:
+        expose: true
+
+api_egoi_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.api_egoi:editAction }
+    options:
+        expose: true
+
+api_egoi_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.api_egoi:deleteAction }
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+api_egoi_manual_integration:
+    path:  /manual-integration
+    defaults: { _controller: wspot.admin.controller.api_egoi:manualIntegrationAction }
+    options:
+        expose: true
+
+api_egoi_subscribe:
+    path:  /subscribe
+    defaults: { _controller: wspot.admin.controller.api_egoi:addSubscribeToEgoiAction }
+    requirements: { methods: post|get }
+

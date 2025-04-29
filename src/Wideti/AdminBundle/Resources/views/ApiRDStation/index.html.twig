@@ -1,0 +1,106 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Integração RD Station
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('api_rd_station_new')}}" style="float: right; margin-top: 4px;" class="btn btn-primary btn-icon glyphicons circle_plus"><i></i>Cadastrar</a>
+{% endblock %}
+
+{% block thead %}
+    <div style="margin-bottom: 20px;">
+        {% if client.whiteLabel == true%}
+            <p>A Integração permite criar conversões automaticamente na sua conta do RD Station toda vez que um visitante acessar sua rede Wi-Fi.</p>
+        {% else %}
+            <p>A Integração permite criar conversões automaticamente na sua conta do RD Station toda vez que um visitante acessar sua rede Wi-Fi com a Mambo WiFi.</p>
+        {% endif %}
+        <p>Dois tipos de conversões são realizadas:</p>
+        <p>
+            - Quando um visitante faz um cadastro;<br>
+            - No primeiro acesso diário de um visitante.
+        </p>
+        <p>Na tela de cadastro você pode escolher entre ativar essa integração de forma automática, ou então manual, enviando todos os cadastros de uma única vez.</p>
+        {% if client.whiteLabel == true%}
+            <p>Lembrando que pode haver um delay entre o momento em que enviamos a conversão até ela ser exibida no RD Station.</p>
+        {% else %}
+            <p>Lembrando que pode haver um delay entre o momento em que a Mambo WiFi envia a conversão até ela ser exibida no RD Station.</p>
+        {% endif %}
+    </div>
+
+    <th class="center">Título</th>
+    <th class="center">API Token</th>
+    <th class="center" width="180">Integração ativa?</th>
+    <th class="center" width="150">Pontos de Acesso</th>
+    <th class="center" style="width: 90px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr id="{{ entity.id }}" class="gradeX">
+            <td class="center">{{ entity.title }}</td>
+            <td class="center">{{ entity.token }}</td>
+            <td class="center">{{ entity.enableAutoIntegration ? 'Sim' : 'Não' }}</td>
+            <td class="center">
+                {% if entity.inAccessPoints == 0 %}
+                    Todos
+                {% else %}
+                    <a href="javascript:void(0);"
+                    data-toggle="tooltip"
+                    data-original-title="{{ entity.accessPoints|aps_by_business_hours }}"
+                    data-placement="top"
+                    >
+                        {{ entity.accessPoints|length }}
+                    </a>
+                {% endif %}
+            </td>
+            <td class="center">
+                <a href="{{ path('api_rd_station_edit', { 'id': entity.id }) }}" class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+                <a href="#" class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+            </td>
+        </tr>
+    {% else %}
+        <td colspan="4">Nenhum registro cadastrado</td>
+    {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result){
+                    if(result){
+                        var route = Routing.generate('api_rd_station_delete', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                if (response.message !== 'Exclusão não permitida') {
+                                    parent.remove();
+                                }
+
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+
+    </script>
+{% endblock %}

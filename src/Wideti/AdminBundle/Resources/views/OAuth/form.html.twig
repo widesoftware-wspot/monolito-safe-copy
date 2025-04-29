@@ -1,0 +1,302 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/css/sso.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+{% endblock %}
+
+{% block content %}
+
+{% set route = app.request.attributes.get('_route') %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Configurar SSO'} %}
+
+
+{% set global_sso_type = 'default' %}
+{% set action_form = actionForm %}
+<div class="innerLR">
+  <div class="widget widget-tabs border-bottom-none">
+    <div class="widget-head">
+        <ul>
+            <li class="active">
+                <a class="glyphicons edit" data-toggle="tab"><i></i>
+                {% if app.request.attributes.get('_route') == 'sso_integration_new' %}
+                    Novo
+                {% else %}
+                    Editar
+                {% endif %}
+                </a>
+            </li>
+        </ul>
+    </div>
+    
+    {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+    {% form_theme form with ['AdminBundle:Form:fields.html.twig'] %}
+
+    <div class="widget-body">
+        <div class="row-fluid">
+        <div class="span6">
+        {% if action_form == 'create' %}
+            <div class="row-fluid">
+                <div class="span12 alert alert-yellow">
+                    Ao criar esta integração para seus visitantes você está de acordo com os items do seu termo de consentimento.
+                </div>
+            </div>
+        {% endif %}
+        <div class="form-session">
+
+        {% if action_form == 'create' %}
+        <div class="control-group"id="sso-type-control-group">
+            {{ form_label(form.ssoType) }}
+            <div class="controls" style="margin-left: 0;display: flex;width:100%;flex-wrap: wrap;">
+                {% for category, subCategories in form.ssoType.vars.choices %}
+                    <div style="width:50%;">
+                        <h5>
+                            {{ category }}
+                        </h5>
+                        <div class="sub-options" id="{{ category|lower|replace({' ': '-'}) }}-sub-options" style="/*display: none;*/">
+                            {% for subCategoryKey, subCategoryLabel in subCategories %}
+                                <div style="display: flex;">
+                                    {{ form_widget(form.ssoType[subCategoryKey]) }}
+                                    {{ form_label(form.ssoType[subCategoryKey]) }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+      {{ form_row(form.name) }}
+
+    {% set image_html_pt = '<div class="icon-pt"></div>' %}
+    <div class="control-group">
+        {{ form_label(form.label)|replace({'{{ image_placeholder }}': image_html_pt})|raw }}
+        <div class="controls" >
+        {{ form_widget(form.label) }}
+        </div>
+    </div>
+    {% set image_html_en = '<div class="icon-en"></div>' %}
+    <div class="control-group">
+        {{ form_label(form.labelEn)|replace({'{{ image_placeholder }}': image_html_en})|raw }}
+        <div class="controls">
+        {{ form_widget(form.labelEn) }}
+        </div>
+    </div>
+        {% set image_html_es = '<div class="icon-es" alt="Espanhol" title="Espanhol"></div>' %}
+        <div class="control-group">
+        {{ form_label(form.labelEs)|replace({'{{ image_placeholder }}': image_html_es})|raw }}
+        <div class="controls">
+        {{ form_widget(form.labelEs) }}
+        </div>
+    </div>
+
+    </div>
+
+    <div class="form-session">
+        <h4>Informações do Authorization Server</h4>
+        {{ form_row(form.url)}}
+        {{ form_row(form.authorizeUrl)}}
+        {{ form_row(form.tokenUrl)}}
+    </div>
+
+    <div class="form-session" id="oAuthClientInfo" style="display:block;">
+        <h4>Dados Cliente OAuth</h4>
+        {{ form_row(form.clientId)}}
+        <div id="client-secret" style="display:block;">
+            {{ form_row(form.clientSecret)}}
+        </div>
+    </div>
+
+    <div class="form-session">
+        <h4>Atributos</h4>
+        {{ form_row(form.fieldLogin)}}
+        {{ form_row(form.resource)}}
+        {{ form_row(form.scope)}}
+        {{ form_row(form.requestMissingFields)}}
+        {{ form_row(form.tokenType)}}
+    </div>
+
+    </div>
+    <div class="span6">
+        <div class="widget row-fluid">
+            <div class="widget-head">
+                <h4 class="heading"> Regras de acesso</h4>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <p style="margin-bottom: 20px; margin-left: 20px;">
+                        Aqui você escolhe em qual regra de acesso os usuários serão cadastrados
+                    </p>
+                    {{ form_row(form.customizeGuestGroup) }}
+                </div>
+            </div>
+        </div>
+        <div class="widget row-fluid">
+            <div class="widget-head">
+                <h4 class="heading"> Pontos de acesso</h4>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <p style="margin-bottom: 20px; margin-left: 20px;">
+                        Aqui você escolhe em qual grupo de ponto de acesso a integração estará ativa
+                    </p>
+                    {{ form_row(form.group) }}
+                </div>
+            </div>
+        </div>
+        <div class="widget row-fluid" style="display:none;">
+            <div class="widget-head">
+                <h4 class="heading">Tutoriais - Tipos de Integrações</h4>
+            </div>
+            <div class="widget-body">
+                <div class="row">
+                    <p style="margin-bottom: 20px; margin-left: 20px;">
+                        Docs
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="form-session">
+            <h4>Callback URL</h4>
+            <div class="session-copy">
+                <p id="copy-callback-url" class="callback-url-to-copy"></p>
+                <button id="button-copy-callback-url" class="button-callback-url">
+                    <img src="{{ asset(assets_path ~'/images/copyimg.png') }}" alt="ícone de copiar texto">
+                </button>
+            </div>
+        </div>
+    </div>
+  </div>
+    {{ form_errors(form) }}
+
+    <hr class="separator">
+
+    <div class="form-actions right">
+        <a href="{{ path('sso_integration') }}">
+            <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>Cancelar</button>
+        </a>
+        {{ form_widget(form.submit) }}
+    </div>
+    {{ form_end(form) }}
+  </div>
+  </div>
+  </div>
+</div>
+
+{% endblock%}
+{% block javascript %}
+    {{ parent() }}
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js') }}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            function hideInternFields(sso_type) {
+                if (sso_type === 'database'  | sso_type === 'ixc') {
+                    $('#oAuthClientInfo').css('display', 'none');
+                } else {
+                    $('#oAuthClientInfo').css('display', 'block');
+                }
+            }
+            function configureDefaultFields(global_sso_type) {
+                if (global_sso_type == "google_workspace" | global_sso_type == "google_education" ) {
+                    $('#wspot_sso_integration_url').val('https://accounts.google.com/o/oauth2/auth').trigger('input');
+                    $('#wspot_sso_integration_tokenUrl').val('https://oauth2.googleapis.com/token');
+                    $('#wspot_sso_integration_fieldLogin').val('email');
+                    $('#wspot_sso_integration_resource').val('openid');
+                } else if(global_sso_type == "adfs") {
+                    $('#wspot_sso_integration_url').val('https://adfs.com.br/adfs/oauth2').trigger('input');
+                    $('#wspot_sso_integration_fieldLogin').val('upn');
+                    $('#wspot_sso_integration_resource').val('mambowifi');
+                } else if(global_sso_type == "ad") {
+                    $('#wspot_sso_integration_url').val('https://login.microsoftonline.com/organizations/oauth2').trigger('input');
+                    $('#wspot_sso_integration_fieldLogin').val('upn');
+                    $('#wspot_sso_integration_resource').val('https://graph.windows.net');
+                } else {
+                    $('#wspot_sso_integration_url').val('').trigger('input');
+                    $('#wspot_sso_integration_tokenUrl').val('');
+                    $('#wspot_sso_integration_resource').val('');
+                    $('#wspot_sso_integration_fieldLogin').val('');
+                    $('#wspot_sso_integration_authorizeUrl').val('');
+                }
+            }
+            function configureAdfsFields(global_sso_type) {
+                var clientSecretInput = $('#wspot_sso_integration_clientSecret');
+                var clientIdInput = $('#wspot_sso_integration_clientId');
+
+                if(global_sso_type == "adfs") {
+                    $('#client-secret').css('display', 'none');
+                    clientSecretInput.prop('required', false);
+                    clientSecretInput.val(null);
+                    clientSecretInput.attr('disabled', 'disabled');
+                    clientSecretInput.removeAttr('aria-required');
+                    clientIdInput.attr('readonly', 'readonly');
+                } else {
+                    $('#client-secret').css('display', 'block');
+                    clientSecretInput.prop('required', true);
+                    clientSecretInput.removeAttr('disabled');
+                    clientSecretInput.attr('aria-required', 'true');
+                    clientIdInput.removeAttr('readonly');
+                }
+                if (global_sso_type == "adfs" && "{{ actionForm }}" == "create") {
+                    clientIdInput.val("{{ uuidClientSecret }}")
+                } else if ("{{ actionForm }}" == "create") {
+                    clientIdInput.val("");
+                }
+            }
+            configureAdfsFields("{{ globalSsoType }}");
+            document.querySelectorAll('.sub-options input[type="radio"]').forEach(function(radio) {
+                if (radio.checked) {
+                    global_sso_type = radio.value;
+                    hideInternFields(global_sso_type); 
+                    configureDefaultFields(global_sso_type);
+                    configureAdfsFields(global_sso_type);
+                }
+                radio.addEventListener('click', function() {
+                    global_sso_type = this.value;
+                    hideInternFields(global_sso_type);
+                    configureDefaultFields(global_sso_type);
+                    configureAdfsFields(global_sso_type);
+                });
+            });
+
+            $('#wspot_sso_integration_url').on('input', function() {
+                if ('{{ actionForm }}' == 'create' && (global_sso_type == "adfs" | global_sso_type == "ad")) {
+                    $('#wspot_sso_integration_authorizeUrl').val($(this).val() + '/authorize');
+                    $('#wspot_sso_integration_tokenUrl').val($(this).val() + '/token');
+                } else if ('{{ actionForm }}' == 'create' && (global_sso_type == "google_workspace" | global_sso_type == "google_education")) {
+                    $('#wspot_sso_integration_authorizeUrl').val($(this).val());
+                }
+            });
+
+            $('#copy-callback-url').text('https://' + window.location.hostname + '/oauth-callback');
+
+            $('.button-callback-url').on('click', function(e) {
+                e.preventDefault()
+                var buttonId = $(this).attr('id');
+                var text = $(`#${buttonId.replace('button-', '')}`).text();
+                navigator.clipboard.writeText(text)
+                    .then(function() {
+                        $.gritter.add({
+                            title: 'Callback url copiada para sua área de tranferência!',
+                            time: 2000,
+                            });
+                    })
+                    .catch(function(error) {
+                        console.error('Erro ao copiar texto:', error);
+                    });
+            });
+        });
+
+        
+    </script>
+
+{% endblock %}

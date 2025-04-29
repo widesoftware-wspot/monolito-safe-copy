@@ -1,0 +1,276 @@
+{% extends 'PanelBundle::layout.html.twig' %}
+
+{% block content %}
+    <h3 class="heading-mosaic">Clientes</h3>
+
+    <div class="innerLR">
+
+        <div class="widget widget-tabs border-bottom-none">
+            <!-- Widget heading -->
+            <div class="widget-head">
+                <ul>
+                    <ul>
+                        <li class="active"><a class="glyphicons edit" data-toggle="tab"><i></i>Incluir</a></li>
+                    </ul>
+                </ul>
+            </div>
+
+            <!-- // Widget heading END -->
+            <div class="widget-body">
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+                    <!-- Widget -->
+                    <div class="widget">
+                        <!-- Widget heading -->
+                        <div class="widget-head">
+                            <h4 class="heading">Inclusão de novo cliente no sistema Mambo Wifi</h4>
+                        </div>
+                        <!-- // Widget heading END -->
+                            <div class="widget-body">
+                                {{ form_errors(form) }}
+                                <!-- Row -->
+                                <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                                    <div class="span6">
+                                        {{ form_row(form.plan) }}
+                                        {{ form_row(form.segment) }}
+                                        {{ form_row(form.status) }}
+                                        {{ form_row(form.type) }}
+                                        {{ form_row(form.erp_id) }}
+                                        {{ form_row(form.domain) }}
+                                        {{ form_row(form.company) }}
+                                        {{ form_row(form.document) }}
+
+                                        <div id="client_email_sender_default_box" class="control-group" style="display: none;">
+                                            <label class="control-label" for="client_email_sender_default">Remetente dos e-mails enviados para os administradores</label>
+                                            <div class="controls"><input type="text" id="client_email_sender_default" name="client_email_sender_default" class="span12"></div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="span6">
+                                        {{ form_row(form.module) }}
+                                        {{ form_row(form.pocEndDate) }}
+                                        {{ form_row(form.smsCost) }}
+                                        {{ form_row(form.contractedAccessPoints) }}
+                                        {{ form_row(form.closingDate) }}
+                                        {{ form_row(form.apCheck) }}
+                                        {{ form_row(form.enableMacAuthentication) }}
+                                        {{ form_row(form.authenticationType) }}
+                                    </div>
+                                </div>
+
+                                <div class="widget-head">
+                                    <h4 class="heading">Endereço</h4>
+                                </div>
+
+                                <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                                    <div class="span6">
+                                        {{ form_row(form.zipCode) }}
+                                        {{ form_row(form.address) }}
+                                        {{ form_row(form.addressNumber) }}
+                                        {{ form_row(form.addressComplement) }}
+                                    </div>
+                                    <div class="span6">
+                                        {{ form_row(form.district) }}
+                                        {{ form_row(form.city) }}
+                                        {{ form_row(form.state) }}
+                                    </div>
+                                </div>
+                                <!-- // Row END -->
+                            </div>
+                    </div>
+                    <!-- // Widget END -->
+
+                <div class="widget">
+                    <!-- Widget heading -->
+                    <div class="widget-head">
+                        <h4 class="heading">Usuário administrador do cliente</h4>
+                    </div>
+                    <!-- // Widget heading END -->
+                    <div class="widget-body">
+                        <!-- Row -->
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                            <div class="span6">
+                                <div class="control-group  ">
+                                    <label class="control-label required" for="wideti_panelbundle_client_type">E-mail do administrador</label>
+                                    <div class="controls ">
+                                        <input type="email" id="admin_email" name="admin_email" class="span12" required>
+                                    </div>
+                                </div>
+                                <div class="control-group  ">
+                                    <label class="control-label required">Nome do administrador</label>
+                                    <div class="controls ">
+                                        <input type="text" id="admin_name" name="admin_name" class="span12" required>
+                                    </div>
+                                </div>
+                                <div class="control-group  ">
+                                    <label class="control-label required" aria-required="true">Perfil do administrador</label>
+                                    <div class="controls ">
+                                        <select id="admin_profile_role" name="admin_profile_role" required="required" aria-required="true">
+                                            <option value="2" selected="selected">Administrador</option>
+                                            <option value="4">Marketing</option>
+                                            <option value="3">Usuario</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-group  ">
+                                    <label class="control-label required" aria-required="true">Status</label>
+                                    <div class="controls ">
+                                        <select id="admin_status" name="admin_status" aria-invalid="false" class="valid" required>
+                                            <option value="1">Ativo</option>
+                                            <option value="0">Inativo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="span6">
+                                <div class="control-group  ">
+                                    <label class="control-label required">URL de redirecionamento pós login</label>
+                                    <div class="controls ">
+                                        <input type="text" id="admin_redirect_url" name="admin_redirect_url" placeholder="Insira um link válido" value="https://www.google.com" class="span12" required>
+                                    </div>
+                                </div>
+                                <div class="control-group  ">
+                                    <label class="control-label required">Nome da Empresa</label>
+                                    <div class="controls ">
+                                        <input type="text" id="admin_company_name" name="admin_company_name" class="span12" required>
+                                    </div>
+                                </div>
+                                <div class="control-group  ">
+                                    <label class="control-label required">Remetente dos e-mails enviados para visitantes</label>
+                                    <div class="controls ">
+                                        <input type="email" id="admin_email_sender" name="admin_email_sender" class="span12" required>
+                                    </div>
+                                </div>
+                                <div class="control-group  ">
+                                    <label class="control-label required" aria-required="true">Receber Resumo Semanal via e-mail</label>
+                                    <div class="controls ">
+                                        <select id="admin_receive_report_mail" name="admin_receive_report_mail" aria-invalid="false" class="valid" required>
+                                            <option value="1">Sim</option>
+                                            <option value="0">Não</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- // Row END -->
+
+                    </div>
+                </div>
+
+                        <div id="smart_location_default_box" style="display: none;">
+                            <div class="widget-head">
+                                <h4 class="heading">Smart Location</h4>
+                            </div>
+                            <div class="widget-body">
+                                <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                                    <div class="span6">
+                                        <div class="control-group">
+                                            <label class="control-label" for="smart_location_accountname">accountName</label>
+                                            <div class="controls"><input type="text" id="smart_location_accountname" name="smart_location_accountname" value="{{ smartLocationEntity.accountName }}" class="span12"></div>
+                                        </div>
+                                        <div class="control-group">
+                                            <label class="control-label" for="smart_location_customerid">customerId</label>
+                                            <div class="controls"><input type="text" id="smart_location_customerid" name="smart_location_customerid" value="{{ smartLocationEntity.customerId }}" class="span12"></div>
+                                        </div>
+                                        <div class="control-group">
+                                            <label class="control-label" for="smart_location_password">password</label>
+                                            <div class="controls"><input type="password" id="smart_location_password" name="smart_location_password" value="{{ smartLocationEntity.password }}" class="span12"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                <!-- Form actions -->
+                <div class="form-actions right">
+
+                    <a href="{{ app.request.headers.get('referer') }}">
+                        <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                            Cancelar
+                        </button>
+                    </a>
+                    {{ form_widget(form.submit) }}
+                </div>
+                <!-- // Form actions END -->
+                <!-- // Widget END -->
+                {{ form_end(form) }}
+            </div>
+            <!-- // Tab content END -->
+        </div>
+    </div>
+    <!-- // Widget END -->
+    </div>
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascript %}
+
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            dojo.query("#wideti_panelbundle_client_module").chosen({batch_select:true});
+        });
+
+        $("#wideti_panelbundle_client_module").change(function() {
+            modules = []
+            $( "#wideti_panelbundle_client_module option:selected" ).each(function() {
+                modules.push($( this ).text())
+            });
+            if(modules.includes("White Label")){
+                $("#client_email_sender_default_box").show();
+            }else {
+                $("#client_email_sender_default_box").hide();
+            }
+            if(modules.includes("Smart Location")){
+                $("#smart_location_default_box").show();
+            }else {
+                $("#smart_location_default_box").hide();
+            }
+        });
+
+        $( "#wideti_panelbundle_client_pocEndDate" ).datepicker({
+            dateFormat: 'dd/mm/yy',
+            dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+            dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+            dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+            monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+            monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+            nextText: 'Próximo',
+            prevText: 'Anterior',
+            changeMonth: false,
+            numberOfMonths: 1
+        }).datepicker( "option", "maxDate", $('#maxDate').text() );
+
+        $(function() {
+            $.mask.definitions['~'] = "[+-]";
+
+            $('#wideti_panelbundle_client_zipCode').focusout(function(){
+                var element;
+                element = $(this);
+                element.unmask();
+                element.mask("99999-999");
+            }).trigger('focusout');
+        });
+
+        $('#wideti_panelbundle_client_smsCost').focusout(function(){
+            var element;
+            element = $(this);
+            element.unmask();
+            element.mask("9,99");
+        }).trigger('focusout');
+
+    </script>
+
+{% endblock %}

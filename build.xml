@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="wspot" default="build">
+
+    <!-- ##  BUILD ## -->
+    <target name="build"
+            depends="phpcpd"
+            description=""/>
+
+    <!-- PHPCPD: Duplicated Code -->
+    <target name="phpcpd"
+            description="Find duplicate code using PHPCPD and log result in XML format. Intended for usage within a continuous integration environment.">
+        <exec executable="phpcpd">
+            <arg value="--log-pmd" />
+            <arg path="${basedir}/build/logs/pmd-cpd.xml" />
+            <arg path="${basedir}/src" />
+        </exec>
+    </target>
+
+</project>

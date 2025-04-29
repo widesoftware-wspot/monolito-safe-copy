@@ -1,0 +1,143 @@
+services:
+# API Client Service
+  wspot.api.controller.rdstation:
+    class: Wideti\ApiBundle\Controller\RDStationController
+    arguments: ["@core.service.configuration", "@wspot.helper.client"]
+    calls:
+      - [ setClientService, ["@core.service.client"] ]
+      - [ setRouter, ["@router"] ]
+      - [ setLogger, ["@logger"] ]
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+      - [ setUserService, ["@core.service.user"] ]
+      - [ setRdStationService, ["@core.service.rdstation"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setEmailConfigService, ["@core.service.send_nas_configuration"] ]
+
+  wspot.api.controller.guests:
+    class: Wideti\ApiBundle\Controller\GuestApiController
+    arguments:
+      - "@validator"
+      - "@service_container"
+      - "@wspot.api.service.guests"
+      - "@core.service.auditor"
+      - "@doctrine.orm.entity_manager"
+    calls:
+      - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+      - [ setGuestService, ["@core.service.guest"] ]
+      - [ setPaginator, ["@knp_paginator"] ]
+      - [ setApiValidator, ["@core.service.guest_api_validator"] ]
+      - [ setClientService, ["@core.service.client"] ]
+
+  wspot.api.controller.guests.v2:
+    class: Wideti\ApiBundle\Controller\GuestApiControllerV2
+    arguments:
+      - "@validator"
+      - "@service_container"
+      - "@wspot.api.service.guests"
+      - "@core.service.auditor"
+      - "@doctrine.orm.entity_manager"
+    calls:
+      - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+      - [ setGuestService, ["@core.service.guest"] ]
+      - [ setPaginator, ["@knp_paginator"] ]
+      - [ setApiValidator, ["@core.service.guest_api_validator"] ]
+      - [ setClientService, ["@core.service.client"] ]
+
+  wspot.api.controller.access_points:
+    class: Wideti\ApiBundle\Controller\AccessPointsController
+    arguments: ['@core.service.select_client_request','@core.service.accesspoints', '@logger', '@core.service.vendor', '@core.service.access_point_api_validator', '@core.service.accesspointsgroups', '@core.service.access_point_build_entity_dto']
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  wspot.api.controller.access_point_groups:
+    class: Wideti\ApiBundle\Controller\AccessPointGroupsController
+    arguments: ["@core.service.select_client_request", "@core.service.accesspointsgroups", "@logger"]
+
+  wspot.api.controller.internal_access_point_groups:
+    class: Wideti\ApiBundle\Controller\InternalAccessPointGroupsController
+    arguments: ["@core.service.select_client_request", "@core.service.accesspointsgroups", "@logger", "@core.service.client"]
+
+  wspot.api.controller.internal_access_points:
+    class: Wideti\ApiBundle\Controller\InternalAccessPointController
+    arguments: ['@core.service.select_client_domain','@core.service.accesspoints', '@logger', '@core.service.vendor', '@core.service.access_point_api_validator', '@core.service.accesspointsgroups', '@core.service.access_point_build_entity_dto', "@core.service.client"]
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  wspot.api.controller.internal_clients:
+    class: Wideti\ApiBundle\Controller\InternalClientsController
+    arguments:
+      - "@core.service.white_label"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setClientService, ["@core.service.client"] ]
+
+  wspot.api.controller.internal_consent:
+    class: Wideti\ApiBundle\Controller\InternalConsentController
+    arguments:
+      - "@doctrine_mongodb.odm.default_document_manager"
+      - "@core.service.get_consent_gateway"
+      - "@core.service.revoke_signed_consent_gateway"
+      - "@core.service.legal_base_manager_service"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  wspot.api.controller.internal_sms:
+    class: Wideti\ApiBundle\Controller\InternalSmsController
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@core.service.select_client_domain'
+      - '@logger'
+      - '@core.service.sms_history'
+
+  wspot.api.controller.internal_campaign_video_url:
+    class: Wideti\ApiBundle\Controller\InternalCampaignVideoUrlController
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@core.service.campaign'
+      - '@logger'
+
+  wspot.api.controller.client:
+    class: Wideti\ApiBundle\Controller\ClientsController
+    arguments: ["@wspot.helper.client", "@core.service.client", "@wspot.helper.controller", '@core.service.client_logs', '@core.service.erp', '@core.service.client_status', '@logger', '@core.service.accesspoints', "%ap_validate_auth_token%"]
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  wspot.api.controller.accounting:
+    class: Wideti\ApiBundle\Controller\AccountingController
+    arguments:
+      - "@core.service.select_client_request"
+      - "@core.service.accounting_stream"
+      - "@logger"
+      - "@core.service.get_accounting_data"
+
+  wspot.api.controller.segmentation:
+    class: Wideti\ApiBundle\Controller\SegmentationController
+    arguments:
+      - "@core.service.select_client_request"
+      - "@core.service.segmentation_api_validator"
+      - "@segmentation.preview"
+      - "@segmentation.create"
+      - "@segmentation.edit"
+      - "@segmentation.list"
+      - "@segmentation.delete"
+      - "@segmentation.default_schema"
+      - "@segmentation.export"
+      - "@logger"
+      - "@core.service.client"
+      - "@core.service.auditor"
+
+  wspot.api.service.guests:
+    class: Wideti\ApiBundle\Service\GuestApiService
+    arguments:
+      - "@core.service.sms"
+      - "@core.service.configuration"
+      - "@core.service.custom_fields"
+
+## Security Authenticator
+  wspot.api.guard.token:
+    class: Wideti\ApiBundle\Security\TokenAPIGuard
+    arguments: ["@service_container", "@doctrine.orm.entity_manager"]
+    calls:
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]

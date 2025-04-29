@@ -1,0 +1,88 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;">
+            <div class="box-content">
+                <h3>{{ 'wspot.access_code.title'|trans }}</h3>
+
+                {% set query = app.request.query.all %}
+
+                <div class="content-center">
+                    <p>{{ 'wspot.access_code.message_1'|trans }} <b>{{ 'wspot.default.guest'|trans }}</b>.</p>
+                    <p>{{ 'wspot.access_code.message_2'|trans }}</p>
+                </div>
+
+                {% form_theme form 'FrontendBundle:Form:frontendCustomForm.html.twig' %}
+                {{ form_start(form, {attr: {novalidate: 'novalidate', 'id': 'accessCodeForm'}}) }}
+                {{ form_row(form.code, { 'attr': {'placeholder': 'wspot.access_code.placeholder'|trans } }) }}
+                <p id="codeValidate" class="pull-left"></p>
+
+                {% if invalidMessage %}
+                    <span class="errorBox">{{ invalidMessage }}</span><br>
+                {% endif %}
+
+                <a style="margin-left: 0px; width: 100% !important; position: relative; display: inline-block;" id="loaderBtnSignUp" class="btnLoader">
+                    <img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" />
+                </a>
+
+                {{ form_row(form.submit) }}
+                {{ form_end(form) }}
+
+                {% if (enableFreeAccess == true) %}
+                    <div class="content-center">
+                        <p>{{ 'wspot.access_code.free_access_message'|trans }} <b>{{ freeAccessTime|confirmationTimeFormat }}</b>.</p>
+                    </div>
+
+                    <form action="{{ path('frontend_two_factor_auth_accesscode_free_access', { 'step' : step }) }}" method="POST">
+                        <button type="submit" id="" style="margin-top: 10px;">{{ 'wspot.access_code.free_access_button'|trans }}</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ asset(assets_path ~'/js/jquery.min.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery.validate.min.js')}}"></script>
+
+    <script type="text/javascript">
+
+        $('#accessCode_code').on('focusout', function(e){
+            var regexPattern = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ \b0123456789]+$/;
+            if (!regexPattern.test($('#accessCode_code').val()) && $('#accessCode_code').val() != '') {
+                $('#codeValidate').html('Caracteres especiais não são aceitos');
+                $('#codeValidate').addClass('validateLabel');
+                submitButtonControl(true, $(this));
+            } else {
+                $('#codeValidate').removeClass('validateLabel');
+                $('#codeValidate').empty();
+                submitButtonControl(false, $(this));
+            }
+        });
+
+        jQuery(document).ready(function(){
+            jQuery('#loaderBtnSignUp').hide();
+
+            $("#accessCodeForm").validate({
+                rules: {
+                    'accessCode[code]': {
+                        required: true
+                    }
+                },
+                messages: {
+                    'accessCode[code]': {
+                        required: "{{ 'wspot.signup_page.field_required'|trans }}"
+                    }
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                    jQuery('.btnAccessCode').hide();
+                    jQuery('#loaderBtnSignUp').show();
+                }
+            });
+        })
+
+    </script>
+{% endblock %}

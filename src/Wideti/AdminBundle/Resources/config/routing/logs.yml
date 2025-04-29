@@ -1,0 +1,4 @@
+# Correção paliativa para remover acesso ao historico de alterações: WSPOTNEW-4869
+#logs_list:
+#    path: /{page}
+#    defaults: { _controller: wspot.admin.controller.logs:indexAction, page: 1 }

@@ -1,0 +1,188 @@
+section.container div.boxes form input[type="text"],
+section.container div.boxes form input[type="email"],
+section.container div.boxes form input[type="tel"],
+section.container div.boxes form input[type="password"],
+section.container div.boxes form button,
+section.forgetpass div.form input,
+section.forgetpass div.form button,
+section.forgetpass div.form button.btnCancelar{
+    color: #9f9f9f;
+}
+
+section.container div.boxes#loginBox
+section.container div.boxes#loginBox,
+section.container div.boxes#checkinBox{
+    background-color: #000;
+}
+
+section.container div.boxes#signUpBox{
+    background-color: #9f9f9f;
+}
+
+section.container div.boxes#signUpBox form button{
+    background-color: #6f6f6f;
+}
+
+section.container div.boxes#signUpBox form input{
+    color: #9f9f9f;
+}
+
+/* WebKit browsers */
+section.container div.boxes#loginBox form input::-webkit-input-placeholder,
+section.container div.boxes#checkinBox form input::-webkit-input-placeholder{
+    color: #000;
+}
+
+section.container div.boxes#signUpBox form input::-webkit-input-placeholder{
+    color: #9f9f9f;
+}
+
+/* Mozilla Firefox 19+ */
+section.container div.boxes#loginBox form input::-moz-placeholder,
+section.container div.boxes#checkinBox form input::-moz-placeholder{
+    color: #000;
+}
+
+section.container div.boxes#signUpBox form input::-moz-placeholder{
+    color: #9f9f9f;
+}
+
+/* Internet Explorer 10+ */
+section.container div.boxes#signUpBox form input:-ms-input-placeholder {
+    color: #9f9f9f;
+}
+section.container div.boxes#loginBox form input::-ms-input-placeholder,
+section.container div.boxes#checkinBox form input::-ms-input-placeholder{
+    color: #000;
+}
+
+section.forgetpass{
+    background-color: #000;
+}
+
+section.forgetpass div.form button.btnCancelar{
+    color: #B26501;
+}
+
+section.container div.boxes form button, section.forgetpass div.form button, section.forgetpass div.form a.btnCancelar{
+    background-color: black;
+}
+
+section.container div#languageBox, section.container div#languageBox a{
+    color: #000000;
+}
+
+a#forgotPassword,
+a#forgotEmail{
+    color: #3d3d3d;
+}
+
+section.container div.boxes#loginBox{
+    background-color: #ec213a;
+}
+section.container div.boxes#signUpBox{
+    background-color: #9f9f9f;
+}
+section.container div#signUpBox.boxes form input{
+    color: #9f9f9f;
+}
+section.container div.boxes form button, section.forgetpass div.form button, section.forgetpass div.form a.btnCancelar{
+    background-color: #b26501;
+    color: #ffffff;
+}
+section.container div#signUpBox.boxes form button,
+section.container div#registrationBox.boxes form button {
+    background-color: #6f6f6f;
+    height: 40px;
+}
+section.forgetpass{
+    background-color: #ec213a;
+}
+
+input#confirmation_code{
+    margin-top: 20px;
+}
+
+input#signUp_documento,
+input#signUp_telefone{
+    color: #9f9f9f !important;
+}
+
+.container.terms{
+    padding: 0 30px 30px;
+}
+
+.content-terms{
+    opacity: 1;
+}
+
+select[class*="span"] {
+    width: 100%;
+    border: none;
+    height: 35px;
+    margin-bottom: 7px;
+    font-size: 15px;
+    color: #9f9f9f;
+    padding: 0 3px;
+}
+
+.authorize_email {
+    font-size: 11.4px;
+    position: relative;
+    display: inline-block;
+}
+
+.authorize_email input {
+    position: relative;
+    bottom: 2px;
+}
+
+.termsOfUse {
+    font-size: 11.4px;
+    position: relative;
+    display: inline-block;
+}
+
+.termsOfUse input {
+    position: relative;
+    bottom: 2px;
+}
+
+.iti-mobile .intl-tel-input.iti-container {
+    top: 290px !important;
+    bottom: 30px !important;
+    left: 45px !important;
+    right: 45px !important;
+    position: absolute !important;
+}
+
+@media (max-width: 500px) {
+    .intl-tel-input .country-list {
+        width: 240px !important;
+    }
+}
+
+.intl-tel-input {
+    /*position: relative !important;*/
+    display: block !important;
+    margin-bottom: 6px !important;
+    color: #9f9f9f !important;
+}
+
+.intl-tel-input .country-list {
+    max-width: 228px !important;
+    border: none !important;
+}
+
+.changeData .span12.numbers {
+    padding-left: 50px !important;
+}
+
+.changeData .intl-tel-input .country-list {
+    max-width: 330px !important;
+}
+
+
+textarea, input[type="text"], input[type="password"], input[type="datetime"], input[type="datetime-local"], input[type="date"], input[type="month"], input[type="time"], input[type="week"], input[type="number"], input[type="email"], input[type="url"], input[type="search"], input[type="tel"], input[type="color"], .uneditable-input {
+    box-shadow: none !important;
+}

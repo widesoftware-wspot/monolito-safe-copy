@@ -1,0 +1,254 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/fancybox/jquery.fancybox-1.3.4.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block dataTitle %}
+    Pontos de acesso
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('access_points_new')}}" style="float: right; margin-top: 2px;"
+       class="btn btn-primary btn-icon glyphicons circle_plus">
+        <i></i>Cadastrar</a>
+{% endblock %}
+
+{%  block filter %}
+    {{ form_start(form, {'attr':{'class':'form-inline '} } ) }}
+    {{ form_row(form.value) }}
+    {{ form_row(form.status) }}
+
+    {% if btnCancel %}
+        <div>
+            <a title="Cancelar Filtro" href="{{ path('access_points') }}" class="btnSearchCancel glyphicons circle_remove"><i></i></a>
+        </div>
+    {% endif %}
+
+    {{ form_row(form.filtrar) }}
+    {{ form_end(form) }}
+{% endblock %}
+
+{% block messagebar %}
+    <h4 style="color: #ce4844;">Total de pontos de acesso contratados: {{ count_contracted_aps }}</h4>
+    <h5 style="color: #1b809e;">Total de pontos de acesso ativos: {{ count_active_aps }}</h5>
+    <h5 style="color: #1b809e;">Total de pontos de acesso inativos: {{ count_inactive_aps }}</h5>
+
+
+{% endblock %}
+
+{% block thead %}
+    <th class="center">Nome</th>
+    <th class="center">Grupo</th>
+    <th class="center" style="width: 150px;">Fabricante</th>
+    <th class="center">Identificador</th>
+    <th class="center">
+        Template
+        <span style="color: #4d4d4d; font-weight: lighter; font-size: 0.9em">
+            <i class="icon-large icon-question-sign icon-white" tabindex="0" data-placement="bottom" role="button" data-toggle="popover"
+               data-trigger="focus" data-html="true" data-content="Clique no template para saber como seu visitante irá visualizar sua página quando acessar pelo ponto de acesso selecionado."
+               data-original-title="" title=""></i>
+        </span>
+    </th>
+    <th class="center" style="width: 50px;">Status</th>
+    <th class="center">Verificação
+        <span style="color: #4d4d4d; font-weight: lighter; font-size: 0.9em">
+            <i class="icon-large icon-question-sign icon-white" tabindex="0" data-placement="bottom" role="button" data-toggle="popover"
+                data-trigger="focus" data-html="true" data-content="Assim que for realizado o primeiro acesso  de um visitante através de um ponto de acesso, realiza uma verificação nos dados enviados pelo seu equipamento.  Caso estejam corretos, esse ponto de acesso se torna Verificado.  Caso contrário, ele ficará  pendente e nenhum  visitante conseguirá acesso através do  mesmo."
+               data-original-title="" title="" ></i>
+        </span>
+    </th>
+    <th class="center" style="width: 130px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr id="{{ entity.id }}" class="gradeX">
+            <td class="center">{{ entity.friendlyName }}</td>
+            <td class="center">
+                <a href="{{ path('configurations_edit',{'groupId': entity.group.id}) }}">{{ entity.group.groupName }}</a>
+            </td>
+            <td class="center">
+                {% if entity.vendor %}
+                    {{ entity.vendor|capitalize }}
+                {% else %}
+                    N/I
+                {% endif %}
+            </td>
+            <td class="center">
+                {% if entity.identifier %}
+                    {{ entity.identifier }}
+                {% else %}
+                    N/I
+                {% endif %}
+            </td>
+            <td class="center">
+                {% if entity.template %}
+                    <a href="{{ path('frontend_preview',{'ap': entity.identifier}) }}" target="_blank">{{ entity.template.name }}</a>
+                {% else %}
+                    <a href="{{ path('frontend_preview',{'ap': entity.identifier}) }}" target="_blank">N/I</a>
+                {% endif %}
+            </td>
+            <td class="center">{{ entity.status|access_point_status }}</td>
+            <td class="center">
+                {% if entity.fullVerified %}
+                    <span style="color: #00aa00">Verificado</span> <i class="icon-large icon-question-sign ap-verified"></i>
+                {% else %}
+                    <span style="color: #c79300">Pendente</span> <i class="icon-large icon-question-sign ap-pending"></i>
+                {% endif %}
+            </td>
+            <td class="center">
+                <a onclick="openPreview('{{ entity.identifier }}')" style="cursor: pointer;" class="btn-action glyphicons play btn-success" title="Preview"><i></i></a>
+                {% if (sitesBlockingIsActive and entity.vendor|allowedModuleByVendor('sites_blocking')) %}
+                    <a href="{{ path('access_points_sites_blocking', { 'id': entity.id }) }}" class="btn-action glyphicons ban btn-danger" title="Bloqueio de Sites"><i></i></a>
+                {% endif %}
+                {% if (monitoringIsActive and entity.vendor|allowedModuleByVendor('access_point_monitoring')) %}
+                    <a href="{{ path('access_points_monitoring', { 'id': entity.id }) }}" class="btn-action glyphicons charts btn-success" title="Monitoramento"><i></i></a>
+                {% endif %}
+                {% if entity.vendor %}
+                    <a href="{{ path('access_points_manual', { 'vendor': entity.vendor }) }}" target="_blank" class="btn-action glyphicons file btn-info" title="Manual"><i></i></a>
+                {% endif %}
+                <a href="{{ path('access_points_edit', { 'id': entity.id }) }}" class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+                <a href="#" class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+            </td>
+        </tr>
+    {% else %}
+        <td colspan="3">Nenhum ponto de acesso cadastrado</td>
+    {% endfor %}
+
+    <div class="tab-pane modal fade" id="accessPointModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cadastro de Pontos de acesso - Limite atingido</h4>
+                </div>
+                <div class="modal-body">
+                    A quantidade de Pontos de acesso cadastrados atingiu o total contratado. Por favor, entre em contato com o administrador.
+                </div>
+                <div class="modal-footer">
+                    <button id="contractAccept" type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block pagination %}
+    {% include 'AdminBundle::pagination.html.twig' with {'pagination': pagination, 'route': 'access_points'} %}
+{% endblock %}
+
+{% block bottomMenu %}
+    <a href="{{ path('access_points_import')}}" style="float: right; margin-top: 4px;"
+       class="btn btn-success btn-icon glyphicons file_import">
+        <i></i>Importar Lista</a>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script>
+        $(".ap-verified").on("click", function() {
+            bootbox.alert("Configurações foram verificadas com sucesso!");
+        });
+        $(".ap-pending").on("click", function() {
+            bootbox.alert("O status pendente significa que seu ponto de acesso foi cadastrado porém não obteve nenhum acesso. Com isso não conseguimos validar as configurações. Assim que for contabilizado o primeiro acesso neste ponto, o status mudará para verificado.");
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result) {
+                    if (result) {
+                        var route = Routing.generate('access_points_delete', { id: id });
+
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                if (response.error != 'Exclusão de Access Point não permitida.') {
+                                    parent.remove();
+                                }
+
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.error
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        function generateFakeMac() {
+            const firstByte = (0x02 + (Math.floor(Math.random() * 4) * 4).toString(16)).padStart(2, '0').toUpperCase();
+            const mac = firstByte + ':' + Array.from({ length: 5 }, () => 
+                Math.floor(Math.random() * 256).toString(16).padStart(2, '0').toUpperCase()
+            ).join(':');
+            return mac;
+        }
+        function openPreview(macAddress) {
+            let url_preview;
+            let otherParams = '&preview=1&link-login-only=http://wificheck.com.br&error=&host-ip=0.0.0.0&ip=0.0.0.0&login-by=teste&server-address=0.0.0.0&server-name=mikrotik&session-id=&link-orig=http://0.0.0.0/teste';
+            if (location.origin.includes('https://dev.wspot.com.br')) {
+                url_preview = `https://dev.wspot.com.br/app_dev.php/mikrotik?identity=${macAddress}&mac=${generateFakeMac()}${otherParams}`;
+            } else {
+                url_preview = `${location.origin}/mikrotik?identity=${macAddress}&mac=${generateFakeMac()}${otherParams}`;
+            }
+            copy(url_preview);            
+            $.gritter.add({
+                title: 'Aviso!',
+                text: 'Link copiado'
+            });
+            window.open(url_preview, '_blank');
+        }
+
+        function copy(textToCopy) {
+            // Função de fallback para navegadores mais antigos
+            function fallbackCopy(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';  // Evita rolagem indesejada
+                document.body.appendChild(textarea);
+                textarea.select();
+                
+                try {
+                    const successful = document.execCommand('copy');
+                    console.log(successful ? 'Texto copiado!' : 'Falha ao copiar texto');
+                } catch (err) {
+                    console.error('Erro ao copiar texto:', err);
+                }
+                
+                document.body.removeChild(textarea);
+            }
+
+            // Tenta usar a API Clipboard moderna
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(textToCopy)
+                    .then(() => {
+                        console.log('Texto copiado para a área de transferência!');
+                    })
+                    .catch(err => {
+                        console.error('Erro ao usar API Clipboard:', err);
+                        fallbackCopy(textToCopy);
+                    });
+            } else {
+                // Fallback para execCommand
+                fallbackCopy(textToCopy);
+            }
+        }
+
+        
+
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+{% endblock %}

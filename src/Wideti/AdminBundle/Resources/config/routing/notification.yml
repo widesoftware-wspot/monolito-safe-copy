@@ -1,0 +1,6 @@
+notification_wrong_ap_config:
+    path:  /wrong-ap-configuration
+    defaults: { _controller: wspot.admin.controller.notification:wrongApConfigNotificationAction}
+    requirements: { _format: (xml|json), methods: POST }
+    options:
+      expose: true

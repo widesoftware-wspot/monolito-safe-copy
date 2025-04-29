@@ -1,0 +1,366 @@
+facebook_auth:
+    resource: "@FrontendBundle/Resources/config/routing/facebook_auth.yml"
+
+
+frontend_pre_login:
+    path:  /{nas}
+    defaults: { _controller: wspot.frontend.controller.frontend:preLoginAction, nas: null}
+    requirements:
+      nas: ruckus_standalone|ruckus|ruckus_cloud|mikrotik|winco|aruba|cisco|cisco_catalyst|cisco_meraki_cloud|openwrt|aerohive|coovachilli|intelbras|plenatech|fortinet|pfsense|enterasys|zyxel|motorola|xirrus|fake|cambium|unifi|teltonika|edgecore|tp_link|huawei|tp_link_v4|tp_link_v5|tp_link_cloud|tp_link_v4_cloud|tp_link_v5_cloud|openwifi|unifinew|grandstream|draytek|watchguard|intelbras_future|ruijie|extreme_cloud_xiq|aruba_v2
+
+frontend_two_factor_auth_hapvida:
+    path:  /two-factor-auth/{_locale}
+    defaults: { _controller: wspot.frontend.controller.two_factor_auth:hapVidaAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_two_factor_auth_verify:
+    path: /two-factor-auth/verify
+    defaults: { _controller: wspot.frontend.controller.two_factor_auth:verifyFactorAction }
+    methods: [GET]
+    options:
+        expose: true
+
+frontend_two_factor_auth_accesscode:
+    path:  /two-factor-auth-access-code/{_locale}
+    defaults: { _controller: wspot.frontend.controller.two_factor_auth:accessCodeAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_two_factor_auth_accesscode_free_access:
+    path:  /two-factor-auth-access-code-free-access/{_locale}
+    defaults: { _controller: wspot.frontend.controller.two_factor_auth:accessCodeFreeAccess, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_index:
+    path:  /home/{_locale}
+    defaults: { _controller: wspot.frontend.controller.frontend:indexAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+    options:
+        expose: true
+
+frontend_preview_admin:
+    path:  /preview-admin/{template_id}/{_locale}
+    defaults: { _controller: wspot.frontend.controller.frontend:previewAdminAction, template_id:1, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_preview:
+    path:  /preview/{_locale}
+    defaults: { _controller: wspot.frontend.controller.frontend:previewAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_signin_action:
+    path: /signin/{_locale}
+    defaults: { _controller: wspot.frontend.controller.auth:signInAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_signup_action:
+    path: /signup/{_locale}
+    defaults: { _controller: wspot.frontend.controller.auth:signUpAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_signup_confirmation_action:
+    path: /signup/confirmation/{_locale}
+    defaults: { _controller: wspot.frontend.controller.auth:signUpConfirmationAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_start_navigation:
+    path: /start-navigation/
+    defaults: { _controller: wspot.frontend.controller.frontend:startNavigationAction }
+    methods: [POST, GET]
+
+frontend_forget_password:
+    path: /forget-password/{_locale}
+    defaults: { _controller: wspot.frontend.controller.guestprofile:forgetPasswordAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_forget_email:
+    path: /forget-email/{_locale}
+    defaults: { _controller: wspot.frontend.controller.guestprofile:forgetEmailAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_forget_email_check_guest:
+    path:  /forget-email-check-guest
+    defaults: { _controller: wspot.frontend.controller.guestprofile:checkGuestAction }
+    options:
+        expose: true
+
+frontend_recovery_password:
+    path: /recovery-password/{_locale}
+    defaults: { _controller: wspot.frontend.controller.guestprofile:recoveryPasswordAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_guest_confirmation:
+    path:  /confirmation/{guest}/{_locale}
+    defaults: { _controller: wspot.frontend.controller.auth:guestConfirmation, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+complete_registration:
+    path:  /finalizar_cadastro/{_locale}/{authorized_checkin}
+    defaults: { _controller: wspot.frontend.controller.auth:completeRegistrationAction, _locale:pt_br, authorized_checkin:false }
+    requirements:
+      _locale: en|pt_br|es
+
+complete_registration_oauth:
+  path:  /complete_registration/{_locale}
+  defaults: { _controller: wspot.frontend.controller.auth:completeRegistrationOAuthAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+
+complete_registration_integrate:
+  path:  /complete_integration/{_locale}
+  defaults: { _controller: wspot.frontend.controller.auth:completeRegistrationIntegrateAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+
+complete_registration_confirmation:
+    path:  /finalizar_cadastro/confirmation/{guest}/{socialType}/{_locale}
+    defaults: { _controller: wspot.frontend.controller.auth:completeRegistrationConfirmation, _locale:pt_br }
+    options:
+      expose: true
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_confirmation:
+    path:  /confirmation/{_locale}
+    defaults: { _controller: wspot.frontend.controller.facebook:publishActions, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_terms_of_use:
+    path: /termos-de-uso/{_locale}
+    defaults: { _controller: wspot.frontend.controller.frontend:termsOfUseAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_consent_term:
+  path: /termos-de-consentimento/{_locale}
+  defaults: { _controller: wspot.frontend.controller.frontend:consentTermAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+
+frontend_active_js:
+  path: /ativar-js/{_locale}
+  defaults: { _controller: wspot.frontend.controller.frontend:activeJsAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+
+
+frontend_twitter_login:
+    path:  /twitter-login/{_locale}
+    defaults: { _controller: wspot.frontend.controller.twitter:indexAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_twitter_redirect:
+    path:  /twitter-redirect/{_locale}
+    defaults: { _controller: wspot.frontend.controller.twitter:redirectAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_twitter_callback:
+    path:  /twitter-callback/{_locale}
+    defaults: { _controller: wspot.frontend.controller.twitter:callbackAction, _locale:pt_br }
+    requirements:
+      _locale: en|pt_br|es
+
+frontend_oauth_login:
+  path:  /oauth-login/{_locale}
+  defaults: { _controller: wspot.frontend.controller.oauth:indexAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+
+frontend_oauth_callback:
+  path:  /oauth-callback
+  defaults: { _controller: wspot.frontend.controller.oauth:callbackAction}
+
+
+frontend_confirm_url:
+    path:  /confirmation/
+    defaults: { _controller: wspot.frontend.controller.auth:confirmUrlAction }
+
+frontend_edit_data:
+    path:  /editar/{_locale}
+    defaults: { _controller: wspot.frontend.controller.guestprofile:editAction, _locale:pt_br }
+    requirements:
+        _locale: en|pt_br|es
+
+frontend_email_update:
+    path:  /email-update/{_locale}
+    defaults: { _controller: wspot.frontend.controller.guestprofile:emailUpdateAction, _locale:pt_br }
+    requirements:
+        _locale: en|pt_br|es
+
+frontend_resend_confirmation:
+    path:  /resend-confirmation/{guest}/{mode}/{_locale}
+    defaults: { _controller: wspot.frontend.controller.guestprofile:resendConfirmationAction, _locale:pt_br }
+    requirements:
+        _locale: en|pt_br|es
+    options:
+        expose: true
+
+frontend_redirection_url:
+    path: /302
+    defaults: { _controller: wspot.frontend.controller.redirect:redirectAction }
+
+campaign_count_view:
+    path: /campaign_count_view/{id}/{guestMacAddress}/{accessPoint}
+    methods: [POST, GET]
+    defaults: { _controller: wspot.frontend.controller.frontend:countViewAction }
+    options:
+      expose: true
+
+campaign_count_view_post:
+    path: /campaign_count_view_post/{id}/{guestId}/{guestMacAddress}/{accessPoint}
+    methods: [POST, GET]
+    defaults: { _controller: wspot.frontend.controller.frontend:countViewPostAction }
+    options:
+      expose: true
+
+frontend_load_cities:
+    path:  /cities_load
+    defaults: { _controller: wspot.frontend.controller.frontend:loadCitiesAction }
+    options:
+        expose: true
+
+check_field_exists:
+    path:  /check_fields
+    defaults: { _controller: wspot.frontend.controller.frontend:checkFieldExists }
+    options:
+        expose: true
+
+email_validate:
+    path: /email-validate
+    defaults: { _controller: wspot.frontend.controller.email_validation:validate }
+    methods: [POST, GET]
+    options:
+        expose: true
+
+frontend_first_config_block:
+  path: /no-setup
+  defaults: { _controller: wspot.frontend.controller.first_config:blockAction }
+
+frontend_bad_parameter_ap_error:
+  path: /no-parameters
+  defaults: { _controller: wspot.frontend.controller.first_config:apBadParameterErrorAction }
+
+frontend_ap_not_registered:
+  path: /acesso-nao-permitido
+  defaults: { _controller: wspot.frontend.controller.first_config:apNotRegisteredErrorAction }
+
+frontend_register_call_to_action:
+  path: /call-to-action/{type}/{url}/{macAddress}/{apMacAddress}/{guest}/{campaign}
+  defaults: { _controller: wspot.frontend.controller.frontend:registerCallToAction }
+  methods: [POST, GET]
+  options:
+      expose: true
+
+frontend_google_oauth_sign_in:
+  path: /google-callback
+  defaults: {_controller: wspot.frontend.controller.google:googleCallback}
+  methods: [POST, GET]
+  options:
+    expose: true
+
+frontend_google_login:
+  path: /google-login
+  defaults: {_controller: wspot.frontend.controller.google:googleLogin}
+  methods: [POST, GET]
+  options:
+    expose: true
+
+linkedin_auth_login:
+  path:  /linkedin-login
+  defaults: { _controller: wspot.frontend.controller.linkedin:indexLinkedinAction}
+  methods: [POST, GET]
+  requirements:
+    _locale: en|pt_br|es
+
+linkedin_auth_callback:
+  path:  /linkedin-callback
+  defaults: { _controller: wspot.frontend.controller.linkedin:linkedinCallbackAction}
+  methods: [POST, GET]
+  requirements:
+    _locale: en|pt_br|es
+
+linkedin_complete_login:
+  path: /linkedin-complete-login/{_locale}
+  defaults: { _controller: wspot.frontend.controller.linkedin:LinkedinCompleteLogin, _locale:pt_br}
+  methods: [ POST, GET ]
+  requirements:
+    _locale: en|pt_br|es
+
+frontend_consent_sign:
+  path: /sign-consent
+  defaults: {_controller: wspot.frontend.controller.auth:signConsentAction}
+  methods: [POST, GET]
+  options:
+    expose: false
+
+
+frontend_survey_sign_in:
+  path: /survey-step
+  defaults: {_controller: wspot.frontend.controller.survey:surveyStep}
+  methods: [POST, GET]
+  options:
+    expose: true
+
+frontend_security_answer:
+  path: /security-answer/{_locale}
+  defaults: {_controller: wspot.frontend.controller.secretanswer:createAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+  methods: [POST, GET]
+
+frontend_progressive_form:
+  path: /complete-form/{_locale}
+  defaults: {_controller: wspot.frontend.controller.progressiveform:indexAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+  methods: [POST, GET]
+
+frontend_authorize_error_url:
+  path:  /authorize-error-url/{_locale}
+  defaults: { _controller: wspot.frontend.controller.frontend:authorizeErrorUrlAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+  methods: [POST, GET]
+
+frontend_preview_done:
+  path:  /preview-done/{_locale}
+  defaults: { _controller: wspot.frontend.controller.frontend:previewDoneAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+  methods: [POST, GET]
+
+frontend_hubsoft_auth:
+  path: /hubsoft-auth/{_locale}
+  defaults: {_controller: wspot.frontend.controller.hubsoft:authAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+
+frontend_Ixc_auth:
+  path: /Ixc-auth/{_locale}
+  defaults: {_controller: wspot.frontend.controller.Ixc:authAction, _locale:pt_br }
+  requirements:
+    _locale: en|pt_br|es
+
+frontend_get_address:
+  path: /get-address/{cep}/{_locale}
+  defaults: {_controller: wspot.frontend.controller.frontend:getAddressAction, _locale:pt_br }
+  methods: [GET]
+  requirements:
+    _locale: en|pt_br|es
+  options:
+    expose: true

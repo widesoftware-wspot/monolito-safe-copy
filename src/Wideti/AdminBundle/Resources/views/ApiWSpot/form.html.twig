@@ -1,0 +1,141 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('bundles/admin/frontend/css/tokenresources.css') }}">
+{% endblock %}
+
+{% block content %}
+    {% set host = app.request.httpHost %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Integração via API - Gerenciamento de Tokens'} %}
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>
+                            {% if app.request.attributes.get('_route') == 'api_token_new' %}
+                                Novo
+                            {% else %}
+                                Editar
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="widget-body">
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+                <div class="widget-body">
+                    {{ form_errors(form) }}
+
+                    <div style="display: flex;">
+                        <div style="padding: 0.5rem;">
+                            {{ form_row(form.name) }}
+                            {{ form_row(form.permissionType) }}
+                            <div class="control-group">
+                                <label class="control-label required" for="wspot_api_token_name" aria-required="true">Recursos que deseja acessar</label>
+                                <div class="controls" id="resources-checkboxes">
+                                    {% for key,value in resourceNames %}
+                                        {% if value !='segmentation' %}
+                                            {% if value in resourceNamesChecked %}
+                                                <label class="container-checkbox">{{ key }}
+                                                    <input type="checkbox" value="{{ value }}" name="resourceNames[]" checked/>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            {% else %}
+                                                <label class="container-checkbox">{{ key }}
+                                                    <input type="checkbox" value="{{ value }}" name="resourceNames[]" />
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            {% endif %}
+                                        {% elseif host == "wideti.wspot.com.br" or host == "wideti.mambowifi.com" %}
+                                            {% if value in resourceNamesChecked %}
+                                                <label class="container-checkbox">{{ key }}
+                                                    <input type="checkbox" value="{{ value }}" name="resourceNames[]" checked/>
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            {% else %}
+                                                <label class="container-checkbox">{{ key }}
+                                                    <input type="checkbox" value="{{ value }}" name="resourceNames[]" />
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    <span id="error-msg-checkbox" hidden><p class="error help-block email-error-msg"><span class="label label-important email-error-msg">Campo obrigatório</span></p></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="padding: 0.5rem; flex: 1">
+                            <p><b>Permissões:</b></p>
+                            <p>- <b>Leitura</b>: possui permissão apenas para executar o método <b>GET</b></p>
+                            <p>- <b>Escrita</b>: possui permissão para executar todos os métodos <b>(GET, POST, PUT e DELETE)</b></p>
+                            <br/>
+                            {% if client.whiteLabel == false %}
+                            <p><b>Para maiores informações sobre a API, leia a documentação clicando </b> <a href={{ path('api_docs')}} target="_blank">Aqui</a></p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <hr class="separator">
+
+                    <div class="row-fluid">
+                        <div class="span12 alert alert-yellow">
+                            {% if consent.hasError %}
+                                {% if client.whiteLabel %}
+                                    <p>Ao usar os dados da API de <b>Visitantes</b> você está de acordo com os items do seu termo de consentimento.</p>
+                                {% else %}
+                                    <p>Ao usar os dados da API de <b>Visitantes</b> do Mambo WiFi você está de acordo com os items do seu termo de consentimento.</p>
+                                {% endif %}
+                            {% else %}
+                                {% if client.whiteLabel %}
+                                    <p>Ao usar os dados da API de <b>Visitantes</b> você está de acordo com as finalidades de uso abaixo:</p>
+                                {% else %}
+                                    <p>Ao usar os dados da API de <b>Visitantes</b> do Mambo WiFi você está de acordo com as finalidades de uso abaixo:</p>
+                                {% endif %}
+                                <ul>
+                                    {% for condition in consent.conditions %}
+                                        <li>{{ condition.description }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Form actions -->
+                    <div class="form-actions right">
+                        <a href="{{ path('api_token') }}">
+                            <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                Cancelar
+                            </button>
+                        </a>
+                        {{ form_widget(form.submit) }}
+                    </div>
+                </div>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $('#wspot_api_token_submit').on('click', function(e){
+            var valid = $("[name='resourceNames[]']").is(":checked");
+            if(!valid) {
+                $('#error-msg-checkbox').show();
+                e.preventDefault();
+            } else {
+                $('#error-msg-checkbox').hide();
+            }
+        });
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}
+

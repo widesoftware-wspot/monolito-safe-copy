@@ -1,0 +1,28 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Erro ao encontrar base jurídica'} %}
+    <div class="innerLR">
+
+        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+            <div class="row-fluid" style="margin-bottom: 30px;">
+                <div class="span6">
+                    <div class="alert alert-primary">
+                        <h4 class="">Você não possui nenhuma base jurídica cadastrada</h4>
+                        <strong>Atenção: </strong> Você não possui nenhuma base jurídica cadastrada. É necessário cadastrar uma para prosseguir. Clique
+                        <a href="{{ path('legal_base_manager') }}">aqui</a> ou entre em contato com o suporte.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

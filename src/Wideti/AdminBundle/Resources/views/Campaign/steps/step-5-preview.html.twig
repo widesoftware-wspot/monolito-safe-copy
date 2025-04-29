@@ -1,0 +1,255 @@
+<html>
+<head>
+    <title>Campanha preview</title>
+    <link href="{{ asset('bundles/admin/frontend/js/previewer/previewer.min.css')}}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/css/campaign.css')}}" type="text/css" rel="stylesheet" />
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/previewer/previewer.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.backstretch.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.bgluminance.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot.campaign.preview.call-to-action.button.js')}}"></script>
+
+    <style>
+        {% if callToAction is not null and callToAction.status == 1 %}
+            @media only screen and (orientation: landscape ) {
+                #campaign {
+                    align-items: {{ callToAction.landscapeButtonVerticalAlign }};
+                    justify-content: {{ callToAction.landscapeButtonHorizontalAlign }};
+                }
+
+                #callToAction {
+                    position: relative;
+                    font-size: {{ callToAction.landscapeButtonLabelSize }}px;
+                    color: {{ callToAction.landscapeButtonLabelColor }};
+                    border-color: {{ callToAction.landscapeButtonColor }};
+                    width: {{ callToAction.landscapeButtonWidth }}px;
+                    height: {{ callToAction.landscapeButtonSize }}px;
+                    background-color: {{ callToAction.landscapeButtonColor }};
+                    margin: 5px 5px;
+                }
+            }
+
+            @media only screen and (orientation: portrait ) {
+                #campaign {
+                    display: flex;
+                    align-items: {{ callToAction.portraitButtonVerticalAlign }};
+                    justify-content: {{ callToAction.portraitButtonHorizontalAlign }};
+                    position: relative;
+                    bottom: 30px;
+                }
+
+                div #callToAction {
+                    position: absolute;
+                    font-size: {{ callToAction.portraitButtonLabelSize }}px;
+                    color: {{ callToAction.portraitButtonLabelColor }};
+                    border-color: {{ callToAction.portraitButtonColor }};
+                    height: {{ callToAction.portraitButtonSize }}px;
+                    width: {{ callToAction.portraitButtonWidth }}px;
+                    background-color: {{ callToAction.portraitButtonColor }};
+                    margin: 5px 5px;
+                }
+            }
+        {% endif %}
+    </style>
+</head>
+<body>
+
+{#
+
+vertical
+top     -> flex-start
+middle  -> center
+bottom  -> flex-end
+
+horizontal
+left    -> flex-start
+certer  -> center
+right   -> flex-end
+
+#}
+
+<div class="content">
+    <div id="nav-menu">
+        <p class="text">
+            Pré-visualização da campanha. {% if campaign.status == 0 %}<a class="btn-success" id="btn-confirm" href="#" onclick="redirectIframe('confirm', 'new')">Confirmar e Ativar</a>{% else %}<a class="btn-success" id="btn-confirm" href="#" onclick="redirectIframe('confirm', 'edit')">Voltar para listagem</a>{% endif %} <a id="btn-edit" class="btn-edit" href="#" onclick="redirectIframe('edit', '')">ir para edição</a>
+        </p>
+        <hr class="divider" />
+        <p class="text">
+            {% set paramsPre = app.request.attributes.get('_route_params')|merge({'previewer' : app.request.get('previewer'), 'step' : "pre"}) %}
+            {% set paramsPos = app.request.attributes.get('_route_params')|merge({'previewer' : app.request.get('previewer'), 'step' : "pos"}) %}
+            {% set linkPre = path(app.request.attributes.get('_route'),paramsPre) %}
+            {% set linkPos = path(app.request.attributes.get('_route'),paramsPos) %}
+            Visualizando ({{ device ? device : "desktop" }}): {% if campaign.preLogin %}| <a href="{{ linkPre }}" target="_self" class="{{ (step  == 'pre') ? 'btn-select-active' :'btn-select-inactive' }}">Pré-Login</a>{% endif %} {% if campaign.posLogin %}| <a href="{{ linkPos }}" class="{{ (step  == 'pos') ? 'btn-select-active' :'btn-select-inactive' }}">Pós-Login</a>{% endif %}
+            {% set campaignType = (step  == 'pre') ? 1 : 2 %}
+        </p>
+    </div>
+
+    <div id="warning-message">
+        {{ 'wspot.campaign.count_message'|trans }}...
+    </div>
+    <div id="campaign" style="background-color: {{ campaign.bgColor }}; top: 0px;">
+        {% if callToAction is not null and callToAction.status == 1 and callToAction.campaignType == campaignType  %}
+            <button id="callToAction" style="border-radius: 5px !important;">{{ callToAction.label }}</button>
+        {% endif %}
+    </div>
+
+</div>
+
+<script>
+    $('body').previewer({
+        show: true,
+        type: 'desktop'
+    });
+    //Ação do botão "x" no menu de devices
+    $("button[data-dismiss=previewer]").on('click', function (event) {
+        event.preventDefault();
+        window.location.href = "{{ path('campaign')}}";
+        return false;
+    });
+
+    $('#warning-message').bgColorLuminance("{{ campaign.bgColor }}", -0.4);
+
+    /**
+     * Define o tamanho vertical da imagem de campanha
+     */
+    var menuBoxHeight = $('#nav-menu').outerHeight(true);
+    var messageBoxHeight = $('#warning-message').outerHeight(true);
+    var totalBodyHeight = $('body').outerHeight(true);
+    var campaignHeight = (totalBodyHeight - messageBoxHeight) - menuBoxHeight;
+
+    if (campaignHeight > 600) {
+        campaignHeight = 600
+    }
+
+    $('#campaign').css('height', campaignHeight + "px");
+    var currentImageIndexDesktop = 0; // Variável global para desktop
+    var currentImageIndexMobile = 0;  // Variável global para mobile
+
+    var device = "{{ device }}";
+    var campaignBox = $('#campaign');
+
+    // Lista de imagens para desktop
+    var desktopImages = [
+        '{{ (step == 'pre') ? asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.preLoginMediaDesktop) : asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.posLoginMediaDesktop) }}',
+        '{{ (step == 'pre') ? asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.preLoginMediaDesktop2) : asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.posLoginMediaDesktop2) }}',
+        '{{ (step == 'pre') ? asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.preLoginMediaDesktop3) : asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.posLoginMediaDesktop3) }}'
+    ];
+
+    // Lista de imagens para mobile
+    var mobileImages = [
+        '{{ (step == 'pre') ? asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.preLoginMediaMobile) : asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.posLoginMediaMobile) }}',
+        '{{ (step == 'pre') ? asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.preLoginMediaMobile2) : asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.posLoginMediaMobile2) }}',
+        '{{ (step == 'pre') ? asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.preLoginMediaMobile3) : asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ campaign.posLoginMediaMobile3) }}'
+    ];
+
+    // Função para atualizar imagens de desktop
+    function updateImageDesktop() {
+        campaignBox.backstretch({url: desktopImages[currentImageIndexDesktop], scale: "fit-smaller"});
+        currentImageIndexDesktop = (currentImageIndexDesktop + 1) % desktopImages.length;
+    }
+
+    // Função para atualizar imagens de mobile
+    function updateImageMobile() {
+        campaignBox.backstretch({url: mobileImages[currentImageIndexMobile], scale: "fit-smaller"});
+        currentImageIndexMobile = (currentImageIndexMobile + 1) % mobileImages.length;
+    }
+
+    if (device === "desktop" || device === "laptop" || !device) {
+        updateImageDesktop(); // Inicializa a imagem de desktop
+        setInterval(updateImageDesktop, 4000); // Atualiza a cada 4 segundos
+    }
+
+    if (device === "phone" || device === "tablet") {
+        updateImageMobile(); // Inicializa a imagem de mobile
+        setInterval(updateImageMobile, 4000); // Atualiza a cada 4 segundos
+    }
+    function redirectIframe(state, action) {
+        const listAction = "{{ path('campaign') }}";
+
+        if (state === 'confirm') {
+            if (action === 'new') {
+                window.top.location.href = "{{ path('campaign_activate', { 'id': campaign.id, 'action': 'new' }) }}";
+            } else {
+                window.top.location.href = "{{ path('campaign_activate', { 'id': campaign.id, 'action': 'edit' }) }}";
+            }
+            return;
+        }
+
+        if (state === 'edit') {
+            window.top.location.href = "{{ path('campaign_edit', { 'id': campaign.id }) }}";
+            return;
+        }
+
+        window.top.location.href = listAction;
+    }
+
+    // Alinhamento do botão "Call to action" do Preview
+    var button = $("#callToAction");
+    sideAlign(button, "{{ app.request.get('previewer') }}");
+
+    function sideAlign(elementButton, previewMode) {
+        elementButton.css("position",  "absolute");
+        var img = document.querySelector('.backstretch-item img');
+
+        img.onload = function(e) {
+            var sizes = getSizes(img, elementButton);
+
+            if (sizes.imgWidth > 0 && sizes.imgHeight > 0) {
+                if (previewMode === 'phone' || previewMode === 'tablet') {
+                    switch (translate("horizontal", "{{ callToAction ? callToAction.portraitButtonHorizontalAlign : "" }}")) {
+                        case "left":
+                            alignLeft(sizes, elementButton);
+                            break;
+                        case "center":
+                            alignCenter(sizes, elementButton);
+                            break;
+                        case "right":
+                            alignRight(sizes, elementButton);
+                            break;
+                    }
+
+                    switch (translate("vertical", "{{ callToAction ? callToAction.portraitButtonVerticalAlign : "" }}")) {
+                        case "top":
+                            alignTop(sizes, elementButton);
+                            break;
+                        case "middle":
+                            alignMiddle(sizes, elementButton);
+                            break;
+                        case "bottom":
+                            alignBottom(sizes, elementButton);
+                            break;
+                    }
+                }
+
+                if (previewMode === '' || previewMode === 'laptop' || previewMode === 'desktop') {
+                    switch (translate("horizontal", "{{ callToAction ? callToAction.landscapeButtonHorizontalAlign : "" }}")) {
+                        case "left":
+                            alignLeft(sizes, elementButton);
+                            break;
+                        case "center":
+                            alignCenter(sizes, elementButton);
+                            break;
+                        case "right":
+                            alignRight(sizes, elementButton);
+                            break;
+                    }
+
+                    switch (translate("vertical", "{{ callToAction ? callToAction.landscapeButtonVerticalAlign : "" }}")) {
+                        case "top":
+                            alignTop(sizes, elementButton);
+                            break;
+                        case "middle":
+                            alignMiddle(sizes, elementButton);
+                            break;
+                        case "bottom":
+                            alignBottom(sizes, elementButton);
+                            break;
+                    }
+                }
+            }
+        };
+    }
+</script>
+</body>
+</html>

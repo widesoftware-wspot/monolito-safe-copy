@@ -1,0 +1,20 @@
+.overflow-div {
+    overflow-x: auto;
+}
+
+.overflow-table {
+    table-layout: auto !important;
+    overflow: auto !important;
+    width:99%;
+}
+
+.filter-overflow {
+    overflow:auto !important;
+}
+
+.text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70ch;
+}

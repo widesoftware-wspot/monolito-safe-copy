@@ -1,0 +1,22 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;">
+            <div class="box-content">
+                <h3>{{ 'wspot.access_code.access_denied'|trans }}</h3>
+
+                <div class="content-center">
+                    {% set query = app.request.query.all %}
+
+                    <div style="margin: 50px 10px 30px 10px; font-size:16px; text-align: center;">
+                        <p>{{ 'wspot.access_code.message_1'|trans }} <b>{{ guest.properties.name|default('wspot.default.guest'|trans) }}</b>.</p>
+                        <p>{{ 'wspot.access_code.access_denied_message'|trans }}</p>
+                    </div>
+                </div>
+
+                <a class="btnChangeData" href="{{ path('frontend_index') }}" style="margin-top: 30px;">{{ 'wspot.confirmation.button_home'|trans }}</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

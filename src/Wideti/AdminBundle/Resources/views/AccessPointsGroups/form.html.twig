@@ -1,0 +1,111 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/select2/select2.css') }}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+
+{% set route = app.request.attributes.get('_route') %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Grupos'} %}
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>
+                        {% if 'access_points_groups_new' in route %}Novo{% else %}Editar{% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-body">
+                    {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                    {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+                    {{ form_errors(form) }}
+
+                    <div class="row-fluid">
+                        <div class="span6">
+                            {{ form_row(form.parent) }}
+                            {{ form_row(form.parentConfigurations) }}
+                            {{ form_row(form.parentTemplate) }}
+                            {{ form_row(form.isMaster) }}
+                            {{ form_row(form.groupName) }}
+                            {{ form_row(form.template) }}
+                            <div class="access-points-block control-group" style="display: none">
+                                {{ form_row(form.accessPoints) }}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="separator line bottom"></div>
+
+                    <div class="form-actions right">
+                        <a href="{{ app.request.headers.get('referer') }}">
+                            <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                Cancelar
+                            </button>
+                        </a>
+                        {{ form_widget(form.submit) }}
+                    </div>
+
+                    {{ form_end(form) }}
+
+                    <hr class="separator">
+
+                    <div class="row-fluid">
+                        <div class="span12 alert alert-info">
+                            <b>Importante!</b> um ponto de acesso deve sempre estar vinculado à um grupo. Caso exclua o relacionamento de um ponto de acesso de um grupo, ele automaticamente será vinculado ao grupo padrão.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock%}
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/select2/select2.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script type="text/javascript">
+        {% if (entity.isDefault) %}
+            document.getElementById('access_point_group_groupName').readOnly = true;
+        {% endif %}
+
+        function controlSelectAccessPoints()
+        {
+            dojo.query("#access_point_group_accessPoints").chosen({batch_select:true});
+        }
+
+        $('document').ready(function() {
+            controlSelectAccessPoints();
+        });
+
+        $("#access_point_group_users").select2({
+            placeholder: "Selecione o Grupo",
+            allowClear: true
+        }).removeClass('form-control');
+
+        $("#access_point_group_isMaster").change(function() {
+            if ($(this).prop("checked")) {
+                $("#access_point_group_parent")
+                    .val(0)
+                    .change();
+
+                $("#access_point_group_parentConfigurations")
+                    .prop("checked", false);
+
+                $("#access_point_group_parentTemplate")
+                    .prop("checked", false);
+            }
+        });
+    </script>
+{% endblock %}

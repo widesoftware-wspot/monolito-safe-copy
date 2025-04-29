@@ -1,0 +1,75 @@
+Wideti\DomainBundle\Entity\Module:
+  Module1:
+    shortCode: "campaign"
+    name: "Campanhas"
+    client: [ @Client1 ]
+
+  Module2:
+    shortCode: "access_code"
+    name: "Código de acesso"
+    client: [ @Client1 ]
+
+  Module3:
+    shortCode: "blacklist"
+    name: "Bloqueio de Dispositivos"
+    client: [ @Client1 ]
+
+  Module4:
+    shortCode: "business_hours"
+    name: "Horário de Funcionamento"
+    client: [ @Client1 ]
+
+  Module5:
+    shortCode: "api"
+    name: "Integração via API"
+    client: [ @Client1 ]
+
+  Module6:
+    shortCode: "white_label"
+    name: "White Label"
+    client: [ @Client1 ]
+
+  Module7:
+    shortCode: "customer_area"
+    name: "Financeiro"
+    client: [ @Client1 ]
+
+  Module8:
+    shortCode: "rd_station"
+    name: "Integração com API RD Station"
+    client: [ @Client1 ]
+
+  Module9:
+    shortCode: "egoi"
+    name: "Integração com API E-goi"
+    client: [ @Client1 ]
+
+  Module10:
+    shortCode: "segmentation"
+    name: "Segmentação"
+    client: [ @Client1 ]
+
+  Module11:
+    shortCode: "access_point_monitoring"
+    name: "Monitoramento de Equipamento"
+    client: [ @Client1 ]
+
+  Module12:
+    shortCode: "sites_blocking"
+    name: "Bloqueio de Sites"
+    client: [ @Client1 ]
+
+  Module13:
+    shortCode: "sms_marketing"
+    name: "SMS Marketing"
+    client: [ @Client1 ]
+
+  Module14:
+    shortCode: "survey"
+    name: "Pesquisa"
+    client: [ @Client1 ]
+
+  Module15:
+    shortCode: "smart_location"
+    name: "Smart Location"
+    client: [ @Client1 ]

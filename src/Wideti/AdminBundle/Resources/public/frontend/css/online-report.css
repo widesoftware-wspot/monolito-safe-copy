@@ -1,0 +1,163 @@
+#collapse-checkboxes {
+    float: left;
+    margin: 0 5px;
+    display: block;
+    line-height: 30px;
+}
+
+#collapse-checkboxes a {
+    text-decoration:none;
+}
+
+#collapse-checkboxes a:link {
+    color: #333333;
+}
+
+#collapse-checkboxes a:visited {
+    color: #333333;
+}
+
+#collapse-checkboxes a:hover {
+    color: #333333;
+}
+
+#collapse-checkboxes a:active {
+    color: #333333;
+}
+
+.container-checkbox {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 13px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.container-checkbox input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 5px;
+}
+
+/* On mouse-over, add a grey background color */
+.container-checkbox:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.container-checkbox input:checked ~ .checkmark {
+    background-color: #ec213a;
+    border-radius: 5px;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+/* Show the checkmark when checked */
+.container-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+/* Style the checkmark/indicator */
+.container-checkbox .checkmark:after {
+    left: 9px;
+    top: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+
+#grpChkBox {
+    -webkit-column-count: 3;
+    -moz-column-count: 3;
+    column-count: 3;
+    -webkit-column-gap: 40px;
+    -moz-column-gap: 40px;
+    column-gap: 40px;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+}
+
+th, td {
+    border: 1px solid #ddd;
+}
+
+.btn-primary[disabled] {
+    cursor: not-allowed;
+}
+
+.btn-desconectar {
+    display: flex;
+    align-items: center;
+}
+
+.btn-desconectar img {
+    min-width: 20px;
+}
+
+.desconectar-confirm > .modal-body > div > h3 {
+    color: #ec213a;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.desconectar-confirm > .modal-body > div > p {
+    font-size: medium;
+    text-align: center;
+}
+
+.desconectar-confirm > div {
+    display: flex;
+    justify-content: center;
+}
+
+.desconectar-confirm {
+    top: 35% !important;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+.desconectar-confirm > .modal-footer {
+    background: inherit;
+    border-top: none;
+    border-radius: 8px;
+}
+
+.desconectar-confirm > .modal-footer a {
+    border: none;
+    padding: 8px 16px;
+    font-size: medium;
+    margin-right: 16px;
+}

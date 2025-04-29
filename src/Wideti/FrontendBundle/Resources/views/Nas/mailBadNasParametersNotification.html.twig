@@ -1,0 +1,115 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block header %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:40px;font-size:30px;line-height:48px;color:#ec213a;font-family:Arial;font-weight:bold; text-align: center;" colspan="2">
+            {{ client.domain }}.mambowifi.com
+        </td>
+    </tr>
+{% endblock %}
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">Olá <a style="color: #ec213a; font-weight: bold; text-decoration: none;">{{ user.name }}</a>.</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">
+                        Identificamos que algum visitante tentou se conectar à sua rede Wi-fi por um
+                        ponto de acesso mal configurado. Com isso não é possível realizar
+                        autenticações ou armazenar registros de acessos em sua rede Wi-fi.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">
+                        Este ponto de acesso não está enviando os parâmetros necessários para que o Mambo WiFi possa realizar
+                        o acesso do seu visitante.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">
+                        Mensagem de erro gerada:
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550">
+                <tbody>
+                <tr>
+                    <td style="padding: 30px 0px 30px 0px;font-size:20px;line-height:30px;color:#ec213a;font-family:Arial;background-color: #e1e1e1;font-weight: bold;text-align: center">
+                        {{ message }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial,sans-serif;border: 1px solid #c79300; background-color: #ffff91; text-align: center">
+                        Pontos de acesso mal configurados podem causar mal funcionamento no seu Mambo Wifi,
+                        gerando inconsistência em seus dados.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">Caso tenha alguma d&uacute;vida, por favor entre em contato conosco pelo e-mail <a href="mailto:suporte@mambowifi.com" style="text-decoration: none; color: #ec213a">suporte@mambowifi.com</a>.</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Equipe {{ whiteLabel.companyName }}</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

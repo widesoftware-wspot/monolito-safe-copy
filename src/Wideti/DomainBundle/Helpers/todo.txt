@@ -1,0 +1,3 @@
+- cropper
+
+https://dev.wspot.com.br/app_dev.php/admin/campaign/83/media-upload/pre/image

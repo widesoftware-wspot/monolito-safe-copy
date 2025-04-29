@@ -1,0 +1,24 @@
+{% extends 'PanelBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Sincronizar E-mails Mailchimp
+{% endblock %}
+
+{% block addButton %}
+    <a href="{{ path('panel_client_admin_users_list', { 'sync' : true }) }}" style="margin: 4px 0 5px 5px;" class="btn btn-primary btn-icon glyphicons roundabout pull-left">
+        <i></i>Sincronizar
+    </a>
+{% endblock %}
+
+{% block thead %}
+{% endblock %}
+
+{% block tbody %}
+    {% if (sync) %}
+        <h3>Total de e-mails inseridos: {{ sync.subscribers }}</h3>
+        <h3>Total de e-mails removidos: {{ sync.unsubscribers }}</h3>
+    {% endif %}
+{% endblock %}
+
+{% block pagination %}
+{% endblock %}

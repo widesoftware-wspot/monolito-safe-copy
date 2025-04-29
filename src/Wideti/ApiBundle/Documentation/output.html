@@ -1,0 +1,823 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><title>API REST Mambo Wifi</title><link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"><style>@import url('https://fonts.googleapis.com/css?family=Roboto:400,700|Inconsolata|Raleway:200');.hljs-comment,.hljs-title{color:#8e908c}.hljs-variable,.hljs-attribute,.hljs-tag,.hljs-regexp,.ruby .hljs-constant,.xml .hljs-tag .hljs-title,.xml .hljs-pi,.xml .hljs-doctype,.html .hljs-doctype,.css .hljs-id,.css .hljs-class,.css .hljs-pseudo{color:#c82829}.hljs-number,.hljs-preprocessor,.hljs-pragma,.hljs-built_in,.hljs-literal,.hljs-params,.hljs-constant{color:#f5871f}.ruby .hljs-class .hljs-title,.css .hljs-rules .hljs-attribute{color:#eab700}.hljs-string,.hljs-value,.hljs-inheritance,.hljs-header,.ruby .hljs-symbol,.xml .hljs-cdata{color:#718c00}.css .hljs-hexcolor{color:#3e999f}.hljs-function,.python .hljs-decorator,.python .hljs-title,.ruby .hljs-function .hljs-title,.ruby .hljs-title .hljs-keyword,.perl .hljs-sub,.javascript .hljs-title,.coffeescript .hljs-title{color:#4271ae}.hljs-keyword,.javascript .hljs-function{color:#8959a8}.hljs{display:block;background:white;color:#4d4d4c;padding:.5em}.coffeescript .javascript,.javascript .xml,.tex .hljs-formula,.xml .javascript,.xml .vbscript,.xml .css,.xml .hljs-cdata{opacity:.5}.right .hljs-comment{color:#969896}.right .css .hljs-class,.right .css .hljs-id,.right .css .hljs-pseudo,.right .hljs-attribute,.right .hljs-regexp,.right .hljs-tag,.right .hljs-variable,.right .html .hljs-doctype,.right .ruby .hljs-constant,.right .xml .hljs-doctype,.right .xml .hljs-pi,.right .xml .hljs-tag .hljs-title{color:#c66}.right .hljs-built_in,.right .hljs-constant,.right .hljs-literal,.right .hljs-number,.right .hljs-params,.right .hljs-pragma,.right .hljs-preprocessor{color:#de935f}.right .css .hljs-rule .hljs-attribute,.right .ruby .hljs-class .hljs-title{color:#f0c674}.right .hljs-header,.right .hljs-inheritance,.right .hljs-name,.right .hljs-string,.right .hljs-value,.right .ruby .hljs-symbol,.right .xml .hljs-cdata{color:#b5bd68}.right .css .hljs-hexcolor,.right .hljs-title{color:#8abeb7}.right .coffeescript .hljs-title,.right .hljs-function,.right .javascript .hljs-title,.right .perl .hljs-sub,.right .python .hljs-decorator,.right .python .hljs-title,.right .ruby .hljs-function .hljs-title,.right .ruby .hljs-title .hljs-keyword{color:#81a2be}.right .hljs-keyword,.right .javascript .hljs-function{color:#b294bb}.right .hljs{display:block;overflow-x:auto;background:#1d1f21;color:#c5c8c6;padding:.5em;-webkit-text-size-adjust:none}.right .coffeescript .javascript,.right .javascript .xml,.right .tex .hljs-formula,.right .xml .css,.right .xml .hljs-cdata,.right .xml .javascript,.right .xml .vbscript{opacity:.5}body{color:black;background:white;font:400 14px / 1.42 'Roboto',Helvetica,sans-serif}header{border-bottom:1px solid #f2f2f2;margin-bottom:12px}h1,h2,h3,h4,h5{color:black;margin:12px 0}h1 .permalink,h2 .permalink,h3 .permalink,h4 .permalink,h5 .permalink{margin-left:0;opacity:0;transition:opacity .25s ease}h1:hover .permalink,h2:hover .permalink,h3:hover .permalink,h4:hover .permalink,h5:hover .permalink{opacity:1}.triple h1 .permalink,.triple h2 .permalink,.triple h3 .permalink,.triple h4 .permalink,.triple h5 .permalink{opacity:.15}.triple h1:hover .permalink,.triple h2:hover .permalink,.triple h3:hover .permalink,.triple h4:hover .permalink,.triple h5:hover .permalink{opacity:.15}h1{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:36px}h2{font:200 36px 'Raleway',Helvetica,sans-serif;font-size:30px}h3{font-size:100%;text-transform:uppercase}h5{font-size:100%;font-weight:normal}p{margin:0 0 10px}p.choices{line-height:1.6}a{color:#428bca;text-decoration:none}li p{margin:0}hr.split{border:0;height:1px;width:100%;padding-left:6px;margin:12px auto;background-image:linear-gradient(to right, rgba(0,0,0,0) 20%, rgba(0,0,0,0.2) 51.4%, rgba(255,255,255,0.2) 51.4%, rgba(255,255,255,0) 80%)}dl dt{float:left;width:130px;clear:left;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}dl dd{margin-left:150px}blockquote{color:rgba(0,0,0,0.5);font-size:15.5px;padding:10px 20px;margin:12px 0;border-left:5px solid #e8e8e8}blockquote p:last-child{margin-bottom:0}pre{background-color:#f5f5f5;padding:12px;border:1px solid #cfcfcf;border-radius:6px;overflow:auto}pre code{color:black;background-color:transparent;padding:0;border:none}code{color:#444;background-color:#f5f5f5;font:'Inconsolata',monospace;padding:1px 4px;border:1px solid #cfcfcf;border-radius:3px}ul,ol{padding-left:2em}table{border-collapse:collapse;border-spacing:0;margin-bottom:12px}table tr:nth-child(2n){background-color:#fafafa}table th,table td{padding:6px 12px;border:1px solid #e6e6e6}.text-muted{opacity:.5}.note,.warning{padding:.3em 1em;margin:1em 0;border-radius:2px;font-size:90%}.note h1,.warning h1,.note h2,.warning h2,.note h3,.warning h3,.note h4,.warning h4,.note h5,.warning h5,.note h6,.warning h6{font-family:200 36px 'Raleway',Helvetica,sans-serif;font-size:135%;font-weight:500}.note p,.warning p{margin:.5em 0}.note{color:black;background-color:#f0f6fb;border-left:4px solid #428bca}.note h1,.note h2,.note h3,.note h4,.note h5,.note h6{color:#428bca}.warning{color:black;background-color:#fbf1f0;border-left:4px solid #c9302c}.warning h1,.warning h2,.warning h3,.warning h4,.warning h5,.warning h6{color:#c9302c}header{margin-top:24px}nav{position:fixed;top:24px;bottom:0;overflow-y:auto}nav .resource-group{padding:0}nav .resource-group .heading{position:relative}nav .resource-group .heading .chevron{position:absolute;top:12px;right:12px;opacity:.5}nav .resource-group .heading a{display:block;color:black;opacity:.7;border-left:2px solid transparent;margin:0}nav .resource-group .heading a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul{list-style-type:none;padding-left:0}nav ul a{display:block;font-size:13px;color:rgba(0,0,0,0.7);padding:8px 12px;border-top:1px solid #d9d9d9;border-left:2px solid transparent;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}nav ul a:hover{text-decoration:none;background-color:bad-color;border-left:2px solid black}nav ul>li{margin:0}nav ul>li:first-child{margin-top:-12px}nav ul>li:last-child{margin-bottom:-12px}nav ul ul a{padding-left:24px}nav ul ul li{margin:0}nav ul ul li:first-child{margin-top:0}nav ul ul li:last-child{margin-bottom:0}nav>div>div>ul>li:first-child>a{border-top:none}.preload *{transition:none !important}.pull-left{float:left}.pull-right{float:right}.badge{display:inline-block;float:right;min-width:10px;min-height:14px;padding:3px 7px;font-size:12px;color:#000;background-color:#f2f2f2;border-radius:10px;margin:-2px 0}.badge.get{color:#70bbe1;background-color:#d9edf7}.badge.head{color:#70bbe1;background-color:#d9edf7}.badge.options{color:#70bbe1;background-color:#d9edf7}.badge.put{color:#f0db70;background-color:#fcf8e3}.badge.patch{color:#f0db70;background-color:#fcf8e3}.badge.post{color:#93cd7c;background-color:#dff0d8}.badge.delete{color:#ce8383;background-color:#f2dede}.collapse-button{float:right}.collapse-button .close{display:none;color:#428bca;cursor:pointer}.collapse-button .open{color:#428bca;cursor:pointer}.collapse-button.show .close{display:inline}.collapse-button.show .open{display:none}.collapse-content{max-height:0;overflow:hidden;transition:max-height .3s ease-in-out}nav{width:220px}.container{max-width:940px;margin-left:auto;margin-right:auto}.container .row .content{margin-left:244px;width:696px}.container .row:after{content:'';display:block;clear:both}.container-fluid nav{width:22%}.container-fluid .row .content{margin-left:24%}.container-fluid.triple nav{width:16.5%;padding-right:1px}.container-fluid.triple .row .content{position:relative;margin-left:16.5%;padding-left:24px}.middle:before,.middle:after{content:'';display:table}.middle:after{clear:both}.middle{box-sizing:border-box;width:51.5%;padding-right:12px}.right{box-sizing:border-box;float:right;width:48.5%;padding-left:12px}.right a{color:#428bca}.right h1,.right h2,.right h3,.right h4,.right h5,.right p,.right div{color:white}.right pre{background-color:#1d1f21;border:1px solid #1d1f21}.right pre code{color:#c5c8c6}.right .description{margin-top:12px}.triple .resource-heading{font-size:125%}.definition{margin-top:12px;margin-bottom:12px}.definition .method{font-weight:bold}.definition .method.get{color:#2e8ab8}.definition .method.head{color:#2e8ab8}.definition .method.options{color:#2e8ab8}.definition .method.post{color:#56b82e}.definition .method.put{color:#b8a22e}.definition .method.patch{color:#b8a22e}.definition .method.delete{color:#b82e2e}.definition .uri{word-break:break-all;word-wrap:break-word}.definition .hostname{opacity:.5}.example-names{background-color:#eee;padding:12px;border-radius:6px}.example-names .tab-button{cursor:pointer;color:black;border:1px solid #ddd;padding:6px;margin-left:12px}.example-names .tab-button.active{background-color:#d5d5d5}.right .example-names{background-color:#444}.right .example-names .tab-button{color:white;border:1px solid #666;border-radius:6px}.right .example-names .tab-button.active{background-color:#5e5e5e}#nav-background{position:fixed;left:0;top:0;bottom:0;width:16.5%;padding-right:14.4px;background-color:#fbfbfb;border-right:1px solid #f0f0f0;z-index:-1}#right-panel-background{position:absolute;right:-12px;top:-12px;bottom:-12px;width:48.6%;background-color:#333;z-index:-1}@media (max-width:1200px){nav{width:198px}.container{max-width:840px}.container .row .content{margin-left:224px;width:606px}}@media (max-width:992px){nav{width:169.4px}.container{max-width:720px}.container .row .content{margin-left:194px;width:526px}}@media (max-width:768px){nav{display:none}.container{width:95%;max-width:none}.container .row .content,.container-fluid .row .content,.container-fluid.triple .row .content{margin-left:auto;margin-right:auto;width:95%}#nav-background{display:none}#right-panel-background{width:48.6%}}.back-to-top{position:fixed;z-index:1;bottom:0;right:24px;padding:4px 8px;color:rgba(0,0,0,0.5);background-color:#f2f2f2;text-decoration:none !important;border-top:1px solid #d9d9d9;border-left:1px solid #d9d9d9;border-right:1px solid #d9d9d9;border-top-left-radius:3px;border-top-right-radius:3px}.resource-group{padding:12px;margin-bottom:12px;background-color:white;border:1px solid #d9d9d9;border-radius:6px}.resource-group h2.group-heading,.resource-group .heading a{padding:12px;margin:-12px -12px 12px -12px;background-color:#f2f2f2;border-bottom:1px solid #d9d9d9;border-top-left-radius:6px;border-top-right-radius:6px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.triple .content .resource-group{padding:0;border:none}.triple .content .resource-group h2.group-heading,.triple .content .resource-group .heading a{margin:0 0 12px 0;border:1px solid #d9d9d9}nav .resource-group .heading a{padding:12px;margin-bottom:0}nav .resource-group .collapse-content{padding:0}.action{margin-bottom:12px;padding:12px 12px 0 12px;overflow:hidden;border:1px solid transparent;border-radius:6px}.action h4.action-heading{padding:6px 12px;margin:-12px -12px 12px -12px;border-bottom:1px solid transparent;border-top-left-radius:6px;border-top-right-radius:6px;overflow:hidden}.action h4.action-heading .name{float:right;font-weight:normal;padding:6px 0}.action h4.action-heading .method{padding:6px 12px;margin-right:12px;border-radius:3px;display:inline-block}.action h4.action-heading .method.get{color:#fff;background-color:#337ab7}.action h4.action-heading .method.head{color:#fff;background-color:#337ab7}.action h4.action-heading .method.options{color:#fff;background-color:#337ab7}.action h4.action-heading .method.put{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.patch{color:#fff;background-color:#ed9c28}.action h4.action-heading .method.post{color:#fff;background-color:#5cb85c}.action h4.action-heading .method.delete{color:#fff;background-color:#d9534f}.action h4.action-heading code{color:#444;background-color:#f5f5f5;border-color:#cfcfcf;font-weight:normal;word-break:break-all;display:inline-block;margin-top:2px}.action dl.inner{padding-bottom:2px}.action .title{border-bottom:1px solid white;margin:0 -12px -1px -12px;padding:12px}.action.get{border-color:#bce8f1}.action.get h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.head{border-color:#bce8f1}.action.head h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.options{border-color:#bce8f1}.action.options h4.action-heading{color:#337ab7;background:#d9edf7;border-bottom-color:#bce8f1}.action.post{border-color:#d6e9c6}.action.post h4.action-heading{color:#5cb85c;background:#dff0d8;border-bottom-color:#d6e9c6}.action.put{border-color:#faebcc}.action.put h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.patch{border-color:#faebcc}.action.patch h4.action-heading{color:#ed9c28;background:#fcf8e3;border-bottom-color:#faebcc}.action.delete{border-color:#ebccd1}.action.delete h4.action-heading{color:#d9534f;background:#f2dede;border-bottom-color:#ebccd1}</style></head><body class="preload"><a href="#top" class="text-muted back-to-top"><i class="fa fa-toggle-up"></i>&nbsp;Back to top</a><div class="container"><div class="row"><nav><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#top">Overview</a></div><div class="collapse-content"><ul><li><a href="#header-api-para-integração-de-sistema-com-o-wspot">Api para integração de sistema com a Mambo Wifi</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#autenticação">Autenticação</a></div><div class="collapse-content"><ul><li><a href="#header-como-autenticar-na-api">Como Autenticar na API</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#acesso-de-visitantes">Acesso de Visitantes</a></div><div class="collapse-content"><ul><li><a href="#acesso-de-visitantes-consultar-dados-de-acesso-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Buscar dados de acesso</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#pontos-de-acesso">Pontos de Acesso</a></div><div class="collapse-content"><ul><li><a href="#pontos-de-acesso-atualizar-ponto-put"><span class="badge put"><i class="fa fa-pencil"></i></span>Atualizar ponto</a></li><li><a href="#pontos-de-acesso-criar-novo-ponto-de-acesso-post"><span class="badge post"><i class="fa fa-plus"></i></span>Criar novo ponto</a></li><li><a href="#pontos-de-acesso-todos-pontos-de-acesso-paginados-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Listar vendors</a></li><li><a href="#pontos-de-acesso-todos-pontos-de-acesso-paginados-get-1"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Listar pontos de acesso</a></li><li><a href="#pontos-de-acesso-detalhar-ponto-de-acesso-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Detalhar ponto de acesso</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#grupo-de-pontos-de-acesso">Grupo de Pontos de Acesso</a></div><div class="collapse-content"><ul><li><a href="#grupo-de-pontos-de-acesso-listar-grupos-de-pontos-de-acesso-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Listar grupos</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#visitantes">Visitantes</a></div><div class="collapse-content"><ul><li><a href="#visitantes-todos-visitantes-paginados-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Listar todos visitantes</a></li><li><a href="#visitantes-listar-visitantes-por-data-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Listar visitantes por data</a></li><li><a href="#visitantes-buscar-um-visitante-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Buscar apenas um visitante</a></li><li><a href="#visitantes-criar-visitante-post"><span class="badge post"><i class="fa fa-plus"></i></span>Criar Visitante</a></li><li><a href="#visitantes-criar-bulk-de-visitantes-post"><span class="badge post"><i class="fa fa-plus"></i></span>Criar Visitante Bulk</a></li><li><a href="#visitantes-atualizar-visitante-put"><span class="badge put"><i class="fa fa-pencil"></i></span>Atualizar Visitante</a></li><li><a href="#visitantes-excluir-visitante-delete"><span class="badge delete"><i class="fa fa-times"></i></span>Excluir Visitante</a></li><li><a href="#visitantes-alterar-grupo-de-visitante-put"><span class="badge put"><i class="fa fa-pencil"></i></span>Alterar grupo de visitante</a></li></ul></div></div><div class="resource-group"><div class="heading"><div class="chevron"><i class="open fa fa-angle-down"></i></div><a href="#campos-customizados">Campos customizados</a></div><div class="collapse-content"><ul><li><a href="#campos-customizados-listar-campos-get"><span class="badge get"><i class="fa fa-arrow-down"></i></span>Listar campos</a></li></ul></div></div></nav><div class="content"><header><h1 id="top">API REST Mambo Wifi</h1></header><h3 id="header-api-para-integração-de-sistema-com-o-wspot">Api para integração de sistema com a Mambo Wifi <a class="permalink" href="#header-api-para-integração-de-sistema-com-o-wspot" aria-hidden="true">¶</a></h3>
+<p>Bem vindo a API de integração da Mambo Wifi, qualquer dúvida com nossa integração, entre em contato com <a href="mailto:suporte@mambowifi.com">suporte@mambowifi.com</a></p>
+<section id="autenticação" class="resource-group"><h2 class="group-heading">Autenticação <a href="#autenticação" class="permalink">&para;</a></h2><h2 id="header-como-autenticar-na-api">Como Autenticar na API <a class="permalink" href="#header-como-autenticar-na-api" aria-hidden="true">¶</a></h2>
+<p>A API da Mambo Wifi é REST, então toda requisição deverá ser autenticada através de um token que deverá ser previamente gerado a partir do painel administrativo na opção “Integração via API”.</p>
+<p>Você poderá criar token para dois tipos de permissão Leitura (GET) e  Escrita (POST , PUT e GET).</p>
+<p>A requisição poderá ser autenticada de duas maneiras, a primeira é enviando o token através do header “X-TOKEN” e a outra forma como demonstrado abaixo é enviar o token como parâmetro da requisição:</p>
+<p><a href="https://meudominio.wspot.com.br/api/guests?token=meu_token_gerado">https://meudominio.wspot.com.br/api/guests?token=meu_token_gerado</a></p>
+</section><section id="acesso-de-visitantes" class="resource-group"><h2 class="group-heading">Acesso de Visitantes <a href="#acesso-de-visitantes" class="permalink">&para;</a></h2><div id="acesso-de-visitantes-consultar-dados-de-acesso" class="resource"><h3 class="resource-heading">Consultar dados de acesso <a href="#acesso-de-visitantes-consultar-dados-de-acesso" class="permalink">&nbsp;&para;</a></h3><div id="acesso-de-visitantes-consultar-dados-de-acesso-get" class="action get"><h4 class="action-heading"><div class="name">Buscar dados de acesso</div><a href="#acesso-de-visitantes-consultar-dados-de-acesso-get" class="method get">GET</a><code class="uri">/api/access</code></h4><p>Este recurso da API tem como objetivo buscar os dados de acesso de seus visitantes. Como estes dados são muitos, este endpoint funciona como data stream.</p>
+<ul>
+<li>Como ele funciona
+<ul>
+<li>Faz a consulta utilizando os filtros listados abaixo</li>
+<li>Caso tenha resultados, eles serão mostrados em janelas de 100 em 100</li>
+<li>O retorno da pesquisa irá retornar os campos:
+<ul>
+<li><b>totalRegistries:</b> Total de acessos baseado nos filtros</li>
+<li><b>nextToken:</b> Token utilizado para pegar a próxima janela de 100 registros, consecutivamente, até chegar no final dos registros.</li>
+<li><b>data:</b> Os acessos buscados</li>
+</ul>
+</li>
+<li>Para buscar os próximos 100 registros utilize o <b>“nextToken”</b> na requisição, ex: <b>/api/access?nextToken=asd786as8d6as8d</b></li>
+<li>Ao adicionar o <b>“nextToken”</b> na requisição, você não poderá mudar os filtros, caso queira mudar o valor de algum filtro, deve fazer uma nova pesquisa sem o <b>“nextToken”</b></li>
+<li>O <b>“nextToken”</b> possui uma válidade de 60 segundos, ou seja, após fazer uma consulta que possui <b>200 “totalRegistries”</b>, você já receberá os 100 primeiros registros, caso você demorar mais do que 60 segundos para consultar os próximos 100 registros, o token ficará inválido, sendo necessário inciar a operação novamente.</li>
+<li>Ao adicionar o <b>“nextToken”</b> na requisição, você pode remover o restantes dos filtros caso queria, pois os filtros ficam salvos na sessão do <b>“nextToken”</b> e não podem mais serem alterados.</li>
+</ul>
+</li>
+</ul>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/access</span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>from</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>30 dias atrás a partir de hoje.</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>2018-01-01 00:00:00</span></span><p>Data inicial para buscar os acessos</p>
+</dd><dt>to</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>Hoje às 23:59:59</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>2018-05-10 23:59:59</span></span><p>Data final para buscar os acessos</p>
+</dd><dt>order</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>desc</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>&quot;desc&quot;</span></span><p>Ordenação do resultado, baseado na data de “Start” do acesso</p>
+<p class="choices"><strong>Choices:&nbsp;</strong><code>asc</code> <code>desc</code> </p></dd><dt>nextToken</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>&quot;HSUSGDGSH6777877_788=&quot;</span></span><p>Token utilizado para pegar os próximos 100 resultados</p>
+</dd><dt>guest</dt><dd><code>integer</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>234</span></span><p><b>“refId”</b> de um visitante, para buscar somente os acessos dele, no recurso de visitantes, ao buscar um visitante, você terá o <b>“refId”</b> que deve ser usado nesse campo para busca, o <b>“id”</b> do visitante não será válidao.</p>
+</dd><dt>identifier</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Identificador do ponto de acesso, para filtrar somente acessos deste ponto de acesso</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Quando é encontrado resultados baseados nos filtros, retorna o valor com os resultados, sem limitado a 100 resultados por consulta
+o campo “totalRegistries” sempre será o total de registros baseados no filtro.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">totalRegistries</span>": <span class="hljs-value"><span class="hljs-number">450</span></span>,
+  "<span class="hljs-attribute">nextToken</span>": <span class="hljs-value"><span class="hljs-string">"AASD887AS6AS70ASU0D8UAS90D8AS09DAS8D"</span></span>,
+  "<span class="hljs-attribute">data</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">23</span></span>,
+      "<span class="hljs-attribute">guest</span>": <span class="hljs-value"><span class="hljs-number">10437769</span></span>,
+      "<span class="hljs-attribute">isEmployee</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+      "<span class="hljs-attribute">guestDevice</span>": <span class="hljs-value"><span class="hljs-string">"E4-90-7E-B2-AB-28"</span></span>,
+      "<span class="hljs-attribute">guestIp</span>": <span class="hljs-value"><span class="hljs-string">"10.97.8.173"</span></span>,
+      "<span class="hljs-attribute">nasIpAddress</span>": <span class="hljs-value"><span class="hljs-string">"10.1.1.1"</span></span>,
+      "<span class="hljs-attribute">identifier</span>": <span class="hljs-value"><span class="hljs-string">"64-d1-54-4b-a5-e4"</span></span>,
+      "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"Meu ponto de acesso"</span></span>,
+      "<span class="hljs-attribute">start</span>": <span class="hljs-value"><span class="hljs-string">"2018-06-04 23:58:40"</span></span>,
+      "<span class="hljs-attribute">stop</span>": <span class="hljs-value"><span class="hljs-string">"2018-06-05 01:44:59"</span></span>,
+      "<span class="hljs-attribute">acctInputOctets</span>": <span class="hljs-value"><span class="hljs-number">633671</span></span>,
+      "<span class="hljs-attribute">acctOutputOctets</span>": <span class="hljs-value"><span class="hljs-number">422854</span>
+    </span>}
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>404</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Caso não seja encontrado nenhum resultado baseado nos filtros.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">totalRegistries</span>": <span class="hljs-value"><span class="hljs-number">0</span></span>,
+  "<span class="hljs-attribute">nextToken</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">data</span>": <span class="hljs-value">[]
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>400</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Caso ocorra algum erro nos filtros no momento da busca.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">error</span>": <span class="hljs-value"><span class="hljs-string">"Data inválida: 2018-01-333334, formato correto: Y-m-d H:i:s"</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>500</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Caso ocorra algum erro no servidor no momento da busca. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">error</span>": <span class="hljs-value"><span class="hljs-string">"Ocorreu um problema em nosso serivor, nossa equipe ja foi notificada."</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></section><section id="pontos-de-acesso" class="resource-group"><h2 class="group-heading">Pontos de Acesso <a href="#pontos-de-acesso" class="permalink">&para;</a></h2><div id="pontos-de-acesso-atualizar-ponto" class="resource"><h3 class="resource-heading">Atualizar ponto <a href="#pontos-de-acesso-atualizar-ponto" class="permalink">&nbsp;&para;</a></h3><div id="pontos-de-acesso-atualizar-ponto-put" class="action put"><h4 class="action-heading"><div class="name">Atualizar ponto</div><a href="#pontos-de-acesso-atualizar-ponto-put" class="method put">PUT</a><code class="uri">/api/access-points/:id</code></h4><p>Campos disponibilizados para atualização: “friendlyName”, “local”, “status”, “templateId”, “groupId”.
+Você poderá enviar um, ou mais campos para atualização.</p>
+<p>Campos da requisição:</p>
+<ul>
+<li>
+<p><b>friendlyName:</b> [String] É o nome do ponto de acesso.</p>
+</li>
+<li>
+<p><b>local:</b> [String] Apenas uma descrição para identificar o local onde o ponto de acesso esta fisicamente.</p>
+</li>
+<li>
+<p><b>status:</b> [Integer] Este campo é a definição de status do seu ponto de acesso pode ser “0” para intativo ou “1” para ativo.</p>
+</li>
+<li>
+<p><b>templateId:</b> [Integer] Associar o ponto de acesso a um template.</p>
+</li>
+<li>
+<p><b>groupId:</b> [Integer] Associar o ponto de acesso a um grupo. Lista de grupos poderá ser obtida pelo recurso “[GET] /api/access-point-groups”.</p>
+</li>
+</ul>
+<h4>Example URI</h4><div class="definition"><span class="method put">PUT</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/access-points/:id</span></div><div class="title"><strong>Request&nbsp;&nbsp;<code>Atualizar Ponto de Acesso</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"Meu ponto de acesso"</span></span>,
+  "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"Ponto de acesso do salão"</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">templateId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">groupId</span>": <span class="hljs-value"><span class="hljs-number">1</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>204</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>400</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"Campo obrigatório, deve ter de 2 a 100 caracteres"</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"Status inválido, deve ser 1 = Ativo ou 0 = Inativo"</span></span>,
+  "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"Deve possuir um valor válido, consulte a documentação"</span></span>,
+  "<span class="hljs-attribute">templateId</span>": <span class="hljs-value"><span class="hljs-string">"Template informado não existe"</span></span>,
+  "<span class="hljs-attribute">grupoId</span>": <span class="hljs-value"><span class="hljs-string">"O grupo informado não existe"</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>500</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">error</span>": <span class="hljs-value"><span class="hljs-string">"Ocorreu algum erro, nossa equipe já foi notificada."</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="pontos-de-acesso-criar-novo-ponto-de-acesso" class="resource"><h3 class="resource-heading">Criar novo ponto de acesso <a href="#pontos-de-acesso-criar-novo-ponto-de-acesso" class="permalink">&nbsp;&para;</a></h3><div id="pontos-de-acesso-criar-novo-ponto-de-acesso-post" class="action post"><h4 class="action-heading"><div class="name">Criar novo ponto</div><a href="#pontos-de-acesso-criar-novo-ponto-de-acesso-post" class="method post">POST</a><code class="uri">/api/access-points</code></h4><p>Para cadastrar o ponto de acesso via API você precisa respeitar os campos obrigatórios: “friendlyName”, “vendor”, “identifier”, “groupId”.</p>
+<p>Campos da requisição:</p>
+<ul>
+<li>
+<p><b>friendlyName*:</b> [String] É o nome do ponto de acesso.</p>
+</li>
+<li>
+<p><b>vendor*:</b> [String] É o nome do fabricante do seu ponto de acesso, deve ser um nome compatível com o WSpot, esse campo deve ser qualquer valor da lista retornada pelo recurso “[GET] /api/access-points/vendors”</p>
+</li>
+<li>
+<p><b>identifier*:</b> [String] É o identificador que o ponto de acesso envia para o WSpot realizar operações como autenticação e log de acesso, esse identificador deverá respeitar o campo “mask” que é atribuído ao vendor, verificar no recurso “[GET] /api/access-points/vendors”</p>
+</li>
+<li>
+<p><b>local:</b> [String] Este campo é opcional, apenas uma descrição para identificar o local onde o ponto de acesso esta fisicamente.</p>
+</li>
+<li>
+<p><b>status*:</b> [Integer] Este campo é a definição de status do seu ponto de acesso pode ser “0” para intativo ou “1” para ativo.</p>
+</li>
+<li>
+<p><b>templateId:</b> [Integer] Caso você queira associar um ponto de acesso a um template, basta passar o Id do template neste campo, caso contrário, não coloque este campo na requisição pois o sistema tentará associar um template inexistente e dará erro.</p>
+</li>
+<li>
+<p><b>groupId*:</b> [Integer] Este campo é obrigatório, deve ser informado o grupo qual o ponto de acesso fará parte. Lista de grupos poderá ser obtida pelo recurso “[GET] /api/access-point-groups”.</p>
+</li>
+</ul>
+<p>* Campos obrigatórios</p>
+<h4>Example URI</h4><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/access-points</span></div><div class="title"><strong>Request&nbsp;&nbsp;<code>Criar Visitante</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"Meu ponto de acesso"</span></span>,
+  "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"mikrotik"</span></span>,
+  "<span class="hljs-attribute">identifier</span>": <span class="hljs-value"><span class="hljs-string">"64-D1-54-E3-2A-D4"</span></span>,
+  "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"Ponto de acesso do salão"</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">templateId</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">groupId</span>": <span class="hljs-value"><span class="hljs-number">1</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>201</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">8</span></span>,
+  "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"Meu ponto de acesso"</span></span>,
+  "<span class="hljs-attribute">created</span>": <span class="hljs-value"><span class="hljs-string">"2018-06-05 09:29:44"</span></span>,
+  "<span class="hljs-attribute">updated</span>": <span class="hljs-value"><span class="hljs-string">"2018-06-05 09:29:44"</span></span>,
+  "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"mikrotik"</span></span>,
+  "<span class="hljs-attribute">identifier</span>": <span class="hljs-value"><span class="hljs-string">"64-D1-54-E3-2A-D4"</span></span>,
+  "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"Ponto de acesso do salão"</span></span>,
+  "<span class="hljs-attribute">verified</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">template</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Template padrão"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">group</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Grupo padrão"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>400</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"Campo obrigatório, deve ter de 2 a 100 caracteres"</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-string">"Status inválido, deve ser 1 = Ativo ou 0 = Inativo"</span></span>,
+  "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"Campo obrigatório, deve possuir um valor válido, consulte a documentação "</span></span>,
+  "<span class="hljs-attribute">identifier</span>": <span class="hljs-value"><span class="hljs-string">"Campo identifier é obrigatório"</span></span>,
+  "<span class="hljs-attribute">groupId</span>": <span class="hljs-value"><span class="hljs-string">"O grupo informado não existe"</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>500</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">error</span>": <span class="hljs-value"><span class="hljs-string">"Ocorreu algum erro, nossa equipe já foi notificada."</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="pontos-de-acesso-todos-pontos-de-acesso-paginados" class="resource"><h3 class="resource-heading">Todos pontos de acesso paginados <a href="#pontos-de-acesso-todos-pontos-de-acesso-paginados" class="permalink">&nbsp;&para;</a></h3><div id="pontos-de-acesso-todos-pontos-de-acesso-paginados-get" class="action get"><h4 class="action-heading"><div class="name">Listar vendors</div><a href="#pontos-de-acesso-todos-pontos-de-acesso-paginados-get" class="method get">GET</a><code class="uri">/api/access-points/vendors</code></h4><p>Esta lista é utilizada para cadastrar novos pontos de acesso, o vendor deve ser um desta lista respeitando o campo “mask” para preencher o “identifier”.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/access-points/vendors</span></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"aerohive"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">"HH-HH-HH-HH-HH-HH"</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"aruba"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">"HH-HH-HH-HH-HH-HH"</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"aruba-v2"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">"HH-HH-HH-HH-HH-HH"</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"cisco"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">"HH-HH-HH-HH-HH-HH"</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"mikrotik"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">""</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"pfsense"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">""</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"ruckus-controlador"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">"HH-HH-HH-HH-HH-HH"</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"ruckus-standalone"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">"HH-HH-HH-HH-HH-HH"</span>
+  </span>},
+  {
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"zyxel"</span></span>,
+    "<span class="hljs-attribute">mask</span>": <span class="hljs-value"><span class="hljs-string">"HH-HH-HH-HH-HH-HH"</span>
+  </span>}
+]</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="pontos-de-acesso-todos-pontos-de-acesso-paginados-1" class="resource"><h3 class="resource-heading">Todos pontos de acesso paginados <a href="#pontos-de-acesso-todos-pontos-de-acesso-paginados-1" class="permalink">&nbsp;&para;</a></h3><div id="pontos-de-acesso-todos-pontos-de-acesso-paginados-get-1" class="action get"><h4 class="action-heading"><div class="name">Listar pontos de acesso</div><a href="#pontos-de-acesso-todos-pontos-de-acesso-paginados-get-1" class="method get">GET</a><code class="uri">/api/access-points</code></h4><h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/access-points</span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>friendlyName</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>&quot;Minha Ap&quot;</span></span><p>Nome do ponto de acesso</p>
+</dd><dt>identifier</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>&quot;identificador_da_ap&quot;</span></span><p>Identificador do ponto de acesso</p>
+</dd><dt>status</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Status do ponto de acesso 1 - Ativo / 0 - Inativo</p>
+<p class="choices"><strong>Choices:&nbsp;</strong><code>0</code> <code>1</code> </p></dd><dt>page</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>1</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1</span></span><p>Página atual</p>
+</dd><dt>limit</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>50</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>50</span></span><p>Limite de resultado por página</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[
+  {
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"AP Teste 01"</span></span>,
+    "<span class="hljs-attribute">created</span>": <span class="hljs-value"><span class="hljs-string">"2018-05-22 13:57:55"</span></span>,
+    "<span class="hljs-attribute">updated</span>": <span class="hljs-value"><span class="hljs-string">"2018-05-22 14:22:03"</span></span>,
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"mikrotik"</span></span>,
+    "<span class="hljs-attribute">identifier</span>": <span class="hljs-value"><span class="hljs-string">"11-11-11-11-11-11"</span></span>,
+    "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"Teste Local 1"</span></span>,
+    "<span class="hljs-attribute">verified</span>": <span class="hljs-value"><span class="hljs-literal">true</span></span>,
+    "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">template</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Template padrão"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">group</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Grupo padrão"</span>
+    </span>}
+  </span>},
+  {
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+    "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"AP Teste 02"</span></span>,
+    "<span class="hljs-attribute">created</span>": <span class="hljs-value"><span class="hljs-string">"2018-05-22 13:57:55"</span></span>,
+    "<span class="hljs-attribute">updated</span>": <span class="hljs-value"><span class="hljs-string">"2018-05-22 14:33:52"</span></span>,
+    "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"mikrotik"</span></span>,
+    "<span class="hljs-attribute">identifier</span>": <span class="hljs-value"><span class="hljs-string">"2B-9C-E8-F4-4D-75"</span></span>,
+    "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"Teste Local 2"</span></span>,
+    "<span class="hljs-attribute">verified</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+    "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">0</span></span>,
+    "<span class="hljs-attribute">template</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-literal">null</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">group</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Grupo padrão"</span>
+    </span>}
+  </span>}
+]</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>404</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Caso o grupo de ponto de acesso não exista grupos baseados nos filtros</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[]</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>500</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Caso ocorra algum erro interno no servidor, nossa equipe será notificada automáticamente.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">error</span>": <span class="hljs-value"><span class="hljs-string">"Ocorreu um erro, nossa equipe já foi notificada."</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="pontos-de-acesso-detalhar-ponto-de-acesso" class="resource"><h3 class="resource-heading">Detalhar ponto de acesso <a href="#pontos-de-acesso-detalhar-ponto-de-acesso" class="permalink">&nbsp;&para;</a></h3><div id="pontos-de-acesso-detalhar-ponto-de-acesso-get" class="action get"><h4 class="action-heading"><div class="name">Detalhar ponto de acesso</div><a href="#pontos-de-acesso-detalhar-ponto-de-acesso-get" class="method get">GET</a><code class="uri">/api/access-points/:id</code></h4><h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/access-points/:id</span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>12</span></span><p>Id do ponto de acesso</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">friendlyName</span>": <span class="hljs-value"><span class="hljs-string">"AP Teste 01"</span></span>,
+  "<span class="hljs-attribute">created</span>": <span class="hljs-value"><span class="hljs-string">"2018-05-22 13:57:55"</span></span>,
+  "<span class="hljs-attribute">updated</span>": <span class="hljs-value"><span class="hljs-string">"2018-05-22 14:22:03"</span></span>,
+  "<span class="hljs-attribute">vendor</span>": <span class="hljs-value"><span class="hljs-string">"mikrotik"</span></span>,
+  "<span class="hljs-attribute">identifier</span>": <span class="hljs-value"><span class="hljs-string">"11-11-11-11-11-11"</span></span>,
+  "<span class="hljs-attribute">local</span>": <span class="hljs-value"><span class="hljs-string">"Teste Local 1"</span></span>,
+  "<span class="hljs-attribute">verified</span>": <span class="hljs-value"><span class="hljs-literal">true</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">template</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Template Padrão"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">group</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Grupo padrão"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>404</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Resposta quando o id solicitado não existe no WSpot</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>400</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Resposta quando o id solicitado possui um formato inválido</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">message</span>": <span class="hljs-value"><span class="hljs-string">"Id inválido"</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>500</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Caso ocorra algum erro interno no servidor, nossa equipe será notificada automáticamente.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">error</span>": <span class="hljs-value"><span class="hljs-string">"Ocorreu um erro, nossa equipe já foi notificada."</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></section><section id="grupo-de-pontos-de-acesso" class="resource-group"><h2 class="group-heading">Grupo de Pontos de Acesso <a href="#grupo-de-pontos-de-acesso" class="permalink">&para;</a></h2><div id="grupo-de-pontos-de-acesso-listar-grupos-de-pontos-de-acesso" class="resource"><h3 class="resource-heading">Listar grupos de pontos de acesso <a href="#grupo-de-pontos-de-acesso-listar-grupos-de-pontos-de-acesso" class="permalink">&nbsp;&para;</a></h3><div id="grupo-de-pontos-de-acesso-listar-grupos-de-pontos-de-acesso-get" class="action get"><h4 class="action-heading"><div class="name">Listar grupos</div><a href="#grupo-de-pontos-de-acesso-listar-grupos-de-pontos-de-acesso-get" class="method get">GET</a><code class="uri">/access-point-groups</code></h4><p>Lista todos ou um grupo(s) de ponto(s) de acesso.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/access-point-groups</span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>name</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Nome do grupo que será listado</p>
+</dd><dt>limit</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>10</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>10</span></span><p>Limite de grupos que será listado</p>
+</dd><dt>page</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>0</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>0</span></span><p>Qual página deseja buscar, caso haja paginação</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>+ Body
+    [
+        {
+             <span class="hljs-string">"id"</span>: <span class="hljs-number">1</span>,
+             <span class="hljs-string">"name"</span>: <span class="hljs-string">"Grupo padrão"</span>,
+             <span class="hljs-string">"isDefault"</span>: <span class="hljs-literal">true</span>,
+             <span class="hljs-string">"template"</span>: {
+                 <span class="hljs-string">"id"</span>: <span class="hljs-number">1</span>,
+                 <span class="hljs-string">"name"</span>: Template padrão
+             },
+             <span class="hljs-string">"id"</span>: <span class="hljs-number">2</span>,
+              <span class="hljs-string">"name"</span>: <span class="hljs-string">"Grupo funcionários"</span>,
+              <span class="hljs-string">"isDefault"</span>: <span class="hljs-literal">false</span>,
+              <span class="hljs-string">"template"</span>: {
+                  <span class="hljs-string">"id"</span>: <span class="hljs-number">3</span>,
+                  <span class="hljs-string">"name"</span>: Template funcionários
+              },
+             <span class="hljs-string">"id"</span>: <span class="hljs-number">3</span>,
+              <span class="hljs-string">"name"</span>: <span class="hljs-string">"Grupo visitantes"</span>,
+              <span class="hljs-string">"isDefault"</span>: <span class="hljs-literal">false</span>,
+              <span class="hljs-string">"template"</span>: {
+                  <span class="hljs-string">"id"</span>: <span class="hljs-number">2</span>,
+                  <span class="hljs-string">"name"</span>: Template visitantes
+              }
+        },
+    ]</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>404</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>Caso o grupo de ponto de acesso não exista grupos baseados nos filtros</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[]</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>500</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>Caso ocorra algum erro interno no servidor, nossa equipe será notificada automáticamente.
+    + Body
+    {
+         <span class="hljs-string">"error"</span>: <span class="hljs-string">"Ocorreu um erro, nossa equipe já foi notificada."</span>
+    }</code></pre><div style="height: 1px;"></div></div></div></div></div></section><section id="visitantes" class="resource-group"><h2 class="group-heading">Visitantes <a href="#visitantes" class="permalink">&para;</a></h2><div id="visitantes-todos-visitantes-paginados" class="resource"><h3 class="resource-heading">Todos visitantes paginados <a href="#visitantes-todos-visitantes-paginados" class="permalink">&nbsp;&para;</a></h3><div id="visitantes-todos-visitantes-paginados-get" class="action get"><h4 class="action-heading"><div class="name">Listar todos visitantes</div><a href="#visitantes-todos-visitantes-paginados-get" class="method get">GET</a><code class="uri">/api/guests</code></h4><p>No resultado do visitante o campo <b>“refId”</b> é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests</span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>limit</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>20</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>10</span></span><p>Limite de visitantes que será listado</p>
+</dd><dt>page</dt><dd><code>number</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>0</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>0</span></span><p>Qual página deseja buscar, caso haja paginação</p>
+</dd><dt>sort</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>&quot;desc&quot;</span></span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>&quot;desc&quot;</span></span><p>Ordem da listagem</p>
+<p class="choices"><strong>Choices:&nbsp;</strong><code>&quot;desc&quot;</code> <code>&quot;asc&quot;</code> </p></dd><dt>filter</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>&quot;properties.email&quot;</span></span><p>Nome do campo a ser buscado no cadastro do visitante, todos campos dentro de “properties”, deve possuir “properties.” antes do campo</p>
+</dd><dt>value</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>&quot;visitante@wspot.com.br&quot;</span></span><p>Valor buscado, do campo especificado em “filter”</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">page</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">totalOfPages</span>": <span class="hljs-value"><span class="hljs-number">5</span></span>,
+  "<span class="hljs-attribute">totalOfElements</span>": <span class="hljs-value"><span class="hljs-number">5</span></span>,
+  "<span class="hljs-attribute">limitPerPage</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">order</span>": <span class="hljs-value"><span class="hljs-string">"desc"</span></span>,
+  "<span class="hljs-attribute">elements</span>": <span class="hljs-value">[
+    {
+      "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"586a7288024925001b054924"</span></span>,
+      "<span class="hljs-attribute">created</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2017-01-02 13:32:22.206000"</span></span>,
+        "<span class="hljs-attribute">timezone_type</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+        "<span class="hljs-attribute">timezone</span>": <span class="hljs-value"><span class="hljs-string">"America/Sao_Paulo"</span>
+      </span>}</span>,
+      "<span class="hljs-attribute">group</span>": <span class="hljs-value"><span class="hljs-string">"guest"</span></span>,
+      "<span class="hljs-attribute">validated</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">lastAccess</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+      "<span class="hljs-attribute">locale</span>": <span class="hljs-value"><span class="hljs-string">"pt_br"</span></span>,
+      "<span class="hljs-attribute">documentType</span>": <span class="hljs-value"><span class="hljs-string">"CPF"</span></span>,
+      "<span class="hljs-attribute">authorizeEmail</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">returning</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+        "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Spider Man"</span></span>,
+        "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"Campinas"</span></span>,
+        "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-string">"31546840265"</span>
+      </span>}</span>,
+      "<span class="hljs-attribute">social</span>": <span class="hljs-value">{}</span>,
+      "<span class="hljs-attribute">accessData</span>": <span class="hljs-value">{}</span>,
+      "<span class="hljs-attribute">employee</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+      "<span class="hljs-attribute">refId</span>": <span class="hljs-value"><span class="hljs-number">18</span>
+    </span>}
+  ]</span>,
+  "<span class="hljs-attribute">nextLink</span>": <span class="hljs-value"><span class="hljs-string">"/app_dev.php/api/guests?page=2&amp;limit=1&amp;sort=desc"</span></span>,
+  "<span class="hljs-attribute">previusLink</span>": <span class="hljs-value"><span class="hljs-literal">null</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="visitantes-listar-visitantes-por-data" class="resource"><h3 class="resource-heading">Listar visitantes por data <a href="#visitantes-listar-visitantes-por-data" class="permalink">&nbsp;&para;</a></h3><div id="visitantes-listar-visitantes-por-data-get" class="action get"><h4 class="action-heading"><div class="name">Listar visitantes por data</div><a href="#visitantes-listar-visitantes-por-data-get" class="method get">GET</a><code class="uri">/api/guests?filter=created&amp;from=2017-07-10 12:00:00&amp;to=2017-07-11 12:00:00</code></h4><p>No resultado do visitante o campo <b>“refId”</b> é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests?filter=created&from=2017-07-10 12:00:00&to=2017-07-11 12:00:00</span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>filter</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>&quot;created&quot;</span></span><p>Nome do campo a ser filtrado por range de data no cadastro do visitante, todos campos dentro de “properties”, deve possuir “properties.” antes do campo</p>
+</dd><dt>from</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>2017-07-10 12:00:00</span></span><p>Data inicial do range de data.</p>
+</dd><dt>to</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>2017-07-11 12:00:00</span></span><p>Data final do range de data.</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"586a7285024925001b054923"</span></span>,
+  "<span class="hljs-attribute">created</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2017-07-11 10:32:20.271000"</span></span>,
+    "<span class="hljs-attribute">timezone_type</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+    "<span class="hljs-attribute">timezone</span>": <span class="hljs-value"><span class="hljs-string">"America/Sao_Paulo"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">group</span>": <span class="hljs-value"><span class="hljs-string">"guest"</span></span>,
+  "<span class="hljs-attribute">validated</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">lastAccess</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">locale</span>": <span class="hljs-value"><span class="hljs-string">"pt_br"</span></span>,
+  "<span class="hljs-attribute">documentType</span>": <span class="hljs-value"><span class="hljs-string">"CPF"</span></span>,
+  "<span class="hljs-attribute">authorizeEmail</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">returning</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Iron Man"</span></span>,
+    "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"Campinas"</span></span>,
+    "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-number">84452652530</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">social</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">accessData</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">employee</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">refId</span>": <span class="hljs-value"><span class="hljs-number">8</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="visitantes-buscar-um-visitante" class="resource"><h3 class="resource-heading">Buscar um visitante <a href="#visitantes-buscar-um-visitante" class="permalink">&nbsp;&para;</a></h3><div id="visitantes-buscar-um-visitante-get" class="action get"><h4 class="action-heading"><div class="name">Buscar apenas um visitante</div><a href="#visitantes-buscar-um-visitante-get" class="method get">GET</a><code class="uri">/api/guests/{id}</code></h4><p>No resultado do visitante o campo <b>“refId”</b> é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests/<span class="hljs-attribute" title="id">id</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>string</code>&nbsp;<span class="required">(required)</span>&nbsp;<p>Id do visitante</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+"<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"586a7285024925001b054923"</span></span>,
+"<span class="hljs-attribute">created</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">date</span>": <span class="hljs-value"><span class="hljs-string">"2017-01-02 13:32:20.271000"</span></span>,
+    "<span class="hljs-attribute">timezone_type</span>": <span class="hljs-value"><span class="hljs-number">3</span></span>,
+    "<span class="hljs-attribute">timezone</span>": <span class="hljs-value"><span class="hljs-string">"America/Sao_Paulo"</span>
+</span>}</span>,
+"<span class="hljs-attribute">group</span>":<span class="hljs-value"><span class="hljs-string">"guest"</span></span>,
+"<span class="hljs-attribute">validated</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+"<span class="hljs-attribute">lastAccess</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+"<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+"<span class="hljs-attribute">locale</span>": <span class="hljs-value"><span class="hljs-string">"pt_br"</span></span>,
+"<span class="hljs-attribute">documentType</span>": <span class="hljs-value"><span class="hljs-string">"CPF"</span></span>,
+"<span class="hljs-attribute">authorizeEmail</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+"<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+"<span class="hljs-attribute">returning</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+"<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Iron Man"</span></span>,
+    "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"Campinas"</span></span>,
+    "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-number">84452652530</span>
+</span>}</span>,
+"<span class="hljs-attribute">social</span>": <span class="hljs-value">{}</span>,
+"<span class="hljs-attribute">accessData</span>": <span class="hljs-value">{}</span>,
+"<span class="hljs-attribute">employee</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+"<span class="hljs-attribute">refId</span>": <span class="hljs-value"><span class="hljs-number">14</span></span>,
+}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="visitantes-criar-visitante" class="resource"><h3 class="resource-heading">Criar visitante <a href="#visitantes-criar-visitante" class="permalink">&nbsp;&para;</a></h3><div id="visitantes-criar-visitante-post" class="action post"><h4 class="action-heading"><div class="name">Criar Visitante</div><a href="#visitantes-criar-visitante-post" class="method post">POST</a><code class="uri">/api/guests/{locale}</code></h4><p>Antes de criar um visitante, caso você possua campos personalizados em seu formulário, é necessário fazer uma requisição de campos customizados antes de enviar a requisição. No exemplo deste request possui os campos customizados “name”, “city”, “document” e “email”.</p>
+<p>O campo “status” deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo], não é obrigatório, por padrão é 1.</p>
+<p>O campo “registrationMacAddress” é o Mac Address/IP referente ao ponto de acesso em que o visitante está se cadastrando. Essa informação será útil para carregarmos as configurações, que agora cada Grupo de Ponto de acesso possui suas configurações específicas. Caso nenhum valor seja informado nesse campo, carregaremos as configurações do Grupo padrão. Campo opcional.</p>
+<h4>Example URI</h4><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests/<span class="hljs-attribute" title="locale">locale</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>locale</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>&quot;pt_br&quot;</span></span>&nbsp;<p>Locale qual o visitante será salvo no wspot</p>
+<p class="choices"><strong>Choices:&nbsp;</strong><code>&quot;pt_br&quot;</code> <code>&quot;en&quot;</code> <code>&quot;es&quot;</code> </p></dd></dl></div><div class="title"><strong>Request&nbsp;&nbsp;<code>Criar Visitante</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">password</span>": <span class="hljs-value"><span class="hljs-string">"@#123&amp;&amp;*%SA"</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+  "<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-string">"99-99-99-99-99-99"</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Teste User"</span></span>,
+    "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"Campinas"</span></span>,
+    "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-string">"27658434817"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>201</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"586a9b99024925fe1a054923"</span></span>,
+  "<span class="hljs-attribute">created</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">sec</span>": <span class="hljs-value"><span class="hljs-number">1483381656</span></span>,
+    "<span class="hljs-attribute">usec</span>": <span class="hljs-value"><span class="hljs-number">462000</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">group</span>": <span class="hljs-value"><span class="hljs-string">"guest"</span></span>,
+  "<span class="hljs-attribute">validated</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">lastAccess</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">locale</span>": <span class="hljs-value"><span class="hljs-string">"pt_br"</span></span>,
+  "<span class="hljs-attribute">documentType</span>": <span class="hljs-value"><span class="hljs-string">"CPF"</span></span>,
+  "<span class="hljs-attribute">authorizeEmail</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">returning</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Teste User"</span></span>,
+    "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"Campinas"</span></span>,
+    "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-string">"27658434817"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">social</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">accessData</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">employee</span>": <span class="hljs-value"><span class="hljs-literal">null</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="visitantes-criar-bulk-de-visitantes" class="resource"><h3 class="resource-heading">Criar bulk de visitantes <a href="#visitantes-criar-bulk-de-visitantes" class="permalink">&nbsp;&para;</a></h3><div id="visitantes-criar-bulk-de-visitantes-post" class="action post"><h4 class="action-heading"><div class="name">Criar Visitante Bulk</div><a href="#visitantes-criar-bulk-de-visitantes-post" class="method post">POST</a><code class="uri">/api/guests/bulk/{locale}</code></h4><p>Antes de criar um visitante, caso você possua campos personalizados em seu formulário, é necessário fazer uma requisição de campos customizados antes de enviar a requisição. No exemplo deste request possui os campos customizados “name”, “city”, “document” e “email”.</p>
+<p>O campo “status” deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo], não é obrigatório, por padrão é 1.</p>
+<p>O campo “registrationMacAddress” é o Mac Address/IP referente ao ponto de acesso em que o visitante está se cadastrando. Essa informação será útil para carregarmos as configurações, que agora cada Grupo de Ponto de acesso possui suas configurações específicas. Caso nenhum valor seja informado nesse campo, carregaremos as configurações do Grupo padrão. Campo opcional.</p>
+<h4>Example URI</h4><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests/bulk/<span class="hljs-attribute" title="locale">locale</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>locale</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>&quot;pt_br&quot;</span></span>&nbsp;<p>Locale qual o visitante será salvo no wspot</p>
+<p class="choices"><strong>Choices:&nbsp;</strong><code>&quot;pt_br&quot;</code> <code>&quot;en&quot;</code> <code>&quot;es&quot;</code> </p></dd></dl></div><div class="title"><strong>Request&nbsp;&nbsp;<code>Criar Visitantes</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>[
+  {
+    "<span class="hljs-attribute">password</span>": <span class="hljs-value"><span class="hljs-string">"123456"</span></span>,
+    "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-string">"99-99-99-99-99-99"</span></span>,
+    "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante1@wspot.com.br"</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Thor"</span></span>,
+      "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"Campinas"</span></span>,
+      "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-number">27145444283</span>
+    </span>}
+  </span>},
+  {
+    "<span class="hljs-attribute">password</span>": <span class="hljs-value"><span class="hljs-string">"123456"</span></span>,
+    "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">1</span></span>,
+    "<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-string">"99-99-99-99-99-99"</span></span>,
+    "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante2@wspot.com.br"</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Hulk"</span></span>,
+      "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"Campinas"</span></span>,
+      "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-number">84452652530</span>
+    </span>}
+  </span>}
+]</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">hasErrors</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">successTotal</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">errorsTotal</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">errors</span>": <span class="hljs-value">[]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="visitantes-atualizar-visitante" class="resource"><h3 class="resource-heading">Atualizar visitante <a href="#visitantes-atualizar-visitante" class="permalink">&nbsp;&para;</a></h3><div id="visitantes-atualizar-visitante-put" class="action put"><h4 class="action-heading"><div class="name">Atualizar Visitante</div><a href="#visitantes-atualizar-visitante-put" class="method put">PUT</a><code class="uri">/api/guests/{locale}</code></h4><p>O campo “status” deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo].</p>
+<h4>Example URI</h4><div class="definition"><span class="method put">PUT</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests/<span class="hljs-attribute" title="locale">locale</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>locale</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>&quot;pt_br&quot;</span></span>&nbsp;<p>Locale qual o visitante será salvo no wspot</p>
+<p class="choices"><strong>Choices:&nbsp;</strong><code>&quot;pt_br&quot;</code> <code>&quot;en&quot;</code> <code>&quot;es&quot;</code> </p></dd></dl></div><div class="title"><strong>Request&nbsp;&nbsp;<code>Atualizar visitante</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"586a9b99024925054923"</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Spider Man"</span></span>,
+    "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"São Paulo"</span></span>,
+    "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-string">"82877700682"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"586a9b99024925054923"</span></span>,
+  "<span class="hljs-attribute">created</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">sec</span>": <span class="hljs-value"><span class="hljs-number">1483383368</span></span>,
+    "<span class="hljs-attribute">usec</span>": <span class="hljs-value"><span class="hljs-number">320000</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">validated</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">lastAccess</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">group</span>": <span class="hljs-value"><span class="hljs-string">"guest"</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">locale</span>": <span class="hljs-value"><span class="hljs-string">"pt_br"</span></span>,
+  "<span class="hljs-attribute">documentType</span>": <span class="hljs-value"><span class="hljs-string">"CPF"</span></span>,
+  "<span class="hljs-attribute">authorizeEmail</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">returning</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Spider Man"</span></span>,
+    "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"São Paulo"</span></span>,
+    "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-string">"82877700682"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">social</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">accessData</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">employee</span>": <span class="hljs-value"><span class="hljs-literal">null</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="visitantes-excluir-visitante" class="resource"><h3 class="resource-heading">Excluir visitante <a href="#visitantes-excluir-visitante" class="permalink">&nbsp;&para;</a></h3><div id="visitantes-excluir-visitante-delete" class="action delete"><h4 class="action-heading"><div class="name">Excluir Visitante</div><a href="#visitantes-excluir-visitante-delete" class="method delete">DELETE</a><code class="uri">/api/guests</code></h4><p>Atualmente a exclusão de visitantes via API não é permitida. Excluir um visitante impacta na exclusão de todos seus dados de acesso.
+Em caso de dúvida, favor contatar nossa equipe de suporte: <a href="mailto:suporte@mambowifi.com">suporte@mambowifi.com</a>.</p>
+<h4>Example URI</h4><div class="definition"><span class="method delete">DELETE</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests</span></div></div></div><div id="visitantes-alterar-grupo-de-visitante" class="resource"><h3 class="resource-heading">Alterar grupo de visitante <a href="#visitantes-alterar-grupo-de-visitante" class="permalink">&nbsp;&para;</a></h3><div id="visitantes-alterar-grupo-de-visitante-put" class="action put"><h4 class="action-heading"><div class="name">Alterar grupo de visitante</div><a href="#visitantes-alterar-grupo-de-visitante-put" class="method put">PUT</a><code class="uri">/api/guests/{locale}</code></h4><p>O processo de alteração de grupo do visitante é similar a atualização dos dados de um visitante, a diferença é que você passa o atributo “group” com o “identifier” do grupo.
+O “identifier” pode ser encontrado através do seu “painel administrativo &gt; visitantes &gt; grupos &gt; detalhe do grupo”.
+O parâmetro “properties” deve ser enviado também, senão dara erro de validação dos campos customizados do seu WSpot.</p>
+<h4>Example URI</h4><div class="definition"><span class="method put">PUT</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests/<span class="hljs-attribute" title="locale">locale</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>locale</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-info default"><strong>Default:&nbsp;</strong><span>&quot;pt_br&quot;</span></span>&nbsp;<p>Locale qual o visitante será salvo no wspot</p>
+<p class="choices"><strong>Choices:&nbsp;</strong><code>&quot;pt_br&quot;</code> <code>&quot;en&quot;</code> <code>&quot;es&quot;</code> </p></dd></dl></div><div class="title"><strong>Request&nbsp;&nbsp;<code>Atualizar grupo do visitante</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"586a9b99024925054923"</span></span>,
+  "<span class="hljs-attribute">group</span>": <span class="hljs-value"><span class="hljs-string">"identifier_do_novo_grupo"</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Spider Man"</span></span>,
+    "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"São Paulo"</span></span>,
+    "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-string">"82877700682"</span>
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">id</span>": <span class="hljs-value"><span class="hljs-string">"586a9b99024925054923"</span></span>,
+  "<span class="hljs-attribute">created</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">sec</span>": <span class="hljs-value"><span class="hljs-number">1483383368</span></span>,
+    "<span class="hljs-attribute">usec</span>": <span class="hljs-value"><span class="hljs-number">320000</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">validated</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">lastAccess</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">group</span>": <span class="hljs-value"><span class="hljs-string">"identifier_do_novo_grupo"</span></span>,
+  "<span class="hljs-attribute">status</span>": <span class="hljs-value"><span class="hljs-number">2</span></span>,
+  "<span class="hljs-attribute">locale</span>": <span class="hljs-value"><span class="hljs-string">"pt_br"</span></span>,
+  "<span class="hljs-attribute">documentType</span>": <span class="hljs-value"><span class="hljs-string">"CPF"</span></span>,
+  "<span class="hljs-attribute">authorizeEmail</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">registrationMacAddress</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">returning</span>": <span class="hljs-value"><span class="hljs-literal">null</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">email</span>": <span class="hljs-value"><span class="hljs-string">"visitante@wspot.com.br"</span></span>,
+    "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"Spider Man"</span></span>,
+    "<span class="hljs-attribute">city</span>": <span class="hljs-value"><span class="hljs-string">"São Paulo"</span></span>,
+    "<span class="hljs-attribute">document</span>": <span class="hljs-value"><span class="hljs-string">"82877700682"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">social</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">accessData</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">employee</span>": <span class="hljs-value"><span class="hljs-literal">null</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></section><section id="campos-customizados" class="resource-group"><h2 class="group-heading">Campos customizados <a href="#campos-customizados" class="permalink">&para;</a></h2><div id="campos-customizados-listar-campos" class="resource"><h3 class="resource-heading">Listar campos <a href="#campos-customizados-listar-campos" class="permalink">&nbsp;&para;</a></h3><div id="campos-customizados-listar-campos-get" class="action get"><h4 class="action-heading"><div class="name">Listar campos</div><a href="#campos-customizados-listar-campos-get" class="method get">GET</a><code class="uri">/api/guests/fields</code></h4><p>Lista todos os campos customizados que existem no formulário de cadastro.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/api/guests/fields</span></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>+ Body
+    [{
+        <span class="hljs-string">"id"</span>: <span class="hljs-string">"585168a1e0e35b6aa83c9f6e"</span>,
+        <span class="hljs-string">"type"</span>: <span class="hljs-string">"document"</span>,
+        <span class="hljs-string">"name"</span>: {
+            <span class="hljs-string">"pt_br"</span>: <span class="hljs-string">"CPF"</span>,
+            <span class="hljs-string">"en"</span>: <span class="hljs-string">"Passport"</span>,
+            <span class="hljs-string">"es"</span>: <span class="hljs-string">"Pasaporte"</span>
+        },
+        <span class="hljs-string">"identifier"</span>: <span class="hljs-string">"document"</span>,
+        <span class="hljs-string">"choices"</span>: <span class="hljs-literal">null</span>,
+        <span class="hljs-string">"validations"</span>: [
+            {
+                <span class="hljs-string">"type"</span>: <span class="hljs-string">"required"</span>,
+                <span class="hljs-string">"value"</span>: <span class="hljs-literal">true</span>,
+                <span class="hljs-string">"message"</span>: <span class="hljs-string">"wspot.signup_page.field_required"</span>,
+                <span class="hljs-string">"locale"</span>: [
+                    <span class="hljs-string">"pt_br"</span>,
+                    <span class="hljs-string">"en"</span>,
+                    <span class="hljs-string">"es"</span>
+                ]
+            },
+            {
+                <span class="hljs-string">"type"</span>: <span class="hljs-string">"minlength"</span>,
+                <span class="hljs-string">"value"</span>: <span class="hljs-number">10</span>,
+                <span class="hljs-string">"message"</span>: <span class="hljs-string">"wspot.signup_page.field_document_min_characters_required"</span>,
+                <span class="hljs-string">"locale"</span>: [
+                    <span class="hljs-string">"pt_br"</span>
+                ]
+            },
+            {
+                <span class="hljs-string">"type"</span>: <span class="hljs-string">"CpfValidator"</span>,
+                <span class="hljs-string">"value"</span>: {
+                    <span class="hljs-string">"required"</span>: <span class="hljs-literal">true</span>
+                },
+                <span class="hljs-string">"message"</span>: <span class="hljs-string">"wspot.signup_page.field_invalid_document"</span>,
+                <span class="hljs-string">"locale"</span>: [
+                    <span class="hljs-string">"pt_br"</span>
+                ]
+            }
+        ],
+        <span class="hljs-string">"mask"</span>: {
+            <span class="hljs-string">"pt_br"</span>: <span class="hljs-string">"99999999999"</span>,
+            <span class="hljs-string">"en"</span>: <span class="hljs-string">""</span>,
+            <span class="hljs-string">"es"</span>: <span class="hljs-string">""</span>
+        },
+        isUnique: <span class="hljs-literal">true</span>,
+        isLogin: <span class="hljs-literal">false</span>
+    }
+    ]</code></pre><div style="height: 1px;"></div></div></div></div></div></section></div></div></div><p style="text-align: center;" class="text-muted">Generated by&nbsp;<a href="https://github.com/danielgtaylor/aglio" class="aglio">aglio</a>&nbsp;on 13 Jun 2018</p><script>/* eslint-env browser */
+/* eslint quotes: [2, "single"] */
+'use strict';
+
+/*
+  Determine if a string ends with another string.
+*/
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+/*
+  Get a list of direct child elements by class name.
+*/
+function childrenByClass(element, name) {
+  var filtered = [];
+
+  for (var i = 0; i < element.children.length; i++) {
+    var child = element.children[i];
+    var classNames = child.className.split(' ');
+    if (classNames.indexOf(name) !== -1) {
+      filtered.push(child);
+    }
+  }
+
+  return filtered;
+}
+
+/*
+  Get an array [width, height] of the window.
+*/
+function getWindowDimensions() {
+  var w = window,
+      d = document,
+      e = d.documentElement,
+      g = d.body,
+      x = w.innerWidth || e.clientWidth || g.clientWidth,
+      y = w.innerHeight || e.clientHeight || g.clientHeight;
+
+  return [x, y];
+}
+
+/*
+  Collapse or show a request/response example.
+*/
+function toggleCollapseButton(event) {
+    var button = event.target.parentNode;
+    var content = button.parentNode.nextSibling;
+    var inner = content.children[0];
+
+    if (button.className.indexOf('collapse-button') === -1) {
+      // Clicked without hitting the right element?
+      return;
+    }
+
+    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+        // Currently showing, so let's hide it
+        button.className = 'collapse-button';
+        content.style.maxHeight = '0px';
+    } else {
+        // Currently hidden, so let's show it
+        button.className = 'collapse-button show';
+        content.style.maxHeight = inner.offsetHeight + 12 + 'px';
+    }
+}
+
+function toggleTabButton(event) {
+    var i, index;
+    var button = event.target;
+
+    // Get index of the current button.
+    var buttons = childrenByClass(button.parentNode, 'tab-button');
+    for (i = 0; i < buttons.length; i++) {
+        if (buttons[i] === button) {
+            index = i;
+            button.className = 'tab-button active';
+        } else {
+            buttons[i].className = 'tab-button';
+        }
+    }
+
+    // Hide other tabs and show this one.
+    var tabs = childrenByClass(button.parentNode.parentNode, 'tab');
+    for (i = 0; i < tabs.length; i++) {
+        if (i === index) {
+            tabs[i].style.display = 'block';
+        } else {
+            tabs[i].style.display = 'none';
+        }
+    }
+}
+
+/*
+  Collapse or show a navigation menu. It will not be hidden unless it
+  is currently selected or `force` has been passed.
+*/
+function toggleCollapseNav(event, force) {
+    var heading = event.target.parentNode;
+    var content = heading.nextSibling;
+    var inner = content.children[0];
+
+    if (heading.className.indexOf('heading') === -1) {
+      // Clicked without hitting the right element?
+      return;
+    }
+
+    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+      // Currently showing, so let's hide it, but only if this nav item
+      // is already selected. This prevents newly selected items from
+      // collapsing in an annoying fashion.
+      if (force || window.location.hash && endsWith(event.target.href, window.location.hash)) {
+        content.style.maxHeight = '0px';
+      }
+    } else {
+      // Currently hidden, so let's show it
+      content.style.maxHeight = inner.offsetHeight + 12 + 'px';
+    }
+}
+
+/*
+  Refresh the page after a live update from the server. This only
+  works in live preview mode (using the `--server` parameter).
+*/
+function refresh(body) {
+    document.querySelector('body').className = 'preload';
+    document.body.innerHTML = body;
+
+    // Re-initialize the page
+    init();
+    autoCollapse();
+
+    document.querySelector('body').className = '';
+}
+
+/*
+  Determine which navigation items should be auto-collapsed to show as many
+  as possible on the screen, based on the current window height. This also
+  collapses them.
+*/
+function autoCollapse() {
+  var windowHeight = getWindowDimensions()[1];
+  var itemsHeight = 64; /* Account for some padding */
+  var itemsArray = Array.prototype.slice.call(
+    document.querySelectorAll('nav .resource-group .heading'));
+
+  // Get the total height of the navigation items
+  itemsArray.forEach(function (item) {
+    itemsHeight += item.parentNode.offsetHeight;
+  });
+
+  // Should we auto-collapse any nav items? Try to find the smallest item
+  // that can be collapsed to show all items on the screen. If not possible,
+  // then collapse the largest item and do it again. First, sort the items
+  // by height from smallest to largest.
+  var sortedItems = itemsArray.sort(function (a, b) {
+    return a.parentNode.offsetHeight - b.parentNode.offsetHeight;
+  });
+
+  while (sortedItems.length && itemsHeight > windowHeight) {
+    for (var i = 0; i < sortedItems.length; i++) {
+      // Will collapsing this item help?
+      var itemHeight = sortedItems[i].nextSibling.offsetHeight;
+      if ((itemsHeight - itemHeight <= windowHeight) || i === sortedItems.length - 1) {
+        // It will, so let's collapse it, remove its content height from
+        // our total and then remove it from our list of candidates
+        // that can be collapsed.
+        itemsHeight -= itemHeight;
+        toggleCollapseNav({target: sortedItems[i].children[0]}, true);
+        sortedItems.splice(i, 1);
+        break;
+      }
+    }
+  }
+}
+
+/*
+  Initialize the interactive functionality of the page.
+*/
+function init() {
+    var i, j;
+
+    // Make collapse buttons clickable
+    var buttons = document.querySelectorAll('.collapse-button');
+    for (i = 0; i < buttons.length; i++) {
+        buttons[i].onclick = toggleCollapseButton;
+
+        // Show by default? Then toggle now.
+        if (buttons[i].className.indexOf('show') !== -1) {
+            toggleCollapseButton({target: buttons[i].children[0]});
+        }
+    }
+
+    var responseCodes = document.querySelectorAll('.example-names');
+    for (i = 0; i < responseCodes.length; i++) {
+        var tabButtons = childrenByClass(responseCodes[i], 'tab-button');
+        for (j = 0; j < tabButtons.length; j++) {
+            tabButtons[j].onclick = toggleTabButton;
+
+            // Show by default?
+            if (j === 0) {
+                toggleTabButton({target: tabButtons[j]});
+            }
+        }
+    }
+
+    // Make nav items clickable to collapse/expand their content.
+    var navItems = document.querySelectorAll('nav .resource-group .heading');
+    for (i = 0; i < navItems.length; i++) {
+        navItems[i].onclick = toggleCollapseNav;
+
+        // Show all by default
+        toggleCollapseNav({target: navItems[i].children[0]});
+    }
+}
+
+// Initial call to set up buttons
+init();
+
+window.onload = function () {
+    autoCollapse();
+    // Remove the `preload` class to enable animations
+    document.querySelector('body').className = '';
+};
+</script></body></html>

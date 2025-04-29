@@ -1,0 +1,40 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block heading %} Campanhas visualizadas ({{ guest }}) {% endblock %}
+
+{% block filterBlock %}
+{% endblock %}
+
+{% block table %}
+    {% for type, viewData in campaignData %}
+        <h5>{{ type == '1' ? 'Pré' : 'Pós' }} Login</h5>
+        <table class="table table-bordered">
+            <tr>
+                <th>Campanha</th>
+                <th>Ponto de Acesso</th>
+                <th>Data de Visualização</th>
+                <th>Número de Visualizações</th>
+            </tr>
+            {% for key, data in viewData %}
+                <tr>
+                    <td>{{ data.name }}</td>
+                    <td>{{ data.accessPoint }}</td>
+                    <td>{{ data.viewDate | date("d/m/Y") }}</td>
+                    <td>{{ data.quantity }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br /><br />
+    {% endfor %}
+    <div class="widget-body">
+        <hr class="separator">
+        <div class="form-actions right">
+            <a href="{{ path('admin_campaign_view_details',
+                { id : goBack.campaign, type: goBack.campaignType }) }}">
+                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                    Voltar
+                </button>
+            </a>
+        </div>
+    </div>
+{% endblock %}

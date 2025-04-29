@@ -1,0 +1,144 @@
+services:
+  wspot.panel.controller.dashboard:
+    class: Wideti\PanelBundle\Controller\DashboardController
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setSession, ["@session"] ]
+
+  wspot.panel.controler.client:
+    class: Wideti\PanelBundle\Controller\ClientController
+    arguments: 
+      - "%aws_bucket_name%"
+      - "@core.service.configuration"
+      - "@wspot.helper.controller"
+      - "@file_uploader"
+      - "@core.service.entity_logger"
+      - "@core.service.user"
+      - "@core.service.client_logs"
+      - "@core.service.sms_billing"
+      - "@wspot.helper.client"
+      - "@core.service.auditoring.data_controller_service"
+      - "@core.service.unifi"
+      - "@wspot.panel.service.mongodatabase"
+      - "@core.service.firts_config"
+      - "@core.service.legal_base_manager_service"
+      - "@core.service.cache"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setClientService, ["@core.service.client"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setForm, ["@form.factory"] ]
+      - [ setRouter, ["@router"] ]
+      - [ setPaginator, ["@knp_paginator"] ]
+      - [ setMikrotikService, ["@core.service.mikrotik"] ]
+      - [ setEmailConfigService, ["@core.service.send_nas_configuration"] ]
+      - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+      - [ setLogger, ["@logger"] ]
+      - [ setSession, ["@session"] ]
+
+  wspot.panel.controler.sms_gateway:
+    class: Wideti\PanelBundle\Controller\SmsGatewayController
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@wspot.helper.controller"
+      - "@core.service.sms_gateway"
+    calls:
+      - [ setTemplate, ["@templating"] ]
+      - [ setForm, ["@form.factory"] ]
+      - [ setRouter, ["@router"] ]
+      - [ setLogger, ["@logger"] ]
+      - [ setSession, ["@session"] ]
+
+  wspot.panel.controller.sms_credit:
+    class: Wideti\PanelBundle\Controller\SmsCreditController
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@wspot.helper.controller"
+      - "@core.service.sms_credit"
+    calls:
+      - [ setTemplate, ["@templating"] ]
+      - [ setForm, ["@form.factory"] ]
+      - [ setRouter, ["@router"] ]
+      - [ setLogger, ["@logger"] ]
+      - [ setSession, ["@session"] ]
+
+  wspot.panel.controller.report:
+    class: Wideti\PanelBundle\Controller\ReportController
+    arguments:
+      - "@wspot.panel.helper.pagination"
+      - "@service_container"
+      - "@doctrine_mongodb.odm.document_manager"
+      - "@core.service.elastic_search"
+      - "@core.service.watchdog_clients_are_not_using"
+      - "@wspot.panel.service.superlogica"
+      - "@file_uploader"
+      - "%temp_files_folder%"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setReportService, ["@core.service.report"] ]
+
+  wspot.panel.controler.mailchimp:
+    class: Wideti\PanelBundle\Controller\MailchimpController
+    calls:
+      - [ setTemplate, ["@templating"] ]
+      - [ setRouter, ["@router"] ]
+      - [ setMailchimpService, ["@core.service.mailchimp"] ]
+
+  wspot.form.panel_custom_fields:
+    class: Wideti\PanelBundle\Form\Type\CustomFieldsType
+    tags:
+      - { name: form.type, alias: wspot_panel_custom_fields }
+
+  wspot.panel.service.pagination:
+      class: Wideti\PanelBundle\Service\PaginationService
+      arguments: ["%pagination_limit_number%"]
+
+  wspot.panel.service.superlogica:
+      arguments: ["%superlogica_access_token%", "%superlogica_app_token%"]
+      class: Wideti\PanelBundle\Service\SuperLogicaService
+
+  wspot.panel.service.mongodatabase:
+    class: Wideti\PanelBundle\Service\MongoDatabaseService
+    calls:
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+
+  wspot.panel.service.whitelabel_cert:
+    class: Wideti\PanelBundle\Service\WhitelabelCertService
+
+  wspot.panel.controler.whitelabel_cert:
+    class: Wideti\PanelBundle\Controller\WhitelabelCertController
+    arguments:
+      - "@wspot.helper.controller"
+      - "@wspot.panel.service.whitelabel_cert"
+    calls:
+      - [ setTemplate, ["@templating"] ]
+      - [ setForm, ["@form.factory"] ]
+      - [ setSession, ["@session"] ]
+      - [ setRouter, ["@router"] ]
+      - [ setLogger, ["@logger"] ]
+
+  wspot.panel.helper.pagination:
+    class: Wideti\PanelBundle\Helpers\PaginationHelper
+    arguments: ["@wspot.panel.service.pagination", "@service_container"]
+
+  wspot.panel.controller.user:
+    class: Wideti\PanelBundle\Controller\UserController
+    arguments:
+      - "@core.service.configuration"
+      - "@wspot.helper.controller"
+      - "@core.service.user"
+      - "@core.repository.user"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setPaginator, ["@knp_paginator"] ]
+      - [ setSession, ["@session"] ]
+
+  wspot.panel.controller.sms_billing:
+    class: Wideti\PanelBundle\Controller\SMSBillingController
+    arguments: [ "@core.service.configuration", "@wspot.helper.controller", "@core.service.date_interval_management_control", "@core.service.change_status_control", "@core.service.billing_manager_control", "@core.service.billing_filter_control" ]
+    calls:
+      - [ setTemplate, ["@templating"] ]

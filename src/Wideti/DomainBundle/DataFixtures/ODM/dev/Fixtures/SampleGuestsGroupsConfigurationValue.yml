@@ -1,0 +1,116 @@
+Wideti\DomainBundle\Document\Group\ConfigurationValue:
+  EnableBlockPerTime1:
+    key: "enable_block_per_time"
+    value: ""
+    type: "checkbox"
+    params: {}
+    label: "Ativar"
+
+  BlockPerTimeTime1:
+    key: "block_per_time_time"
+    value: ""
+    type: "text"
+    params: {}
+    label: "Tempo"
+    tip: "Informar o limite de tempo que o visitante poderá utilizar a Internet. O valor informado será renovado dentro do período definido no campo abaixo."
+
+  BlockPerTimePeriod1:
+    key: "block_per_time_period"
+    value: ""
+    type: "text"
+    params: {}
+    label: "Período"
+    tip: "Informar o período no qual o limite de tempo será considerado. Caso o campo acima tenha o valor de 1h, o período poderá ser de 1d (1 dia) fazendo com que o visitante tenha somente 1 hora de acesso por dia."
+
+  EnableValidityAccess1:
+    key: "enable_validity_access"
+    value: ""
+    type: "checkbox"
+    params: {}
+    label: "Ativar"
+
+  ValidityAccessDateLimit1:
+    key: "validity_access_date_limit"
+    value: ""
+    type: "text"
+    params: { attr: { "class" : "mask-date" } }
+    label: "Data limite de acesso"
+
+  EnableBandWidth1:
+    key: "enable_bandwidth"
+    value: ""
+    type: "checkbox"
+    params: {}
+    label: "Ativar"
+
+  BandWidthDownloadLimit1:
+    key: "bandwidth_download_limit"
+    value: ""
+    type: "choice"
+    params: {"choices": {"65536":"64 Kbps", "131072":"128 Kbps", "262144":"256 Kbps", "524288":"512 Kbps", "1048576":"1 Mbps", "2097152":"2 Mbps", "3145728":"3 Mbps", "5242880":"5 Mbps", "10485760":"10 Mbps", "20971520": "20 Mbps", "31457280": "30 Mbps", "41943040": "40 Mbps", "52428800": "50 Mbps"}}
+    label: "Download"
+
+  BandWidthUploadLimit1:
+    key: "bandwidth_upload_limit"
+    value: ""
+    type: "choice"
+    params: {"choices": {"65536":"64 Kbps", "131072":"128 Kbps", "262144":"256 Kbps", "524288":"512 Kbps", "1048576":"1 Mbps", "2097152":"2 Mbps", "3145728":"3 Mbps", "5242880":"5 Mbps", "10485760":"10 Mbps", "20971520": "20 Mbps", "31457280": "30 Mbps", "41943040": "40 Mbps", "52428800": "50 Mbps"}}
+    label: "Upload"
+
+  EnableBlockPerTime2:
+    key: "enable_block_per_time"
+    value: ""
+    type: "checkbox"
+    params: {}
+    label: "Ativar"
+
+  BlockPerTimeTime2:
+    key: "block_per_time_time"
+    value: ""
+    type: "text"
+    params: {}
+    label: "Tempo"
+    tip: "Informar o limite de tempo que o visitante poderá utilizar a Internet. O valor informado será renovado dentro do período definido no campo abaixo."
+
+  BlockPerTimePeriod2:
+    key: "block_per_time_period"
+    value: ""
+    type: "text"
+    params: {}
+    label: "Período"
+    tip: "Informar o período no qual o limite de tempo será considerado. Caso o campo acima tenha o valor de 1h, o período poderá ser de 1d (1 dia) fazendo com que o visitante tenha somente 1 hora de acesso por dia."
+
+  EnableValidityAccess2:
+    key: "enable_validity_access"
+    value: ""
+    type: "checkbox"
+    params: {}
+    label: "Ativar"
+
+  ValidityAccessDateLimit2:
+    key: "validity_access_date_limit"
+    value: ""
+    type: "text"
+    params: { attr: { "class" : "mask-date" } }
+    label: "Data limite de acesso"
+
+  EnableBandWidth2:
+    key: "enable_bandwidth"
+    value: ""
+    type: "checkbox"
+    params: {}
+    label: "Ativar"
+
+  BandWidthDownloadLimit2:
+    key: "bandwidth_download_limit"
+    value: ""
+    type: "choice"
+    params: {"choices": {"65536":"64 Kbps", "131072":"128 Kbps", "262144":"256 Kbps", "524288":"512 Kbps", "1048576":"1 Mbps", "2097152":"2 Mbps", "3145728":"3 Mbps", "5242880":"5 Mbps", "10485760":"10 Mbps", "20971520": "20 Mbps", "31457280": "30 Mbps", "41943040": "40 Mbps", "52428800": "50 Mbps"}}
+    label: "Download"
+
+  BandWidthUploadLimit2:
+    key: "bandwidth_upload_limit"
+    value: ""
+    type: "choice"
+    params: {"choices": {"65536":"64 Kbps", "131072":"128 Kbps", "262144":"256 Kbps", "524288":"512 Kbps", "1048576":"1 Mbps", "2097152":"2 Mbps", "3145728":"3 Mbps", "5242880":"5 Mbps", "10485760":"10 Mbps", "20971520": "20 Mbps", "31457280": "30 Mbps", "41943040": "40 Mbps", "52428800": "50 Mbps"}}
+    label: "Upload"

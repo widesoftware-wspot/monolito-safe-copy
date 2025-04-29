@@ -1,0 +1,119 @@
+{
+  "order": 0,
+  "template": "wspot*",
+  "settings": {
+    "index": {
+      "max_result_window": "200000",
+      "number_of_shards": "3",
+      "number_of_replicas": "1"
+    }
+  },
+  "mappings": {
+    "radacct": {
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "acctuniqueid": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "calledstationid": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "upload": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "framedipaddress": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "timezone": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "acctstarttime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "index": "not_analyzed",
+          "type": "date"
+        },
+        "nasidentifier": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "callingstationid": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "nasipaddress": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "acctstoptime": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "index": "not_analyzed",
+          "type": "date"
+        },
+        "type": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "employee": {
+          "index": "not_analyzed",
+          "type": "boolean"
+        },
+        "client_id": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "acctoutputoctets": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "download": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "calledstation_name": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "acctinputoctets": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "acctsessionid": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "interim_update": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "index": "not_analyzed",
+          "type": "date"
+        },
+        "username": {
+          "index": "not_analyzed",
+          "type": "long"
+        }
+      }
+    }
+  },
+  "aliases": {
+    "last_6_months": {},
+    "current": {},
+    "all": {},
+    "last_12_months": {},
+    "last_3_months": {},
+    "last_month": {
+      "filter": {
+        "range": {
+          "acctstarttime": {
+            "gte": "now-30d"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+group_list:
+    path:  /{page}
+    defaults: { _controller: wspot.admin.controller.group:listAction, page:1}
+    options:
+        expose: true
+    requirements:
+            page: \d+
+
+group_create:
+    path:  /create
+    defaults: { _controller: wspot.admin.controller.group:createAction}
+    options:
+        expose: true
+
+group_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.group:editAction}
+    options:
+        expose: true
+
+group_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.group:deleteAction}
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+group_show:
+    path:  /{id}/show
+    defaults: { _controller: wspot.admin.controller.group:showAction}
+    requirements: { methods: get }
+    options:
+        expose: true
+
+group_guest_transfer:
+    path:  /guest_transfer
+    defaults: { _controller: wspot.admin.controller.group:transferGuestAction}
+    requirements: { methods: get }
+    options:
+        expose: true

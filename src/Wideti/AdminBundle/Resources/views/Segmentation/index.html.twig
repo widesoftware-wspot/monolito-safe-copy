@@ -1,0 +1,120 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Segmentação de Visitantes
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('segmentation_new')}}" style="margin: 0px 0 2px 0;"
+       class="btn btn-primary btn-icon glyphicons circle_plus">
+        <i></i>Cadastrar</a>
+{% endblock %}
+
+{% block thead %}
+    <th class="center">Título</th>
+    <th class="center" style="width: 200px;">Data Criação</th>
+    <th class="center" style="width: 200px;">Última Alteração</th>
+    <th class="center" style="width: 150px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr id="{{ entity.id }}" class="gradeX">
+            <td>{{ entity.title }}</td>
+            <td class="center">{{ entity.created|date('d/m/Y H:i') }}</td>
+            <td class="center">{{ entity.updated|date('d/m/Y H:i') }}</td>
+            <td class="center">
+                <a href="{{ path('segmentation_show', { 'id': entity.id }) }}"
+                   class="btn-action glyphicons eye_open btn-info" title="Visualizar"><i></i></a>
+
+                <a href="#"
+                   class="btn-action glyphicons file_export btn-key" title="Exportar"><i></i></a>
+
+                <a href="{{ path('segmentation_edit', { 'id': entity.id }) }}"
+                   class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+
+                <a href="#"
+                   class="btn-action glyphicons remove_2 btn-danger delete-row" title="Excluir"><i></i></a>
+            </td>
+        </tr>
+    {% else %}
+        <td>Nenhuma Segmentação cadastrada</td>
+    {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('tr.gradeX td.center a.file_export').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Exportaremos e enviaremos para seu e-mail a listagem de visitantes que se enquadram a esta segmentação.", function(result){
+                    if(result){
+                        var route = Routing.generate('segmentation_export', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                var title;
+
+                                if (response.type == 'success') {
+                                    title = 'Aviso!';
+                                } else {
+                                    title = "Erro ao realizar a exportação!";
+                                }
+
+                                $.gritter.add({
+                                    title: title,
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result){
+                    if(result){
+                        var route = Routing.generate('segmentation_delete', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                var title;
+
+                                if (response.type == 'success') {
+                                    title = 'Aviso!';
+                                    parent.remove();
+                                } else {
+                                    title = "Erro ao tentar excluir!";
+                                }
+
+                                $.gritter.add({
+                                    title: title,
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

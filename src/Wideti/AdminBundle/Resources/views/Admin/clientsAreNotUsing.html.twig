@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head lang="pt-BR">
+    <meta charset="UTF-8">
+    <title>Clientes que n&atilde;o est&atilde;o utilizando o Mambo WiFi</title>
+</head>
+<body>
+<table cellspacing="0" bgcolor="#f1f1f1" align="center" width="100%" style="background-color:#f1f1f1;padding-top:0px;padding-right:0px;padding-left:0px;padding-bottom:0px;border-top-width:0px;border-right-width:0px;border-bottom-width:0px;border-left-width:0px">
+    <tbody>
+        <tr>
+            <td bgcolor="#f1f1f1" align="center" style="background-color:#f1f1f1;padding-right:20px;padding-top:0;padding-left:20px;padding-bottom:20px;text-align:center">
+                <div align="center" style="max-width:800px;margin-top:0;margin-right:auto;margin-bottom:0;margin-left:auto;padding-top:0;padding-right:10px;padding-bottom:0;padding-left:10px">
+                    <table cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" width="656" style="background-color:#ffffff;padding-bottom:0px;padding-right:0px;padding-top:0px;padding-left:0px;width:656px!important;max-width:800px;margin-bottom:0;margin-right:0;margin-top:0;margin-left:0;font-family:Arial;font-size:11px;color:#565656;text-align:left">
+                        <tbody>
+                            <tr>
+                                <td bgcolor="#565656" width="100%" style="background-color:#f1f1f1">
+                                    <table cellspacing="0" cellpadding="0" border="0" bgcolor="#f1f1f1" width="656" style="background-color:#f1f1f1">
+                                        <tbody>
+                                            <tr>
+                                                <td align="right" width="182">
+                                                    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 11px; color: #909090; text-align: right;">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td height="30" width="182"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="100%">
+                                    <table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center" width="100%" style="padding-right:0px;padding-bottom:0px;padding-left:0px;padding-top:20px;border-right-width:0px;border-bottom-width:0px;border-top-width:0px;border-left-width:0px;text-align:left;margin-left:0;margin-bottom:0;margin-top:0;margin-right:0;background-color:#ffffff;font-family:Arial;font-weight:100;font-size:14px;color:#444444;line-height:0px">
+                                        <tbody>
+                                            <tr>
+                                                <td style="padding-left:30px;padding-bottom:30px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+                                                    <table cellspacing="0" cellpadding="0" border="0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="padding-right:20px;padding-left: 20px;font-size:25px;line-height:30px;color:#444444;font-family:Arial;">
+                                                                    Clientes que n&atilde;o est&atilde;o utilizando o Mambo WiFi
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:30px;padding-bottom:30px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+                                                    <table cellspacing="0" cellpadding="0" border="0">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td style="padding-left:30px;padding-bottom:30px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+                                                                <table style="border: 1px solid #c9cccf; width: 100%;">
+                                                                    <tr style="border: 1px solid #c9cccf;">
+                                                                        <td style="border: 1px solid #c9cccf; text-align: center; font-weight: bold;">Cliente</td>
+                                                                        <td style="border: 1px solid #c9cccf; text-align: center; font-weight: bold;">Dias sem acesso</td>
+                                                                        <td style="border: 1px solid #c9cccf; text-align: center; font-weight: bold;">Últímo acesso</td>
+                                                                        <td style="border: 1px solid #c9cccf; text-align: center; font-weight: bold;">Status</td>
+                                                                        <td style="border: 1px solid #c9cccf; text-align: center; font-weight: bold;">Email Admins</td>
+                                                                    </tr>
+                                                                    {% for field in results %}
+                                                                        <tr style="border: 1px solid #c9cccf;">
+                                                                            <td style="min-width: 200px; border: 1px solid #c9cccf; padding-left: 10px;">
+                                                                                <a href="{{ field.client.domain }}.mambowifi.com" target="_blank">{{ field.client.domain }}</a>
+                                                                            </td>
+                                                                            <td style="width: 150px; border: 1px solid #c9cccf; text-align: center;">{{ field.days_without_access|default('-') }}</td>
+                                                                            <td style="width: 150px; border: 1px solid #c9cccf; text-align: center;">{{ field.last_access|default('-') }}</td>
+                                                                            <td style="width: 150px; border: 1px solid #c9cccf; text-align: center;">{{ (field.client.status == 1) ? 'Ativo' : 'Poc' }}</td>
+                                                                            <td style="width: 150px; border: 1px solid #c9cccf; text-align: center;">{{ field.user_email|default('-') }}</td>
+                                                                        </tr>
+                                                                    {% endfor %}
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+</body>
+</html>

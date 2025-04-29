@@ -1,0 +1,122 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block header %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:20px;font-size:30px;line-height:48px;color:#ec213a;font-family:Arial;font-weight:bold; text-align: center;" colspan="2">
+
+        </td>
+    </tr>
+{% endblock %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">
+                        Olá, <a style="color: #ec213a; font-weight: bold; text-decoration: none;">{{ entity.company}}</a>.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="font-size:16px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                        Esse email contém todas as informações necessárias para você realizar a
+                        configuração do seu pfSense utilizando o tutorial de configuração.
+                        <br>
+                        Caso ainda não tenha acessado o tutorial,
+                        <a href="https://www.mambowifi.com/blog/area-tecnica/configuracao-do-wspot-em-equipamentos-pfsense/" style="text-decoration: underline; color: #ec213a">clique aqui</a>.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                        <strong>Servidores RADIUS, utilizados no passo 6.</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;padding-top:20px;line-height:30px;color:#909090;font-family:Arial;">
+                        <strong>Pre-authentication redirect URL:</strong> https://{{ entity.domain }}.mambowifi.com/pfsense <br>
+                        <strong>After authentication Redirection URL:</strong> https://{{ entity.domain }}.mambowifi.com/302
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;padding-top:10px;font-family:Arial;">
+                        <strong>Primary RADIUS server</strong><br>
+                        IP Address: 54.207.48.161 <br>
+                        Shared Secret: wide$123
+                    </td>
+
+                    <td style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;padding-top:10px;font-family:Arial;">
+                        <strong>Secondary RADIUS server</strong><br>
+                        IP Address: 54.207.62.56 <br>
+                        Shared Secret: wide$123
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Passo 7 - IPs </strong><br>
+                        54.232.255.112/32 <br>
+                        52.92.72.0/24 <br>
+                        52.92.73.0/24 <br>
+                        52.92.74.0/24 <br>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="font-size:16px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                        Após configurar o equipamento, sugerimos a leitura
+                        <a href="https://www.mambowifi.com/materiais/WSpot-Manual.pdf" style="text-decoration: underline; color: #ec213a">
+                            desse material para configurar o seu Mambo Wifi
+                        </a>.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:16px;line-height:16px;color:#909090;font-family:Arial;">Se precisar de ajuda, por favor entre em contato conosco pelo email <a href="mailto:{{ fromEmail }}" style="text-decoration: none; color: #ec213a">{{ fromEmail }}</a></td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:16px;line-height:16px;color:#444444;font-family:Arial;">Teremos o maior prazer em ajud&aacute;-lo.</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:16px;line-height:16px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:16px;line-height:16px;color:#444444;font-family:Arial; font-weight: bold;">{{ config.partner_name }}</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

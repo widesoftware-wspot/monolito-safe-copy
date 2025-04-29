@@ -1,0 +1,143 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <script>
+        var language = '{{ language }}';
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId            : 1474723399477930,
+                autoLogAppEvents : true,
+                status           : true,
+                xfbml            : true,
+                version          : 'v3.1'
+            });
+        };
+
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/" + language + "/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <section class="container singleBox">
+        <div id="registrationBox" class="boxes complete fullBox">
+            <div class="box-content">
+                {% if facebookConfig.isLike == 1 and facebookConfig.isShare == 0 %}
+                    <h3>{{ 'wspot.social.title_like'|trans }}</h3>
+                {% elseif facebookConfig.isShare == 1 and facebookConfig.isLike == 0 %}
+                    <h3>{{ 'wspot.social.title_checkin'|trans }}</h3>
+                {% elseif facebookConfig.isShare == 1 and facebookConfig.isLike == 1 %}
+                    <h3>{{ 'wspot.social.title_like_and_checkin'|trans }}</h3>
+                {% endif %}
+
+                <div class="form">
+                    {% if facebookConfig.isLike == 1 %}
+                        <p>{{ 'wspot.social.facebook_like' | trans }}</p>
+
+                        <div class="fb-page" data-href="{{ facebookConfig.likeUrl }}" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true" style="margin-bottom: 20px;">
+                            <blockquote cite="{{ facebookConfig.likeUrl }}" class="fb-xfbml-parse-ignore">
+                                <a href="{{ facebookConfig.likeUrl }}">{{ whiteLabel.companyName }}</a>
+                            </blockquote>
+                        </div>
+                    {% endif %}
+
+                    {% if facebookConfig.isShare == 1 %}
+                        <div style="margin-top: 8px">
+                            <button
+                                    class="btn btn-block btn-warning active"
+                                    id="share-connect" style="height: 38px;">
+                                <b>{{ 'wspot.login_page.facebook_share_connect'|trans }}</b>
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    {% if facebookConfig.isLike == 1 and facebookConfig.isShare == 0 %}
+                        <div style="margin-top: 8px">
+                            <button
+                                id="wspot-fb-like"
+                                class="btn btn-block btn-warning active"
+                                onClick="window.location.href='{{ path('publish_actions_facebook', { 'action': 'loginOnly', 'guest' : guestId, 'socialType' : socialType}) }}'"
+                                style="height: 38px;"
+                            >
+                                <b>{{ 'wspot.login_page.login_submit_input'|trans }}</b>
+                            </button>
+                        </div>
+                    {% endif %}
+
+                    <div id="error-share-require-message" class="alert alert-error" style="margin-top: 8px; display: none">
+                        {{ 'wspot.login_page.facebook_share_require'|trans }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <div id="fb-root"></div>
+    <!-- Modernizr -->
+    <script src="{{ asset('bundles/admin/scripts/modernizr-custom.js') }}"></script>
+    <script>
+        // FB Like
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            var language = '{{ language }}';
+            if (d.getElementById(id)) return;
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/" + language + "/sdk.js#xfbml=1&version=v3.1";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        var connectUrl = Routing.generate('complete_registration_confirmation', {
+            'guest': "{{ guestId }}",
+            'socialType': "{{ socialType }}"
+        });
+
+        // FB Share
+        document.getElementById('share-connect').onclick = function() {
+            if (isCna()) {
+                var url = window.location.origin;
+                url = url +connectUrl;
+                var ref = "https://www.facebook.com/dialog/share?app_id=1474723399477930&display=popup&href={{facebookConfig.shareUrl}}&redirect_uri="+url;
+                ref = encodeURI(ref);
+                window.location.href = ref;
+            } else {
+                    FB.ui({
+                    method: 'share',
+                    mobile_iframe: false,
+                    display: 'popup',
+                    hashtag:'{{ facebookConfig.shareHashtag }}',
+                    quote: '{{ facebookConfig.shareMessage }}',
+                    href: '{{ facebookConfig.shareUrl }}',
+                    redirect_uri: connectUrl,
+                }, function(response){
+                    var connectUrl = Routing.generate('complete_registration_confirmation', {
+                        'guest': "{{ guestId }}",
+                        'socialType': "{{ socialType }}"
+                    });
+                    window.location.href = connectUrl;
+                });
+            }
+        }
+
+
+        function isCna(){
+            if ( !(Modernizr.sessionstorage && Modernizr.localstorage) ){
+                return true;
+            }
+            iphoneUser = "iPhone OS";
+            if ( navigator.userAgent.indexOf(iphoneUser) != -1 ){
+                return true;
+            }
+            captivePortal = "wv";
+            if ( navigator.userAgent.indexOf(captivePortal) != -1 ){
+                return true;
+            }
+            return false;
+        }
+    </script>
+{% endblock %}

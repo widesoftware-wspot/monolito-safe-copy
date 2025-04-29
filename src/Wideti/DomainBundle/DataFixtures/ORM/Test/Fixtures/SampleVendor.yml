@@ -1,0 +1,231 @@
+Wideti\DomainBundle\Entity\Vendor:
+  Aerohive:
+    vendor: 'Extreme - Aerohive - ExtremeCloud IQ'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000069502-configuracão-do-wspot-em-equipamentos-aerohive-hivemanager-'
+    mask: ''
+    routerMode: 'router'
+    isHomologated: true
+
+  Aruba:
+    vendor: 'Aruba'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000089522-configuracão-do-wspot-em-equipamentos-aruba'
+    mask: ''
+    routerMode: 'router'
+    isHomologated: true
+
+  Aruba-v2:
+    vendor: 'Aruba v2'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000089522-configuracão-do-wspot-em-equipamentos-aruba'
+    mask: ''
+    routerMode: 'router'
+    isHomologated: true
+
+  Cambium:
+    vendor: 'Cambium'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000082305-configuracão-cambium-com-cnmaestro'
+    mask: 'HH:HH:HH:HH:HH:HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  Cisco:
+    vendor: 'Cisco'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000069464-configurac%C3%A3o-do-wspot-em-equipamentos-cisco-wlc-'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: true
+
+  Enterasys:
+    vendor: 'Extreme - Enterasys - IdentiFi'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000089523-configuracão-do-wspot-em-equipamentos-enterasys'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  Fortinet:
+    vendor: 'Fortinet'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000078401-configuracão-do-wspot-em-equipamentos-fortigate'
+    mask: ''
+    routerMode: 'bridge'
+    isHomologated: true
+
+  Mikrotik:
+    vendor: 'Mikrotik'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000069505-configuracão-mikrotik-via-script'
+    mask: ''
+    routerMode: 'router'
+    isHomologated: true
+
+  Motorola:
+    vendor: 'Extreme - Motorola - WiNG'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000077914-configuracão-do-wspot-na-controladora-motorola-rfs'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  PfSense:
+    vendor: 'PfSense'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000085077-configuracão-do-wspot-no-pfsense-versão-2-4-4'
+    mask: ''
+    routerMode: 'router'
+    isHomologated: true
+
+  Ruckus-Controlador:
+    vendor: 'Ruckus-Controlador'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000069480-ruckus-controlador-configuracão-do-wspot'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  Ruckus-Standalone:
+    vendor: 'Ruckus-Standalone'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000069501-ruckus-modo-standalone-'
+    mask: ''
+    routerMode: 'router'
+    isHomologated: true
+
+  Winco:
+    vendor: 'Winco'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000089524-configuracão-do-wspot-em-equipamentos-winco'
+    mask: ''
+    routerMode: 'router'
+    isHomologated: true
+
+  Xirrus:
+    vendor: 'Xirrus'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000088085-configuracão-do-wspot-em-equipamentos-xirrus-ap-'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  ZyXEL:
+    vendor: 'ZyXEL'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000069491-configuracão-do-wspot-em-equipamentos-zyxel'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  Intelbras:
+    vendor: 'Intelbras'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000122719-configuracão-ap-intelbras'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: true
+
+  IntelbrasFuture:
+    vendor: 'Intelbras - Linha Future'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000190779-intelbras-linha-future'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: true
+
+  CiscoMerakiCloud:
+    vendor: 'Cisco Meraki Cloud'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000100143'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  UbiquitiUnifi:
+    vendor: 'Unifi Ubiquiti'
+    manual: 'https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000125342-configura%C3%A7%C3%A3o-ubiquiti-unifi-com-wspot '
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  Teltonika:
+    vendor: 'Teltonika'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000128798-configura%C3%A7%C3%A3o-de-teltonika-rut-com-wspot'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  Edgecore:
+    vendor: 'Edgecore'
+    manual: 'https://suporte.mambowifi.com/support/solutions/folders/16000097226'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  RuckusCloud:
+    vendor: 'Ruckus-Cloud'
+    manual: 'https://suporte.mambowifi.com/support/solutions/folders/16000097226'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  Huawei:
+    vendor: 'Huawei'
+    manual: 'https://suporte.mambowifi.com/pt-BR/support/solutions/articles/16000140643-configuração-do-huawei-cloudcampus-imaster-nce-com-o-hotspot-mambo-wifi'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: true
+
+  Tp-Link:
+    vendor: 'Tp-Link'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000138191-configura%C3%A7%C3%A3o-de-omada-tp-link-com-hotspot-da-mambo-wifi'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: true
+
+  Tp-Link-Cloud:
+    vendor: 'Tp-Link Cloud'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000138191-configura%C3%A7%C3%A3o-de-omada-tp-link-com-hotspot-da-mambo-wifi'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: false
+
+  Tp-Link-v4:
+    vendor: 'Tp-Link v4'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000138191-configura%C3%A7%C3%A3o-de-omada-tp-link-com-hotspot-da-mambo-wifi'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: false
+
+  Tp-Link-v4-Cloud:
+    vendor: 'Tp-Link v4 Cloud'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000138191-configura%C3%A7%C3%A3o-de-omada-tp-link-com-hotspot-da-mambo-wifi'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: false
+
+  Tp-Link-v5:
+    vendor: 'Tp-Link v5'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000138191-configura%C3%A7%C3%A3o-de-omada-tp-link-com-hotspot-da-mambo-wifi'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: true
+
+  Openwifi:
+    vendor: 'Openwifi'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000151342-configura%C3%A7%C3%A3o-netexperience-openwifi-com-mambowifi'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  Tp-Link-v5-Cloud:
+    vendor: 'Tp-Link v5 Cloud'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000138191-configura%C3%A7%C3%A3o-de-omada-tp-link-com-hotspot-da-mambo-wifi'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: false
+
+  WatchGuard:
+    vendor: 'WatchGuard'
+    manual: 'https://suporte.mambowifi.com/support/solutions/'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'bridge'
+    isHomologated: true
+
+  Ruijie:
+    vendor: 'Ruijie Networks'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000192572-integra%C3%A7%C3%A3o-mambo-wifi-com-ruijie-reyee-cloud'
+    mask: 'HH-HH-HH-HH-HH-HH'
+    routerMode: 'router'
+    isHomologated: true
+
+  extreme_cloud_iq:
+    vendor: 'Extreme - ExtremeCloud IQ Controller'
+    manual: 'https://suporte.mambowifi.com/support/solutions/articles/16000089523-configuracão-do-wspot-em-equipamentos-enterasys'
+    mask: ''
+    routerMode: 'router'
+    isHomologated: true

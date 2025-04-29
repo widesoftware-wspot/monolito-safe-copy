@@ -1,0 +1,129 @@
+routes:
+  group_create:
+    fields:
+      enable_block_per_time: 'Bloqueio por tempo'
+      enable_validity_access: 'Validade de acesso'
+      enable_bandwidth: 'Limite de Banda'
+      apsAndGroups: 'Vinculo'
+
+  group_edit:
+    fields:
+      enable_block_per_time: 'Bloqueio por tempo'
+      enable_validity_access: 'Validade de acesso'
+      enable_bandwidth: 'Limite de Banda'
+      apsAndGroups: 'Vinculo'
+
+  admin_visitantes:
+    fields:
+      filtro: 'Filtro'
+      group: 'Grupo'
+      dateFrom: 'Cadastros De'
+      dateTo: 'Cadastros Até'
+
+  admin_dashboard:
+    fields:
+      tab: 'Aba'
+      filter: 'Filtrar resultados do dashboard'
+
+  admin_usuarios:
+    fields:
+      filtro: 'Filtro'
+
+  access_points_groups_new:
+    fields:
+      parentConfigurations: 'Herdar Configurações'
+      parentTemplate: 'Herdar Template'
+      isMaster: 'É Grupo Master?'
+
+  configurations_edit:
+    fields:
+      login_form: 'Formulário de Login'
+      signup_form: 'Formulário de Cadastro'
+      enable_welcome_sms: 'Credenciais via SMS'
+      enable_welcome_email: 'E-mail de boas-vindas'
+      authorize_email: 'Solicitar opt-in dos visitantes'
+      enable_confirmation: 'Habilitar confirmação de cadastro'
+
+  access_points_new:
+    fields:
+      status: 'Status'
+      vendor: 'Fabricante'
+
+  access_points_edit:
+    fields:
+      status: 'Status'
+
+  campaign:
+    fields:
+      image: 'Imagem'
+      video: 'Video'
+      pre-login: 'Pré Login'
+      pos-login: 'Pós-Login'
+
+  segmentation_new:
+    fields:
+      filter: 'Filtrar por'
+
+  access_code_new:
+    fields:
+      type: 'Tipo de Código'
+      enable: 'Status'
+      step: 'Em qual momento solicitaremos o código para o visitante?'
+
+  api_rd_station_new:
+    fields:
+      enableAutoIntegration: 'Habilitar integração'
+
+  api_egoi_new:
+    fields:
+      enableAutoIntegration: 'Habilitar integração'
+
+  template_new:
+    fields:
+      backgroundRepeat: 'Repetir'
+      backgroundPositionX: 'Posicionamento Horizontal'
+      backgroundPositionY: 'Posicionamento Vertical'
+
+  template_edit:
+    fields:
+      backgroundRepeat: 'Repetir'
+      backgroundPositionX: 'Posicionamento Horizontal'
+      backgroundPositionY: 'Posicionamento Vertical'
+
+  admin_relatorio_historico:
+    fields:
+      filter: 'Filtros'
+      period: 'Período'
+
+  admin_most_visited_hours_report:
+    fields:
+      filter: 'Filtrar'
+      period: 'Período'
+
+  admin_records_per_day_report:
+    fields:
+      filter: 'Filtrar'
+      period: 'Período'
+
+  admin_access_points_report:
+    fields:
+      filter: 'Filtrar'
+      period: 'Período'
+
+  admin_campaign_report:
+    fields:
+      - campaign
+      - access_point
+      - date_from
+
+  admin_campaign_cta_report:
+    fields:
+      - campaign
+      - date_from
+
+  admin_guests_reports:
+    fields:
+      recurrent: 'Visitantes'
+      field: 'Filtrar por'
+      order: 'Ordem'
+      range_by: 'Filtrar por'

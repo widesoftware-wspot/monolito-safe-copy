@@ -1,0 +1,12 @@
+services:
+
+  web_framework.service.password:
+    class: Wideti\WebFrameworkBundle\Service\PasswordService
+    arguments: ["@security.encoder_factory", "@mailer", "@doctrine.orm.entity_manager", "@twig"]
+
+  web_framwework.service.router:
+    class: Wideti\WebFrameworkBundle\Service\Router\RouterService
+    calls:
+      - [ setRequestStack, ["@request_stack"]]
+      - [ setRouter, ["@router"] ]
+      - [ setHttpKernel, ["@http_kernel"] ]

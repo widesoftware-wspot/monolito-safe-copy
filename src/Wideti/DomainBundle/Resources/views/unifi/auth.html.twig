@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Logging in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+      body {
+        font-family: Arial sans-serif;
+        font-size: 14px;
+        text-align: center;
+        padding-top: 40px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="spinner"></div>
+    <script>
+      console.log("carregou");
+
+      function getUrlParameter(name) {
+        name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+        var regexParam = new RegExp("[\\?&]" + name + "=([^&#]*)");
+        var results = regexParam.exec(location.search);
+        return results === null
+          ? ""
+          : decodeURIComponent(results[1].replace(/\+/g, " "));
+      }
+
+      function dologin(params, newUrl) {
+        console.log("dologin");
+        var ap = '<unifi var="ap_mac" />';
+        var mac = '<unifi var="mac" />';
+        var ssid = '<unifi var="ssid" />';
+
+        var authUrl =
+          window.location.protocol +
+          "//" +
+          window.location.host +
+          window.location.pathname;
+        //   "auth.html"
+        var success_url = "https://" + newUrl;
+        var failure_url =
+          "https://" +
+          redirectUrl +
+          "/unifi?ap_mac=" +
+          ap +
+          "&client_mac=" +
+          mac +
+          "&ssid=" +
+          ssid +
+          "&login_url=" +
+          authUrl;
+
+        var http = new XMLHttpRequest();
+
+        http.open("POST", "login", true);
+        // http.open(
+        //   "GET",
+        //   "https://627d2a6cbf2deb7174e8c84d.mockapi.io/authentication_ok",
+        //   true
+        // );
+        // http.open(
+        //   "GET",
+        //   "https://627d2a6cbf2deb7174e8c84d.mockapi.io/authentication_error",
+        //   true
+        // );
+
+        http.timeout = 10000;
+        http.responseType = "json";
+        http.setRequestHeader("Content-type", "application/json");
+
+        http.onreadystatechange = function () {
+          if (http.readyState != 4 && http.status != 200) {
+            console.log(
+              "[54] NOT READY. http status: " +
+                http.status +
+                "http readyState: " +
+                http.readyState
+            );
+          }
+
+          if (http.readyState == 4 && http.status == 200) {
+            var response = JSON.parse(JSON.stringify(http.response));
+
+            if (response && !response.meta) {
+              console.log(
+                "[62] Missing response " +
+                  JSON.stringify(response) +
+                  " failure url: " +
+                  failure_url
+              );
+              window.location.replace(failure_url);
+            }
+
+            if (response && response.meta) {
+              if (response.meta.rc && response.meta.rc == "ok") {
+                if (response.data[0].authorized == true) {
+                  console.log(
+                    "[69] SUCCESSFULL authorized: " +
+                      JSON.stringify(response) +
+                      success_url
+                  );
+                  window.location.replace(success_url);
+                } else {
+                  console.log(
+                    "[72] NOT authorized: " +
+                      JSON.stringify(response) +
+                      " failure url: " +
+                      failure_url
+                  );
+                  window.location.replace(failure_url + "&reason=" + response);
+                }
+              } else {
+                if (response.meta.msg) {
+                  console.log(
+                    "[77] RC NOT OK : " +
+                      JSON.stringify(response) +
+                      " failure url: " +
+                      failure_url
+                  );
+                  window.location.replace(
+                    failure_url + "&reason=" + response.meta.msg
+                  );
+                } else {
+                  console.log(
+                    "[80] Null Message" +
+                      JSON.stringify(response) +
+                      " failure url: " +
+                      failure_url
+                  );
+                  window.location.replace(
+                    failure_url + "&reason=meta_msg_is_null"
+                  );
+                }
+              }
+            }
+          }
+        };
+
+        http.send(JSON.stringify(params));
+
+        setTimeout(function () {
+          console.log("timeout: 12000");
+          window.location.replace(failure_url);
+        }, 12000);
+      }
+
+      var newUrl = getUrlParameter("next_url");
+      var username = getUrlParameter("username");
+      var password = getUrlParameter("password");
+      var by = getUrlParameter("by");
+      var params = { by: by, username: username, password: password };
+      document.getElementById("spinner").innerHTML =
+        "<p>Aguarde...Caso solicitado na tela, faça login novamente para conectar-se a internet</p>";
+
+      var redirectUrl = newUrl.substring(0, newUrl.length - 4);
+      dologin(params, newUrl);
+      console.log("[105] redirectUrl: ", redirectUrl);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block heading %} Listagem de Visitantes (Top 10) {% endblock %}
+
+{% block filterBlock %}
+{% endblock %}
+
+{% block table %}
+    {#<h5>{{ type == '1' ? 'Pré' : 'Pós' }} Login</h5>#}
+    <table class="table table-bordered">
+        <tr>
+            <th>Visitante</th>
+            <th>Mac Address do Visitante</th>
+            <th>Ponto de acesso</th>
+            <th>URL</th>
+            <th>Data/Hora</th>
+        </tr>
+        {% for result in results %}
+            <tr>
+                <td>
+                    {% if (result.guestId) %}
+                        <a href="{{ path('admin_visitantes_show', {id:result.guestId}) }}">
+                            {{ result.guest }}
+                        </a>
+                    {% else %}
+                        {{ result.guest }}
+                    {% endif %}
+                </td>
+                <td>{{ result.mac_address }}</td>
+                <td>{{ result.accessPoint }}</td>
+                <td>{{ result.url }}</td>
+                <td>{{ result.view_date|date('d/m/Y H:i:s') }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <br /><br />
+
+    <div class="widget-body">
+        <hr class="separator">
+
+        <div class="form-actions right">
+            <a class="btn btn-icon btn-primary glyphicons file_export" id="export-btn" style="float: left;" href="#"><i></i>Exportar Listagem</a>
+            <a href="{{ app.request.headers.get('referer') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+        </div>
+    </div>
+
+    <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+        <form id="modal-form" name="export" method="get" action="{{ path('admin_export_call_to_action', { params : app.request.query.all }) }}" class="form-inline" novalidate="novalidate">
+            <input type="hidden" name="id" id="id" value="{{ campaign }}" />
+            <input type="hidden" name="type" id="type" value="{{ type }}" />
+            <div class="modal-body">
+                <h3>Aviso</h3>
+                <div class="row-fluid">
+                    <div style="padding: 0.5em; background-color: #eeeeee; margin-top: 10px">
+                        {% if consent.hasError %}
+                            <p style="font-weight: bolder">Ao exportar os dados você está de acordo com as finalidades de uso do seu termo de consentimento.</p>
+                        {% else %}
+                            <p style="font-weight: bolder">Ao exportar os dados você está de acordo com as finalidades de uso abaixo:</p>
+                            <ul id="consent-list">
+                                {% for condition in consent.conditions %}
+                                    <li>{{ condition.description }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="close" data-handler="1" class="btn btn-default">Cancelar</a>
+                <button id="export" type="submit" class="btn btn-primary">Exportar</button>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript">
+
+    jQuery(document).ready(function(){
+
+        function openModal() {
+            $("#modal").modal({                    // wire up the actual modal functionality and show the dialog
+                "backdrop"  : "static",
+                "keyboard"  : true,
+                "show"      : true                     // ensure the modal is shown immediately
+            });
+        }
+
+        $('#export-btn').click(function() {
+            openModal()
+        });
+
+        $('#close').click(function() {
+            bootbox.hideAll();
+            $('meta[http-equiv=refresh]').attr('content', '0');
+        });
+
+        $('#export').click(function() {
+                $(this).html("Processando...");
+                $(this).attr('disabled', true);
+                $('#modal-form').submit();
+
+                window.setTimeout(function() {
+                    $('#export').attr('disabled', false);
+                    $('#export').html("Exportar");
+                    bootbox.hideAll();
+                }, 2000);
+            });
+    });
+</script>
+{% endblock %}

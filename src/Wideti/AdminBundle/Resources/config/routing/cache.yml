@@ -1,0 +1,7 @@
+admin_cache:
+    path: /
+    defaults: { _controller: wspot.admin.controller.cache:indexAction }
+
+admin_cache_clear:
+    path: /clear
+    defaults: { _controller: wspot.admin.controller.cache:clear }

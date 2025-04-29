@@ -1,0 +1,138 @@
+.row > .control-group > .control-label {
+    width: auto !important;
+}
+/* .control-group > .atributtes-label {
+    width: 250px !important;
+} */
+#wspot_sso_integration_customizeGuestGroup {
+    width: auto;
+    padding: 5px 20px 5px 20px ;
+}
+
+#wspot_sso_integration_group {
+    width: auto;
+    padding: 5px 20px 5px 20px ;
+}
+.form-horizontal .control-label {
+    width: 200px;
+    text-align: left !important;
+    margin-right: 10px;
+}
+.row .control-group {
+    padding-left: 20px;
+}
+
+.form-horizontal .controls:first-child {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.form-horizontal .control-group {
+    margin-bottom: 10px;
+}
+
+#sso-type-control-group  > .control-label {
+    width: 100% !important;
+    text-align: left !important;
+}
+
+.span6:first-child {
+    width: 55%;
+}
+
+.span6:nth-child(2) {
+    width: 43%;
+}
+
+.form-horizontal .controls {
+    margin-left: 0px !important;
+}
+
+.sub-options {
+    margin-left: 0px !important;
+    margin-bottom: 10px;
+    /* alterr para 100% em mobile */
+}
+
+.sub-options label {
+    margin-bottom: 0px;
+    margin-left: 5px;
+}
+
+#sso-type-control-group > .controls > label {
+    width: 100% !important;
+}
+
+#sso-type-control-group {
+    margin-bottom: 32px;
+}
+
+h4 {
+    font-weight: bold;
+    margin-top: 32px;
+}
+.session-copy {
+    margin: 20px 0 10px 0;
+    width: 100%;
+    display: flex;
+}
+
+.button-callback-url {
+    border: none;
+    background: none;
+    filter: brightness(0.5);
+}
+
+.button-callback-url img {
+    width: 18px;
+}
+.callback-url-to-copy {
+    padding: 8px;
+    border: 1px solid #B0B0B0;
+    border-radius: 8px;
+    background-color: #F6F6F6;
+    min-height: 16px;
+    white-space: normal;
+    word-wrap: break-word; 
+    width: 500px;
+    margin: 0;
+}
+
+.select {
+    margin: 0;
+    width: auto !important;
+    display: flex !important;
+}
+
+.select label {
+    margin: 0 10px 0 5px;
+    line-height: 35px;
+}
+
+.form-session > *:nth-child(2) {
+    margin-top: 10px !important;
+}
+
+.sub-options {
+    width: 100%;
+}
+
+.form-horizontal .control-label div {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-size: 150%;
+    background-position: center center;
+}
+
+.form-horizontal .control-label .icon-es {
+    background-image: url('/bundles/admin/frontend/images/flags/24/Spain.png');
+}
+
+.icon-en {
+    background-image: url('/bundles/admin/frontend/images/flags/24/United-States.png');
+}
+
+.icon-pt {
+    background-image: url('/bundles/admin/frontend/images/flags/24/Brazil.png');
+}

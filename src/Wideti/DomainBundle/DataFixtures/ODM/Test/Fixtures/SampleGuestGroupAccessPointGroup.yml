@@ -1,0 +1,5 @@
+Wideti\DomainBundle\Document\Group\AccessPointGroup:
+  AccessPointGroup1:
+    mysqlId: 1
+  AccessPointGroup2:
+    mysqlId: 2

@@ -1,0 +1,17 @@
+spots_manager_index:
+  path: /
+  defaults: { _controller: wspot.admin.controller.spots_manager:index }
+  requirements: { methods: get }
+  methods: [ GET ]
+
+spots_manager_auto_login:
+  path: /auth
+  defaults: { _controller: wspot.admin.controller.spots_manager:authAction }
+  requirements: { methods: post }
+  methods: [POST]
+
+spots_manager_logout:
+    path: /logout
+    defaults: { _controller: wspot.admin.controller.spots_manager:logoutAction }
+    requirements: { methods: get }
+    methods: [ GET ]

@@ -1,0 +1,356 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
+
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Preview de Template'} %}
+
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+
+            <div class="widget-body">
+                <div id="devices">
+                    <p style="float: left; margin: 15px 20px 0 10px;">Selecione: </p>
+                    <li id="desktop-item" class="glyphicons imac"><a><i></i> </a></li>
+                    <li id="mobile-item" class="glyphicons iphone"><a><i></i> </a></li>
+                </div>
+
+                <div class="tab-content">
+
+                    <div class="tab-pane row-fluid active" id="tab2">
+                        <div class="devices">
+                            <div class="mainPage">
+                                <div class="desktop-section">
+                                    <div class="row">
+                                        <div class="display-mode" style="left: 20%; position: relative; top: 20px;">
+                                            <a class="landscape" style="cursor: pointer;">Horizontal</a> | <a class="portrait" style="cursor: pointer;">Vertical</a>
+                                        </div>
+                                        <div class="tablet-landscape">
+                                            <iframe height="625px" frameborder="0" width="830px" src="{{ indexUrl }}" scrolling="yes"></iframe>
+                                        </div>
+                                        <div class="tablet-portrait hide">
+                                            <iframe height="780px" frameborder="0" width="605px" src="{{ indexUrl }}" scrolling="yes"></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mobile-section">
+                                    <div class="row">
+                                        <div class="phone">
+                                            <iframe height="570px" frameborder="0" width="322px" src="{{ indexUrl }}" scrolling="yes"></iframe>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="widget-body">
+                    <hr class="separator">
+
+                    <div class="form-actions right">
+                        <a href="{{ path('template_edit', { 'id': entity.id }) }}">
+                            <button type="button" class="btn btn-icon btn-default glyphicons circle_arrow_left"><i></i>
+                                Editar
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock%}
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/admin/theme/scripts/demo/custom_upload.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script>
+
+        function controlPreLoginFields(){
+            if($('#wideti_AdminBundle_campaign_preLogin').prop("checked")){
+                $('.preLoginSection').removeClass('hide');
+            } else {
+                $('.preLoginSection').addClass('hide');
+            }
+        }
+
+        function controlPosLoginFields(){
+            if($('#wideti_AdminBundle_campaign_posLogin').prop("checked")){
+                $('.posLoginSection').removeClass('hide');
+            } else {
+                $('.posLoginSection').addClass('hide');
+            }
+        }
+
+        jQuery('document').ready(function(){
+
+            $('.mobile-section').hide();
+
+            $('#desktop-item').on('click', function(){
+                $('.desktop-section').show();
+                $('.mobile-section').hide();
+            });
+
+            $('#mobile-item').on('click', function(){
+                $('.desktop-section').hide();
+                $('.mobile-section').show();
+            });
+
+            $('.landscape').on('click', function(){
+                $('.tablet-portrait').addClass('hide');
+                $('.tablet-landscape').removeClass('hide');
+                $('.display-mode').css('left', '20%');
+                $('.devices').css('min-height', '900px');
+            });
+
+            $('.portrait').on('click', function(){
+                $('.tablet-portrait').removeClass('hide');
+                $('.tablet-landscape').addClass('hide');
+                $('.display-mode').css('left', '14%');
+                $('.devices').css('min-height', '1050px');
+            });
+
+            $(document).ready(function () {
+                $('input').keypress(function (e) {
+                    var code = null;
+                    code = (e.keyCode ? e.keyCode : e.which);
+                    return (code == 13) ? false : true;
+                });
+            });
+
+            var $collectionHolder;
+
+            $collectionHolder = $('div.campaignHours');
+
+            // add a delete link to all of the existing tag form li elements
+            $collectionHolder.find('div.campaignHours-item').each(function() {
+                addTagFormDeleteLink($(this));
+            });
+
+            // count the current form inputs we have (e.g. 2), use that as the new
+            // index when inserting a new item (e.g. 2)
+            $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+            jQuery('button#btnAddHours').click(function(){
+                // add a new tag form (see next code block)
+                addTagForm($collectionHolder);
+            });
+
+            controlPreLoginFields();
+            controlPosLoginFields();
+
+            $('#wideti_AdminBundle_campaign_preLogin').on('change', function(e){
+                controlPreLoginFields();
+            });
+
+            $('#wideti_AdminBundle_campaign_posLogin').on('change', function(e){
+                controlPosLoginFields();
+            });
+
+            // IMAGES SECTION --------------------------------------------------------------
+
+            jQuery('#removePreLoginImageDesktop').on('click', function (e)
+            {
+                var id  = $(this).data('id');
+                var url = Routing.generate('campaign_preloginbanner_desktop_remove', { id: id });
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function(response)
+                    {
+                        jQuery('#removePreLoginImageDesktop').hide();
+                        jQuery('.split').hide();
+                        jQuery('#currentPreLoginImageDesktop').html('');
+
+                        $.gritter.add({
+                            title: 'Aviso!',
+                            text: response.message
+                        });
+                    }
+                })
+            });
+
+            jQuery('#removePreLoginImageMobile').on('click', function (e)
+            {
+                var id  = $(this).data('id');
+                var url = Routing.generate('campaign_preloginbanner_mobile_remove', { id: id });
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function(response)
+                    {
+                        jQuery('#removePreLoginImageMobile').hide();
+                        jQuery('.split').hide();
+                        jQuery('#currentPreLoginImageMobile').html('');
+
+                        $.gritter.add({
+                            title: 'Aviso!',
+                            text: response.message
+                        });
+                    }
+                })
+            });
+
+            jQuery('#removePosLoginImageDesktop').on('click', function (e)
+            {
+                var id  = $(this).data('id');
+                var url = Routing.generate('campaign_posloginbanner_desktop_remove', { id: id });
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function(response)
+                    {
+                        jQuery('#removePosLoginImageDesktop').hide();
+                        jQuery('.split').hide();
+                        jQuery('#currentPosLoginImageDesktop').html('');
+
+                        $.gritter.add({
+                            title: 'Aviso!',
+                            text: response.message
+                        });
+                    }
+                })
+            });
+
+            jQuery('#removePosLoginImageMobile').on('click', function (e)
+            {
+                var id  = $(this).data('id');
+                var url = Routing.generate('campaign_posloginbanner_mobile_remove', { id: id });
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    success: function(response)
+                    {
+                        jQuery('#removePosLoginImageMobile').hide();
+                        jQuery('.split').hide();
+                        jQuery('#currentPosLoginImageMobile').html('');
+
+                        $.gritter.add({
+                            title: 'Aviso!',
+                            text: response.message
+                        });
+                    }
+                })
+            });
+
+            // END IMAGES SECTION ----------------------------------------------------------
+
+            if ($('#wideti_AdminBundle_campaign_startDate').length && $('#wideti_AdminBundle_campaign_endDate').length)
+            {
+                $( "#wideti_AdminBundle_campaign_startDate" ).datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    changeMonth: false,
+                    numberOfMonths: 1,
+                    onClose: function( selectedDate ) {
+                        $( "#wideti_AdminBundle_campaign_endDate" ).datepicker( "option", "minDate", selectedDate );
+                    }
+                }).datepicker( "option", "maxDate", $('#maxDate').text() );
+
+                $( "#wideti_AdminBundle_campaign_endDate" ).datepicker({
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    changeMonth: false,
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    numberOfMonths: 1,
+                    onClose: function( selectedDate ) {
+                        $( "#wideti_AdminBundle_campaign_startDate" ).datepicker( "option", "maxDate", selectedDate );
+                    }
+                }).datepicker( "option", "minDate", $('#wideti_AdminBundle_campaign_endDate').val() );
+            }
+
+            $('.btn-primary.banner').click(function(){
+                if($('.btn-primary.banner').is(':active')){
+                    $('.banner-section').show();
+                    $('.video-section').hide();
+                }
+            });
+
+            $('.btn-primary.video').click(function(){
+                if($('.btn-primary.video').is(':active')){
+                    $('.video-section').show();
+                    $('.banner-section').hide();
+                }
+            });
+
+            if($('#wideti_AdminBundle_campaign_videoUrl').val() != ""){
+                $('.video-section').show();
+                $('.banner-section').hide();
+            } else {
+                $('.banner-section').show();
+                $('.video-section').hide();
+            }
+
+        });
+
+        customScripts.init();
+
+        dojo.ready(function() {
+            dojo.query("#wideti_AdminBundle_campaign_accessPoints").chosen({batch_select:true});
+        });
+
+        function addTagForm($collectionHolder) {
+
+            var prototype = $collectionHolder.data('prototype');
+            var index = $collectionHolder.data('index');
+            var newForm = prototype.replace(/__name__/g, index);
+
+            $collectionHolder.data('index', index + 1);
+
+            var $newFormLi = $('<div class="row campaignHours-item add"></div>').append(newForm);
+
+            addTagFormDeleteLink($newFormLi);
+
+            $collectionHolder.append($newFormLi);
+
+        }
+
+        function addTagFormDeleteLink($tagFormLi) {
+            var $removeFormA = $('<div class="span2"><a class="btn red" type="button"><i class="fa fa-times"></i> Remover</a></div>');
+            $tagFormLi.append($removeFormA);
+
+            $removeFormA.on('click', function(e) {
+
+                var count = $('.row .campaignHours-item').length;
+
+                if(count == 1){
+                    $('.alert-schedule').show({
+                        delay: { show: 1000 }
+                    });
+                }else{
+                    // remove the li for the tag form
+                    $tagFormLi.remove();
+                }
+
+            });
+        }
+
+    </script>
+{% endblock %}

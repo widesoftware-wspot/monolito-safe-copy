@@ -1,0 +1,164 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="{{ asset('bundles/admin/frontend/css/online-report.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-heatmap/leaflet-heatmap.css" />
+    <style>
+        #map {
+            height: 500px;
+            width:80%;
+            filter: contrast(1.2) brightness(0.9);
+        }
+        .legend {
+            background: white;
+        }
+        .legend i {
+            width: 10px;
+            height: 10px;
+            float: left;
+            margin-right: 5px;
+        }
+        #legend-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .widget-head {
+            height: auto !important;
+            background: none !important;
+            display: flex;
+            flex-direction: column;
+        }
+        .widget-head p {
+            width: 60%;
+            height: auto !important;
+            line-height: 20px !important;
+            font-size: 12px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Mapa de Acessos'} %}
+    <div class="widget widget-body-white">
+                                <div class="widget-head">
+                                    <p class="heading text-uppercase">Acompanhe em tempo real quantos visitantes estão conectados em cada ponto de acesso.</p>
+                                    <p class="heading text-uppercase">Para que um ponto de acesso seja exibido no mapa, basta acessar a aba de Pontos de Acesso e, na edição do ponto, preencher o endereço onde ele está localizado.</p>
+                                </div>
+                            </div>
+    <div class="innerLR">
+        <div id="map"></div>
+        <div class="legend">
+            <div id="legend-content">
+                <span>0 acessos</span>
+                    <div id="legend-colors"></div>
+                <span id="total-acess"></span>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+
+    <script>
+        let accessByAp = {{ accessByAp|json_encode|raw }};
+        var map = L.map('map').setView([-14.2350, -51.9253], 4);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var heatData = [];
+        var totalAccesses = 0;
+
+        accessByAp.forEach(function(ap) {
+            totalAccesses += ap.count;
+        });
+
+        function isValidCoordinate(lat, lon) {
+            return (
+                typeof lat === 'number' && 
+                typeof lon === 'number' &&
+                !isNaN(lat) && !isNaN(lon) && 
+                lat >= -90 && lat <= 90 && 
+                lon >= -180 && lon <= 180
+            );
+        }
+
+        accessByAp.forEach(function(ap) {
+            if (!ap.locale) {
+                console.warn(`Formato de coordenadas inválido para: ${ap.friendly_name}`);
+                return;
+            }
+            var locale = ap.locale.split(",")
+             if (locale.length != 2) {
+                 console.warn(`Formato de coordenadas inválido para: ${ap.friendly_name}`);
+                return;
+             }
+            var latitude = parseFloat(locale[0].trim());
+            var longitude = parseFloat(locale[1].trim());
+            if (!isValidCoordinate(latitude, longitude)) {
+                console.warn(`Coordenadas inválidas para: ${ap.friendly_name} (${latitude}, ${longitude})`);
+                return;
+            }
+
+            heatData.push([latitude, longitude, ap.count]);
+            var circle = L.circle([latitude, longitude], {
+                color: getColor(ap.count,totalAccesses),
+                fillColor: getColor(ap.count, totalAccesses),
+                fillOpacity: 0.3,
+                radius: 1000,
+                weight: 0
+            }).addTo(map)
+            .bindPopup('<strong>' + ap.friendly_name + '</strong><br>' + ap.identifier + '<br>Acessos: ' + ap.count);
+
+            var icon = L.divIcon({
+                className: 'custom-icon',
+                html: '<span class="material-symbols-outlined" style="color: black; font-size: 30px; opacity: 0.7;">wifi_tethering</span>', // Ícone do Google Material
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            });
+
+
+        L.marker([latitude, longitude], { icon: icon }).addTo(map)
+        .bindPopup('<strong>' + ap.friendly_name + '</strong><br>' + ap.identifier + '<br>Acessos: ' + ap.count);
+        });
+
+        function getColor(access, max){
+            let value = access/max
+            var hue=((1-value)*120).toString(10);
+            return ["hsl(",hue,",100%,50%)"].join("");
+        }
+
+        var len = 20;
+        var legendContainer = document.createElement('div');
+        legendContainer.style.display = 'flex';
+        legendContainer.style.width = '200px';
+        legendContainer.style.height = '50px';
+        legendContainer.style.position = 'relative';
+        legendContainer.style.marginTop = '10px';
+        document.querySelector('#legend-colors').appendChild(legendContainer);
+        document.querySelector('#total-acess').textContent = totalAccesses + " acessos";
+
+        for (var i = 0; i <= len; i++) {
+            var d = document.createElement('div');
+            d.style.backgroundColor = getColor(i, len);
+            d.style.flex = '1';
+            d.style.height = '100%';
+            d.style.display = 'flex';
+            d.style.alignItems = 'center';
+            d.style.justifyContent = 'center';
+            legendContainer.appendChild(d);
+        }
+        
+    </script>
+{% endblock %}

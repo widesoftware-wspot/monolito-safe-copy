@@ -1,0 +1,249 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block header %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:20px;font-size:30px;line-height:48px;color:#ec213a;font-family:Arial;font-weight:bold; text-align: center;" colspan="2">
+
+        </td>
+    </tr>
+{% endblock %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">
+                        Olá, <a style="color: #ec213a; font-weight: bold; text-decoration: none;">{{ entity.compAny}}</a>.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="font-size:16px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                        Esse email contém todas as informações necessárias para você realizar a
+                        configuração do seu equipamento Cisco - WLC utilizando o tutorial de configuração.
+                        <br>
+                        Caso ainda não tenha acessado o tutorial,
+                        <a href="https://www.mambowifi.com/blog/area-tecnica/cisco-wlc-configuracao-do-wspot/" style="text-decoration: underline; color: #ec213a">clique aqui</a>.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                        <br>
+                        Abaixo as informações que você deverá utilizar nos campos informados no procedimento:
+                        <br><br>
+                        <strong>Servidores RADIUS de autenticação e accounting:</strong> <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:18px;color:#909090;padding-top:10px;font-family:Arial;">
+                        <strong>Server IP Address:</strong> 54.207.48.161<br>
+                        <strong>Shared Secret:</strong> wide$123<br>
+                        <strong>Confirm Shared Secret:</strong> wide$123<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:18px;color:#909090;padding-top:10px;font-family:Arial;">
+                        <strong>Server IP Address:</strong> 54.207.62.56<br>
+                        <strong>Shared Secret:</strong> wide$123<br>
+                        <strong>Confirm Shared Secret:</strong> wide$123<br>
+                        <strong>Redirect URL after login:</strong> https://{{ entity.domain }}.mambowifi.com/302<br>
+                        <strong>External Webauth URL:</strong> https://{{ entity.domain }}.mambowifi.com/cisco<br><br><br>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                        <strong>Regras (ACL):</strong> <br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #1:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> Any<br>
+                        <strong>Destination:</strong> Any<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> 53 (DNS)<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Outbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #2:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> Any<br>
+                        <strong>Destination:</strong> Any<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> 53 (DNS)<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Inbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #3:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> Any<br>
+                        <strong>Destination:</strong> 54.232.255.112/255.255.255.255<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Outbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #4:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> 54.232.255.112/255.255.255.255<br>
+                        <strong>Destination:</strong> Any<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Inbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #5:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> Any<br>
+                        <strong>Destination:</strong> 52.92.72.0/255.255.255.0<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Outbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #6:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> 52.92.72.0/255.255.255.0<br>
+                        <strong>Destination:</strong> Any<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Inbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #7:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> Any<br>
+                        <strong>Destination:</strong> 52.92.73.0/255.255.255.0<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Outbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #8:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> 52.92.73.0/255.255.255.0<br>
+                        <strong>Destination:</strong> Any<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Inbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #9:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> Any<br>
+                        <strong>Destination:</strong> 52.92.74.0/255.255.255.0<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Outbound<br><br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="font-size:14px;padding-right:20px;padding-left: 20px;line-height:30px;padding-top:20px;color:#909090;font-family:Arial;">
+                        <strong>Regra #1:</strong><br><br>
+                        <strong>Action:</strong> Permit<br>
+                        <strong>Source:</strong> 52.92.74.0/255.255.255.0<br>
+                        <strong>Destination:</strong> Any<br>
+                        <strong>Protocol:</strong> Any<br>
+                        <strong>Source Port:</strong> Any<br>
+                        <strong>Dest Port:</strong> Any<br>
+                        <strong>DSCP:</strong> Any<br>
+                        <strong>Direction:</strong> Inbound<br><br>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="font-size:16px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                        Após configurar o equipamento, sugerimos a leitura
+                        <a href="https://www.mambowifi.com/materiais/WSpot-Manual.pdf" style="text-decoration: underline; color: #ec213a">
+                            desse material para configurar o seu Mambo WiFi
+                        </a>.
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:16px;line-height:16px;color:#909090;font-family:Arial;">Se precisar de ajuda, por favor entre em contato conosco pelo email <a href="mailto:{{ fromEmail }}" style="text-decoration: none; color: #ec213a">{{ fromEmail }}</a></td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:16px;line-height:16px;color:#444444;font-family:Arial;">Teremos o maior prazer em ajud&aacute;-lo.</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:16px;line-height:16px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:16px;line-height:16px;color:#444444;font-family:Arial; font-weight: bold;">{{ config.partner_name }}</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

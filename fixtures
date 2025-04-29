@@ -1,0 +1,3 @@
+php app/console doctrine:fixtures:load --fixtures=src/Wideti/DomainBundle/DataFixtures/ORM/Test
+php src/Wideti/DomainBundle/Cli/MigrateMySqlToMongo.php
+php src/Wideti/DomainBundle/Cli/CreateFieldsMongo.php

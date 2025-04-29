@@ -1,0 +1,231 @@
+{% block content %}
+<html>
+    <head>
+        <title>Dados detalhados de Visitante - {{ whiteLabel.companyName }}</title>
+        <style type="text/css">
+            @media screen, print {
+                body, div, p, ul, ol, li, h1, h2, h3, h4, h5 { margin: 0; padding: 0; border: none; font-family: Arial, sans-serif, sans; }
+                .wrapper { padding: 2%; }
+                .header { border-bottom: 3px solid #000; overflow: hidden; margin-bottom: 15px; padding-bottom: 15px; }
+                .header table, .header table td, .header table tr { border: none; padding: 0; }
+                h1 { font-size: 20px; font-weight: bold; text-align: left; }
+                h2 { font-size: 14px; font-style: italic; color: #888; text-align: left; }
+                h3 { font-size: 18px; }
+                h4.filter { font-style: italic; font-size: 14px; margin: 15px 15% 0 15%; font-weight: normal;  }
+                h5 { font-size: 14px; border: 1px solid #000; padding: 10px; margin-top: 25px; margin-bottom: 5px; background-color: #efefef; }
+                .date { text-align: right; font-size: 12px; }
+                .report_info { text-align: center; margin: 20px 0; }
+                .content { clear: both; padding: 10px 20px; font-size: 14px; line-height: 20px; }
+                .legend { border-top: 1px solid #eee; margin-top: 20px; padding-top: 20px; margin: 0 auto; width: 50%; }
+                .footer { border-top: 3px solid #000; overflow: hidden; margin-top: 15px; padding-top: 15px; }
+                .footer table, .footer table td, .footer table tr { border: none; padding: 0; }
+                .footer table td { color: #aaa; }
+                .footer .date { text-align: left; }
+                .footer .partner { text-align: right; font-size: 12px; font-weight: normal; font-style: italic; }
+                span.highlight { background-color: yellow; }
+
+                .info-table { margin-bottom: 5px; }
+                .info-table, .info-table td { border: none; }
+                .info-table td { padding: 0; }
+                .info-table td.table-title { width: 70%; border: 1px solid #000; font-size: 14px; background-color: #efefef; border-collapse: collapse; font-weight: bold; }
+                .scales { width: 100%; padding: 0; margin: 0; margin-left: 5px; }
+                .scales th, .scales td { font-size: 9px; }
+                .scales td { padding: 5px; }
+                .results-table { margin-bottom: 35px; }
+
+                .page-break-inside-avoid { page-break-inside: avoid; }
+                table { border: 2px solid #000; width: 100%; border-collapse: collapse; }
+                tr.even { background-color: #eee; }
+                th, td { border: 1px solid #000; }
+                th { background-color: #ccc; font-size: 14px; }
+                th, td { padding: 5px; }
+                td { font-size: 13px; text-align: center; }
+                td.question { text-align: left; width: 100%; }
+                .limit { border-right-width: 2px; }
+                .results { background-color: #ccc; font-size: 14px; font-weight: bold; }
+                .no-bottom-top { border-top: none; }
+                .no-bottom-border { border-bottom: none; }
+                .no_results { font-style: italic; }
+                .client-name { text-align: left; }
+                .hidden-answers { display: none; }
+                .group-item-expander { background-repeat: no-repeat; background-position: 11px 6px; cursor: pointer; }
+                .collapsed-group { background-image: url(/bundles/tangramtcoma/images/icons/dark/add.png); }
+                .expanded-group { background-image: url(/bundles/tangramtcoma/images/icons/dark/button/minus.png); }
+
+                .legend { margin-top: 10px; }
+                .legend table th { font-size: 12px; }
+                .legend table td { font-size: 11px; }
+                .desc { text-align: left; width: 100%; }
+
+                #report-projectSummary table { margin-bottom: 20px; }
+                #report-projectSummary .header table, #report-projectSummary .footer table { margin-bottom: 0; }
+                .contact_name { font-style: italic; font-weight: bold; background-color: #eee; }
+                .label { font-weight: bold; }
+                .value { text-align: left; width: 80%; }
+
+                #report-insideTheGeneralVision .info-table td.table-title { text-align: center; font-size: 14px; border: 1px solid #000; padding: 10px; margin-top: 25px; margin-bottom: 5px; background-color: #aaa; }
+                #report-insideTheGeneralVision h5 { margin-top: 0; }
+                htmlpageheader, htmlpagefooter { display: none; }
+
+                #report-strongAndWeakPoints h4 { font-size: 16px; margin-top: 20px; background: #ccc; border: 1px solid #000; text-align: center; padding: 10px; }
+                #report-strongAndWeakPoints h5 { margin-top: 5px; padding: 5px; }
+
+                #report-favorability .factor, #report-averageByFactor .factor { text-align: left; }
+
+                .graph { margin-top: 15px; padding: 15px; border: 1px solid #ccc; border-radius: 10px; background-color: #fefefe; }
+                .graph.hidden { position:absolute; top: -9999em; width: 90%; }
+
+                .graph_controls p { text-align: center; }
+                .graph_controls a { color: blue; }
+                .graph_controls a:hover { color: blue; text-decoration: none; }
+
+                .table-visitante, .table-visitante tr, .table-visitante tr td{
+                    border:0;
+                    text-align: right;
+                    border-bottom: 1px solid black;
+                    font-size: 14px;
+                }
+
+                .table-visitante tr td:first-child {width: 250px;}
+
+                .table-visitante tr td.second{
+                    text-align: left;
+                }
+            }
+
+            @media print {
+                .wrapper .header, .wrapper .footer { display: none; }
+
+            }
+        </style>
+
+    </head>
+<body id="report-generalVision">
+<div class="wrapper">
+
+    {% if pdf == true %}
+        <htmlpageheader name="header">
+            <div class="header">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td class="client-name"><h1>{{ whiteLabel.companyName }}</h1></td>
+                        <td class="date">{{ 'now'|date('d/m/Y') }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </htmlpageheader>
+        <sethtmlpageheader name="header" value="on" show-this-page="2"/>
+
+        <htmlpagefooter name="footer">
+            <div class="footer">
+                <table>
+                    <tbody>
+                    <tr>
+                        <td class="date">{{ 'now'|date('d/m/Y - H:i') }} - Powered by {{ whiteLabel.companyName }} - Página {PAGENO} de {nb}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </htmlpagefooter>
+        <sethtmlpagefooter name="footer" value="on" show-this-page="2"/>
+    {%  endif %}
+
+    <div class="header">
+        <table>
+            <tbody>
+            <tr>
+                <td class="client-name"><h1>{{ whiteLabel.companyName }} | Dados detalhados de visitante.</h1></td>
+                <td class="date">{{ 'now'|date('d/m/Y') }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="report_info">
+        <h3>Visitante</h3>
+    </div>
+
+
+    <table border="0" class="table-visitante" style="width:600px; margin:0 auto; margin-bottom: 50px; border: 0;">
+        <tr>
+            <td><strong>Grupo:</strong></td>
+            <td class="second">{{ entity|guest_group|default("Visitante") }}</td>
+        </tr>
+        <tr class="even">
+            <td><strong>Status:</strong></td>
+            <td class="second">{{ entity.statusAsString }}</td>
+        </tr>
+        {% for key, field in customFields %}
+            <tr>
+                <td><strong>{{ key }}:</strong></td>
+                <td class="second">{{ field|default("Não Informado") }}</td>
+            </tr>
+        {% endfor %}
+        {% if (config.authorize_email == 1) %}
+            <tr class="even">
+                <td><strong>Aceita receber novidades?</strong></td>
+                <td class="second">{{ (entity.authorizeEmail is null) ? 'N/I' : ((entity.authorizeEmail == 1) ? 'Sim' : 'Não') }}</td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td><strong>Data Criação:</strong></td>
+            <td class="second">{{ entity.created|date('d/m/Y H:i:s') }}</td>
+        </tr>
+        <tr class="even">
+            <td><strong>Primeira Visita:</strong></td>
+            <td class="second">{{ guestAccessInfo.first ? guestAccessInfo.first|date("d/m/Y H:i:s") : 'Visitante não possui acessos' }}</td>
+        </tr>
+        <tr>
+            <td><strong>Última Visita:</strong></td>
+            <td class="second">{{ guestAccessInfo.last ? guestAccessInfo.last|date("d/m/Y H:i:s") : 'Visitante não possui acessos' }}</td>
+        </tr>
+    </table>
+
+    {% if access_list %}
+
+        <div class="report_info">
+            <h3>Últimos Acessos</h3>
+            <h4 class="filter"></h4>
+        </div>
+
+        <table class="results-table">
+            <tbody>
+                <tr>
+                    <th>IP do usuário</th>
+                    <th>MAC Address</th>
+                    <th>Ponto de Acesso</th>
+                    <th>Início da conexão</th>
+                    <th>Término da conexão</th>
+                </tr>
+                {% for access in access_list %}
+                    {% set even_class = (loop.index is not odd) ? ' class="even"' : '' %}
+                    <tr{{ even_class|raw }}>
+                        <td>{{ access.framedipaddress }}</td>
+                        <td>{{ access.callingstationid }}</td>
+                        <td>{{ access.calledstation_name }}</td>
+                        <td>{{ access.acctstarttime|date('d/m/Y H:i:s') }}</td>
+                        <td>{{ (access.acctstoptime is defined) ? access.acctstoptime|date('d/m/Y H:i:s') : "Usuário Online" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    {% endif %}
+
+    <div class="footer">
+        <table>
+            <tbody>
+            <tr>
+                <td class="date">{{ 'now'|date('d/m/Y - H:i:s') }} - Powered by {{ whiteLabel.companyName }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% if pdf == false %}
+        <script>window.print();</script>
+    {% endif %}
+
+{% endblock %}

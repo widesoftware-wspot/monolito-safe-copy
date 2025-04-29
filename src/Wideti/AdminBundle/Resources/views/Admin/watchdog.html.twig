@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head lang="pt-BR">
+    <meta charset="UTF-8">
+    <title>Quantidade de registros MySQL vs. ElasticSearch</title>
+</head>
+<body>
+<table cellspacing="0" bgcolor="#f1f1f1" align="center" width="100%" style="background-color:#f1f1f1;padding-top:0px;padding-right:0px;padding-left:0px;padding-bottom:0px;border-top-width:0px;border-right-width:0px;border-bottom-width:0px;border-left-width:0px">
+    <tbody>
+        <tr>
+            <td bgcolor="#f1f1f1" align="center" style="background-color:#f1f1f1;padding-right:20px;padding-top:0;padding-left:20px;padding-bottom:20px;text-align:center">
+                <div align="center" style="max-width:800px;margin-top:0;margin-right:auto;margin-bottom:0;margin-left:auto;padding-top:0;padding-right:10px;padding-bottom:0;padding-left:10px">
+                    <table cellspacing="0" cellpadding="0" bgcolor="#ffffff" align="center" width="656" style="background-color:#ffffff;padding-bottom:0px;padding-right:0px;padding-top:0px;padding-left:0px;width:656px!important;max-width:800px;margin-bottom:0;margin-right:0;margin-top:0;margin-left:0;font-family:Arial;font-size:11px;color:#565656;text-align:left">
+                        <tbody>
+                            <tr>
+                                <td bgcolor="#565656" width="100%" style="background-color:#f1f1f1">
+                                    <table cellspacing="0" cellpadding="0" border="0" bgcolor="#f1f1f1" width="656" style="background-color:#f1f1f1">
+                                        <tbody>
+                                            <tr>
+                                                <td align="right" width="182">
+                                                    <table cellspacing="0" cellpadding="0" border="0" width="100%" style="font-size: 11px; color: #909090; text-align: right;">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td height="30" width="182"></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="100%">
+                                    <table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center" width="100%" style="padding-right:0px;padding-bottom:0px;padding-left:0px;padding-top:20px;border-right-width:0px;border-bottom-width:0px;border-top-width:0px;border-left-width:0px;text-align:left;margin-left:0;margin-bottom:0;margin-top:0;margin-right:0;background-color:#ffffff;font-family:Arial;font-weight:100;font-size:14px;color:#444444;line-height:0px">
+                                        <tbody>
+                                            <tr>
+                                                <td style="padding-left:30px;padding-bottom:30px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+                                                    <table cellspacing="0" cellpadding="0" border="0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;">
+                                                                    Total de accountings: {{ countElasticSearch }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;">
+                                                                    Registros com StartTime > StopTime: {{ startTime }}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;">
+                                                                    Total de visitantes com e-mail inválidos: {{ totalInvalidEmails }}
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="100%">
+                                    <table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center" width="100%" style="padding-right:0px;padding-bottom:0px;padding-left:0px;padding-top:20px;border-right-width:0px;border-bottom-width:0px;border-top-width:0px;border-left-width:0px;text-align:left;margin-left:0;margin-bottom:0;margin-top:0;margin-right:0;background-color:#ffffff;font-family:Arial;font-weight:100;font-size:14px;color:#444444;line-height:0px">
+                                        <tbody>
+                                        <tr>
+                                            <td style="padding-left:30px;padding-bottom:30px;padding-right:30px;padding-top:5px;font-size:16px;line-height:24px;color:#444444">
+                                                <table cellspacing="0" cellpadding="0" border="0">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td style="padding-right:20px;padding-left: 20px;font-size:25px;line-height:30px;color:#444444;font-family:Arial;">
+                                                            Índices e Alias ElasticSearch
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#444444;font-family:Arial; padding-top: 20px;">
+                                                            Índices - Alias
+                                                        </td>
+                                                    </tr>
+                                                    {% for key, field in indexes %}
+                                                        <tr>
+                                                            <td style="padding-right:20px;padding-left: 20px;font-size:12px;line-height:30px;color:#444444;font-family:Arial;">
+                                                                {{ key }} - {{ field }}
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="100%">
+                                    <table cellspacing="0" cellpadding="0" border="0" bgcolor="#ffffff" align="center" width="100%" style="padding-right:0px;padding-bottom:0px;padding-left:0px;padding-top:20px;border-right-width:0px;border-bottom-width:0px;border-top-width:0px;border-left-width:0px;text-align:left;margin-left:0;margin-bottom:0;margin-top:0;margin-right:0;background-color:#ffffff;font-family:Arial;font-weight:100;font-size:14px;color:#444444;line-height:0px">
+                                        <tbody>
+                                            <tr>
+                                                <td style="padding-left:30px;padding-bottom:30px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+                                                    <table cellspacing="0" cellpadding="0" border="0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="padding-right:20px;padding-left: 20px;font-size:25px;line-height:30px;color:#444444;font-family:Arial;">
+                                                                    Total de visitantes cadastrados <br> MySQL vs MongoDB
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-left:30px;padding-bottom:30px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+                                                    <table cellspacing="0" cellpadding="0" border="0">
+                                                        <tbody>
+                                                            <tr>
+                                                                <td style="padding-left:30px;padding-bottom:30px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+                                                                    <table style="border: 1px solid #c9cccf; width: 100%;">
+                                                                        <tr style="border: 1px solid #c9cccf;">
+                                                                            <td style="border: 1px solid #c9cccf; text-align: center; font-weight: bold;">Cliente</td>
+                                                                            <td style="border: 1px solid #c9cccf; text-align: center; font-weight: bold;">MySQL</td>
+                                                                            <td style="border: 1px solid #c9cccf; text-align: center; font-weight: bold;">MongoDB</td>
+                                                                        </tr>
+                                                                        {% for key, field in totalGuests %}
+                                                                            <tr style="border: 1px solid #c9cccf; {% if(field.mysql != field.mongo) %} background-color: #F78181;{% endif %}">
+                                                                                <td style="min-width: 150px; border: 1px solid #c9cccf;">{{ key }}</td>
+                                                                                <td style="width: 100px; border: 1px solid #c9cccf; text-align: center;">{{ field.mysql }}</td>
+                                                                                <td style="width: 100px; border: 1px solid #c9cccf; text-align: center;">{{ field.mongo }}</td>
+                                                                            </tr>
+                                                                        {% endfor %}
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="margin-left: 20px">
+                                        <h1>Pontos de acesso mal configurados <br> Elastic | MongoDB</h1>
+                                        <p style="">Comparação das aps no Mongo e elastic com o Mysql</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="margin-left: 20px">
+                                        {% for verify in wrongAps %}
+                                            {%  if  verify.mongoWrongAps or verify.elasticWrongAps %}
+                                                <div style="font-size: 1.3em; border-bottom: 1px solid #a6a69a; margin-bottom: 10px">
+                                                    <p>-> Cliente: {{ verify.client.domain }}</p>
+                                                    {% if verify.mongoWrongAps %}
+                                                        <p>Aps Mongo com problema</p>
+                                                        <ul>
+                                                            {% for mongoAps in verify.mongoWrongAps %}
+                                                                <li>{{ mongoAps }}</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    {% else %}
+                                                        <p>Aps Mongo sem problema!</p>
+                                                    {% endif %}
+
+                                                    {% if verify.elasticWrongAps %}
+                                                        <p>Aps Elastic com problema</p>
+                                                        <ul>
+                                                            {% for elasticAps in verify.elasticWrongAps %}
+                                                                <li>{{ elasticAps }}</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                    {% else %}
+                                                        <p>Aps Elastic sem problema!</p>
+                                                    {% endif %}
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

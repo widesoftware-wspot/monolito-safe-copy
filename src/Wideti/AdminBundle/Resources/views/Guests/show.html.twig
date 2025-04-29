@@ -1,0 +1,356 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <style>.timezone {font-size: 11px;text-align:center;}</style>
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Visitantes'} %}
+
+<div class="innerLR">
+    <!-- Widget -->
+    <div class="widget widget-tabs widget-tabs border-bottom-none">
+        <!-- Widget heading -->
+        {% if (entity.emailIsValid == false and entity.status == 0) %}
+            <div class="row-fluid">
+                <div class="span12 alert alert-yellow">
+                    O e-mail deste visitante foi classificado como <b>Inválido</b>, com isso o Status foi definido como <b>Inativo</b> e o acesso só será liberado após ele informar um e-mail válido.
+                    <br/>
+                    Caso deseje liberar o acesso mesmo assim, basta alterar o Status para <b>Ativo</b>.
+                    <br/><br/>
+                    Lembrando que a validação do e-mail é feita no intuito de prover à você, nosso Cliente, uma base com cadastros confiáveis, isso é essencial caso queira utilizar os e-mails para ações de E-mail Marketing.
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="widget-head">
+            <ul>
+                <li class="active"><a class="glyphicons eye_open" data-toggle="tab"><i></i>Visualizar</a></li>
+            </ul>
+        </div>
+
+        <!-- // Widget heading END -->
+        <div class="widget-body">
+            <div class="tab-content" style="padding: 0; border: none !important;">
+                <div class="tab-pane active widget-body-regular" id="overview">
+                    <div class="row-fluid row-merge">
+                        <div class="span12">
+                            <div class="innerL show-guest">
+                                <div class="span4">
+                                    <img src="{{ facebookPicture }}" alt="" class="picture"/>
+                                    <ul class="unstyled icons">
+                                        <li class="glyphicons user"><i></i> Grupo: {{ entity|guest_group|default('Visitantes') }} </li>
+                                        <li class="glyphicons certificate"><i></i> Status: {{ entity.statusAsString }} </li>
+                                        <li class="glyphicons globe_af"><i></i> Idioma: {{ entity.locale }} </li>
+                                        <li class="glyphicons notes"><i></i> Cadastro via: {{ entity|guest_register_mode }} </li>
+                                        {% if (config.authorize_email == 1) %}
+                                            <li class="glyphicons bullhorn"><i></i> Aceita receber novidades? {{ (entity.authorizeEmail is null) ? 'N/I' : ((entity.authorizeEmail == 1) ? 'Sim' : 'Não') }} </li>
+                                        {% endif %}
+                                        <li class="glyphicons calendar"><i></i> Data do cadastro: {{ entity.created|date('d/m/Y - H:i', entity.timezone) }} <span class="timezone">({{ entity.timezone }})</span></li>
+                                        <li class="glyphicons router"><i></i> Ponto de acesso de cadastro: {{ (entity.registrationMacAddress) ? entity.registrationMacAddress|find_ap_name : 'não informado' }} </li>
+                                    </ul>
+                                    <p></p>
+                                </div>
+
+                                <div class="span4">
+                                    {% if (customFields) %}
+                                        <h4>Informações adicionais</h4>
+                                        <ul class="unstyled icons">
+                                            {% set color = '#484c50' %}
+                                            {% set title = '' %}
+
+                                            {% for key, field in customFields %}
+                                                {% if (key == 'E-mail' and entity.emailIsValid == false) %}
+                                                    {% set color = '#FF0000' %}
+                                                    {% set title = 'E-mail inválido' %}
+                                                {% endif %}
+                                                <li class="glyphicons asterisk" title="{{ title }}" style="color: {{ color }};"><i></i> {{ key }}: {{ field|default("Não Informado") }} </li>
+                                            {% endfor %}
+                                        </ul>
+                                        <br/>
+                                    {% endif %}
+
+                                    {% if (facebookFields) %}
+                                        <h4>Informações do Facebook</h4>
+                                        <ul class="unstyled icons">
+                                            {% for key, field in facebookFields %}
+                                                <li class="glyphicons facebook"><i></i> {{ key }}: {{ field|default("Não Informado")|raw }} </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                </div>
+
+                                <div class="span3">
+                                    <h4>Dados de acesso</h4>
+                                    <ul class="unstyled icons">
+                                        <li class="glyphicons calendar"><i></i> Primeira visita: {{ first_access ? first_access|date('d/m/Y - H:i', entity.timezone) : 'não possui acessos' }} <span class="timezone">({{ entity.timezone }})</span></li>
+                                        <li class="glyphicons calendar"><i></i> Última visita: {{ last_access ? last_access|date('d/m/Y - H:i', entity.timezone) : 'não possui acessos' }} <span class="timezone">({{ entity.timezone }})</span></li>
+                                        <li class="glyphicons clock"><i></i> Tempo médio de acesso: {{ average_time_access ? average_time_access|formatAccessTime : 'não possui acessos' }}</li>
+                                    </ul>
+                                    <br/>
+                                    <div class="widget">
+                                        <!-- Widget Heading -->
+                                        <div class="widget-head">
+                                            <h4 class="heading glyphicons history"><i></i>Taxas&nbsp;</h4> <span class="tooltip-wrapper"><i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Os valores exibidos aqui são estimados." data-original-title="" title=""></i></span>
+                                        </div>
+                                        <!-- // Widget Heading END -->
+
+                                        <div class="widget-body list in collapse" style="height: auto;">
+                                            <ul>
+                                                <li>
+                                                    <span>Download</span>
+                                                    <span class="count">{{ download_upload.download.value | format_bytes }}</span>
+                                                </li>
+                                                <li>
+                                                    <span>Upload</span>
+                                                    <span class="count">{{ download_upload.upload.value | format_bytes }}</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="span12">
+                            <div class="innerL">
+                                <div class="row-fluid">
+                                    <div class="span12">
+                                        <!-- Latest Orders/List Widget -->
+                                        <div class="widget margin-bottom-none" >
+
+                                            <!-- Widget Heading -->
+                                            <div class="widget-head">
+                                                <h4 class="heading">Dispositivos do visitante</h4>
+                                            </div>
+                                            <!-- // Widget Heading -->
+
+                                            <div class="widget-body list products">
+                                                {% if devices %}
+                                                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                                                        <!-- Table heading -->
+                                                        <thead>
+                                                            <tr>
+                                                                <th class="center">OS</th>
+                                                                <th class="center">Plataforma</th>
+                                                                <th class="center">Mac Address</th>
+                                                                <th class="center">Primeiro acesso</th>
+                                                                <th class="center">Último acesso</th>
+                                                                <th class="center">Status</th>
+                                                                <th class="center">Ações</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <!--  ONLINE  -->
+                                                        {% for entry in devices %}
+                                                            {% set device = entry.jsonSerialize %}
+                                                            <tr class="gradeX">
+                                                                <td class="center">{{ device.os|replace({'unknown': 'Desconhecido'})|default('Desconhecido') }}</td>
+                                                                <td class="center">{{ device.platform|replace({'unknown': 'Desconhecida'})|default('Desconhecida') }}</td>
+                                                                <td class="center">{{ device.mac_address|replace({'unknown': 'Desconhecido'})|default('Desconhecido') }}</td>
+                                                                <td class="center">{{ device.created|date('d/m/Y H:i:s', entity.timezone)|default('') }}
+                                                                    <div class="timezone">{{ entity.timezone }}</div>
+                                                                </td>
+                                                                <td class="center">{{ device.lastAccess|date('d/m/Y H:i:s', entity.timezone)|default('') }}
+                                                                    <div class="timezone">{{ entity.timezone }}</div>
+                                                                </td>
+                                                                {% if device.mac_address in blockedDevices  %}
+                                                                    <td id="status-{{ device.mac_address }}" class="center" style="color: red">Bloqueado</td>
+                                                                    <td class="center">
+                                                                        <a href="#"
+                                                                           onclick="unblock('{{ device.mac_address }}')"
+                                                                           id="btn-{{ device.mac_address }}"
+                                                                           class="btn-action glyphicons ok btn-key" title="Desbloquear"><i></i></a>
+                                                                    </td>
+                                                                {% else %}
+                                                                    <td id="status-{{ device.mac_address }}" class="center" style="color: green">Liberado</td>
+                                                                    <td class="center">
+                                                                        <a href="#"
+                                                                           onclick="block('{{ device.mac_address  }}')"
+                                                                           id="btn-{{ device.mac_address }}"
+                                                                           class="btn-action btn-danger glyphicons remove btn-info" title="Bloquear"><i></i></a>
+                                                                    </td>
+                                                                {% endif %}
+                                                            </tr>
+                                                        {% endfor %}
+                                                        <!--  ONLINE END  -->
+                                                        </tbody>
+                                                    </table>
+                                                {% else %}
+                                                    &nbsp; Nenhum dispositivo encontrado
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="innerL" style="margin-top: 20px;">
+                                <div class="row-fluid">
+                                    <div class="span12">
+
+                                        <!-- Latest Orders/List Widget -->
+                                        <div class="widget margin-bottom-none" >
+
+                                            <!-- Widget Heading -->
+                                            <div class="widget-head">
+                                                <h4 class="heading">Últimos Acessos</h4>
+                                            </div>
+                                            <!-- // Widget Heading -->
+
+                                            <div class="widget-body list products">
+                                                {% if pagination|length > 0 %}
+                                                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                                                        <!-- Table heading -->
+                                                        <thead>
+                                                            <tr>
+                                                                <th>MAC Address</th>
+                                                                <th>Ponto de Acesso</th>
+                                                                <th>Início da conexão</th>
+                                                                <th>Término da conexão</th>
+                                                                <th class="center">Detalhes</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                        {% for close in pagination %}
+                                                            <tr class="gradeX">
+                                                                <td>
+                                                                    {% if (close.callingstationid != "\"\"" or close.callingstationid == "") %}
+                                                                        {{ close.callingstationid }}
+                                                                    {% else %}
+                                                                        Desconhecido
+                                                                    {% endif %}
+                                                                </td>
+                                                                <td>{{ close.calledstation_name }}</td>
+                                                                <td>{{ close.acctstarttime|date('d/m/Y H:i:s') }}</td>
+                                                                <td>{{ (close.acctstoptime is defined) ? close.acctstoptime|date('d/m/Y H:i:s') : 'Usuário Online' }}</td>
+                                                                <td class="center">
+                                                                    <a href="{{ path('admin_visitantes_detail',{'accessId': close.acctuniqueid, 'status': 'closed' }) }}"
+                                                                       class="btn-action glyphicons eye_open btn-info"><i></i></a>
+                                                            </tr>
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                {% else %}
+                                                    &nbsp; Nenhum acesso realizado.
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <!-- // Latest Orders/List Widget END -->
+
+                                        {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions right" style="margin-bottom: 20px;">
+                {% set urlBackButton = app.request.headers.get('referer') %}
+
+                {% if ('edit' in urlBackButton or 'detail' in urlBackButton) %}
+                    <a href="{{ path('admin_visitantes') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar para Listagem</a>
+                {%  else %}
+                    <a href="{{ urlBackButton }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+                {% endif %}
+
+                {% if is_granted("ROLE_MARKETING") == false %}
+                    <a href="{{ path('admin_visitantes_edit', { 'id': entity.id }) }}" class="btn btn-icon btn-default glyphicons pencil"><i></i>Editar</a>
+                {% endif %}
+                <a href="{{ path('admin_visitantes_print', { 'id': entity.id }) }}" target="_blank" class="btn btn-icon btn-default glyphicons print"><i></i>Imprimir</a>
+            </div>
+        </div>
+        <!-- // Tab content END -->
+    </div>
+    <!-- // Widget END -->
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script>
+        function block(macaddress){
+            var statusCell = $('#status-' + macaddress);
+            var btnAction = $('#btn-' + macaddress);
+
+            bootbox.confirm("Deseja realmente bloquear o dispositivo " + macaddress + "?", function (result) {
+                if(result){
+                    var data = {mac : macaddress};
+                    var route = Routing.generate('blacklist_block_guest_mac', {mac: macaddress});
+                    $.ajax({
+                        type: "POST",
+                        url: route,
+                        data: data,
+                        dataType: "json",
+                        success: function (response) {
+                            var title;
+
+                            if (response.type == 'success') {
+                                title = 'Aviso!';
+                                statusCell.html("Bloqueado");
+                                statusCell.css({color:"red"});
+                                btnAction.removeClass("btn-action btn-danger glyphicons remove btn-info");
+                                btnAction.addClass("btn-action glyphicons ok btn-key");
+                                btnAction.attr('title',"Liberar");
+                                btnAction.attr('onclick',"unblock('"+macaddress+"')");
+                            } else {
+                                title = "Erro ao tentar excluir!";
+                            }
+
+                            $.gritter.add({
+                                title: 'Aviso!',
+                                text: response.message
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        function unblock(macaddress){
+            var statusCell = $('#status-' + macaddress);
+            var btnAction = $('#btn-' + macaddress);
+
+            bootbox.confirm("Deseja realmente desbloquear o dispositivo " + macaddress + "?", function (result) {
+                if(result){
+                    var data = {mac : macaddress};
+                    var route = Routing.generate('blacklist_unblock_guest_mac', {mac: macaddress});
+                    $.ajax({
+                        type: "POST",
+                        url: route,
+                        data: data,
+                        dataType: "json",
+                        success: function (response) {
+                            var title;
+
+                            if (response.type == 'success') {
+                                title = 'Aviso!';
+                                statusCell.html("Liberado");
+                                statusCell.css({color:"green"});
+                                btnAction.removeClass("btn-action glyphicons ok btn-key");
+                                btnAction.addClass("btn-action btn-danger glyphicons remove btn-info");
+                                btnAction.attr('title',"Bloquear");
+                                btnAction.attr('onclick',"block('"+macaddress+"')");
+                            } else {
+                                title = "Erro ao tentar excluir!";
+                            }
+
+                            $.gritter.add({
+                                title: 'Aviso!',
+                                text: response.message
+                            });
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

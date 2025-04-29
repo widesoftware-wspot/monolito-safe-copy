@@ -1,0 +1,23 @@
+{% block form_row %}
+    {% spaceless %}
+            {{ form_widget(form, {'attr': {'placeholder': form.vars.label }}) }}
+            {{ form_errors(form) }}
+    {% endspaceless %}
+{% endblock form_row %}
+
+{% block tel_widget %}
+    {% spaceless %}
+        {% set type = 'tel' %}
+        {{ block('form_widget_simple') }}
+    {% endspaceless %}
+{% endblock %}
+
+{% block form_errors -%}
+    {% if errors|length > 0 -%}
+        <p class="error help-block">
+            {%- for error in errors -%}
+                <span class="label label-important" style="display: inline; float:left">{{ error.message }}</span>
+            {%- endfor -%}
+        </p>
+    {%- endif %}
+{%- endblock form_errors %}

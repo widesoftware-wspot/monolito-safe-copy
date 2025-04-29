@@ -1,0 +1,533 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/css/sso.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css') }}" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+    <style>
+        .input-field {
+            max-width: 300px;
+        }
+        .preview-language {
+            display: flex;
+            margin:40px 0 20px 0;
+        }
+        .preview-language h4 {
+            margin: 0 20px 0 0;
+            width: 100%;
+        }
+        #language-session {
+            display: flex;
+            gap: 20px;
+            min-width: 90%;
+            flex-wrap: wrap;
+        }
+        .choice-session {
+            display: flex;
+            gap: 20px;
+            min-width: 90%;
+            flex-wrap: wrap;
+        }
+        .header-choices {
+            display: flex;
+            gap: 20px;
+            min-width: 90%;
+            flex-wrap: wrap;
+        }
+        .header-choices h4 {
+            width: 300px;
+        }
+        .new-choice {
+            display: flex;
+            gap: 20px;
+            min-width: 90%;
+            flex-wrap: wrap;
+        }
+        .chzn-container, .chzn-drop {
+            width: 100% !important;
+        }
+        .search-field {
+            width: 100% !important;
+        }
+        .search-field > input {
+            width: 100% !important;
+        }
+        #language-session > .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        #language-session .control-label {
+            font-weight: bold !important;
+            font-size: 16px;
+        }
+        #language-session > .control-group p {
+            font-size: 12px;
+        }
+        #language-session input {
+            width: 300px;
+        }
+        .icon-es {
+            background-image: url('/bundles/admin/frontend/images/flags/24/Spain.png');
+        }
+        .icon-en {
+            background-image: url('/bundles/admin/frontend/images/flags/24/United-States.png');
+        }
+        .icon-pt {
+            background-image: url('/bundles/admin/frontend/images/flags/24/Brazil.png');
+        }
+        .session-preview {
+            width: 512px;
+        }
+        .session-preview > div {
+            width: 55%;
+        }
+        .remove-field {
+            height: 30px;
+        }
+        .field-preview {
+            background-color: rgba(66,66,66, 0.8) !important;
+            padding: 25px;
+            border: none;
+            border-radius: 10px;
+        }
+        .session-preview input {
+            border: none;
+            height: 35px !important;
+            font-size: 15px !important;
+            border-radius: 0 !important;
+            width: 100%;
+        }
+
+        .session-preview input {
+            box-shadow: none !important;
+            font-family: 'Open Sans', sans-serif !important;
+            font-weight: lighter !important;
+        }
+        .session-preview input[placeholder] {
+            float: none;
+            margin-left: 0;
+        }
+        .session-preview input {
+            float: none;
+            margin-left: 0;
+        }
+        .session-preview input {
+            background-color: #ffffff;
+            border: 1px solid #cccccc;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+            -webkit-transition: border linear .2s, box-shadow linear .2s;
+            -moz-transition: border linear .2s, box-shadow linear .2s;
+            -o-transition: border linear .2s, box-shadow linear .2s;
+            transition: border linear .2s, box-shadow linear .2s;
+        }
+        .session-preview input {
+            display: inline-block;
+            padding: 4px 6px;
+            font-size: 14px;
+            line-height: 20px;
+            color: #555555;
+            -webkit-border-radius: 4px;
+            -moz-border-radius: 4px;
+            border-radius: 4px;
+            vertical-align: middle;
+        }
+        .session-preview [class*="span"] {
+            float: left;
+            min-height: 1px;
+            margin-left: 10px;
+        }
+        .session-preview input {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        }
+        .session-preview input, .session-preview select, .session-preview textarea {
+            border-radius: 0 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block field_widget %}
+    {% spaceless %}
+        <div class="form-group">
+            {{ form_widget(form) }}
+            <button type="button" class="remove-field">Remove</button>
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block content %}
+    {% set route = app.request.attributes.get('_route') %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Configuração de campo customizado'} %}
+
+    {% set action_form = actionForm %}
+    {% set field_type = "text" %}
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>
+                            {% if app.request.attributes.get('_route') == 'custom_field_template_new' %}
+                                Novo
+                            {% else %}
+                                Editar
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+            {% form_theme form with ['AdminBundle:Form:fields.html.twig'] %}
+            {% set image_html_pt = '<div class="icon-pt"></div>' %}
+
+            <div class="widget-body">
+                <div class="row-fluid">
+                    {{ form_row(form.type, {'attr': {'readonly': actionForm == "update" }}) }}
+                    <div id="language-session">
+                        <div class="control-group">
+                            {{ form_label(form.labelPt)|replace({'{{ image_placeholder }}': image_html_pt})|raw }}
+                            <p> Texto dentro do campo </p>
+                            <div class="controls">
+                                {{ form_widget(form.labelPt) }}
+                            </div>
+                        </div>
+                        {% set image_html_es = '<div class="icon-es"></div>' %}
+                        <div class="control-group">
+                            {{ form_label(form.labelEs)|replace({'{{ image_placeholder }}': image_html_es})|raw }}
+                            <p> Texto dentro do campo</p>
+                            <div class="controls">
+                                {{ form_widget(form.labelEs) }}
+                            </div>
+                        </div>
+                        {% set image_html_en = '<div class="icon-en"></div>' %}
+                        <div class="control-group">
+                            {{ form_label(form.labelEn)|replace({'{{ image_placeholder }}': image_html_en})|raw }}
+                            <p> Texto dentro do campo</p>
+                            <div class="controls">
+                                {{ form_widget(form.labelEn) }}
+                            </div>
+                        </div>
+                        <div id="options-session" style="display:block;">
+                            <div id="field-container" data-prototype="{{ form_widget(form.choices.vars.prototype)|e('html_attr') }}">
+                                <div class="header-choices">
+                                    <h4>Opções do campo em português</h4>
+                                    <h4>Opções do campo em espanhol</h4>
+                                    <h4>Opções do campo em inglês</h4>
+                                </div>
+                                {% for choice in form.choices %}
+                                    <div class="choice-session">
+                                        {{ form_row(choice.pt_br, {'attr': {'readonly': true}}) }}
+                                        {{ form_row(choice.es, {'attr': {'readonly': true}}) }}
+                                        {{ form_row(choice.en, {'attr': {'readonly': true}}) }}
+                                        {{ form_row(choice.isSaved) }}
+                                        {{ form_row(choice.isLabel) }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <button type="button" id="add-field" class="btn btn-primary">Adicionar nova opção</button>
+                        </div>
+                        {{ form_errors(form) }}
+                    </div>
+
+                    <div class="session-preview">
+                        <div class="preview-language">
+                            <h4>Pré visualização</h4>
+                            {{ form_widget(form.previewLanguage) }}
+                        </div>
+                        {% for property in form.properties %}
+                            {% if (property.vars.multiple is defined and property.vars.multiple == true) %}
+                                <div class="field-preview field-preview-{{ property.vars.id | replace({'wspot_custom_field_template_properties_': ''}) }}" style="visibility: hidden;">
+                                    {{ form_widget(property, { 'attr': {'class': 'chosen-select', 'data-placeholder': property.vars.label } }) }}
+                                </div>
+                            {% else %}
+                                <div style="display:none;" class="field-preview field-preview-{{ property.vars.id | replace({'wspot_custom_field_template_properties_': ''}) }}">
+                                    {{ form_widget(property, { 'attr': {'placeholder': property.vars.name, 'data-placeholder': property.vars.name} }) }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
+            <hr class="separator">
+
+            <div class="form-actions right">
+                <a href="{{ path('custom_fields_index') }}">
+                    <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>Cancelar</button>
+                </a>
+                {{ form_widget(form.submit) }}
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+{% endblock %}
+
+
+{% block javascript %}
+    {{ parent() }}
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js') }}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <script src="//ajax.googleapis.com/ajax/libs/dojo/1.7.2/dojo/dojo.js"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+    <script>
+    $(document).ready(function() {
+            require(["dojo/query", "dojo/domReady!"], function(query) {
+                query(".chosen-select").forEach(function(node) {
+                    dojo.query(node).chosen({batch_select: true});
+                });
+            });
+            
+            let field_type = $('#wspot_custom_field_template_type').val();
+            var form = document.querySelector('form.form-horizontal[name="wspot_custom_field_template"]');
+            form.addEventListener('click', function(event) {
+                if(field_type == "multiple_choice") {
+                    let placeholderPt = $('#wspot_custom_field_template_labelPt').val();
+                    let placeholderEn = $('#wspot_custom_field_template_labelEn').val();
+                    let placeholderEs = $('#wspot_custom_field_template_labelEs').val();
+
+                    setTimeout(function() {
+                        $('#wspot_custom_field_template_properties_multiple_choice_pt_br_chzn .search-field > input').val(placeholderPt);
+                        $('#wspot_custom_field_template_properties_multiple_choice_en_chzn .search-field > input').val(placeholderEn);
+                        $('#wspot_custom_field_template_properties_multiple_choice_es_chzn .search-field > input').val(placeholderEs);
+                    }, 0);
+                }
+            });
+            var languages = ["pt_br","en", "es"];
+            var fieldContainer = document.getElementById('field-container');
+            function hasChoices() {
+                return document.querySelectorAll('.choice-session').length > 0;
+            }
+            
+            function updateRemoveButtons() {
+                if ("{{ actionForm }}" == "create") {
+                    const newChoices = document.querySelectorAll('.new-choice');
+                    newChoices.forEach((choice, index) => {
+                        const removeButton = choice.querySelector('.remove-field');
+                        if (newChoices.length === 1) {
+                            removeButton.style.display = 'none';
+                        } else {
+                            removeButton.style.display = 'inline-block';
+                        }
+                    });
+                }
+                
+            }
+            updateRemoveButtons();
+
+            function addChoiceOnList() {
+                const container = document.getElementById('field-container');
+                const prototype = container.getAttribute('data-prototype');
+                let choices = document.querySelectorAll(".choice-session");
+                let index = 1;
+                if (choices.length != 0) {
+                    let lastChoice = choices[choices.length - 1].firstElementChild;
+                    let elementId;
+                    if (lastChoice.id) {
+                        elementId = lastChoice.id;
+                    } else {
+                        elementId = lastChoice.firstElementChild.firstElementChild.id;
+                    }
+                    index = parseInt(elementId.split("_")[5]) + 1
+                }
+                const newForm = prototype.replace(/__name__/g, index);
+                
+                const newElement = document.createElement('div');
+                newElement.classList.add('new-choice');
+                newElement.innerHTML = newForm + '<button type="button" class="btn btn-primary remove-field"><i class="icon-trash icon-white"></i></button>';
+                const isSavedField = newElement.querySelector('input[type="hidden"]');
+                if (isSavedField) {
+                    isSavedField.value = 'false';
+                }
+                const divWithId = newElement.querySelector('#wspot_custom_field_template_choices_' + index);
+                if (divWithId) {
+                    divWithId.classList.add('choice-session');
+                }
+
+                const inputs = divWithId.querySelectorAll('input');
+                inputs.forEach(input => {
+                    input.addEventListener('input', function() {
+                        const language = this.id.match(/(pt_br|es|en)$/)[0];
+                        let optionId = this.id.replace(/_/g, "-");
+                        addOrChangeOption(`wspot_custom_field_template_properties_choice_${language}`, this.value, optionId, language)
+                    });
+                });
+                
+                container.appendChild(newElement);
+                updateRemoveButtons();
+            }
+
+            document.getElementById('add-field').addEventListener('click', function() {
+                addChoiceOnList();  
+            });
+
+            function cleanOptions(element) {
+                languages.forEach(function (language) {
+                        let optionId = `${element.id.replace(/_/g, "-")}-${language.replace(/_/g, "-")}`;
+                        let optionChznId = element.id + `_${language}_chzn`;
+                        let optionElement = document.getElementById(optionId);
+                        if (optionElement) {
+                            optionElement.remove();
+                        }
+                        let optionChznElement = document.getElementById(optionChznId);
+                        if (optionChznElement) {
+                            optionChznElement.remove();
+                        }
+                    })
+            }
+
+            document.getElementById('field-container').addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-field')) {
+                    cleanOptions(event.target.parentElement.firstElementChild)
+                    event.target.parentElement.remove();
+                    updateRemoveButtons();
+                } else if (event.target.parentElement.classList.contains('remove-field')) {
+                    cleanOptions(event.target.parentElement.parentElement.firstElementChild)
+                    event.target.parentElement.parentElement.remove();
+                    updateRemoveButtons();
+                }
+            });
+
+        function modifyEmptyOption(selectId, newText) {
+                var selectElement = document.getElementById(selectId);
+                if (selectElement) {
+                    var emptyOption = selectElement.querySelector('option[value=""]');
+                    if (emptyOption) {
+                        emptyOption.textContent = newText;
+                    }
+                }
+            }
+
+        function addOrChangeOption(selectId, newText, optionId, language) {
+                let option = document.getElementById(optionId);
+                let optionChznId = optionId.replace(/-/g, "_") + "_chzn"
+                let optionChzn = document.getElementById(optionChznId);
+                let dropOptions = $(`#wspot_custom_field_template_properties_multiple_choice_${language}_chzn .chzn-results`);
+                const newValue = newText.toLowerCase().replace(/\s+/g, '_');;
+                const newLabel = newText;
+                if (option && ("{{ actionForm }}" == "create" || field_type == "choice")) {
+                    option.value = newValue;
+                    option.text = newLabel;
+                }  else if ("{{ actionForm }}" == "create" || field_type == "choice") {
+                    var selectElement = document.getElementById(selectId);
+                    const newOption = document.createElement('option');
+                    newOption.value = newValue;
+                    newOption.text = newLabel;
+                    newOption.id = optionId;
+                    selectElement.appendChild(newOption);
+                }
+                if (optionChzn && ("{{ actionForm }}" == "create" || field_type == "multiple_choice")) {
+                    optionChzn.remove()
+                    let newListItem = $('<li>', {
+                        class: 'active-result',
+                        id: optionChznId,
+                        text: newText
+                    });
+                    dropOptions.append(newListItem);            
+                } else if ("{{ actionForm }}" == "create" || field_type == "multiple_choice") {
+                    let newListItem = $('<li>', {
+                        class: 'active-result',
+                        id: optionChznId,
+                        text: newText
+                    });
+                    dropOptions.append(newListItem);
+                }
+        }
+        let language_preview = $('#wspot_custom_field_template_previewLanguage').val();
+        function cleanAllPlaceholders() {
+            let languages = ["pt_br","en", "es"];
+            let languagesCamelCase = {
+                "pt_br": "Pt",
+                "en": "En",
+                "es": "Es"
+            }
+            let placeholder = "";
+
+            languages.forEach(function (language) {
+                if ("{{ actionForm }}" == "update") {
+                    placeholder = $(`#wspot_custom_field_template_label${languagesCamelCase[language]}`).val();
+                }
+                setPlaceholderPreview(placeholder, language)
+            })   
+        }
+
+        cleanAllPlaceholders()
+
+        $('#options-session').css('display', 'none');
+        if (field_type == "multiple_choice" || field_type == "choice") {
+                $('#options-session').css('display', 'block');
+                if (!hasChoices()) {
+                    addChoiceOnList()
+                }
+        }
+        
+        $(`.field-preview-${field_type}_${language_preview}`).css('display', 'block');
+        $(`.field-preview-multiple_choice_pt_br`).css('display', 'none');
+        $(`.field-preview-multiple_choice_en`).css('display', 'none');
+        $(`.field-preview-multiple_choice_es`).css('display', 'none');
+        changeTypeFieldPreview()
+        
+        function changeTypeFieldPreview() {
+            $('.field-preview').css('display', 'none');
+            $(`.field-preview-${field_type}_${language_preview}`).css('display', 'block');
+            $(`.field-preview-${field_type}_${language_preview}`).css('visibility', 'visible');
+        }
+        
+        function setPlaceholderPreview(placeholder, language) {
+            $(`#wspot_custom_field_template_properties_text_${language}`).attr('placeholder', placeholder);
+            $(`#wspot_custom_field_template_properties_text_${language}`).attr('data-placeholder', placeholder);
+            $(`#wspot_custom_field_template_properties_date_${language}`).attr('placeholder', placeholder);
+            $(`#wspot_custom_field_template_properties_date_${language}`).attr('data-placeholder', placeholder);
+            $(`#wspot_custom_field_template_properties_choice_${language}`).attr('data-placeholder', placeholder);
+            $(`#wspot_custom_field_template_properties_multiple_choice_${language}_chzn .search-field > .default`).val(placeholder);
+            modifyEmptyOption(`wspot_custom_field_template_properties_choice_${language}`, placeholder);
+        }
+
+        $('#wspot_custom_field_template_labelPt').on('input', function() {
+            setPlaceholderPreview($(this).val(), 'pt_br');   
+        });
+
+        $('#wspot_custom_field_template_labelEs').on('input', function() {
+            setPlaceholderPreview($(this).val(), 'es');   
+        });
+
+        $('#wspot_custom_field_template_labelEn').on('input', function() {
+            setPlaceholderPreview($(this).val(), 'en');   
+        });
+
+        $('#wspot_custom_field_template_type').on('change', function() {
+            field_type = $(this).val();
+            changeTypeFieldPreview();
+            if (field_type == "multiple_choice" || field_type == "choice") {
+                $('#options-session').css('display', 'block');
+                if (!hasChoices()) {
+                    addChoiceOnList()
+                }
+            } else {
+                $('#options-session').css('display', 'none');
+            }
+        });
+
+        $('#wspot_custom_field_template_previewLanguage').on('change', function() {
+            language_preview = $(this).val();
+            changeTypeFieldPreview();
+        });
+
+    });
+    </script>
+    
+
+{% endblock %}

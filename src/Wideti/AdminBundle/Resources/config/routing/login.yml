@@ -1,0 +1,24 @@
+login_admin:
+    path: /login
+    defaults: { _controller: AdminBundle:Login:login }
+
+token_authenticate:
+    path: /auth-token
+    defaults: { _controller: AdminBundle:Login:authenticateToken }
+    methods: [GET]
+
+login_check:
+    path: /login_check
+    defaults: { _controller: AdminBundle:Login:loginCheck }
+
+logout_admin:
+    path: /logout
+    defaults: { _controller: AdminBundle:Login:logout }
+
+exit:
+    path: /exit
+    defaults: { _controller: AdminBundle:Login:exit}
+
+login_admin_2fa:
+    path: /login/twoFactorAuthentication
+    defaults: { _controller: AdminBundle:Login:login2fa }

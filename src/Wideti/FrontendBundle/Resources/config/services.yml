@@ -1,0 +1,643 @@
+services:
+    # Kernel Listeners
+
+    kernel.listener.request_listener:
+      class: Wideti\FrontendBundle\Listener\RequestListener
+      arguments: ["@core.service.configuration", "@wspot.helper.controller", "@core.service.cache", "%kernel.environment%"]
+      calls:
+        - [ setClientSelectorService, ["@core.service.client_selector"] ]
+        - [ setSession, ["@session"] ]
+        - [ setRouter, ["@router"] ]
+      tags:
+        - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+    kernel.listener.nas_session_verify_listener:
+      class: Wideti\FrontendBundle\Listener\NasSessionVerify\NasListener
+      arguments:
+        - "%empty_nas_url_redirect%"
+        - "%empty_nas_unchecked_routes%"
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+      tags:
+        - { name: kernel.event_listener, event: kernel.controller, method: onRequest }
+
+    # Services
+    wspot.white_label:
+        class: stdClass
+        factory: ['@core.repository.white_label', 'findWhiteLabelMap']
+        arguments:
+          - "@request_stack"
+
+    #Controllers
+    wspot.frontend.controller.auth:
+        class: Wideti\FrontendBundle\Controller\AuthController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.sms"
+          - "@core.service.two_factor_auth_accesscode"
+          - "@core.service.cache"
+          - "@core.service.access_code"
+          - "@core.service.guest_to_acct_processor_send"
+          - "%bounce_validator_active%"
+          - "@core.service.analytics.frontend_log_manager"
+          - "@core.service.consent"
+          - "@core.service.get_consent_gateway"
+          - "@core.service.legal_base_manager_service"
+          - "@core.service.auditor"
+          - "@core.service.expiration_time"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setSession, ["@session"] ]
+          - [ setForm, ["@form.factory"] ]
+          - [ setRouterService, ["@web_framwework.service.router"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setGuestService, ["@core.service.guest"] ]
+          - [ setGroupService, ["@core.service.group"]]
+          - [ setGuestSocialService, ["@core.service.guestSocial"] ]
+          - [ setLogger, ["@logger"] ]
+          - [ setTranslatorService, ["@translator"] ]
+          - [ setSignInService, ["@core.service.signin"] ]
+          - [ setSignUpService, ["@core.service.signup"]]
+          - [ setEventDispatcher, ["@event_dispatcher"] ]
+          - [ setNasService , ["@core.service.nas"] ]
+          - [ setTemplateService, ["@core.service.template"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+    wspot.frontend.controller.frontend:
+        class: Wideti\FrontendBundle\Controller\FrontendController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.two_factor_auth_hapvida"
+          - "@core.service.two_factor_auth_accesscode"
+          - "@core.nas.middleware.manager"
+          - "@core.service.notification.bad_nas_parameters"
+          - "@core.service.notification.ap_not_registered"
+          - "@core.service.campaign_selector"
+          - "@core.service.nas"
+          - "@core.service.cache"
+          - "@core.service.create_call_to_action_access_data"
+          - "@core.service.access_code"
+          - "@core.service.mac_address_authentication"
+          - "@core.service.guest_devices"
+          - "%bounce_validator_active%"
+          - "%flowplayer_token%"
+          - "@core.service.analytics.frontend_log_manager"
+          - "%auto_login_secret_key%"
+          - "@core.service.get_consent_gateway"
+          - "@core.service.list_signature_gateway"
+          - "@core.service.legal_base_manager_service"
+          - "@core.service.ap_extra_config"
+          - "@core.service.expiration_time"
+          - "@core.service.hubsoft"
+          - "@core.service.Ixc"
+
+        calls:
+          - [ setSession, ["@session"] ]
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setTemplateService, ["@core.service.template"] ]
+          - [ setCampaignService, ["@core.service.campaign"] ]
+          - [ setAuthService, ["@core.service.auth"] ]
+          - [ setBlacklistService, ["@core.service.blacklist"] ]
+          - [ setBusinessHoursService, ["@core.service.business_hours"] ]
+          - [ setGuestService, ["@core.service.guest"] ]
+          - [ setTranslatorService, ["@translator"] ]
+          - [ setEventDispatcher, ["@event_dispatcher"] ]
+          - [ setRouterService, ["@web_framwework.service.router"] ]
+          - [ setClientSelectorService, ["@core.service.client_selector"] ]
+          - [ setAccessPointsService, ["@core.service.accesspoints"] ]
+          - [ setLogger, ["@logger"] ]
+
+    wspot.frontend.controller.guestprofile:
+        class: Wideti\FrontendBundle\Controller\GuestProfileController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "@core.service.cache"
+          - "@core.service.analytics.frontend_log_manager"
+          - "@core.service.auditor"
+          - "@wspot.service.secretquestion"
+          - "@wspot.service.guestpasswordrecovery"
+        calls:
+          - [ setSession, ["@session"] ]
+          - [ setRouterService, ["@web_framwework.service.router"] ]
+          - [ setTemplateService, ["@core.service.template"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setGuestService, ["@core.service.guest"] ]
+          - [ setNasService, ["@core.service.nas"] ]
+          - [ setTranslatorService, ["@translator"] ]
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+    wspot.frontend.controller.facebook:
+        class: Wideti\FrontendBundle\Controller\FacebookAuthController
+        arguments:
+          - "@core.service.configuration"
+          - "@wspot.helper.controller"
+          - "%facebook_app_id%"
+          - "%facebook_app_secret%"
+          - "%facebook_app_graph_version%"
+          - "@core.service.cache"
+          - "@core.service.analytics.frontend_log_manager"
+          - "@core.service.client"
+        calls:
+          - [ setRouterService, ["@web_framwework.service.router"] ]
+          - [ setSession, ["@session"] ]
+          - [ setLogger, ["@logger"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setTemplateService, ["@core.service.template"] ]
+          - [ setNasService, ["@core.service.nas"] ]
+          - [ setFacebookPersistentDataHandler, ["@core.facebook.session.handler"]]
+          - [ setFacebookCsrfFix, ["@core.facebook.csrf.fix"]]
+
+    wspot.frontend.controller.twitter:
+        class: Wideti\FrontendBundle\Controller\TwitterAuthController
+        arguments: ["@wspot.helper.controller", "%twitter_consumer_key%", "%twitter_consumer_secret%","@core.service.analytics.frontend_log_manager"]
+        calls:
+          - [ setRouterService, ["@web_framwework.service.router"] ]
+          - [ setSession, ["@session"] ]
+          - [ setLogger, ["@logger"] ]
+
+    wspot.frontend.controller.hubsoft:
+      class: Wideti\FrontendBundle\Controller\HubsoftController
+      arguments: 
+        - "@wspot.helper.controller"
+        - "@core.service.custom_fields"
+        - "@core.service.hubsoft"
+        - "@core.service.cache"
+      calls:
+        - [ setTemplate, ["@templating"] ]
+        - [ setTemplateService, ["@core.service.template"] ]
+        - [ setSession, ["@session"]]
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+
+    wspot.frontend.controller.Ixc:
+      class: Wideti\FrontendBundle\Controller\IxcController
+      arguments: 
+        - "@wspot.helper.controller"
+        - "@core.service.custom_fields"
+        - "@core.service.Ixc"
+        - "@core.service.cache"
+      calls:
+        - [ setTemplate, ["@templating"] ]
+        - [ setTemplateService, ["@core.service.template"] ]
+        - [ setSession, ["@session"]]
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+
+    wspot.frontend.controller.oauth:
+      class: Wideti\FrontendBundle\Controller\OAuthAuthController
+      arguments: ["@wspot.helper.controller", "@core.service.custom_fields"]
+      calls:
+        - [ setRouterService, ["@web_framwework.service.router"] ]
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+    wspot.frontend.controller.redirect:
+        class: Wideti\FrontendBundle\Controller\RedirectController
+        arguments: ["@core.service.configuration", "@wspot.helper.controller", "@core.service.cache", "@core.service.redirect_url"]
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setRouter, ["@router"] ]
+          - [ setSession, ["@session"] ]
+
+    wspot.frontend.controller.email_validation:
+        class: Wideti\FrontendBundle\Controller\EmailValidationController
+        arguments:
+          - "%bounce_validator_active%"
+          - "@core.service.bounced_validation"
+          - "@logger"
+
+    wspot.frontend.controller.two_factor_auth:
+        class: Wideti\FrontendBundle\Controller\TwoFactorAuthController
+        arguments:
+          - "@wspot.helper.controller"
+          - "@core.service.two_factor_auth_hapvida"
+          - "@core.service.two_factor_auth_accesscode"
+          - "@core.service.template"
+          - "@core.service.custom_fields"
+          - "@core.service.cache"
+          - "@core.service.access_code"
+          - "@core.service.analytics.frontend_log_manager"
+          - "@core.service.guest"
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+          - [ setTemplate, ["@templating"] ]
+          - [ setSession, ["@session"] ]
+          - [ setTranslatorService, ["@translator"] ]
+          - [ setLogger, ["@logger"] ]
+          - [ setNasService,["@core.service.nas"]]
+
+    wspot.frontend.controller.first_config:
+        class: Wideti\FrontendBundle\Controller\FirstConfigController
+        arguments: ["@wspot.helper.controller"]
+        calls:
+          - [ setTemplate, ["@templating"] ]
+
+    wspot.frontend.controller.google:
+      class: Wideti\FrontendBundle\Controller\GoogleAuthController
+      arguments: ["@wspot.helper.controller","@core.service.configuration", "%google_client_id%", "%google_client_secret%","@core.service.analytics.frontend_log_manager", "@core.service.client"]
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+
+    wspot.frontend.controller.linkedin:
+      class: Wideti\FrontendBundle\Controller\LinkedinAuthController
+      arguments: ["@wspot.helper.controller","@core.service.configuration", "%linkedin_client_id%", "%linkedin_client_secret%","@core.service.analytics.frontend_log_manager", "@core.service.client"]
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+
+    wspot.frontend.controller.survey:
+      class: Wideti\FrontendBundle\Controller\SurveyAuthController
+      arguments: [ "@wspot.helper.controller","@core.service.configuration", "@core.service.analytics.frontend_log_manager", "@core.service.client" ]
+      calls:
+        - [ setSession, [ "@session" ] ]
+        - [ setLogger, [ "@logger" ] ]
+        - [ setGuestService, ["@core.service.guest"] ]
+        - [ setNasService , ["@core.service.nas"] ]
+
+    wspot.frontend.controller.secretanswer:
+      class: Wideti\FrontendBundle\Controller\SecretAnswerController
+      arguments: ["@wspot.service.secretquestion", "@wspot.helper.controller", "@core.service.nas", "@core.service.guest"]
+      calls:
+        - [ setTemplate, ["@templating"] ]
+        - [ setTemplateService, ["@core.service.template"] ]
+        - [ setSession, ["@session"]]
+
+    wspot.frontend.controller.progressiveform:
+      class: Wideti\FrontendBundle\Controller\ProgressiveFormController
+      arguments: 
+        - "@wspot.helper.controller"
+        - "@core.service.nas"
+        - "@core.service.guest"
+        - "@core.service.legal_base_manager_service"
+        - "@core.service.cache"
+      calls:
+        - [ setTemplate, ["@templating"] ]
+        - [ setTemplateService, ["@core.service.template"] ]
+        - [ setSession, ["@session"]]
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+
+    ## Forms
+    wspot.frontend.form.hubsoft_auth:
+      class: Wideti\FrontendBundle\Form\HubsoftType
+      tags:
+        - { name: form.type, alias: wspot_hubsoft_auth }
+
+    wspot.frontend.form.Ixc_auth:
+      class: Wideti\FrontendBundle\Form\IxcType
+      tags:
+        - { name: form.type, alias: wspot_Ixc_auth }
+
+    wspot.frontend.form.social_media_registration:
+      class: Wideti\FrontendBundle\Form\SocialMediaRegistrationType
+      arguments: ["@core.service.cache"]
+      tags:
+        - { name: form.type, alias: social_media_registration }
+      calls:
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+        - [ setTranslatorService, ["@translator.default"] ]
+
+    wspot.frontend.form.progressive_form:
+      class: Wideti\FrontendBundle\Form\ProgressiveFormType
+      arguments: ["@core.service.cache"]
+      tags:
+        - { name: form.type, alias: progressive_form }
+      calls:
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+        - [ setTranslatorService, ["@translator.default"] ]
+
+    wspot.frontend.form.type.mikrotik:
+      class: Wideti\FrontendBundle\Form\Type\FormMikrotikType
+      tags:
+        - { name: form.type, alias: mikrotik }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.ruckus:
+      class: Wideti\FrontendBundle\Form\Type\FormRuckusType
+      tags:
+        - { name: form.type, alias: ruckus }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.ruckus_standalone:
+      class: Wideti\FrontendBundle\Form\Type\FormRuckusstandaloneType
+      tags:
+        - { name: form.type, alias: ruckus_standalone }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.motorola:
+      class: Wideti\FrontendBundle\Form\Type\FormMotorolaType
+      tags:
+        - { name: form.type, alias: motorola }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.winco:
+      class: Wideti\FrontendBundle\Form\Type\FormWincoType
+      tags:
+        - { name: form.type, alias: winco }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.cisco:
+      class: Wideti\FrontendBundle\Form\Type\FormCiscoType
+      tags:
+        - { name: form.type, alias: cisco }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.cisco_catalyst:
+      class: Wideti\FrontendBundle\Form\Type\FormCiscoCatalystType
+      tags:
+        - { name: form.type, alias: cisco_catalyst }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.watch_guard:
+      class: Wideti\FrontendBundle\Form\Type\FormWatchguardType
+      tags:
+        - { name: form.type, alias: watchguard }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.intelbras_future:
+      class: Wideti\FrontendBundle\Form\Type\FormIntelbrasFutureType
+      tags:
+        - { name: form.type, alias: intelbras_future }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.ruijie:
+      class: Wideti\FrontendBundle\Form\Type\FormRuijieType
+      tags:
+        - { name: form.type, alias: ruijie }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.cisco_meraki_cloud:
+      class: Wideti\FrontendBundle\Form\Type\FormCiscoMerakiCloudType
+      tags:
+        - { name: form.type, alias: cisco_meraki_cloud }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.aruba:
+      class: Wideti\FrontendBundle\Form\Type\FormArubaType
+      tags:
+        - { name: form.type, alias: aruba }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.aruba_v2:
+      class: Wideti\FrontendBundle\Form\Type\FormArubaV2Type
+      tags:
+        - { name: form.type, alias: aruba_v2 }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.aerohive:
+      class: Wideti\FrontendBundle\Form\Type\FormAerohiveType
+      tags:
+          - { name: form.type, alias: aerohive }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.coovachilli:
+      class: Wideti\FrontendBundle\Form\Type\FormCoovaChilliType
+      tags:
+          - { name: form.type, alias: coovachilli }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.intelbras:
+      class: Wideti\FrontendBundle\Form\Type\FormIntelbrasType
+      tags:
+          - { name: form.type, alias: intelbras }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.xirrus:
+      class: Wideti\FrontendBundle\Form\Type\FormXirrusType
+      tags:
+          - { name: form.type, alias: xirrus }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.plenatech:
+      class: Wideti\FrontendBundle\Form\Type\FormPlenatechType
+      tags:
+          - { name: form.type, alias: plenatech }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.fortinet:
+      class: Wideti\FrontendBundle\Form\Type\FormFortinetType
+      tags:
+          - { name: form.type, alias: fortinet }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.pfsense:
+      class: Wideti\FrontendBundle\Form\Type\FormPfSenseType
+      tags:
+          - { name: form.type, alias: pfsense }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.enterasys:
+      class: Wideti\FrontendBundle\Form\Type\FormEnterasysType
+      tags:
+          - { name: form.type, alias: enterasys }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.zyxel:
+      class: Wideti\FrontendBundle\Form\Type\FormZyxelType
+      tags:
+        - { name: form.type, alias: zyxel }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.cambium:
+      class: Wideti\FrontendBundle\Form\Type\FormCambiumType
+      tags:
+        - { name: form.type, alias: cambium }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.teltonika:
+      class: Wideti\FrontendBundle\Form\Type\FormTeltonikaType
+      tags:
+        - { name: form.type, alias: teltonika }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.fake:
+      class: Wideti\FrontendBundle\Form\Type\FormFakeType
+      tags:
+        - { name: form.type, alias: fake }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.unifi:
+      class: Wideti\FrontendBundle\Form\Type\FormUnifiType
+      tags:
+        - { name: form.type, alias: unifi }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.unifinew:
+      class: Wideti\FrontendBundle\Form\Type\FormUnifinewType
+      tags:
+        - { name: form.type, alias: unifinew }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.edgecore:
+      class: Wideti\FrontendBundle\Form\Type\FormEdgecoreType
+      tags:
+        - { name: form.type, alias: edgecore }
+      calls:
+        - [ setSession, ["@session"] ]
+
+    wspot.frontend.form.type.ruckus_cloud:
+      class: Wideti\FrontendBundle\Form\Type\FormRuckusCloudType
+      tags:
+        - { name: form.type, alias: ruckus_cloud }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.tp_link:
+      class: Wideti\FrontendBundle\Form\Type\FormTplinkType
+      tags:
+        - { name: form.type, alias: tp_link }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.tp_link_cloud:
+      class: Wideti\FrontendBundle\Form\Type\FormTplinkcloudType
+      tags:
+        - { name: form.type, alias: tp_link_cloud }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.tp_link_v4:
+      class: Wideti\FrontendBundle\Form\Type\FormTplinkv4Type
+      tags:
+        - { name: form.type, alias: tp_link_v4 }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.tp_link_v4_cloud:
+      class: Wideti\FrontendBundle\Form\Type\FormTplinkv4cloudType
+      tags:
+        - { name: form.type, alias: tp_link_v4_cloud }
+      calls:
+        - [ setSession, [ "@session" ] ]
+  
+    wspot.frontend.form.type.tp_link_v5:
+      class: Wideti\FrontendBundle\Form\Type\FormTplinkv5Type
+      tags:
+        - { name: form.type, alias: tp_link_v5 }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.tp_link_v5_cloud:
+      class: Wideti\FrontendBundle\Form\Type\FormTplinkv5cloudType
+      tags:
+        - { name: form.type, alias: tp_link_v5_cloud }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.huawei:
+      class: Wideti\FrontendBundle\Form\Type\FormHuaweiType
+      tags:
+        - { name: form.type, alias: huawei }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.openwifi:
+      class: Wideti\FrontendBundle\Form\Type\FormOpenwifiType
+      tags:
+        - { name: form.type, alias: openwifi }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.grandstream:
+      class: Wideti\FrontendBundle\Form\Type\FormGrandstreamType
+      tags:
+        - { name: form.type, alias: grandstream }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.draytek:
+      class: Wideti\FrontendBundle\Form\Type\FormDraytekType
+      tags:
+        - { name: form.type, alias: draytek }
+      calls:
+        - [ setSession, [ "@session" ] ]
+
+    wspot.frontend.form.type.extreme_cloud_xiq:
+      class: Wideti\FrontendBundle\Form\Type\FormExtremeCloudXiqType
+      tags:
+        - { name: form.type, alias: extreme_cloud_xiq }
+      calls:
+        - [ setSession, ["@session"] ]
+    # Form Types
+
+    wspot.form.signin:
+        class: Wideti\FrontendBundle\Form\SignInType
+        arguments: ["@core.service.cache"]
+        calls:
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+            - [ setLogger, ["@logger"] ]
+            - [ setTranslatorService, ["@translator.default"] ]
+            - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_signin }
+
+    wspot.form.signup:
+        class: Wideti\FrontendBundle\Form\SignUpType
+        arguments: ["@core.service.cache"]
+        calls:
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+            - [ setLogger, ["@logger"] ]
+            - [ setTranslatorService, ["@translator.default"] ]
+            - [ setSession, ["@session"] ]
+        tags:
+            - { name: form.type, alias: wspot_signup }
+
+    wspot.form.change:
+        class: Wideti\FrontendBundle\Form\ChangeUserDataType
+        calls:
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        tags:
+            - { name: form.type, alias: wspot_change }
+
+    wspot.form.frontend_recovery_password:
+        class: Wideti\FrontendBundle\Form\ForgotPasswordType
+        arguments: ["@core.service.cache"]
+        calls:
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+            - [ setTranslatorService, ["@translator.default"] ]
+            - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+        tags:
+            - { name: form.type, alias: frontend_recovery_password }
+
+    wspot.form.tel:
+        class: Wideti\FrontendBundle\Form\Type\TelType
+        tags:
+            - { name: form.type, alias: tel }

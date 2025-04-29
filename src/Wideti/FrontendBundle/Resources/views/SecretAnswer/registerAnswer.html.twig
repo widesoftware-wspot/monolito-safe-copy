@@ -1,0 +1,62 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <style>
+        #number-error ul li {
+            background: #9f2323 none repeat scroll 0 0 !important;
+            border-radius: 3px;
+            color: #ffffff;
+            display: inline-block;
+            font-size: 11.8px;
+            font-weight: bold;
+            line-height: 14px;
+            padding: 2px 4px;
+            position: relative;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+            top: 10px;
+            vertical-align: baseline;
+            white-space: nowrap;
+        }
+        section.container div.boxes#signUpBox {
+            display: inherit !important;
+        }
+    </style>
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes complete fullBox">
+            <div class="box-content">
+                <div class="content-center">
+                    <h3>{{ 'wspot.secret_answer.title'|trans }}</h3>
+                </div>
+
+                <div class="content-center">
+                    {{ 'wspot.secret_answer.info'|trans }}
+                </div>
+
+                <form action="{{ path('frontend_security_answer') }}" method="POST">
+                    <div class="awesomplete">
+                        <select name="question_id" id="question_id" class="span12" required>
+                            <option value="" disabled selected>{{ 'wspot.secret_answer.default_choice'|trans }}</option>
+                            {% for question in listQuestions %}
+                                <option value="{{ question.id }}">{{ question.question }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="awesomplete">
+                        <input type="text" name="answer" id="answer" class="span12" placeholder="{{ 'wspot.secret_answer.placeholder'|trans }}" required/>
+                    </div>
+                    <button type="submit" id="">{{ 'wspot.secret_answer.button_text'|trans }}</button>
+                </form>
+
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset(assets_path ~'/js/fingerprinting.js')}}"></script>
+
+    <script type="text/javascript">
+
+    </script>
+{% endblock %}

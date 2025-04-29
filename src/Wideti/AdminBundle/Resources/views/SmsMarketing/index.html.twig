@@ -1,0 +1,109 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    SMS Marketing
+{% endblock %}
+
+{% block buttonRight %}
+    <span style="margin-right: 20px; border-right: 1px dashed #b3b3b3; padding-right: 10px">
+        <a href="{{ path('sms_marketing_add_credit') }}" target="_blank" style="font-weight: bolder; color: #2d5aa2; cursor: pointer">Adicionar créditos</a>
+    </span>
+    <span style="margin-right: 20px; border-right: 1px dashed #b3b3b3; padding-right: 10px">
+        Meus Créditos: <span style="font-weight: bolder; color: {{ (totalCredits == 0) ? "red" : "green" }}">{{ totalCredits }}</span>
+    </span>
+    <a href="{{ path('sms_marketing_new')}}" style="margin: 0px 0 2px 0;"class="btn btn-primary btn-icon glyphicons circle_plus"><i></i>Cadastrar</a>
+{% endblock %}
+
+{% block filter %}
+    {{ parent() }}
+    {% form_theme filterForm 'AdminBundle:Form:fields.html.twig' %}
+    {{ form_start(filterForm) }}
+    {{ form_row(filterForm.status) }}
+    {{ form_row(filterForm.filtrar) }}
+    {{ form_end(filterForm) }}
+{% endblock %}
+
+{% block thead %}
+    <th>Status</th>
+    <th>Criado em</th>
+    <th>Enviado em</th>
+    <th>Responsável</th>
+    <th>Total de destinatários</th>
+    <th class="center" style="width: 90px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr id="{{ entity.id }}" class="gradeX">
+            <td><span class="statusColor {{ entity.status|lower }}">{{ entity.status|translate_status }}</span></td>
+            <td><span title="America/Sao_Paulo" data-toggle="tooltip" data-placement="top">{{ entity.createdAt|date('d/m/Y H:i', 'America/Sao_Paulo') }}</span></td>
+            <td><span title="America/Sao_Paulo" data-toggle="tooltip" data-placement="top">{{ entity.sentAt ? entity.sentAt|date("d/m/Y H:i:s", "America/Sao_Paulo") : '-' }}</span></td>
+            <td>{{ entity.adminUserId|find_user }}</td>
+            <td>{{ entity.totalSms }}</td>
+            <td class="center">
+                {% if (entity.status != "PROCESSING") %}
+                    {% if (entity.status != "DRAFT") %}
+                        <a href="{{ path('sms_marketing_stats', {'id': entity.id}) }}" class="btn-action glyphicons charts btn-info" title="Métricas"><i></i></a>
+                    {% endif %}
+
+                    {% if (entity.status != "SENT") %}
+                        <a href="{{ path('sms_marketing_edit', { 'id': entity.id }) }}" class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+                    {% endif %}
+
+                    <a href="#" class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+    {% else %}
+        <td>Nenhum registro cadastrado</td>
+    {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result){
+
+                    if(result){
+
+                        var route = Routing.generate('sms_marketing_delete', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                var title;
+
+                                if (response.type == 'success') {
+                                    title = 'Aviso!';
+                                    parent.remove();
+                                } else {
+                                    title = "Erro ao tentar excluir!";
+                                }
+
+                                $.gritter.add({
+                                    title: title,
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

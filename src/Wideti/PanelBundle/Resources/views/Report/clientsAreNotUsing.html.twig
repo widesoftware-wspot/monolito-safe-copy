@@ -1,0 +1,117 @@
+{% extends 'PanelBundle::reportList.html.twig' %}
+
+{% block heading %}
+    Clientes que não estão utilizando o Mambo Wifi
+{% endblock %}
+
+{% block cards %}
+    <div class="box-generic">
+        <div class="">
+            <div class="tabs active openedBefore" id="overview">
+                <div class="row-fluid">
+                    <div class="span12" style="margin-bottom: 10px;">
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <span class="widget-stats widget-stats-2">
+                                    <span class="glyphicons group"><i></i></span>
+                                    <span class="txt"><span class="count" style="color: #496cad;">{{ totalClientsAreNotUsing}}</span><br>Clientes que não estão utilizando o Mambo Wifi</span>
+                                    <div class="clearfix"></div>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tabs" id="guests"></div>
+            <div class="tabs" id="network"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block filterBlock %}
+    {% block filter %}
+        <div class="row-fluid">
+            <div class="filter-bar margin-bottom-none">
+                <form name="wideti_AdminBundle_usuarios_filter" method="get" action="" novalidate="novalidate">
+                    <div id="wideti_AdminBundle_usuarios_filter">
+                        <label for="wideti_AdminBundle_usuarios_filter_filtro" class="required" aria-required="true">Exibir:</label>
+                        <div>
+                            <select id="statusFilter" name="statusFilter" aria-controls="DataTables_Table_0" class="form-control">
+                                <option selected value disabled>-- Selecione o status--</option>
+                                <option value="1">Ativo</option>
+                                <option value="0">Inativo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="limitFilter" name="limitFilter" aria-controls="DataTables_Table_0" class="form-control">
+                                <option selected value disabled>-- Quantidade a ser exibida--</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                <option value="30">30</option>
+                                <option value="40">40</option>
+                                <option value="50">50</option>
+                                <option value="75">75</option>
+                                <option value="100">100</option>
+                                <option value="10000">Todos</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-animate btn-animate-side btn-primary"><span>
+                    <i class="icon wb-search" aria-hidden="true"></i> Filtrar</button>
+                    <div class="col-md-6"></div>
+                </form>
+            </div>
+        </div>
+    {% endblock %}
+{% endblock %}
+
+{% block tableHead %}  {% endblock %}
+
+{% block thead %}
+    <th style="width: 75px;text-decoration: none;">Razão Social</th>
+    <th style="width: 35px;text-decoration: none;">Domínio</th>
+    <th style="width: 10px;text-decoration: none;">Dias sem acesso</th>
+    <th style="width: 10px;text-decoration: none;">Último acesso</th>
+    <th style="width: 10px;text-decoration: none;">Status</th>
+    <th style="width: 75px;text-decoration: none;">Email Admins</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for data in clientsAreNotUsingReport %}
+        <tr class="gradeX">
+            <td>{{ data.client.company }}</td>
+            <td><a href="https://{{ data.client.domain }}.mambowifi.com" target="_blank">
+                    {{ data.client.domain }}
+                </a></td>
+            <td>{{ data.days_without_access }}</td>
+            <td>{{ data.last_access }}</td>
+            <td>
+                {% if data.client.status == 1 %}
+                    Ativo
+                {% elseif data.client.status == 0 %}
+                    Inativo
+                {% endif %}
+            </td>
+            <td>{{ data.user_email | replace({'contato@wideti.com.br': '', ',': ''}) }}</td>
+        </tr>
+    {% else %}
+        <tr class="gradeX">
+            <td colspan="7">Nenhum cliente encontrado.</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block extraTable %}
+    <div class="loadReportFiles span2" style="margin-bottom: 40px;">
+        <div class="btn-group btn-block">
+            <div class="leadcontainer">
+                <button class="btn dropdown-lead btn-primary center">Exportar</button>
+            </div>
+            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span> </a>
+            <ul class="dropdown-menu pull-right">
+                <li class="center"><a class="file" data-format="Xlsx" data-placement="right" href="{{ path('panel_report_clients_not_using_export') }}">EXCEL</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="export-generating-alert"></div>
+{% endblock %}

@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="ie lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="ie lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="ie lt-ie9"> <![endif]-->
+<!--[if gt IE 8]> <html class="ie gt-ie8"> <![endif]-->
+<!--[if !IE]><!--><html><!-- <![endif]-->
+<head>
+    {% block title %}
+        <title>Painel Administrativo {{ (whiteLabel.companyName is defined) ? " - " ~ whiteLabel.companyName }}</title>
+    {% endblock %}
+
+    {% block meta %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+
+        {% if app.session.get('wspotClient').isWhiteLabel == false %}
+            <!-- Facebook meta tags -->
+            <meta property="fb:app_id" content="1474723399477930" />
+            <meta property="og:url" content="https://mambowifi.com/" />
+            <meta property="og:type" content="website" />
+            <meta property="og:title" content="Mambo WiFi" />
+            <meta property="og:description" content="Mambo WiFi - Gestão de Hotspots e WiFi Marketing" />
+            <meta property="og:image" content="https://mambowifi.com/wp-content/themes/wspot/assets/dist/svg/logo.svg"/>
+        {%  endif %}
+
+    {% endblock %}
+
+    {% block css %}
+        <link href="{{ asset('bundles/admin/bootstrap/css/bootstrap.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/bootstrap/css/responsive.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/css/glyphicons.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/pixelmatrix-uniform/css/uniform.default.css')}}" rel="stylesheet" />
+        <!--[if IE]><!--><script src="{{ asset('bundles/admin/theme/scripts/plugins/other/excanvas/excanvas.js')}}"></script><!--<![endif]-->
+                                                                                                                             <!--[if lt IE 8]><script src="{{ asset('bundles/admin/theme/scripts/plugins/other/json2.js')}}"></script><![endif]-->
+        <link href="{{ asset('bundles/admin/bootstrap/extend/jasny-bootstrap/css/jasny-bootstrap.min.css')}}" rel="stylesheet">
+        <link href="{{ asset('bundles/admin/bootstrap/extend/jasny-bootstrap/css/jasny-bootstrap-responsive.min.css')}}" rel="stylesheet">
+        <link href="{{ asset('bundles/admin/bootstrap/extend/bootstrap-wysihtml5/css/bootstrap-wysihtml5-0.0.2.css')}}" rel="stylesheet">
+        <link href="{{ asset('bundles/admin/bootstrap/extend/bootstrap-select/bootstrap-select.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/bootstrap/extend/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/select2/select2.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-datetimepicker/css/datetimepicker.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/system/jquery-ui/css/smoothness/jquery-ui-1.9.2.custom.min.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/jquery-miniColors/jquery.miniColors.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/notifications/Gritter/css/jquery.gritter.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/notifications/notyfy/jquery.notyfy.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/notifications/notyfy/default.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/scripts/plugins/other/google-code-prettify/prettify.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/admin/theme/css/style-light.css?1369414383')}}" rel="stylesheet" />
+        {% include "AdminBundle::adminCustomColor.html.twig" %}
+
+    {% endblock %}
+
+    {% block js %}
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/system/less.min.js')}}"></script>
+    {% endblock %}
+
+    <script>
+        //Google Analytics
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-44869267-7', 'auto');
+        ga('send', 'pageview');
+
+        //New Relic
+        // window.NREUM||(NREUM={}),__nr_require=function(t,e,n){function r(n){if(!e[n]){var o=e[n]={exports:{}};t[n][0].call(o.exports,function(e){var o=t[n][1][e];return r(o||e)},o,o.exports)}return e[n].exports}if("function"==typeof __nr_require)return __nr_require;for(var o=0;o<n.length;o++)r(n[o]);return r}({1:[function(t,e,n){function r(t){try{c.console&&console.log(t)}catch(e){}}var o,i=t("ee"),a=t(15),c={};try{o=localStorage.getItem("__nr_flags").split(","),console&&"function"==typeof console.log&&(c.console=!0,o.indexOf("dev")!==-1&&(c.dev=!0),o.indexOf("nr_dev")!==-1&&(c.nrDev=!0))}catch(s){}c.nrDev&&i.on("internal-error",function(t){r(t.stack)}),c.dev&&i.on("fn-err",function(t,e,n){r(n.stack)}),c.dev&&(r("NR AGENT IN DEVELOPMENT MODE"),r("flags: "+a(c,function(t,e){return t}).join(", ")))},{}],2:[function(t,e,n){function r(t,e,n,r,o){try{d?d-=1:i("err",[o||new UncaughtException(t,e,n)])}catch(c){try{i("ierr",[c,(new Date).getTime(),!0])}catch(s){}}return"function"==typeof f&&f.apply(this,a(arguments))}function UncaughtException(t,e,n){this.message=t||"Uncaught error with no additional information",this.sourceURL=e,this.line=n}function o(t){i("err",[t,(new Date).getTime()])}var i=t("handle"),a=t(16),c=t("ee"),s=t("loader"),f=window.onerror,u=!1,d=0;s.features.err=!0,t(1),window.onerror=r;try{throw new Error}catch(l){"stack"in l&&(t(8),t(7),"addEventListener"in window&&t(5),s.xhrWrappable&&t(9),u=!0)}c.on("fn-start",function(t,e,n){u&&(d+=1)}),c.on("fn-err",function(t,e,n){u&&(this.thrown=!0,o(n))}),c.on("fn-end",function(){u&&!this.thrown&&d>0&&(d-=1)}),c.on("internal-error",function(t){i("ierr",[t,(new Date).getTime(),!0])})},{}],3:[function(t,e,n){t("loader").features.ins=!0},{}],4:[function(t,e,n){function r(t){}if(window.performance&&window.performance.timing&&window.performance.getEntriesByType){var o=t("ee"),i=t("handle"),a=t(8),c=t(7),s="learResourceTimings",f="addEventListener",u="resourcetimingbufferfull",d="bstResource",l="resource",p="-start",h="-end",m="fn"+p,w="fn"+h,v="bstTimer",y="pushState";t("loader").features.stn=!0,t(6);var g=NREUM.o.EV;o.on(m,function(t,e){var n=t[0];n instanceof g&&(this.bstStart=Date.now())}),o.on(w,function(t,e){var n=t[0];n instanceof g&&i("bst",[n,e,this.bstStart,Date.now()])}),a.on(m,function(t,e,n){this.bstStart=Date.now(),this.bstType=n}),a.on(w,function(t,e){i(v,[e,this.bstStart,Date.now(),this.bstType])}),c.on(m,function(){this.bstStart=Date.now()}),c.on(w,function(t,e){i(v,[e,this.bstStart,Date.now(),"requestAnimationFrame"])}),o.on(y+p,function(t){this.time=Date.now(),this.startPath=location.pathname+location.hash}),o.on(y+h,function(t){i("bstHist",[location.pathname+location.hash,this.startPath,this.time])}),f in window.performance&&(window.performance["c"+s]?window.performance[f](u,function(t){i(d,[window.performance.getEntriesByType(l)]),window.performance["c"+s]()},!1):window.performance[f]("webkit"+u,function(t){i(d,[window.performance.getEntriesByType(l)]),window.performance["webkitC"+s]()},!1)),document[f]("scroll",r,!1),document[f]("keypress",r,!1),document[f]("click",r,!1)}},{}],5:[function(t,e,n){function r(t){for(var e=t;e&&!e.hasOwnProperty(u);)e=Object.getPrototypeOf(e);e&&o(e)}function o(t){c.inPlace(t,[u,d],"-",i)}function i(t,e){return t[1]}var a=t("ee").get("events"),c=t(17)(a,!0),s=t("gos"),f=XMLHttpRequest,u="addEventListener",d="removeEventListener";e.exports=a,"getPrototypeOf"in Object?(r(document),r(window),r(f.prototype)):f.prototype.hasOwnProperty(u)&&(o(window),o(f.prototype)),a.on(u+"-start",function(t,e){var n=t[1],r=s(n,"nr@wrapped",function(){function t(){if("function"==typeof n.handleEvent)return n.handleEvent.apply(n,arguments)}var e={object:t,"function":n}[typeof n];return e?c(e,"fn-",null,e.name||"anonymous"):n});this.wrapped=t[1]=r}),a.on(d+"-start",function(t){t[1]=this.wrapped||t[1]})},{}],6:[function(t,e,n){var r=t("ee").get("history"),o=t(17)(r);e.exports=r,o.inPlace(window.history,["pushState","replaceState"],"-")},{}],7:[function(t,e,n){var r=t("ee").get("raf"),o=t(17)(r),i="equestAnimationFrame";e.exports=r,o.inPlace(window,["r"+i,"mozR"+i,"webkitR"+i,"msR"+i],"raf-"),r.on("raf-start",function(t){t[0]=o(t[0],"fn-")})},{}],8:[function(t,e,n){function r(t,e,n){t[0]=a(t[0],"fn-",null,n)}function o(t,e,n){this.method=n,this.timerDuration="number"==typeof t[1]?t[1]:0,t[0]=a(t[0],"fn-",this,n)}var i=t("ee").get("timer"),a=t(17)(i),c="setTimeout",s="setInterval",f="clearTimeout",u="-start",d="-";e.exports=i,a.inPlace(window,[c,"setImmediate"],c+d),a.inPlace(window,[s],s+d),a.inPlace(window,[f,"clearImmediate"],f+d),i.on(s+u,r),i.on(c+u,o)},{}],9:[function(t,e,n){function r(t,e){d.inPlace(e,["onreadystatechange"],"fn-",c)}function o(){var t=this,e=u.context(t);t.readyState>3&&!e.resolved&&(e.resolved=!0,u.emit("xhr-resolved",[],t)),d.inPlace(t,w,"fn-",c)}function i(t){v.push(t),h&&(g=-g,b.data=g)}function a(){for(var t=0;t<v.length;t++)r([],v[t]);v.length&&(v=[])}function c(t,e){return e}function s(t,e){for(var n in t)e[n]=t[n];return e}t(5);var f=t("ee"),u=f.get("xhr"),d=t(17)(u),l=NREUM.o,p=l.XHR,h=l.MO,m="readystatechange",w=["onload","onerror","onabort","onloadstart","onloadend","onprogress","ontimeout"],v=[];e.exports=u;var y=window.XMLHttpRequest=function(t){var e=new p(t);try{u.emit("new-xhr",[e],e),e.addEventListener(m,o,!1)}catch(n){try{u.emit("internal-error",[n])}catch(r){}}return e};if(s(p,y),y.prototype=p.prototype,d.inPlace(y.prototype,["open","send"],"-xhr-",c),u.on("send-xhr-start",function(t,e){r(t,e),i(e)}),u.on("open-xhr-start",r),h){var g=1,b=document.createTextNode(g);new h(a).observe(b,{characterData:!0})}else f.on("fn-end",function(t){t[0]&&t[0].type===m||a()})},{}],10:[function(t,e,n){function r(t){var e=this.params,n=this.metrics;if(!this.ended){this.ended=!0;for(var r=0;r<d;r++)t.removeEventListener(u[r],this.listener,!1);if(!e.aborted){if(n.duration=(new Date).getTime()-this.startTime,4===t.readyState){e.status=t.status;var i=o(t,this.lastSize);if(i&&(n.rxSize=i),this.sameOrigin){var a=t.getResponseHeader("X-NewRelic-App-Data");a&&(e.cat=a.split(", ").pop())}}else e.status=0;n.cbTime=this.cbTime,f.emit("xhr-done",[t],t),c("xhr",[e,n,this.startTime])}}}function o(t,e){var n=t.responseType;if("json"===n&&null!==e)return e;var r="arraybuffer"===n||"blob"===n||"json"===n?t.response:t.responseText;return h(r)}function i(t,e){var n=s(e),r=t.params;r.host=n.hostname+":"+n.port,r.pathname=n.pathname,t.sameOrigin=n.sameOrigin}var a=t("loader");if(a.xhrWrappable){var c=t("handle"),s=t(11),f=t("ee"),u=["load","error","abort","timeout"],d=u.length,l=t("id"),p=t(14),h=t(13),m=window.XMLHttpRequest;a.features.xhr=!0,t(9),f.on("new-xhr",function(t){var e=this;e.totalCbs=0,e.called=0,e.cbTime=0,e.end=r,e.ended=!1,e.xhrGuids={},e.lastSize=null,p&&(p>34||p<10)||window.opera||t.addEventListener("progress",function(t){e.lastSize=t.loaded},!1)}),f.on("open-xhr-start",function(t){this.params={method:t[0]},i(this,t[1]),this.metrics={}}),f.on("open-xhr-end",function(t,e){"loader_config"in NREUM&&"xpid"in NREUM.loader_config&&this.sameOrigin&&e.setRequestHeader("X-NewRelic-ID",NREUM.loader_config.xpid)}),f.on("send-xhr-start",function(t,e){var n=this.metrics,r=t[0],o=this;if(n&&r){var i=h(r);i&&(n.txSize=i)}this.startTime=(new Date).getTime(),this.listener=function(t){try{"abort"===t.type&&(o.params.aborted=!0),("load"!==t.type||o.called===o.totalCbs&&(o.onloadCalled||"function"!=typeof e.onload))&&o.end(e)}catch(n){try{f.emit("internal-error",[n])}catch(r){}}};for(var a=0;a<d;a++)e.addEventListener(u[a],this.listener,!1)}),f.on("xhr-cb-time",function(t,e,n){this.cbTime+=t,e?this.onloadCalled=!0:this.called+=1,this.called!==this.totalCbs||!this.onloadCalled&&"function"==typeof n.onload||this.end(n)}),f.on("xhr-load-added",function(t,e){var n=""+l(t)+!!e;this.xhrGuids&&!this.xhrGuids[n]&&(this.xhrGuids[n]=!0,this.totalCbs+=1)}),f.on("xhr-load-removed",function(t,e){var n=""+l(t)+!!e;this.xhrGuids&&this.xhrGuids[n]&&(delete this.xhrGuids[n],this.totalCbs-=1)}),f.on("addEventListener-end",function(t,e){e instanceof m&&"load"===t[0]&&f.emit("xhr-load-added",[t[1],t[2]],e)}),f.on("removeEventListener-end",function(t,e){e instanceof m&&"load"===t[0]&&f.emit("xhr-load-removed",[t[1],t[2]],e)}),f.on("fn-start",function(t,e,n){e instanceof m&&("onload"===n&&(this.onload=!0),("load"===(t[0]&&t[0].type)||this.onload)&&(this.xhrCbStart=(new Date).getTime()))}),f.on("fn-end",function(t,e){this.xhrCbStart&&f.emit("xhr-cb-time",[(new Date).getTime()-this.xhrCbStart,this.onload,e],e)})}},{}],11:[function(t,e,n){e.exports=function(t){var e=document.createElement("a"),n=window.location,r={};e.href=t,r.port=e.port;var o=e.href.split("://");!r.port&&o[1]&&(r.port=o[1].split("/")[0].split("@").pop().split(":")[1]),r.port&&"0"!==r.port||(r.port="https"===o[0]?"443":"80"),r.hostname=e.hostname||n.hostname,r.pathname=e.pathname,r.protocol=o[0],"/"!==r.pathname.charAt(0)&&(r.pathname="/"+r.pathname);var i=!e.protocol||":"===e.protocol||e.protocol===n.protocol,a=e.hostname===document.domain&&e.port===n.port;return r.sameOrigin=i&&(!e.hostname||a),r}},{}],12:[function(t,e,n){function r(){}function o(t,e,n){return function(){return i(t,[(new Date).getTime()].concat(c(arguments)),e?null:this,n),e?void 0:this}}var i=t("handle"),a=t(15),c=t(16),s=t("ee").get("tracer"),f=NREUM;"undefined"==typeof window.newrelic&&(newrelic=f);var u=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit"],d="api-",l=d+"ixn-";a(u,function(t,e){f[e]=o(d+e,!0,"api")}),f.addPageAction=o(d+"addPageAction",!0),f.setCurrentRouteName=o(d+"routeName",!0),e.exports=newrelic,f.interaction=function(){return(new r).get()};var p=r.prototype={createTracer:function(t,e){var n={},r=this,o="function"==typeof e;return i(l+"tracer",[Date.now(),t,n],r),function(){if(s.emit((o?"":"no-")+"fn-start",[Date.now(),r,o],n),o)try{return e.apply(this,arguments)}finally{s.emit("fn-end",[Date.now()],n)}}}};a("setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(t,e){p[e]=o(l+e)}),newrelic.noticeError=function(t){"string"==typeof t&&(t=new Error(t)),i("err",[t,(new Date).getTime()])}},{}],13:[function(t,e,n){e.exports=function(t){if("string"==typeof t&&t.length)return t.length;if("object"==typeof t){if("undefined"!=typeof ArrayBuffer&&t instanceof ArrayBuffer&&t.byteLength)return t.byteLength;if("undefined"!=typeof Blob&&t instanceof Blob&&t.size)return t.size;if(!("undefined"!=typeof FormData&&t instanceof FormData))try{return JSON.stringify(t).length}catch(e){return}}}},{}],14:[function(t,e,n){var r=0,o=navigator.userAgent.match(/Firefox[\/\s](\d+\.\d+)/);o&&(r=+o[1]),e.exports=r},{}],15:[function(t,e,n){function r(t,e){var n=[],r="",i=0;for(r in t)o.call(t,r)&&(n[i]=e(r,t[r]),i+=1);return n}var o=Object.prototype.hasOwnProperty;e.exports=r},{}],16:[function(t,e,n){function r(t,e,n){e||(e=0),"undefined"==typeof n&&(n=t?t.length:0);for(var r=-1,o=n-e||0,i=Array(o<0?0:o);++r<o;)i[r]=t[e+r];return i}e.exports=r},{}],17:[function(t,e,n){function r(t){return!(t&&t instanceof Function&&t.apply&&!t[a])}var o=t("ee"),i=t(16),a="nr@original",c=Object.prototype.hasOwnProperty,s=!1;e.exports=function(t,e){function n(t,e,n,o){function nrWrapper(){var r,a,c,s;try{a=this,r=i(arguments),c="function"==typeof n?n(r,a):n||{}}catch(f){l([f,"",[r,a,o],c])}u(e+"start",[r,a,o],c);try{return s=t.apply(a,r)}catch(d){throw u(e+"err",[r,a,d],c),d}finally{u(e+"end",[r,a,s],c)}}return r(t)?t:(e||(e=""),nrWrapper[a]=t,d(t,nrWrapper),nrWrapper)}function f(t,e,o,i){o||(o="");var a,c,s,f="-"===o.charAt(0);for(s=0;s<e.length;s++)c=e[s],a=t[c],r(a)||(t[c]=n(a,f?c+o:o,i,c))}function u(n,r,o){if(!s||e){var i=s;s=!0;try{t.emit(n,r,o)}catch(a){l([a,n,r,o])}s=i}}function d(t,e){if(Object.defineProperty&&Object.keys)try{var n=Object.keys(t);return n.forEach(function(n){Object.defineProperty(e,n,{get:function(){return t[n]},set:function(e){return t[n]=e,e}})}),e}catch(r){l([r])}for(var o in t)c.call(t,o)&&(e[o]=t[o]);return e}function l(e){try{t.emit("internal-error",e)}catch(n){}}return t||(t=o),n.inPlace=f,n.flag=a,n}},{}],ee:[function(t,e,n){function r(){}function o(t){function e(t){return t&&t instanceof r?t:t?s(t,c,i):i()}function n(n,r,o){if(!l.aborted){t&&t(n,r,o);for(var i=e(o),a=h(n),c=a.length,s=0;s<c;s++)a[s].apply(i,r);var f=u[y[n]];return f&&f.push([g,n,r,i]),i}}function p(t,e){v[t]=h(t).concat(e)}function h(t){return v[t]||[]}function m(t){return d[t]=d[t]||o(n)}function w(t,e){f(t,function(t,n){e=e||"feature",y[n]=e,e in u||(u[e]=[])})}var v={},y={},g={on:p,emit:n,get:m,listeners:h,context:e,buffer:w,abort:a,aborted:!1};return g}function i(){return new r}function a(){(u.api||u.feature)&&(l.aborted=!0,u=l.backlog={})}var c="nr@context",s=t("gos"),f=t(15),u={},d={},l=e.exports=o();l.backlog=u},{}],gos:[function(t,e,n){function r(t,e,n){if(o.call(t,e))return t[e];var r=n();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(t,e,{value:r,writable:!0,enumerable:!1}),r}catch(i){}return t[e]=r,r}var o=Object.prototype.hasOwnProperty;e.exports=r},{}],handle:[function(t,e,n){function r(t,e,n,r){o.buffer([t],r),o.emit(t,e,n)}var o=t("ee").get("handle");e.exports=r,r.ee=o},{}],id:[function(t,e,n){function r(t){var e=typeof t;return!t||"object"!==e&&"function"!==e?-1:t===window?0:a(t,i,function(){return o++})}var o=1,i="nr@id",a=t("gos");e.exports=r},{}],loader:[function(t,e,n){function r(){if(!b++){var t=g.info=NREUM.info,e=d.getElementsByTagName("script")[0];if(setTimeout(f.abort,3e4),!(t&&t.licenseKey&&t.applicationID&&e))return f.abort();s(v,function(e,n){t[e]||(t[e]=n)}),c("mark",["onload",a()],null,"api");var n=d.createElement("script");n.src="https://"+t.agent,e.parentNode.insertBefore(n,e)}}function o(){"complete"===d.readyState&&i()}function i(){c("mark",["domContent",a()],null,"api")}function a(){return(new Date).getTime()}var c=t("handle"),s=t(15),f=t("ee"),u=window,d=u.document,l="addEventListener",p="attachEvent",h=u.XMLHttpRequest,m=h&&h.prototype;NREUM.o={ST:setTimeout,CT:clearTimeout,XHR:h,REQ:u.Request,EV:u.Event,PR:u.Promise,MO:u.MutationObserver},t(12);var w=""+location,v={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-998.min.js"},y=h&&m&&m[l]&&!/CriOS/.test(navigator.userAgent),g=e.exports={offset:a(),origin:w,features:{},xhrWrappable:y};d[l]?(d[l]("DOMContentLoaded",i,!1),u[l]("load",r,!1)):(d[p]("onreadystatechange",o),u[p]("onload",r)),c("mark",["firstbyte",a()],null,"api");var b=0},{}]},{},["loader",2,10,4,3]);
+        // ;NREUM.info={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",licenseKey:"1c5716ab43",applicationID:"33050624",sa:1}
+    </script>
+    {% if app.session.get('wspotClient') != null %}
+        {% if app.session.get('wspotClient').isWhiteLabel == true %}
+            <link rel="icon" type="image/x-icon" href="{{ asset('favicon2.ico') }}" />
+        {% endif %}
+    {% endif %}
+
+    <style>
+
+    .btn-mambo-position {
+       top:  -5px;
+    }
+
+    .menu-mambo-position  {
+        position: absolute;
+        z-index: 10;
+    }
+    
+    .menu-mambo-position .slimScrollDiv, .menu-mambo-position .slimScrollDiv .slim-scroll {
+        height: 100% !important;
+    }
+
+    .contentRemoveMargin {
+        margin: 0 !important;
+    }
+
+    .remove-margin-padding {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    #menu {
+        margin-bottom: 20px;
+        padding-bottom: 0px;
+        min-height: 100vh;
+        overflow: auto !important;
+        height: 100%;
+    }
+
+    #menu {
+        ::-webkit-scrollbar {
+            width: 0em !important;  
+        }
+    }
+
+    #content {
+        height: auto !important;
+        padding-bottom: 100px !important;
+    }
+
+    .slimScrollDiv {
+        overflow: auto !important; 
+       
+    }
+
+    .menu-mambo-position .slimScrollDiv, .menu-mambo-position .slimScrollDiv .slim-scroll  {
+        height: auto !important;
+    }
+
+    #fake-data-menu {
+        display: none;
+    }
+
+    #loaderOverlay {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loaderContainer {
+        padding: 20px;
+        background: white;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        text-align: center;
+    }
+
+    .spinner {
+        border: 4px solid rgba(0,0,0,.1);
+        border-radius: 50%;
+        border-top: 4px solid #e04545;
+        width: 40px;
+        height: 40px;
+        -webkit-animation: spin 1s linear infinite;
+        animation: spin 1s linear infinite;
+        margin: auto;
+    }
+
+    .loaderContainer p {
+        margin-top: 12px;
+        font-size: 18px;
+        color: #000;
+    }
+
+    .slim-scroll {
+    width: auto;
+    padding-bottom: 85px;
+    height: auto !important;
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    @media screen and (max-width:767px) {
+    #menu::-webkit-scrollbar {
+        width: 0em !important;
+    }
+
+    #menu ul {
+            height: 140%;
+            overflow: auto;
+        }
+    }
+
+    .menu-mambo-position .slimScrollDiv, .menu-mambo-position .slimScrollDiv .slim-scroll  {
+        height: 100% !important;
+    }
+
+    .slim-scroll {
+        height: auto !important;
+    }
+    </style>
+
+    <script>
+    function showMenuMobile() {
+                $("#menu").addClass('remove-margin-padding')
+                $("#btn-open-menu").addClass('hidden')
+                $("#btn-close-menu").removeClass('hidden')
+    
+            }
+    function closeMenuMobile() {
+                $("#btn-open-menu").removeClass('hidden')
+                $("#btn-close-menu").addClass('hidden')
+            }
+</script>
+</head>
+
+{% block body %}
+<body class="">
+    <div id="notification"></div>
+
+    {% block loader %}{% endblock %}
+    {% set plan = app.session.get('plan') %}
+    {% set isRegularDomain = app.session.get('isRegularDomain') %}
+    {% set activeModules = app.session.get('modulesActive') %}
+    {% set formFields = app.session.get('fields') %}
+
+    <!-- Main Container Fluid -->
+    <div class="container-fluid fluid menu-left">
+     
+        <div class="navbar main hidden-print">
+            <!-- Brand -->
+{#            {% if isRegularDomain is defined and isRegularDomain != '0'%}#}
+{#            <a title="{{ wspot_version }}" href="#" class="appbrand pull-left"><span>{{ (whiteLabel.companyName|lower != 'wspot') ? whiteLabel.companyName : ''}}</span></a>#}
+{#            {% endif %}#}
+            <!-- Menu Toggle Button -->
+
+            <ul class="topnav pull-left">
+            
+                <li class="account btn-mambo-position hidden">
+                    <button  id="btn-open-menu" type="button" class="btn btn-navbar hide-menu" onclick="showMenuMobile()">
+                       <span class="glyphicons show_lines"><i></i></span>
+                    </button>
+                    <button id="btn-close-menu" type="button" style="left: 5px;" class="btn btn-navbar hide-menu hidden" onclick="closeMenuMobile()">
+                       <span class="glyphicons remove_2"><i></i></span>
+                    </button>
+                   
+                </li>
+                {% if app.user.spotManager %}
+                    <li class="account">
+                        <a href="{{ path('spots_manager_index') }}" class="glyphicons left_arrow" ><i></i> Gerenciador de Spots</a>
+                    </li>
+                    <li>
+                        <div style="margin-left: 1em; padding-left: 1em; border-left: 2px solid #fff;">
+                            Você esta no Spot: <span style="font-weight: bolder;">{{ app.session.get("wspotClient").domain }}</span>
+                            <span class="tooltip-wrapper">
+                                <i class="icon-large icon-question-sign" tabindex="0" data-placement="down" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="{{ app.session.get("wspotClient").company }}"></i>
+                            </span>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+
+
+            <!-- // Menu Toggle Button END -->
+
+            <!-- Top Menu Right -->
+            <ul class="topnav pull-right">
+
+                <!-- Dropdown -->
+                <li class="dropdown visible-abc">
+                    <a href="" data-toggle="dropdown" class="glyphicons shield"><i></i> Proteção de Dados <span class="caret"></span></a>
+                    <ul class="dropdown-menu pull-right">
+
+                        <li><a href="{{ path('data_controller') }}">Controlador de Dados</a></li>
+                        <li><a href="{{ path('consent_manager') }}">Gestão de Consentimento</a></li>
+                        {% if is_granted("ROLE_MANAGER") %}
+                            <li><a href="{{ path('legal_base_manager') }}">Gestão das Bases Legais</a></li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {%  if app.session.get('isRegularDomain') %}
+                <!-- // Dropdown END -->
+                <li class="account">
+                    <a href="https://suporte.mambowifi.com/support/solutions" target="_blank" class="glyphicons lightbulb white" style="padding: 0 38px 0 10px;" ><span class="hidden-phone text">Base de conhecimento</span><i style="position:relative; float:right"></i></a>
+                </li>
+                <!-- Profile / Logout menu -->
+                {% endif %}
+                <li class="account">
+                    <a data-toggle="dropdown" href="{{ path('admin_profile_edit') }}" class="glyphicons logout lock"><span class="hidden-phone text">{{ app.user.nome }}</span><i></i></a>
+                    <ul class="dropdown-menu pull-right">
+                        <li class="highlight profile">
+                            <span>
+                                <span class="heading">Perfil <a href="{{ path('admin_profile_edit') }}" class="pull-right">editar</a></span>
+                                <span class="img"></span>
+                                <span class="details">
+                                    <a href="{{ path('admin_profile_edit') }}">{{ app.user.nome }}</a> <br/>
+                                    {{ app.user.username }}
+                                </span>
+                                <span class="clearfix"></span>
+                                {% if (not is_granted("ROLE_USER_LIMITED")) and (not is_granted("ROLE_MARKETING_LIMITED")) and (not is_granted("ROLE_USER_BASIC")) %}
+                                    <div id="relatorios-auditoria" class="{% if app.request.attributes.get('_route') == 'admin_audit_report' %}active{% endif %}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                        </br>
+                                        <a href="{{ path('admin_audit_report') }}">
+                                            <span>Auditoria Administrativa</span>
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </span>
+                        </li>
+
+{#                        Correção paliativa para remover acesso ao historico de alterações: WSPOTNEW-4869#}
+{#                        <li>#}
+{#                            <a class="logs" href="{{ path('logs_list') }}">Histórico de alterações</a>#}
+{#                        </li>#}
+                        <li>
+                            <span>
+                                <a class="btn btn-default btn-mini pull-right" href="{{ path('exit') }}">Sair</a>
+                            </span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- // Top Menu Right END -->
+        </div>
+        <!-- Top navbar END -->
+
+        <!-- Sidebar menu & content wrapper -->
+        <div id="wrapper">
+            <!-- Sidebar Menu -->
+            <div id="menu" class="hidden-phone hidden-print menu-mambo-position">
+                <!-- Scrollable menu wrapper with Maximum height -->
+                <div class="slim-scroll" >
+                    <!-- Sidebar Profile -->
+                    <span id="cf" class="profile" style="padding: 10px; ">
+                        <img src="{{ whiteLabel.logotipo }}" />
+                    </span>
+                    <!-- // Sidebar Profile END -->
+
+                    {% set active = '' %}
+
+                    <!-- Regular Size Menu -->
+                    <ul>
+                        <li id="dashboard" class="glyphicons dashboard 
+                            {% if app.request.attributes.get('_route') == 'admin_dashboard' %} active {% endif %}">
+                            <a href="{{ path('admin_dashboard') }}">
+                                <i></i><span>Dashboard</span>
+                            </a>
+                        </li>
+
+                        {% set guest_active = '' %}
+                        {% set list_guest_active = '' %}
+                        {% set group_guest_ctive = '' %}
+
+                        {% if app.request.attributes.get('_route') == 'admin_visitantes' or
+                        app.request.attributes.get('_route') == 'admin_visitantes_show' or
+                        app.request.attributes.get('_route') == 'admin_visitantes_create' or
+                        app.request.attributes.get('_route') == 'admin_visitantes_edit' or
+                        app.request.attributes.get('_route') == 'admin_visitantes_detail' or
+                        app.request.attributes.get('_route') == 'admin_visitantes_detail_print' or
+                        app.request.attributes.get('_route') == 'admin_visitantes_print' or
+                        app.request.attributes.get('_route') == 'admin_visitantes_delete' or
+                        app.request.attributes.get('_route') == 'guest_password_reset' or
+                        app.request.attributes.get('_route') == 'guest_resend_confirmation_url'
+                        %}
+                            {% set guest_active = 'active' %}
+                            {% set list_guest_active = 'active' %}
+                        {% endif %}
+
+                        {% if app.request.attributes.get('_route') == 'group_list' or
+                        app.request.attributes.get('_route') == 'group_create' or
+                        app.request.attributes.get('_route') == 'group_edit' or
+                        app.request.attributes.get('_route') == 'group_delete' or
+                        app.request.attributes.get('_route') == 'group_show'
+                        %}
+                            {% set guest_active = 'active' %}
+                            {% set group_guest_ctive = 'active' %}
+                        {% endif %}
+                        <li id="visitantes" class="hasSubmenu glyphicons group {{ guest_active }}">
+                            <a href="#menu_guests" data-toggle="collapse" class=""><i></i><span>Visitantes</span></a>
+                            <span class="count">&#8595;</span>
+                            <ul id="menu_guests" class="collapse" style="height: auto;">
+                                {% if not is_granted("ROLE_USER_BASIC") %}
+                                    <li id="visitantes-regras-acesso" class="{{ group_guest_ctive }}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                        <a href="{{ path('group_list') }}">
+                                            <span>Regras de Acesso</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") or is_granted("ROLE_USER_BASIC") %}
+                                <li id="visitantes-submenu" class="{{ list_guest_active }}">
+                                    <a href="{{ path('admin_visitantes') }}">
+                                        <span>Visitantes</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                        {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_MANAGER") %}
+                            <li id="administradores" class="glyphicons user
+                                {% if app.request.attributes.get('_route') == 'admin_usuarios' %} active{% endif %}"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('admin_usuarios') }}"><i></i>
+                                    <span>Administradores</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% set active = '' %}
+                        {% set apActive = '' %}
+                        {% set apgActive = '' %}
+
+                        {% if app.request.attributes.get('_route') == 'access_points' or
+                        app.request.attributes.get('_route') == 'access_points_new' or
+                        app.request.attributes.get('_route') == 'access_points_edit' %}
+                            {% set active = 'active' %}
+                            {% set apActive = 'active' %}
+                        {% endif %}
+
+                        {% if app.request.attributes.get('_route') == 'access_points_groups' or
+                        app.request.attributes.get('_route') == 'configurations_edit' or
+                        app.request.attributes.get('_route') == 'access_points_groups_new' or
+                        app.request.attributes.get('_route') == 'access_points_groups_edit'%}
+                            {% set active = 'active' %}
+                            {% set apgActive = 'active' %}
+                        {% endif %}
+
+                        {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") or is_granted("ROLE_USER_LIMITED") or is_granted("ROLE_MARKETING_LIMITED") or is_granted("ROLE_SUPORT_LIMITED") %}
+                            <li id="ponto-acesso" class="hasSubmenu glyphicons router {{ active }}">
+                                <a href="#menu_aps" data-toggle="collapse" class=""><i></i><span>Pontos de Acesso</span></a>
+                                <span class="count">&#8595;</span>
+                                <ul id="menu_aps" class="collapse" style="height: auto;">
+                                    <li id="ponto-acesso-grupos" class="{{ apgActive }}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                        <a href="{{ path('access_points_groups') }}">
+                                            <span>Grupos</span>
+                                        </a>
+                                    </li>
+                                    <li id="ponto-acesso-submenu" class="{{ apActive }}">
+                                        <a href="{{ path('access_points') }}">
+                                            <span>Pontos de Acesso</span>
+                                        </a>
+                                        {% if app.session.get('accessPointPendingName') > 0 %}
+                                            <span class="count">{{ app.session.get('accessPointPendingName') }}</span>
+                                        {% endif %}
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endif %}
+
+                        {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") or is_granted("ROLE_MARKETING_LIMITED") or is_granted("ROLE_SUPORT_LIMITED") %}
+                            <li id="templates" class="glyphicons pencil
+                                {% if app.request.attributes.get('_route') == 'template' %} active{% endif %}"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('template') }}"><i></i>
+                                    <span>Templates</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") or is_granted("ROLE_MARKETING_LIMITED") or is_granted("ROLE_SUPORT_LIMITED")) and 'campaign' in activeModules %}
+                            <li id="campanhas" class="glyphicons bullhorn
+                                {% if app.request.attributes.get('_route') == 'campaign' %} active{% endif %}"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('campaign') }}"><i></i>
+                                    <span>Campanhas</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") or is_granted("ROLE_MARKETING_LIMITED") or is_granted("ROLE_SUPORT_LIMITED")) and 'sms_marketing' in activeModules%}
+                            <li id="sms-marketing" class="glyphicons iphone
+                                {% if app.request.attributes.get('_route') == 'sms_marketing' %} active{% endif %}"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('sms_marketing') }}"><i></i>
+                                    <span>SMS Marketing</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if (app.session.get('segmentationEnabled')) %}
+                            {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") or is_granted("ROLE_MARKETING_LIMITED") or is_granted("ROLE_SUPORT_LIMITED")) and 'segmentation' in activeModules%}
+                                <li id="segmentacao" class="glyphicons list
+                                    {% if app.request.attributes.get('_route') == 'segmentation' %} active{% endif %}"
+                                    {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('segmentation') }}"><i></i>
+                                        <span>Segmentação</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MANAGER") or is_granted("ROLE_SUPORT_LIMITED")) and ('access_code' in activeModules) %}
+                            <li id="codigo-acesso" class="glyphicons credit_card
+                                {% if app.request.attributes.get('_route') == 'access_code' %} active{% endif %}"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('access_code') }}"><i></i>
+                                    <span>Código de Acesso</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MANAGER") or is_granted("ROLE_SUPORT_LIMITED")) and ('blacklist' in activeModules) %}
+                            <li id="bloqueio-dispositivos" class="glyphicons remove
+                                {% if app.request.attributes.get('_route') == 'blacklist_list' %} active{% endif %}"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('blacklist_list') }}"><i></i>
+                                    <span>Bloqueio de Dispositivos</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MANAGER") or is_granted("ROLE_SUPORT_LIMITED")) and ('business_hours' in activeModules) %}
+                            <li id="horario-funcionamento" class="glyphicons clock
+                                {% if app.request.attributes.get('_route') == 'business_hours' %} active{% endif %}"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('business_hours') }}"><i></i>
+                                    <span>Horário de Funcionamento</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if (is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MANAGER") or is_granted("ROLE_SUPORT_LIMITED"))
+                        and app.session.get('wspotClient').getNoRegisterFields() == 0 %}
+                            <li id="customizar-formularios" class="glyphicons notes_2
+                                {% if app.request.attributes.get('_route') == 'custom_fields_index' %} active{% endif %}"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('custom_fields_index') }}"><i></i>
+                                    <span>Customizar Formulários</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if (app.session.get('surveyEnabled'))%}
+                            <li id="pesquisa" class="glyphicons search"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="/admin/survey"><i></i>
+                                    <span>Pesquisa</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if (app.session.get('smartLocationEnabled'))%}
+                            <li id="smartlocation"
+                                {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="{{ path('smart_location') }}">
+                                    <img class="smart-location-icon" style="opacity: 0.5; margin-left: 1em; margin-right: 0.5em" src="{{ asset('bundles/admin/frontend/images/wifi_tethering.svg') }}"/>
+                                    <span>Smart Location</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if (app.session.get('whiteLabelEnabled'))%}
+                            {% if is_granted("ROLE_MANAGER") or is_granted("ROLE_SUPORT_LIMITED") %}
+                                <li id="whitelabel" class="glyphicons flag
+                                {% if app.request.attributes.get('_route') == 'white_label_edit' %} active{% endif %}"
+                                    {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('white_label_edit') }}"><i></i>
+                                        <span>White Label</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        {% endif %}
+
+                        {% set apiWspotActive = '' %}
+                        {% set activeApi = '' %}
+                        {% set apiRdActive = '' %}
+                        {% set apiEgoiActive = '' %}
+
+                        {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MANAGER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MARKETING_LIMITED") or is_granted("ROLE_SUPORT_LIMITED") %}
+                            {% if app.request.attributes.get('_route') == 'api_token' or
+                                app.request.attributes.get('_route') == 'api_token_new' or
+                                app.request.attributes.get('_route') == 'api_token_edit' %}
+                                {% set activeApi = 'active' %}
+                                {% set apiWspotActive = 'active' %}
+                            {% endif %}
+                            {% if app.request.attributes.get('_route') == 'api_rd_station' or
+                                app.request.attributes.get('_route') == 'api_rd_station_new' or
+                                app.request.attributes.get('_route') == 'api_rd_station_edit' %}
+                                {% set activeApi = 'active' %}
+                                {% set apiRdActive = 'active' %}
+                            {% endif %}
+                            {% if app.request.attributes.get('_route') == 'api_egoi' or
+                                app.request.attributes.get('_route') == 'api_egoi_new' or
+                                app.request.attributes.get('_route') == 'api_egoi_edit' %}
+                                {% set activeApi = 'active' %}
+                                {% set apiEgoiActive = 'active' %}
+                            {% endif %}
+
+                            <li id="integracoes" class="hasSubmenu glyphicons embed_close {{ activeApi }}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                <a href="#menu_integrations" data-toggle="collapse" class=""><i></i><span>Integrações</span></a>
+                                <span class="count">&#8595;</span>
+                                <ul id="menu_integrations" class="collapse" style="height: auto;">
+                                    <li id="integracoes-api" class="{{ apiWspotActive }}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                        <a href="{{ path('api_token') }}">
+                                            {% if (app.session.get('isRegularDomain') != false) %}
+                                                <span>API Mambo WiFi</span>
+                                            {% else %}
+                                                <span>API</span>
+                                            {% endif %}
+                                        </a>
+                                    </li>
+                                    <li id="integracoes-rd" class="{{ apiRdActive }}">
+                                        <a href="{{ path('api_rd_station') }}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                            <span>RD Station</span>
+                                        </a>
+                                    </li>
+                                    <li id="integracoes-deskbee" class="">
+                                        <a href="{{ path('deskbee_integration') }}">
+                                            <span>Deskbee</span>
+                                        </a>
+                                    </li>
+                                    <li id="integracoes-hubsoft" class="">
+                                        <a href="{{ path('hubsoft_integration') }}">
+                                            <span>Hubsoft</span>
+                                        </a>
+                                    </li>
+                                    {% if (app.session.get('isRegularDomain') != false) %}
+                                    <li id="integracoes-egoi" class="{{ apiEgoiActive }}">
+                                        <a href="{{ path('api_egoi') }}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                            <span>E-goi</span>
+                                        </a>
+                                    </li>
+                                   {% endif %}
+                                   {% if (app.session.get('integrationSsoEnabled') != false) %}
+                                        <li id="integracoes-sso" class="">
+                                            <a href="{{ path('sso_integration') }}">
+                                                <span>Gerenciamento de SSOs</span>
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                    <li id="integracoes-ixc" class="">
+                                        <a href="{{ path('Ixc_integration') }}">
+                                            <span>IXC Soft</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        {% endif %}
+
+                        {% if (app.user.financialManager and app.session.get('customerAreaEnabled')) and (app.session.get('isRegularDomain') != false)  or is_granted("ROLE_MANAGER") %}
+                            <li id="financeiro" class="glyphicons usd
+                            {% if app.request.attributes.get('_route') == 'customer_area' %} active{% endif %}">
+                                <a href="{{ path('customer_area') }}"><i></i>
+                                    <span>Financeiro</span>
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% set relActive = '' %}
+
+                        {% if app.request.attributes.get('_route') == 'admin_online_user_report' or
+                        app.request.attributes.get('_route') == 'admin_relatorio_historico' or
+                        app.request.attributes.get('_route') == 'admin_download_upload_report' or
+                        app.request.attributes.get('_route') == 'admin_most_visited_hours_report' or
+                        app.request.attributes.get('_route') == 'admin_records_per_day_report' or
+                        app.request.attributes.get('_route') == 'admin_visitantes_detail' or
+                        app.request.attributes.get('_route') == 'admin_access_points_report' or
+                        app.request.attributes.get('_route') == 'admin_access_points_report' or
+                        app.request.attributes.get('_route') == 'admin_campaign_report' or
+                        app.request.attributes.get('_route') == 'admin_campaign_cta_report' or
+                        app.request.attributes.get('_route') == 'admin_sms_report' or
+                        app.request.attributes.get('_route') == 'admin_birthdays_reports' or
+                        app.request.attributes.get('_route') == 'admin_guests_reports' or
+                        app.request.attributes.get('_route') == 'admin_audit_report' or
+                        app.request.attributes.get('_route') == 'admin_download_upload_detail_report' %}
+                            {% set relActive = 'active' %}
+                        {% endif %}
+
+                        <li id="relatorios" class="hasSubmenu glyphicons charts reports {{ relActive }}">
+                            <a href="#menu_reports" data-toggle="collapse" class="" id="menu_reports_scroll"><i></i><span>Relatórios</span></a>
+                            <span class="count">&#8595;</span>
+                            <ul id="menu_reports" class="collapse" style="height: auto;">
+                                {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") %}
+                                <li id="relatorios-visitantes-online" class="{% if app.request.attributes.get('_route') == 'admin_online_user_report' %}active{% endif %}"
+                                    {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('admin_online_user_report') }}">
+                                        <span>Visitantes Online</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") %}
+                                <li id="relatorios-map-access" class="{% if app.request.attributes.get('_route') == 'admin_map_access_report' %}active{% endif %}"
+                                    {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('admin_map_access_report') }}">
+                                        <span>Mapa de Acessos</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") %}
+                                <li id="relatorios-historico-acessos" class="{% if app.request.attributes.get('_route') == 'admin_relatorio_historico' or app.request.attributes.get('_route') == 'admin_visitantes_detail' %}active{% endif %}"
+                                    {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('admin_relatorio_historico') }}">
+                                        <span>Histórico de Acessos</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                <li id="relatorios-download-upload" class="{% if (app.request.attributes.get('_route') == 'admin_download_upload_report') or (app.request.attributes.get('_route') == 'admin_download_upload_detail_report') %}active{% endif %}"
+                                    {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('admin_download_upload_report') }}">
+                                        <span>Download e Upload</span>
+                                    </a>
+                                </li>
+                                <li id="relatorios-horarios-visitados" class="{% if app.request.attributes.get('_route') == 'admin_most_visited_hours_report' %}active{% endif %}">
+                                    <a href="{{ path('admin_most_visited_hours_report') }}">
+                                        <span>Horários Mais Visitados</span>
+                                    </a>
+                                </li>
+                                <li id="relatorios-cadastros" class="{% if app.request.attributes.get('_route') == 'admin_records_per_day_report' %}active{% endif %}">
+                                    <a href="{{ path('admin_records_per_day_report') }}">
+                                        <span>Cadastros Por Dia</span>
+                                    </a>
+                                </li>
+                                <li id="relatorios-pontos-acessos" class="{% if app.request.attributes.get('_route') == 'admin_access_points_report' %}active{% endif %}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('admin_access_points_report') }}">
+                                        <span>Pontos de Acesso</span>
+                                    </a>
+                                </li>
+
+                                {% set campaignActive = '' %}
+
+                                {% if app.request.attributes.get('_route') == 'admin_campaign_report' or
+                                    app.request.attributes.get('_route') == 'admin_campaign_cta_report' %}
+                                    {% set campaignActive = 'active' %}
+                                {% endif %}
+
+                                <li id="relatorios-campanhas" class="hasSubmenu {{ campaignActive }}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a data-toggle="collapse" href="#menu_campaign" class="collapsed">
+                                        <span>Campanhas</span>
+                                    </a>
+                                    <span class="count">&#8595;</span>
+                                    <ul class="{{ (campaignActive == 'active') ? 'in' : 'collapse' }}" id="menu_campaign" style=""{{ (campaignActive == 'active') ? 'height: auto;' : 'height: 0px;' }}">
+                                        <li id="relatorios-campanhas-visualizacoes" class="{% if app.request.attributes.get('_route') == 'admin_campaign_report' %}active{% endif %}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                            <a href="{{ path('admin_campaign_report') }}">
+                                                <span>Visualizações</span>
+                                            </a>
+                                        </li>
+                                        <li id="relatorios-campanhas-call-to-action" class="{% if app.request.attributes.get('_route') == 'admin_campaign_cta_report' %}active{% endif %}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                            <a href="{{ path('admin_campaign_cta_report') }}">
+                                                <span>Botão de Interesse (CTA)</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                             {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") %}
+                            <li id="relatorios-uso-sms" class="{% if app.request.attributes.get('_route') == 'admin_sms_report' %}active{% endif %}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('admin_sms_report') }}">
+                                        <span>Uso de SMS</span>
+                                    </a>
+                                </li>
+
+                                <li id="relatorios-visitantes" class="{% if app.request.attributes.get('_route') == 'admin_guests_reports' %}active{% endif %}" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('admin_guests_reports') }}">
+                                        <span>Visitantes</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                                {% if ('data_nascimento' in formFields) or ('birthday' in formFields ) or ('birthday_month' in formFields) %}
+                                <li id="relatorios-aniversariantes" class="{% if app.request.attributes.get('_route') == 'admin_birthdays_reports' %}active{% endif %}" id="birthdays" {% if plan == false %}style="opacity: 0.5"{% endif %}>
+                                    <a href="{{ path('admin_birthdays_reports') }}">
+                                        <span>Aniversariantes do Mês</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </li>
+                    </ul>
+
+                    <div class="clearfix"></div>
+                    <div class="separator bottom"></div>
+                    <!-- // Regular Size Menu END -->
+                </div>
+                <!-- // Scrollable Menu wrapper with Maximum Height END -->
+            </div>
+            <!-- // Sidebar Menu END -->
+
+            <!-- Content -->
+            <div id="content">
+                {% block content %}
+                {% endblock %}
+            </div>
+            <!-- // Content END -->
+
+            <div id="footer" style="padding: 0px;">
+                {% block footer %}
+                    <div class="signature" style="margin-top: -3px;">
+                        {{ whiteLabel.signature|raw }}
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+        <!-- // Sidebar menu & content wrapper END -->
+        <!-- //Consent Modal -->
+        {% block consentModal %}{% endblock %}
+        <!-- //Consent ModalEnd -->
+
+    </div>
+
+    <style>
+        .faker-block {
+            padding: 35px 0 !important;
+            text-align: center !important;
+            font-size: 18px !important;
+        }
+    </style>
+
+    <!-- // Main Container Fluid END -->
+
+    <div id="loaderOverlay">
+        <div class="loaderContainer">
+            <div class="spinner"></div>
+            <p>fake data message managed by fakeDataManage</p>
+            <span>
+                Essa ação pode levar alguns segundos<br>
+                Por favor, mantenha esta tela aberta.
+            </span>
+        </div>
+    </div>
+
+    {% if ((app.session.get('wspotClient').allowFakeData)) %}
+        <div id="fake-data-menu" class="container-fluid fluid menu-left faker-block">
+            {% if (app.session.get('wspotClient').fakeMode == constant('Wideti\\DomainBundle\\Entity\\Client::FAKE_MODE_OFF')) %}
+                Este é um painel de demonstração, caso queira visualizar o seu painel com dados fictícios, <b><a class="fakeDataManage" data-message="Adicionando dados fictícios" href="{{ path('fake_data_execute', {  'action': 'create'}) }}">clique aqui</a></b>.
+            {% else %}
+                Você está visualizando seu painel com dados fictícios. Caso queira limpar sua base, <b><a class="fakeDataManage" data-message="Aguarde enquanto estamos limpando todos os dados" href="{{ path('fake_data_execute', { 'action': 'clear' }) }}">clique aqui</a></b><br>
+                Para adicionar mais dados fictícios, <b><a class="fakeDataManage" data-message="Adicionando novos dados fictícios" href="{{ path('fake_data_execute', { 'action': 'create' }) }}">clique aqui</a></b>.
+            {% endif %}
+        </div>
+    {% endif %}
+
+    <div class="modal fade" id="modalEndPoc">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body…</p>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
+    {% block jsLibraries %}
+
+        <!-- JQuery -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/system/jquery.min.js')}}"></script>
+
+        <!-- JQueryUI -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/system/jquery-ui/js/jquery-ui-1.9.2.custom.min.js')}}"></script>
+
+        <!-- JQueryUI Touch Punch -->
+        <!-- small hack that enables the use of touch events on sites using the jQuery UI user interface library -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/system/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js')}}"></script>
+
+        <!--  Jquery Validations & Mask -->
+        <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js')}}"></script>
+        <script src="{{ asset('bundles/admin/frontend/js/jquery.validate.min.js')}}"></script>
+        <script src="{{ asset('bundles/admin/frontend/js/wspot.custom-validate-rules.js')}}"></script>
+        <script src="{{ asset('bundles/admin/frontend/js/wspot.validate-mask-forms.js')}}"></script>
+
+        <!-- Modernizr -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/system/modernizr.js')}}"></script>
+
+        <!-- Bootstrap -->
+        <script src="{{ asset('bundles/admin/bootstrap/js/bootstrap.min.js')}}"></script>
+
+        <!-- Common Demo Script -->
+        <script src="{{ asset('bundles/admin/theme/scripts/demo/common.js')}}"></script>
+
+        <!-- SlimScroll Plugin -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/other/jquery-slimScroll/jquery.slimscroll.min.js')}}"></script>
+
+        <!-- Holder Plugin -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/other/holder/holder.js')}}"></script>
+
+        <!-- Uniform Forms Plugin -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/pixelmatrix-uniform/jquery.uniform.min.js')}}"></script>
+
+        <!-- Global -->
+        <script>
+            var basePath = '../../../../common/';
+        </script>
+
+        <script>
+            var primaryColor = '{{ whiteLabel.panelColor }}',
+                dangerColor  = '#e25f39',
+                successColor = '#609450',
+                warningColor = '#ab7a4b',
+                inverseColor = '#45484d';
+        </script>
+
+        <!-- Bootstrap Extended -->
+        <script src="{{ asset('bundles/admin/bootstrap/extend/bootstrap-select/bootstrap-select.js')}}"></script>
+        <script src="{{ asset('bundles/admin/bootstrap/extend/bootstrap-toggle-buttons/static/js/jquery.toggle.buttons.js')}}"></script>
+        <script src="{{ asset('bundles/admin/bootstrap/extend/bootstrap-hover-dropdown/twitter-bootstrap-hover-dropdown.min.js')}}"></script>
+        <script src="{{ asset('bundles/admin/bootstrap/extend/jasny-bootstrap/js/jasny-bootstrap.min.js')}}"></script>
+        <script src="{{ asset('bundles/admin/bootstrap/extend/jasny-bootstrap/js/bootstrap-fileupload.js')}}"></script>
+        <script src="{{ asset('bundles/admin/bootstrap/extend/bootbox.js')}}"></script>
+        <script src="{{ asset('bundles/admin/bootstrap/extend/bootstrap-wysihtml5/js/wysihtml5-0.3.0_rc2.min.js')}}"></script>
+        <script src="{{ asset('bundles/admin/bootstrap/extend/bootstrap-wysihtml5/js/bootstrap-wysihtml5-0.0.2.js')}}"></script>
+
+        <!-- Google Code Prettify -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/other/google-code-prettify/prettify.js')}}"></script>
+
+        <!-- Gritter Notifications Plugin -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/notifications/Gritter/js/jquery.gritter.min.js')}}"></script>
+
+        <!-- Notyfy Notifications Plugin -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/notifications/notyfy/jquery.notyfy.js')}}"></script>
+
+        <!-- MiniColors Plugin -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/jquery-miniColors/jquery.miniColors.js')}}"></script>
+
+        <!-- DateTimePicker Plugin -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js')}}"></script>
+
+        <!-- Cookie Plugin -->
+        <script src="{{ asset('bundles/admin/theme/scripts/plugins/system/jquery.cookie.js')}}"></script>
+
+        <!-- FOSjsRouting -->
+        <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+        <script>
+            jQuery(document).ready(function(){
+                $("#menu_reports_scroll").on('click', function(){
+                    reportScroll();
+                });
+
+                $('#birthdays').hide();
+
+                var data = {
+                    'field': ['data_nascimento', 'birthday', 'birthday_month']
+                };
+
+                var route = Routing.generate('check_field_exists');
+
+                $.ajax({
+                    type: "POST",
+                    url: route,
+                    data: data,
+                    dataType : "json",
+                    success: function(response)
+                    {
+                        if (response) {
+                            $('#birthdays').show();
+                        }
+                    }
+                });
+
+                // Exibição dos alertas de PoC.
+                function isNumber(n) {
+                    return !isNaN(parseFloat(n)) && isFinite(n);
+                }
+
+                {% if app.session.get('wspotClient') is not null%}
+                    {% if (app.session.get('wspotClient').status == constant('Wideti\\DomainBundle\\Entity\\Client::STATUS_POC'))
+                        and ("now"|date('Y-m-d') <= app.session.get('wspotClient').pocEndDate|date('Y-m-d')) %}
+                        var changePlanRoute = Routing.generate('admin_token_redirect');
+                        var text = '<strong>Atenção!</strong> O seu período de testes se ';
+
+                        {% if app.session.get('wspotClient').pocEndDate | DateDiffInDays == '0 dias' %}
+                            text += ' encerra hoje.';
+                        {% else %}
+                            text += 'encerrará em {{ app.session.get('wspotClient').pocEndDate | DateDiffInDays }}.';
+                        {% endif %}
+
+                        var createdBy = "{{ app.session.get('wspotClient').createdBy }}";
+                        if (createdBy === 'contratacao-automatica') {
+                            text += '<a href="'+ changePlanRoute +'" class="purchase">Contratar</a>';
+                        }
+
+                        jQuery('#notification').notyfy({
+                            text: text,
+                            type: 'warning',
+                            closeWith: ['button']
+                        });
+                    {% elseif (app.session.get('wspotClient').status == constant('Wideti\\DomainBundle\\Entity\\Client::STATUS_POC')
+                        and "now"|date('Y-m-d') > app.session.get('wspotClient').pocEndDate|date('Y-m-d')) %}
+                        bootbox.dialog("" +
+                            "<h3>Olá, {{ app.user.nome }}</h3>" +
+                            "Seu período de testes do Mambo WiFi chegou ao fim. Esperamos que você tenha encontrado na " +
+                            "solução um excelente parceiro para gestão da sua rede e do relacionamento com clientes." +
+                            "<br><br>" +
+                            "A partir de agora você pode entrar em contato com nossa equipe comercial pelo e-mail " +
+                            "<a href='mailto:comercial@mambowifi.com'>comercial@mambowifi.com</a> e contratar o Mambo WiFi." +
+                            "<br><br>" +
+                            "Não se preocupe com seus visitantes. Eles permanecerão com acesso livre por mais alguns " +
+                            "dias enquanto você opta por dar continuidade ao serviço ou o cancela definitivamente." +
+                            "<br><br>" +
+                            "Seremos muito receptivos em receber o seu feedback, seja ele qual for." +
+                            "<br><br>" +
+                            "<strong>Equipe Mambo WiFi!</strong>"
+                        );
+                    {% endif %}
+
+                    {% if (app.session.get('wspotClient').pendingPayment) %}
+                        var financialArea = Routing.generate('customer_area');
+                        var text = 'Existe(m) cobrança(s) em aberto. Acesse a <a href="'+ financialArea +'" style="color:#ffffff;"><b>área financeira</b></a> para ter acesso as cobranças.';
+                        jQuery('#notification').notyfy({
+                            text: text,
+                            type: 'error',
+                            closeWith: ['button']
+                        });
+                    {% endif %}
+                {% endif %}
+            });
+
+            function reportScroll() {
+                $('.slim-scroll').stop().animate({
+                    scrollTop: $(".slim-scroll")[0].scrollHeight
+                }, 1000);
+            }
+        </script>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('#fake-data-menu').css('display', 'block');
+            $('#fake-data-menu').show();
+            $(document).ready(function(){
+                $('.fakeDataManage').click(function(e){
+                    e.preventDefault();
+                    var message = $(this).data('message');
+                    $('#loaderOverlay p').text(message);
+
+                    $('#loaderOverlay').css('display', 'flex');
+                    $('#loaderOverlay').show();
+
+                    window.location.href = $(this).attr('href');
+                });
+            });
+        });
+        </script>
+    {% endblock %}
+    {% if (app.session.get('wspotClient') is not null) and (isRegularDomain is defined) and (isRegularDomain != '0') %}
+        <script type="text/javascript">
+            window.fwSettings={
+                'widget_id':16000000015,
+                'locale': 'pt-BR',
+            };
+            !function(){if("function"!=typeof window.FreshworksWidget){var n=function(){n.q.push(arguments)};n.q=[],window.FreshworksWidget=n}}()
+            FreshworksWidget('hide', 'ticketForm', ['custom_fields.cf_status_1_ativo_2_poc', 'email', 'custom_fields.cf_usurio', 'custom_fields.cf_url_painel_wspot']);
+            FreshworksWidget('prefill', 'ticketForm', {
+                custom_fields: {
+                    cf_status_1_ativo_2_poc: "{{ app.session.get('wspotClient').status }}",
+                    cf_usurio: "{{ app.user.nome }}",
+                    cf_url_painel_wspot: "{{ app.session.get('wspotClient').domain }}.mambowifi.com"
+                }
+            });
+            FreshworksWidget('identify', 'ticketForm', {
+                name: '{{ app.user.nome }}',
+                email: '{{ app.user.username }}',
+            });
+
+            
+            
+        </script>
+        <script type='text/javascript' src='https://widget.freshworks.com/widgets/16000000015.js' async defer></script>
+    {% endif %}
+    {% block javascript %}
+        <script>
+            var themerPrimaryColor = '{{ whiteLabel.panelColor }}';
+        </script>
+    {% endblock %}
+
+    <script type="text/javascript">
+    
+       
+
+window.onload = function() {
+  
+   if (window.innerWidth >= 569) {
+                $.cookie('menuHidden', false)
+                $('.topnav:first li ').addClass('hidden')
+
+                $('.container-fluid').removeClass('menu-hidden')
+                $('#content').removeClass('contentRemoveMargin')
+                }
+
+
+                if (window.innerWidth <= 568) {
+                $.cookie('menuHidden', true)
+                $('.container-fluid').addClass('menu-hidden')
+                $('#content').addClass('contentRemoveMargin')
+
+                $('.topnav:first li ').removeClass('hidden')
+                closeMenuMobile()
+                }
+
+        addEventListener('resize', (event) => {
+
+                if (window.innerWidth >= 569) {
+                $.cookie('menuHidden', false)
+                $('.topnav:first li ').addClass('hidden')
+
+                $('.container-fluid').removeClass('menu-hidden')
+                $('#content').removeClass('contentRemoveMargin')
+                $("#menu").removeClass('remove-margin-padding')
+                }
+
+
+                if (window.innerWidth <= 568) {
+                    closeMenuMobile()
+                $.cookie('menuHidden', true)
+                $('.container-fluid').addClass('menu-hidden')
+                $('#content').addClass('contentRemoveMargin')
+
+                $('.topnav:first li ').removeClass('hidden')
+                }
+            })
+  
+}
+    
+    </script>
+    </body>
+{% endblock %}
+    <script>  (function(g,u,i,d,e,s){g[e]=g[e]||[];var f=u.getElementsByTagName(i)[0];var k=u.createElement(i);k.async=true;k.src='https://static.userguiding.com/media/user-guiding-'+s+'-embedded.js';f.parentNode.insertBefore(k,f);if(g[d])return;var ug=g[d]={q:[]};ug.c=function(n){return function(){ug.q.push([n,arguments])};};var m=['previewGuide','finishPreview','track','identify','triggerNps','hideChecklist','launchChecklist'];for(var j=0;j<m.length;j+=1){ug[m[j]]=ug.c(m[j]);}})(window,document,'script','userGuiding','userGuidingLayer','206406664ID'); </script>
+</html>

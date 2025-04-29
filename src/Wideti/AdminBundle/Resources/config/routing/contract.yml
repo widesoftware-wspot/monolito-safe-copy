@@ -1,0 +1,9 @@
+contract_print:
+    path:  /{id}/print
+    defaults: { _controller: wspot.admin.controller.contract:printAction }
+
+contract_user_accept:
+    path: /{user}/{contract}/contract_accept
+    defaults: { _controller: wspot.admin.controller.contract:userContractAcceptAction }
+    options:
+        expose: true

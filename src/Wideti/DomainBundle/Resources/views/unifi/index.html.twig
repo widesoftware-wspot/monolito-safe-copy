@@ -1,0 +1,43 @@
+<script>
+    {% if isWhiteLabel %}
+        var redirectUrl = "https://{{ subdomain }}/unifi";
+    {% else %}
+        var redirectUrl = "https://{{ subdomain }}.mambowifi.com/unifi";
+    {% endif %}
+</script>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Carregando...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .loading-unifi {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-unifi > img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-unifi">
+        <img src="{{ asset('bundles/admin/frontend/images/loading-unifi.gif')}}" alt="">
+    </div>
+<script>
+    var ap = '<unifi var="ap_mac" />';
+    var mac = '<unifi var="mac" />';
+    var ssid = '<unifi var="ssid" />';
+    var url = '';
+    var authUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + 'index.html';
+    authUrl = authUrl.replace("index.htmlindex.html", "index.html");
+    window.location.replace(redirectUrl + "?ap_mac=" + ap + "&client_mac=" + mac + "&ssid=" + ssid + "&url=" + url + "&login_url=" + authUrl);
+</script>
+</body>
+</html>

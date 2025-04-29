@@ -1,0 +1,52 @@
+Wideti\DomainBundle\Document\Group\Configuration:
+  BlockPerTime1:
+    category: "Bloqueio por tempo"
+    shortcode: "block_per_time"
+    description: "Limite de tempo que o visitante pode permanecer online"
+    configurationValues:
+      - "@EnableBlockPerTime1"
+      - "@BlockPerTimeTime1"
+      - "@BlockPerTimePeriod1"
+
+  ValidityAccess1:
+    category: "Validade de acesso"
+    shortcode: "validity_access"
+    description: "Data máxima que o visitante poderá acessar o wspot"
+    configurationValues:
+      - "@EnableValidityAccess1"
+      - "@ValidityAccessDateLimit1"
+
+  BandWidth1:
+    category: "Limite de banda"
+    shortcode: "bandwidth"
+    description: "Controle o limite de banda (download e upload) do visitante"
+    configurationValues:
+      - "@EnableBandWidth1"
+      - "@BandWidthDownloadLimit1"
+      - "@BandWidthUploadLimit1"
+
+  BlockPerTime2:
+    category: "Bloqueio por tempo"
+    shortcode: "block_per_time"
+    description: "Limite de tempo que o visitante pode permanecer online"
+    configurationValues:
+      - "@EnableBlockPerTime2"
+      - "@BlockPerTimeTime2"
+      - "@BlockPerTimePeriod2"
+
+  ValidityAccess2:
+    category: "Validade de acesso"
+    shortcode: "validity_access"
+    description: "Data máxima que o visitante poderá acessar o wspot"
+    configurationValues:
+      - "@EnableValidityAccess2"
+      - "@ValidityAccessDateLimit2"
+
+  BandWidth2:
+    category: "Limite de banda"
+    shortcode: "bandwidth"
+    description: "Controle o limite de banda (download e upload) do visitante"
+    configurationValues:
+      - "@EnableBandWidth2"
+      - "@BandWidthDownloadLimit2"
+      - "@BandWidthUploadLimit2"

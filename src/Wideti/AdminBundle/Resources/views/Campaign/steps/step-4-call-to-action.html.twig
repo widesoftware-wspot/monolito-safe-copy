@@ -1,0 +1,559 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/css/campaign.css')}}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Campanhas'} %}
+    <div class="innerLR">
+        <div>
+            <div class="widget widget-tabs border-bottom-none">
+                <div class="widget-head">
+                    <ul>
+                        <li class="active">
+                            <a class="glyphicons circle_question_mark" ><i></i>
+                                Ajuda com o botão de Interesse (CTA)
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="widget-body">
+                    <div class="panel-group" id="accordion">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <p class="panel-title">
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+                                        > O que é e para que serve?
+                                    </a>
+                                </p>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse" style="height: 0px;">
+                                <div class="panel-body">
+                                    <hr />
+                                    <p class="text-muted">
+                                        Todo e-mail marketing precisa dar ao leitor a opção de tomar alguma ação. Seja clicar em um botão, responder a uma pergunta ou visitar alguma página. Isso é fundamental para engajar o leitor e, dessa forma, tornar a campanha mais efetiva. Oferecer algum “mimo” (um desconto, por exemplo) também é uma estratégia válida nesse sentido.
+                                    </p>
+                                    <p class="text-muted">
+                                        Existe um sem número de ferramentas no mercado (algumas gratuitas, outras pagas) que te ajudarão a automatizar o envio de campanhas de e-mail marketing.
+                                    </p>
+                                    <p class="text-muted">
+                                        Ferramentas sugeridas: <a href="https://www.rdstation.com/" target="_blank">RD Station</a>, <a href="https://mailchimp.com/" target="_blank">Mailchimp</a>.
+                                    </p>
+                                    <p class="text-muted"></p>
+                                    <hr />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget widget-tabs border-bottom-none">
+                <div class="widget-body">
+                    <div class="row-fluid" id="call-to-action-active-control" style="display: none;">
+                        <h2>Deseja utilizar um botão de Interesse (CTA)?</h2>
+                        <div class="form-actions left" style="margin-left: -18px;">
+                            <button id="enableCallToAction" type="button" class="btn btn-icon btn-success glyphicons circle_ok"><i></i>Sim</button>
+                            <a href="{{ path('campaign_preview', { id: campaign.id }) }}">
+                                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>Não</button>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row-fluid" id="call-to-action-block" style="display: none;">
+                        <h2>Botão de Interesse (CTA)</h2>
+
+                        <input type="hidden" id="imagePath" value="{{ "//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/" }}" />
+                        <input type="hidden" id="hpreLoginImageDesktop"  value="{{ imageMedias.preLoginImageDesktop }}" />
+                        <input type="hidden" id="hpreLoginImageMobile" value="{{ imageMedias.preLoginImageMobile }}" />
+                        <input type="hidden" id="hposLoginImageDesktop" value="{{ imageMedias.posLoginImageDesktop }}" />
+                        <input type="hidden" id="hposLoginImageMobile" value="{{ imageMedias.posLoginImageMobile }}" />
+
+                        {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+                        {% form_theme form with ['AdminBundle:Form:fields.html.twig', 'AdminBundle:Form:templateForm.html.twig'] %}
+                        <div style="margin-top: 20px;">
+                            <div class="row-fluid">
+                                <div class="span12">
+                                    <div class="widget row-fluid">
+                                        <div class="widget-head">
+                                            <h4 class="heading">Configurações Principais</h4>
+                                        </div>
+                                        <div class="widget-body">
+                                            <div class="row">
+                                                <div class="span12">
+                                                    {{ form_row(form.campaignType) }}
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 10px;">
+                                                <div class="span12">
+                                                    {{ form_row(form.status) }}
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 10px;">
+                                                <div class="span12">
+                                                    {{ form_row(form.label) }}
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 10px;">
+                                                <div class="span12">
+                                                    {{ form_row(form.redirectUrl) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <div class="widget row-fluid">
+                                        <div class="widget-head">
+                                            <h4 class="heading">Banner Desktop</h4>
+                                        </div>
+                                        <div class="widget-body">
+                                            <div class="row">
+                                                <div class="span6">
+                                                    {{ form_row(form.landscapeButtonWidth) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="span6">
+                                                    {{ form_row(form.landscapeButtonSize) }}
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 10px;">
+                                                <div class="span6">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="wideti_AdminBundle_campaign_buttonColor">
+                                                            {{ form_label(form.landscapeButtonColor) }}
+                                                        </label>
+                                                        <div class="controls" style="width: 140px;">
+                                                            {{ form_widget(form.landscapeButtonColor) }}
+                                                            <input type="color" id="landscape-button-colorpicker"  style="width: 30px;" value="{{ callToAction.landscapeButtonColor  ? callToAction.landscapeButtonColor : '#ffffff' }}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="span6">
+                                                    {{ form_row(form.landscapeButtonLabelSize) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="span6">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="wideti_AdminBundle_campaign_buttonLabelColor">
+                                                            {{ form_label(form.landscapeButtonLabelColor) }}
+                                                        </label>
+                                                        <div class="controls" style="width: 140px;">
+                                                            {{ form_widget(form.landscapeButtonLabelColor) }}
+                                                            <input type="color" id="landscape-button-label-colorpicker" style="width: 30px;" value="{{ callToAction.landscapeButtonLabelColor ? callToAction.landscapeButtonLabelColor : '#000' }}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+
+                                            <div class="row" style="padding-left: 3%;">
+                                                <div class="span12" style="padding:.3em;">
+                                                    <div class="control-group span6 center">
+                                                        <h5>Alinhamento Horizontal</h5>
+                                                        <div id="landscape_horizontal-align" data-toggle="buttons-radio" class="btn-group">
+                                                            <button data-value="flex-start" class="btn btn-primary positionX {{  callToAction.landscapeButtonHorizontalAlign is defined and callToAction.landscapeButtonHorizontalAlign == "flex-start" ? "active" : "" }}" type="button">Esquerda</button>
+                                                            <button data-value="center" class="btn btn-primary positionX {{  callToAction.landscapeButtonHorizontalAlign is defined and callToAction.landscapeButtonHorizontalAlign == "center" ? "active" : "" }}" type="button">Centro</button>
+                                                            <button data-value="flex-end" class="btn btn-primary positionX {{  callToAction.landscapeButtonHorizontalAlign is defined and callToAction.landscapeButtonHorizontalAlign == "flex-end" ? "active" : "" }}" type="button">Direita</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="control-group span6 center">
+                                                        <h5>Alinhamento Vertical</h5>
+                                                        <div id="landscape_vertical-align" data-toggle="buttons-radio" class="btn-group">
+                                                            <button data-value="flex-start" class="btn btn-primary positionY {{  callToAction.landscapeButtonVerticalAlign is defined and callToAction.landscapeButtonVerticalAlign == "flex-start" ? "active" : "" }}" type="button">Topo</button>
+                                                            <button data-value="center" class="btn btn-primary positionY {{  callToAction.landscapeButtonVerticalAlign is defined and callToAction.landscapeButtonVerticalAlign == "center" ? "active" : "" }}" type="button">Centro</button>
+                                                            <button data-value="flex-end" class="btn btn-primary positionY {{  callToAction.landscapeButtonVerticalAlign is defined and callToAction.landscapeButtonVerticalAlign == "flex-end" ? "active" : "" }}" type="button">Fundo</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="container">
+                                                <div class="span7">
+                                                    <div class="control-group">
+                                                        {% if action == 'onCreate' %}
+                                                            <div id="simulate-landscape">
+                                                                <div style="position: absolute;">
+                                                                    <button disabled id="landscape-button-simulate" style="width:100px; height: 50px;font-size:12px;">Texto</button>
+                                                                </div>
+                                                                <img id="landscape-image" />
+                                                            </div>
+                                                        {% else %}
+                                                            <div id="simulate-landscape">
+                                                                <div style="position: absolute;">
+                                                                    <button disabled id="landscape-button-simulate"></button>
+                                                                </div>
+                                                                <img id="landscape-image" src="{{ asset("https://" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ imageMedias.preLoginImageDesktop) }}" style="height:100%;" />
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="span6">
+                                    <div class="widget row-fluid">
+                                        <div class="widget-head">
+                                            <h4 class="heading">Banner Mobile</h4>
+                                        </div>
+                                        <div class="widget-body">
+                                            <div class="row">
+                                                <div class="span6">
+                                                    {{ form_row(form.portraitButtonWidth) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="span6">
+                                                    {{ form_row(form.portraitButtonSize) }}
+                                                </div>
+                                            </div>
+                                            <div class="row" style="margin-top: 10px;">
+                                                <div class="span6">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="wideti_AdminBundle_campaign_buttonColor">
+                                                            {{ form_label(form.portraitButtonColor) }}
+                                                        </label>
+                                                        <div class="controls" style="width: 140px;">
+                                                            {{ form_widget(form.portraitButtonColor) }}
+                                                            <input type="color" id="portrait-button-colorpicker"  style="width: 30px;" value="{{ callToAction.portraitButtonColor ? callToAction.portraitButtonColor : '#ffffff' }}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="span6">
+                                                    {{ form_row(form.portraitButtonLabelSize) }}
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="span6">
+                                                    <div class="control-group">
+                                                        <label class="control-label" for="wideti_AdminBundle_campaign_buttonLabelColor">
+                                                            {{ form_label(form.portraitButtonLabelColor) }}
+                                                        </label>
+                                                        <div class="controls" style="width: 140px;">
+                                                            {{ form_widget(form.portraitButtonLabelColor) }}
+                                                            <input type="color" id="portrait-button-label-colorpicker" style="width: 30px;" value="{{ callToAction.portraitButtonLabelColor ? callToAction.portraitButtonLabelColor : '#000' }}" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+
+                                            <div class="row" style="padding-left: 3%;">
+                                                <div class="span12" style="padding:.3em;">
+                                                    <div class="control-group span6 center">
+                                                        <h5>Alinhamento Horizontal</h5>
+                                                        <div id="portrait_horizontal-align" data-toggle="buttons-radio" class="btn-group">
+                                                            <button data-value="flex-start" class="btn btn-primary positionX {{  callToAction.portraitButtonHorizontalAlign is defined and callToAction.portraitButtonHorizontalAlign == "flex-start" ? "active" : "" }}" type="button">Esquerda</button>
+                                                            <button data-value="center" class="btn btn-primary positionX {{  callToAction.portraitButtonHorizontalAlign is defined and callToAction.portraitButtonHorizontalAlign == "center" ? "active" : "" }}" type="button">Centro</button>
+                                                            <button data-value="flex-end" class="btn btn-primary positionX {{  callToAction.portraitButtonHorizontalAlign is defined and callToAction.portraitButtonHorizontalAlign == "flex-end" ? "active" : "" }}" type="button">Direita</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="control-group span6 center">
+                                                        <h5>Alinhamento Vertical</h5>
+                                                        <div id="portrait_vertical-align" data-toggle="buttons-radio" class="btn-group">
+                                                            <button data-value="flex-start" class="btn btn-primary positionY {{  callToAction.portraitButtonVerticalAlign is defined and callToAction.portraitButtonVerticalAlign == "flex-start" ? "active" : "" }}" type="button">Topo</button>
+                                                            <button data-value="center" class="btn btn-primary positionY {{  callToAction.portraitButtonVerticalAlign is defined and callToAction.portraitButtonVerticalAlign == "center" ? "active" : "" }}" type="button">Centro</button>
+                                                            <button data-value="flex-end" class="btn btn-primary positionY {{  callToAction.portraitButtonVerticalAlign is defined and callToAction.portraitButtonVerticalAlign == "flex-end" ? "active" : "" }}" type="button">Fundo</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="container">
+                                                <div class="span7">
+                                                    <div class="control-group">
+                                                        {% if action == 'onCreate' %}
+                                                            <div id="simulate-portrait">
+                                                                <div style="position: absolute;">
+                                                                    <button disabled id="portrait-button-simulate" style="width:100px; height: 50px;font-size:12px;">Texto</button>
+                                                                </div>
+                                                                <img id="portrait-image" />
+                                                            </div>
+                                                        {% else %}
+                                                            <div id="simulate-portrait">
+                                                                <div style="position: absolute;">
+                                                                    <button disabled id="portrait-button-simulate"></button>
+                                                                </div>
+                                                                <img id="portrait-image" src="{{ asset("//" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ imageMedias.preLoginImageMobile) }}" style="height:100%;" />
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="separator">
+
+                        <div class="form-actions right">
+                            <button id="cancel" type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                Cancelar
+                            </button>
+                            {{ form_widget(form.submit) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock%}
+
+
+
+
+
+
+{% block javascript %}
+{{ parent() }}
+
+<script type="text/javascript">
+    jQuery('document').ready(function(){
+        {% if action != 'onCreate' %}
+            initializeCallToActionSimulator();
+        {% else %}
+            $("#wideti_AdminBundle_campaign_call_to_action_redirectUrl").attr("required", false);
+        {% endif %}
+
+        if ('{{ action }}' == 'onCreate' || '{{ callToAction.id is null }}') {
+            $("#call-to-action-active-control").show();
+            $("#enableCallToAction").click(function() {
+                $("#call-to-action-active-control").hide();
+                $("#call-to-action-block").show();
+            });
+
+            $("#cancel").click(function() {
+                $("#call-to-action-block").hide();
+                $("#call-to-action-active-control").show();
+            });
+        } else {
+            $("#call-to-action-active-control").hide();
+            $("#call-to-action-block").show();
+        }
+
+        $("#landscape_horizontal-align button").click(function() {
+            $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonHorizontalAlign").val($(this).attr("data-value"));
+
+            $("#simulate-landscape").css({
+                "justify-content" : $(this).attr("data-value")
+            });
+        });
+
+        $("#landscape_vertical-align button").click(function() {
+            $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonVerticalAlign").val($(this).attr("data-value"));
+
+            $("#simulate-landscape").css({
+                "align-items" : $(this).attr("data-value")
+            });
+        });
+
+        $("#portrait_horizontal-align button").click(function() {
+            $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonHorizontalAlign").val($(this).attr("data-value"));
+
+            $("#simulate-portrait").css({
+                "justify-content" : $(this).attr("data-value")
+            });
+        });
+
+        $("#portrait_vertical-align button").click(function() {
+            $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonVerticalAlign").val($(this).attr("data-value"));
+
+            $("#simulate-portrait").css({
+                "align-items" : $(this).attr("data-value")
+            });
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_label").keyup(function() {
+            $("#portrait-button-simulate").html($(this).val());
+            $("#landscape-button-simulate").html($(this).val());
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonWidth").keyup(function() {
+            $("#portrait-button-simulate").css({
+                "width" : $(this).val() + "px"
+            });
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonWidth").keyup(function() {
+            $("#landscape-button-simulate").css({
+                "width" : $(this).val() + "px"
+            });
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonSize").keyup(function() {
+            $("#portrait-button-simulate").css({
+                "height" : $(this).val() + "px"
+            });
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonSize").keyup(function() {
+            $("#landscape-button-simulate").css({
+                "height" : $(this).val() + "px"
+            });
+        });
+
+        $("#portrait-button-colorpicker").change(function() {
+            $("#portrait-button-simulate").css({
+                "background-color" : $(this).val(),
+                "border-color" : $(this).val()
+            });
+
+            $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonColor").val($(this).val());
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonColor").change(function() {
+            $("#portrait-button-simulate").css({
+                "background-color" : $(this).val(),
+                "border-color" : $(this).val()
+            });
+        });
+
+        $("#landscape-button-colorpicker").change(function() {
+            $("#landscape-button-simulate").css({
+                "background-color" : $(this).val(),
+                "border-color" : $(this).val()
+            });
+
+            $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonColor")
+                .val($(this).val());
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonLabelSize").keyup(function() {
+            $("#portrait-button-simulate").css({
+                "font-size" : $(this).val() + "px"
+            });
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonLabelSize").keyup(function() {
+            $("#landscape-button-simulate").css({
+                "font-size" : $(this).val() + "px"
+            });
+        });
+
+        $("#portrait-button-label-colorpicker").change(function() {
+            $("#portrait-button-simulate").css({
+                "color" : $(this).val()
+            });
+
+            $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonLabelColor").val($(this).val());
+        });
+
+        $("#landscape-button-label-colorpicker").change(function() {
+            $("#landscape-button-simulate").css({
+                "color" : $(this).val()
+            });
+
+            $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonLabelColor").val($(this).val());
+        });
+
+        $("#wideti_AdminBundle_campaign_call_to_action_status").change(function() {
+           var required = false;
+           if ($("#wideti_AdminBundle_campaign_call_to_action_status").val() == 1) {
+               required = true;
+               $("#wideti_AdminBundle_campaign_call_to_action_label").attr("required", true);
+               $("#wideti_AdminBundle_campaign_call_to_action_redirectUrl").attr("required", true);
+           } else {
+               $("#wideti_AdminBundle_campaign_call_to_action_label").attr("required", false);
+               $("#wideti_AdminBundle_campaign_call_to_action_redirectUrl").attr("required", false);
+           }
+
+           changeRequiredFieldsOnCallToActionForm(required);
+        });
+
+        changeImagesSimulation("#wideti_AdminBundle_campaign_call_to_action_campaignType");
+
+        $("#wideti_AdminBundle_campaign_call_to_action_campaignType").change(function() {
+            changeImagesSimulation(this);
+        });
+    });
+
+    function changeImagesSimulation(field) {
+        if ($(field).val() == 1) {
+            $("#portrait-image").attr("src", $("#imagePath").val() + $("#hpreLoginImageMobile").val());
+            $("#landscape-image").attr("src", $("#imagePath").val() + $("#hpreLoginImageDesktop").val());
+        } else {
+            $("#portrait-image").attr("src", $("#imagePath").val() + $("#hposLoginImageMobile").val());
+            $("#landscape-image").attr("src", $("#imagePath").val() + $("#hposLoginImageDesktop").val());
+        }
+    }
+
+    function changeRequiredFieldsOnCallToActionForm(required) {
+        changePortraitRequiredFields(required);
+        changeLandscapeRequiredFields(required);
+    }
+
+    function changePortraitRequiredFields(required) {
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonWidth").attr("required", required);
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonSize").attr("required", required);
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonColor").attr("required", required);
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonLabelSize").attr("required", required);
+        $("#wideti_AdminBundle_campaign_call_to_action_portraitButtonLabelColor").attr("required", required);
+    }
+
+    function changeLandscapeRequiredFields(required) {
+        $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonWidth").attr("required", required);
+        $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonSize").attr("required", required);
+        $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonColor").attr("required", required);
+        $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonLabelSize").attr("required", required);
+        $("#wideti_AdminBundle_campaign_call_to_action_landscapeButtonLabelColor").attr("required", required);
+    }
+
+    {% if action != 'onCreate' %}
+        function initializeCallToActionSimulator()
+        {
+            $("#portrait-button-simulate").html("{{ callToAction.label }}");
+            $("#landscape-button-simulate").html("{{ callToAction.label }}");
+
+            $("#portrait-button-simulate").css({
+                "width" : "{{ callToAction.portraitButtonWidth }}",
+                "height" : "{{ callToAction.portraitButtonSize }}",
+                "background-color" : "{{ callToAction.portraitButtonColor }}",
+                "border-color" : "{{ callToAction.portraitButtonColor }}",
+                "font-size" : "{{ callToAction.portraitButtonLabelSize }}",
+                "color" : "{{ callToAction.portraitButtonLabelColor }}"
+            });
+
+            $("#landscape-button-simulate").css({
+                "width" : "{{ callToAction.landscapeButtonWidth }}",
+                "height" : "{{ callToAction.landscapeButtonSize }}",
+                "background-color" : "{{ callToAction.landscapeButtonColor }}",
+                "border-color" : "{{ callToAction.landscapeButtonColor }}",
+                "font-size" : "{{ callToAction.landscapeButtonLabelSize }}",
+                "color" : "{{ callToAction.landscapeButtonLabelColor }}"
+            });
+
+            $("#simulate-landscape").css({
+                "justify-content" : "{{ callToAction.landscapeButtonHorizontalAlign }}",
+                "align-items" : "{{ callToAction.landscapeButtonVerticalAlign }}"
+            });
+
+            $("#simulate-portrait").css({
+                "justify-content" : "{{ callToAction.portraitButtonHorizontalAlign }}",
+                "align-items" : "{{ callToAction.portraitButtonVerticalAlign }}"
+            });
+        }
+    {% endif %}
+
+
+    console.log('teste')
+            var imageMedias = {{ imageMedias|json_encode|raw }};
+            
+            console.log('teste');
+            console.log('imageMedias:', imageMedias);</script>
+{% endblock %}

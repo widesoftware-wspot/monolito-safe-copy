@@ -1,0 +1,72 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block translation %}
+    {% if (config.translation == 1) %}
+        <div class="language-box">
+            {{ 'wspot.default.selected_language'|trans }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <style>
+        @media (max-width: 460px) {
+            body {
+                line-height: 15px !important;
+                font-size: 10pt;
+            }
+
+            #loginBox {
+                overflow: scroll;
+                overflow-x: hidden;
+                border-radius: 5px;
+                height: auto;
+                min-height: 55vh !important;
+                padding: 0 !important;
+            }
+
+            h1, h2, h3,
+            .content-center {
+                line-height: 26px !important;
+            }
+        }
+
+        h1, h2, h3,
+        .content-center {
+            line-height: 26px !important;
+        }
+    </style>
+{% endblock %}
+
+{% block container %}
+    <section id="terms" class="container terms">
+        <h2>{{ 'wspot.consent_term.page_title'|trans }}</h2>
+        <div class="content-terms">
+            {{ 'wspot.consent_term.page_content'|trans | replace({'%formUrl%': formUrl, '%admin_email%': config.from_email, '%conditions%': conditionsAsHTML(consent) }) | raw }}
+        </div>
+        <p style="padding-top:.2em;text-align:center;">
+            <button class="btn button-back" onclick="window.history.back();">< {{ 'wspot.generic.go_back'|trans }}</button>
+            <button class="btn button" onclick="accept();">{{ 'wspot.generic.confirm'|trans }}</button>
+        </p>
+
+        <form action="{{ path('frontend_consent_sign') }}" id="signForm" hidden>
+            <input type="text" name="guest" value="{{ guest }}">
+            <input type="text" name="status" value="ACTIVE">
+            <input type="text" name="isSignProcess" value="true">
+        </form>
+    </section>
+{% endblock %}
+{% block scripts %}
+    <script>
+
+        function accept() {
+            var form = document.getElementById("signForm");
+            form.submit();
+        }
+
+    </script>
+{% endblock %}
+
+{% block footer %}{% endblock %}

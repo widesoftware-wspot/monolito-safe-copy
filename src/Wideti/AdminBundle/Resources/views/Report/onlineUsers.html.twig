@@ -1,0 +1,328 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('bundles/admin/frontend/css/online-report.css') }}">
+{% endblock %}
+
+{% block custom_fields_checkbox %}
+    <div id="collapse-checkboxes">
+        <a data-toggle="collapse" href="#menu_components" id="collapse-anchor" onclick="return runMyFunction();"><i id="icon-collapse" class="far fa-plus-square"></i><span> Alterar elementos da tabela</span></a>
+        <ul class="collapse" id="menu_components">
+            <div id="grpChkBox">
+                <label class="container-checkbox">Início
+                    <input type="checkbox" name="inicio" />
+                    <span class="checkmark"></span>
+                </label>
+                <label class="container-checkbox">IP
+                    <input type="checkbox" name="ip" />
+                    <span class="checkmark"></span>
+                </label>
+                <label class="container-checkbox">Ponto de Acesso
+                    <input type="checkbox" name="ap" />
+                    <span class="checkmark"></span>
+                </label>
+                <label class="container-checkbox">
+                    <input type="checkbox" name="tempo" />Tempo de Conexão
+                    <span class="checkmark"></span>
+                </label>
+                {% for customField in customFieldNames  %}
+                    {% if customField.name.pt_br != loginField.names['pt_br'] %}
+                        adssadasdsa
+                        <label class="container-checkbox">{{ customField.name.pt_br }}
+                            <input type="checkbox" name="{{ customField.identifier }}"  />
+                            <span class="checkmark"></span>
+                        </label>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </ul>
+    </div>
+{% endblock %}
+
+{% block dataTitle %}
+    Visitantes Online
+{% endblock %}
+
+{% block buttonRight %}
+    <span id="refresh" style="float: right; margin-right: 10px; margin-top: 2px; cursor:pointer;">
+        <a>
+            <b class="status">{% if(app.request.cookies.get('onlineUsersRefresh') == "true") %}Desativar{% else %}Ativar{% endif %}</b> atualizações automáticas
+        </a>
+    </span>
+{% endblock %}
+
+{% block resultsInfo %}
+    <div style="margin-bottom: 10px;">
+        {{ (pagination.getTotalItemCount) ? "Foram encontrados "~ pagination.getTotalItemCount ~" registros." : "Não foram encontrados resultados no período selecionado." }} <span id="tooltip-online-visitor" class="tooltip-wrapper" style="right: 0%;top: 3%;"> <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="A contagem de visitantes online pode levar até 90 segundos para ser atualizada."></i></span><br>
+    </div>
+{% endblock %}
+
+{% block tableHead %} Visitantes Online {% endblock %}
+
+{% block thead %}
+    <th class="th-login-field">{{ loginField.names['pt_br'] }}</th>
+    <th class="th-inicio">Início</th>
+    <th class="th-ip">IP</th>
+    <th class="th-ap">Ponto de Acesso</th>
+    <th class="th-tempo">Tempo de Conexão</th>
+    {% for customField in customFieldNames  %}
+        {% if customField.name.pt_br != loginField.names['pt_br'] %}
+            <th class="th-{{ customField.identifier }}">{{ customField.name.pt_br }}</th>
+        {% endif %}
+    {% endfor %}
+    {% if enableDisconnectGuest %}
+        <th class="th-acao">Ação</th>
+    {% endif %}
+{% endblock %}
+
+{% block tbody %}
+    {% for key,access in pagination %}
+        <tr class="gradeX">
+            <td><a title="Visualizar dados do Visitante" href="{{ path('admin_visitantes_show', {'id': access.guest_id }) }}">{{ access['guest_' ~ loginField.identifier] }}</a></td>
+            {% if access.timezone is not empty %}
+                <td class="inicio">{{ access.acctstarttime | date("d/m/Y H:i:s", access.timezone)}}<div class="timezone">{{ access.timezone }}</div></td>
+            {% else %}
+                <td class="inicio">{{ access.acctstarttime | date("d/m/Y H:i:s", 'America/Sao_Paulo')}}<div class="timezone">America/Sao_Paulo</div></td>
+            {% endif %}
+            <td class="ip">{{ access.framedipaddress }}</td>
+            <td class="ap">{{ access.calledstation_name }}</td>
+            <td class="tempo">{{ access.acctstarttime | dateDiff  }}</td>
+            {% for customField in customFieldNames  %}
+                {% if customField.identifier in access.guest_properties|keys %}
+                    {% if customField.identifier != loginField.identifier%}
+                        {% if customField.type == "date"  %}
+                            <td>{{ access.guest_properties[customField.identifier]|convertMongoDate }}</td>
+                        {% else %}
+                            <td>{{ access.guest_properties[customField.identifier] }}</td>
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <td> - </td>
+                {% endif %}
+            {% endfor %}
+            {% if enableDisconnectGuest %}
+                <th id="acao">
+                    <button data-toggle="tooltip" data-placement="top" data-original-title="Desconectar visitante" {% if access.ap_public_ip == '' %}disabled{% endif %} class="btn btn-desconectar btn-primary" data-id='{{ {"sessionid": access.guest_sessionid, "appublicip": access.ap_public_ip, "username": access.guest_elasticsearch_username, "framedip": access.framedipaddress, "identifier": access['guest_' ~ loginField.identifier] } | json_encode | raw }}'>
+                        <img alt="Ícone de desconexão de wifi" class="desconectar-usuario-icon" src="{{ asset('bundles/admin/frontend/images/disconnect-user-icon.svg') }}"/>
+                    </button>
+                </th>
+            {% endif %}
+        </tr>
+    {% else %}
+        <tr class="gradeX">
+            <td colspan="6">Nenhum visitante online.</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% if app.request.get('filter')['access_point'] is defined  %}
+        {%  set filter = app.request.get('filter')['access_point'] %}
+    {% else %}
+        {%  set filter = "" %}
+    {% endif %}
+
+    {% if pagination.items | length > 0 %}
+        {% if(client.status == 2) %}
+            <div class="poc-report-lines">
+                <p>Apenas {{ maxReportLines }} resultados serão exibidos pois sua conta está em período de Teste.</p>
+            </div>
+        {% endif %}
+        <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+            <form name="export" method="get" action="{{ path('admin_export_online_guests') }}" class="form-inline" novalidate="novalidate">
+                <div class="modal-body">
+                    <input type="hidden" id="filters" name="filters" value="{{ path('admin_export_online_guests', app.request.query.all) }}"/>
+                    <input type="hidden" id="fileFormat" name="fileFormat" value="" />
+                    <h3>Exportação de relatório</h3>
+                    <div class="row-fluid">
+                        <div class='span6'>
+                            <div class='control-group'>
+                                <label class='control-label required' for='endDate' aria-required='true'>Exportar no formato: </label>
+                                <div class='controls'>
+                                    <select name="charset" id="charset">
+                                        <option value="windows">Windows/Mac</option>
+                                        <option value="linux">Linux</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <div style="padding: 0.5em; background-color: #eeeeee; margin-top: 10px">
+                                {% if consent.hasError %}
+                                    <p style="font-weight: bolder">Ao exportar os dados você está de acordo com as finalidades de uso do seu termo de consentimento.</p>
+                                {% else %}
+                                    <p style="font-weight: bolder">Ao exportar os dados você está de acordo com as finalidades de uso abaixo:</p>
+                                    <ul id="consent-list">
+                                        {% for condition in consent.conditions %}
+                                            <li>{{ condition.description }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="close" data-handler="1" class="btn btn-default">Cancelar</a>
+                    <button id="export" type="submit" class="btn btn-primary">Exportar</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+    {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+
+    {% embed "AdminBundle::filesReportEmbed.html.twig" %}
+            {% block exportar %}
+                {% if pagination.items | length > 0  %}
+                    <div class="loadReportFiles">
+                        <h3>Download de Relatórios  &nbsp &nbsp<a data-toggle="tooltip" data-placement="top" data-original-title="Atualizar Listagem" id="refresh-report-list" class="glyphicons refresh" ><i></i></a></h3>
+                        <div class="btn-group btn-block">
+                            <div class="leadcontainer">
+                                <button class="btn dropdown-lead btn-primary center">Exportar</button>
+                            </div>
+                            <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span> </a>
+                            <ul class="dropdown-menu pull-right">
+                                <li class="center"><a class="file" data-format="Csv" data-placement="right" href="#">CSV</a></li>
+                                <li class="center"><a class="file" data-format="Xlsx" data-placement="right" href="#">EXCEL</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="export-generating-alert"></div>
+                {% endif %}
+            {% endblock %}
+
+    {% endembed %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script>
+        function desconectarUsuario(data) {
+            $.ajax({
+                type: 'POST',
+                url: '{{ path("disconnect_user") }}',
+                data: data,
+                success: function () {
+                    $.gritter.add({
+                    title: 'Aviso!',
+                    text: `Processo de desconexão do visitante ${data.identifier} iniciado, ative as atualizações automáticas para acompanhar se o visitante foi desconectado`
+                    });
+                },
+                error: function (e) {
+                    $.gritter.add({
+                    title: 'Aviso!',
+                    text: `Erro ao iniciar desconexão do visitante ${data.identifier}, tente novamente mais tarde ou contate o suporte`
+                    });
+                }
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.btn-desconectar').forEach(function (btn) {
+                btn.addEventListener('click', function () {
+                    bootbox.setLocale('br');
+                    const data = JSON.parse(this.getAttribute("data-id"));
+                    bootbox.confirm(
+                        "<div>\n"+
+                        "<h3>Desconectar visitante</h3>\n"+
+                        `<p>Você tem certeza que gostaria de desconectar o visitante ${data.identifier}?</p>\n`+
+                        "</div>",
+                        function(result) {
+                            if (result) {
+                                desconectarUsuario(data);
+                        }
+                    }).addClass("desconectar-confirm");
+                });
+            });
+        });
+
+        $(function () {
+            var $chk = $("#grpChkBox input:checkbox");
+            var $tbl = $("#someTable");
+            var $tblhead = $("#someTable th");
+            $chk.prop('checked', true);
+            $chk.click(function () {
+                var colToHide = $tblhead.filter(".th-" + $(this).attr("name"));
+                var index = $(colToHide).index();
+                $tbl.find('tr :nth-child(' + (index + 1) + ')').toggle();
+            });
+        });
+
+        function runMyFunction() {
+            var iconCollapse = $("#icon-collapse");
+            var iconCollapseClass = iconCollapse.attr('class');
+            if (iconCollapseClass == 'far fa-plus-square') {
+                $("#icon-collapse").removeClass('far fa-plus-square').addClass('far fa-minus-square');
+            } else {
+                $("#icon-collapse").removeClass('far fa-minus-square').addClass('far fa-plus-square');
+            }
+        }
+    </script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot.report.files.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/select2/select2.js') }}"></script>
+    <script>
+        jQuery(document).ready(function(){
+            $('#refresh').on('click', function(){
+                if(document.cookie.indexOf("onlineUsersRefresh=true") > -1){
+                    document.cookie = "onlineUsersRefresh=false";
+                }else{
+                    document.cookie = "onlineUsersRefresh=true";
+                }
+                location.reload();
+            });
+
+            if (document.cookie.indexOf('onlineUsersRefresh=true') > -1) {
+                setInterval(
+                    function() {
+                        if (jQuery('#FreshWidget').css('display') === 'none') {
+                            location.reload();
+                        }
+                    }, 30000);
+            }
+
+            /**
+             * Ajax Load Report Files on S3
+             * Function created to view the generated reports that are available for download in S3.
+             */
+            loadReportFiles('{{ reportType }}');
+
+            $('#refresh-report-list').click(function(){
+                loadReportFiles('{{ reportType }}');
+            });
+
+            $('a.file').click(function() {
+                var format = $(this).data('format');
+                bootbox
+                        .dialog($('#modal'))
+                        .on('shown.bs.modal', function() {
+                            $('.bootbox.modal.fade.in').removeAttr('style');
+                            $('#modal').show();
+                            $('#fileFormat').val(format);
+                        })
+                ;
+            });
+
+            $('#close').click(function() {
+                bootbox.hideAll();
+                $('meta[http-equiv=refresh]').attr('content', '0');
+            });
+
+            $('#export').click(function() {
+                $('#export-generating-alert').addClass('alert alert-primary export-class');
+                $('#export-generating-alert').html('<center>Aguarde! Estamos processando</center>' +
+                                                 '<center>sua(s) solicitação(ões).</center>');
+                $('#listExport').html('');
+                bootbox.hideAll();
+
+                window.setTimeout(function(){
+                    $('#export-generating-alert').hide();
+                }, 5000);
+            });
+        })
+    </script>
+{% endblock %}
+

@@ -1,0 +1,211 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Visitantes'} %}
+
+    <div class="innerLR">
+
+        <div class="widget widget-tabs border-bottom-none">
+            <!-- Widget heading -->
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>Editar</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- // Widget heading END -->
+            <div class="widget-body">
+
+                {{ form_start(edit_form, { 'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate', 'id': 'guestForm'} }) }}
+                {% form_theme edit_form 'AdminBundle:Form:fields.html.twig' %}
+
+                <!-- Widget -->
+                <div class="widget">
+
+                    <!-- Widget heading -->
+                    <div class="widget-head">
+                        <h4 class="heading">Edição dos dados de visitante.</h4>
+                    </div>
+                    <!-- // Widget heading END -->
+
+                    <div class="widget-body">
+                        {% if (entity.emailIsValid == false and entity.status == 0) %}
+                            <div class="row-fluid">
+                                <div class="span12 alert alert-yellow">
+                                    O e-mail deste visitante foi classificado como <b>Inválido</b>, com isso o Status foi definido como <b>Inativo</b> e o acesso só será liberado após ele informar um e-mail válido.
+                                    <br/>
+                                    Caso deseje liberar o acesso mesmo assim, basta alterar o Status para <b>Ativo</b>.
+                                    <br/><br/>
+                                    Lembrando que a validação do e-mail é feita no intuito de prover à você, nosso Cliente, uma base com cadastros confiáveis, isso é essencial caso queira utilizar os e-mails para ações de E-mail Marketing.
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {{ form_errors(edit_form) }}
+
+                        <!-- Row -->
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                            <div class="span6">
+                                <input type="hidden" id="locale" value="pt_br"/>
+                                {% if (entity.status == 0 or entity.status == 1) %}
+                                    {{ form_row(edit_form.status) }}
+                                {% else %}
+                                    <div class="control-group">
+                                        <label class="control-label">Status</label>
+                                        <div class="controls">
+                                            <input type="text" class="span12" value="{{ entity.status|guest_status }}" disabled>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {{ form_row(edit_form.group) }}
+                                {{ form_row(edit_form.locale) }}
+                                {% if (config.authorize_email == 1) %}
+                                    {{ form_row(edit_form.authorizeEmail) }}
+                                {% endif %}
+                                {{ form_row(edit_form.registrationMacAddress) }}
+                            </div>
+
+                            <div class="span6">
+                                {% for property in edit_form.properties %}
+                                    {% if (property.vars.id == 'wspot_guest_properties_email') %}
+                                        {{ form_row(property) }}
+                                        <div id="email_validate"></div>
+                                    {% endif %}
+
+                                    {% if (property.vars.id == 'wspot_guest_properties_document') %}
+                                        <div id="document" style="margin-bottom: 20px;">
+                                            {{ form_row(property) }}
+                                        </div>
+                                    {% endif %}
+                                    {% if (property.vars.multiple is defined and property.vars.multiple == true) %}
+                                        {{ form_row(property, { 'attr': {'class': 'chosen-select', 'data-placeholder': property.vars.label}, 'label_attr': {'class': 'control-label'} }) }}
+                                    {% endif %}
+
+                                    {{ form_row(property) }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <!-- // Row END -->
+
+                        <div class="row-fluid"></div>
+
+                        <hr class="separator">
+
+                        <div class="row-fluid uniformjs" style="margin:0 auto;">
+                            <!-- Column -->
+                            <div class="span5" style="margin: 20px 50px ;">
+                                <h4 style="margin-bottom: 10px;">Aviso!</h4>
+                                <label>
+                                    <span>
+                                        O campo <strong>idioma</strong> define a linguagem na qual serão enviadas informações para o visitante, via email e/ou SMS.
+                                        Ao selecionar "inglês" ou "espanhol", o cadastro de visitantes pelo número do passaporte será habilitado.
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Form actions -->
+                        <div class="form-actions right">
+
+                            <a href="{{ app.request.headers.get('referer') }}">
+                                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                    Cancelar
+                                </button>
+                            </a>
+
+                            {{ form_widget(edit_form.submit) }}
+                        </div>
+                        <!-- // Form actions END -->
+                    </div>
+
+                </div>
+                <!-- // Widget END -->
+
+                {{ form_end(edit_form) }}
+
+            </div>
+        </div>
+    </div>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $('#wspot_guest_properties_name').on('change keyup', function() {
+            var string = $(this).val().replace(/[0-9]/g, '');
+            string = string.replace(/\.(?=.*\.)/, '');
+            $(this).val(string);
+        });
+
+        $('#wspot_guest_locale').on('change keyup', function() {
+            if ($(this).val() == 'pt_br') {
+                $('.label_document').html('CPF');
+                $('#wspot_guest_properties_document').mask('99999999999');
+            } else {
+                $('.label_document').html('Passaporte');
+                $('#wspot_guest_properties_document').remove();
+                $('#wspot_guest_properties_document-error').remove();
+                $('#document .controls').append('<input type="text" id="wspot_guest_properties_document" name="wspot_guest[properties][document]" class="span12" required />');
+            }
+        });
+
+        jQuery(document).ready(function(){
+            var bounceValidator = '{{ bounceValidator }}';
+
+            if (bounceValidator == 1) {
+                $('#wspot_guest_properties_email').change(function() {
+                    setTimeout(function(){
+                        if (!$('#wspot_guest_properties_email').hasClass('error')) {
+                            $('#wspot_guest_submit').attr('onclick', 'return false');
+                            $('#email_validate').empty().prepend('<label id="email_validate_process" class="error info" for="wspot_guest_properties_email">{{ "wspot.invalid_email.email_validate_process"|trans }}</label>');
+
+                            var data  = {
+                                'email' : $('#wspot_guest_properties_email').val()
+                            };
+
+                            var route = Routing.generate('email_validate');
+
+                            $.ajax({
+                                type: "POST",
+                                url: route,
+                                data: data,
+                                dataType: "json",
+                                timeout: 10000,
+                                success: function(response)
+                                {
+                                    $('#email_validate').empty().prepend('<label id="email_validate_success" class="error success" for="wspot_guest_properties_email">{{ "wspot.invalid_email.email_validate_success"|trans }}</label>');
+                                    $('#wspot_guest_emailValidate').val(response);
+                                    $('#wspot_guest_submit').removeAttr('onclick');
+                                },
+                                error: function(response, status)
+                                {
+                                    if (status == 'timeout') {
+                                        $('#email_validate').empty();
+                                        $('#wspot_guest_submit').removeAttr('onclick');
+                                    } else {
+                                        $('#wspot_guest_emailValidate').val('');
+                                        $('#email_validate').empty().prepend('<label id="email_validate_error" class="error-validate" for="wspot_guest_properties_email">{{ "wspot.invalid_email.email_validate_error"|trans }}</label>');
+                                    }
+                                }
+                            });
+                        }
+                    }, 100);
+                });
+            }
+        });
+    </script>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+    <script>
+        require(["dojo/query", "dojo/domReady!"], function(query) {
+            query(".chosen-select").forEach(function(node) {
+                dojo.query(node).chosen({batch_select: true});
+            });
+        });
+    </script>
+{% endblock %}

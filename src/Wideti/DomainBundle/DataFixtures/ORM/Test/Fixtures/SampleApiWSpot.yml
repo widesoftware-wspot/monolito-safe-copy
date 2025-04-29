@@ -1,0 +1,5 @@
+Wideti\DomainBundle\Entity\ApiWSpot:
+  ApiWSpot:
+    client: "@Client"
+    name: 'Mambo WiFi'
+    token: 'c165e22c6fa9c9dd8547aaea79efe884'

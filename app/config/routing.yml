@@ -1,0 +1,42 @@
+api:
+    resource: "@ApiBundle/Resources/config/routing.yml"
+    prefix:   /api
+
+panel:
+    resource: "@PanelBundle/Resources/config/routing.yml"
+    prefix:   /panel
+
+frontend:
+    resource: "@FrontendBundle/Resources/config/routing.yml"
+    prefix:   /
+
+backend:
+  resource: "@AdminBundle/Resources/config/routing.yml"
+  prefix:   /admin
+
+admin_oauth_login:
+  path: /oauth-admin/login
+  defaults: { _controller: wspot.admin.controller.oauth:indexAction }
+
+admin_oauth_callback:
+  path: /oauth-admin/callback
+  defaults: { _controller: wspot.admin.controller.oauth:callbackAction }
+
+admin_oauth_redirect:
+  path: /oauth-admin/redirect
+  defaults: { _controller: wspot.admin.controller.oauth:redirectAction }
+
+fos_js_routing_js:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+remove_trailing_slash:
+    path: /{url}
+    defaults: { _controller: AdminBundle:Redirecting:removeTrailingSlash }
+    requirements:
+        url: .*/$
+    methods: [GET]
+
+client_validate_ap:
+    path:     internal/clients/{id}/access-points/{identifier}/check
+    defaults: { _controller: wspot.api.controller.client:validateClientAp}
+    methods: [POST]

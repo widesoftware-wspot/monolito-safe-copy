@@ -1,0 +1,6 @@
+wspot:
+  admin_page:
+    invalid_date: 'Please insert a valid date.'
+
+  auth_code:
+      invalid: 'Invalid code! Try again please.'

@@ -1,0 +1,71 @@
+admin_visitantes:
+    path:  /{page}
+    defaults: { _controller: wspot.admin.controller.visitantes:indexAction, page:1 }
+    requirements:
+        page: \d+
+
+admin_visitantes_show:
+    path:  /{id}/show/{page}
+    defaults: { _controller: wspot.admin.controller.visitantes:showAction, page:1 }
+    requirements: { methods: post|get }
+    options:
+        expose: true
+
+guest_password_reset:
+    path:  reset/{id}/password
+    defaults: { _controller: wspot.admin.controller.visitantes:resetPasswordAction }
+    options:
+        expose: true
+
+guest_resend_confirmation_url:
+    path:  resend/{id}/confirmation-url
+    defaults: { _controller: wspot.admin.controller.visitantes:resendConfirmationUrlAction }
+    options:
+        expose: true
+
+guest_confirmation_by_admin:
+    path:  confirmation/{id}
+    defaults: { _controller: wspot.admin.controller.visitantes:confirmationByAdminAction }
+    options:
+        expose: true
+
+admin_visitantes_create:
+    path:  /create
+    defaults: { _controller: wspot.admin.controller.visitantes:createAction }
+    requirements: { methods: post|get }
+
+admin_visitantes_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.visitantes:editAction }
+
+admin_visitantes_print:
+    path:  /{id}/print
+    defaults: { _controller: wspot.admin.controller.visitantes:printAction }
+
+admin_visitantes_detail_print:
+    path:  /{accessId}/{status}/printaccessdetail/
+    defaults: { _controller: wspot.admin.controller.visitantes:printDetailAction }
+
+admin_visitantes_detail:
+    path:  /detail/{accessId}/{status}
+    defaults: { _controller: wspot.admin.controller.visitantes:detailAction, status: 'closed' }
+    requirements:
+      methods: POST|GET
+
+admin_visitantes_export:
+    path: /export-guests
+    defaults: { _controller: wspot.admin.controller.visitantes:exportGuestsAction }
+
+admin_campaigns_viewed_by_guest:
+    path: /admin_campaigns_viewed_by_guest
+    defaults: { _controller: wspot.admin.controller.visitantes:campaignsViewedByGuests }
+    options:
+      expose: true
+
+admin_delete_guests:
+    path: /delete-guests/{id}
+    defaults: { _controller: wspot.admin.controller.visitantes:deleteAction}
+    options:
+        expose: true
+    requirements:
+        methods: POST

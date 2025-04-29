@@ -1,0 +1,20 @@
+Wideti\DomainBundle\Document\Group\Group:
+  Group1:
+    name: "Visitantes"
+    shortcode: "guest"
+    default: true
+    inAccessPoints: false
+    configurations:
+      - "@BlockPerTime1"
+      - "@ValidityAccess1"
+      - "@BandWidth1"
+
+  Group2:
+    name: "Funcionários"
+    shortcode: "employee"
+    default: true
+    inAccessPoints: false
+    configurations:
+      - "@BlockPerTime2"
+      - "@ValidityAccess2"
+      - "@BandWidth2"

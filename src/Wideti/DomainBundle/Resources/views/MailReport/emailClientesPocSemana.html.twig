@@ -1,0 +1,180 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="font-weight: bold;padding-right:20px;padding-left: 20px;font-size:25px;line-height:46px;color:#444444;font-family:Arial;">
+                        <a style="font-size:35px;text-decoration: none;">Atenção.</a><br>
+                        <a style="font-size:25px;text-decoration: none;color: #ec213a;">Clientes encerrando a POC esta semana.</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#909090;font-family:Arial;">
+                        Ol&aacute;. Essa mensagem &eacute; apenas para informar quais clientes estão encerrando a POC essa semana. <br>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding-left: 30px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    {% set previous = "" %}
+                    {% for entity in entities %}
+                        {% if previous != entity.pocEndDate %}
+                            {% if not loop.first %}
+                                </table></td></tr>
+                            {% endif %}
+                        <tr>
+                            <td style="padding-top:50px;padding-right:5px;padding-left: 5px;font-size:12px;line-height:30px;color:#909090;font-family:Arial;text-align: justify;">
+                                <a style="color: #ec213a; font-size:20px;font-weight: bold; text-decoration: none;">
+                                    {{ entity.pocEndDate | date("d/m/Y - l") }}
+                                </a>
+                                <table style="border: 1px solid #c9cccf; max-width: 100%;">
+                                    <tr>
+                                        <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;width: 250px;">Razao Social</td>
+                                        <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Dominio</td>
+                                        <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Data Criação</td>
+                                        <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Tempo de POC</td>
+                                    </tr>
+                        {% endif %}
+                                    <tr>
+                                        <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;width: 250px;text-align: left;">{{ entity.company |slice(0, 40) }}</td>
+                                        <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.domain }}</td>
+                                        <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.created | date("d/m/Y") }}</td>
+                                        <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.created | dateDiff()  }}</td>
+                                    </tr>
+                        {% set previous = entity.pocEndDate %}
+                        {% if loop.last %}
+                                </table>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% else %}
+                        <table cellspacing="0" cellpadding="0" border="0">
+                            <tbody>
+                            <tr>
+                                <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#909090;font-family:Arial;">
+                                    <strong><i>Infelizmente nenhum cliente foi encontrado.</i></strong> <br>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    {#expirados#}
+
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="font-weight: bold;padding-right:20px;padding-left: 20px;font-size:25px;line-height:46px;color:#444444;font-family:Arial;">
+                        <a style="font-size:25px;text-decoration: none;color: #ec213a;">Clientes Com POC expirada a mais de uma semana.</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#909090;font-family:Arial;">
+                        <a style="font-size:35px;text-decoration: none;"><br>Os clientes abaixo estão com POC vencidas a mais de uma semana e precisam ser tratados com urgência.</a><br>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding-left: 30px;">
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+            {% for entity in expireds %}
+            <tr>
+                <td style="padding-top:50px;padding-right:5px;padding-left: 5px;font-size:12px;line-height:30px;color:#909090;font-family:Arial;text-align: justify;">
+                    {% if loop.first %}
+                        <table style="border: 1px solid #c9cccf; max-width: 100%;">
+                            <tr>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;width: 250px;">Razao Social</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Dominio</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Data Criação</td>
+                                <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center; font-weight: bold;">Tempo de POC</td>
+                            </tr>
+                    {% endif %}
+                        <tr>
+                            <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;width: 250px;text-align: left;">{{ entity.company |slice(0, 40) }}</td>
+                            <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.domain }}</td>
+                            <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.created | date("d/m/Y") }}</td>
+                            <td style="border: 1px solid #c9cccf;padding-left:5px;padding-right:5px;text-align: center;">{{ entity.created | dateDiff()  }}</td>
+                        </tr>
+                    {% if loop.last %}
+                        </table></td>
+                    {% endif %}
+            </tr>
+    {% else %}
+        <table cellspacing="0" cellpadding="0" border="0">
+            <tbody>
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:20px;line-height:30px;color:#909090;font-family:Arial;">
+                    <strong><i>Infelizmente nenhum cliente foi encontrado.</i></strong> <br>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    {% endfor %}
+    </tbody>
+    </table>
+    </td>
+    </tr>
+
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:14px;line-height:18px;color:#909090;font-family:Arial;">Se precisar de ajuda ou caso n&atilde;o tenha solicitado o cadastro na Mambo Wifi, por favor entre em contato conosco pelo email <a href="mailto:suporte@mambowifi.com" style="text-decoration: none; color: #ec213a">suporte@mambowifi.com</a></td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:14px;line-height:18px;color:#444444;font-family:Arial;">Teremos o maior prazer em ajud&aacute;-lo.</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:14px;line-height:18px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:14px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Equipe Mambo Wifi</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

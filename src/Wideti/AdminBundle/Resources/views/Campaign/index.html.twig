@@ -1,0 +1,200 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .gradeX td {
+            vertical-align: middle;
+            padding: 1vh;
+        }
+    </style>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block dataTitle %}
+    Campanhas
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('campaign_new')}}" style="float: right; margin-top: 2px;"
+       class="btn btn-primary btn-icon glyphicons circle_plus">
+        <i></i>Cadastrar</a>
+{% endblock %}
+
+{% block filter %}
+    {{ parent() }}
+    {% form_theme filterForm 'AdminBundle:Form:fields.html.twig' %}
+    {{ form_start(filterForm) }}
+    {{ form_row(filterForm.start_date) }}
+    {{ form_row(filterForm.end_date) }}
+    {{ form_row(filterForm.name) }}
+    {{ form_row(filterForm.status) }}
+    {{ form_row(filterForm.access_points) }}
+    {{ form_row(filterForm.type) }}
+    {{ form_row(filterForm.filtrar) }}
+    {{ form_end(filterForm) }}
+{% endblock %}
+
+{% block messagebar %}
+    <h4 style="color: #ce4844;">Total de campanhas registradas: {{ totalCampaignCount }}</h4>
+    <h5 style="color: #1b809e;">Total de campanhas ativas: {{ activeCampaignCount }}</h5>
+    <h5 style="color: #1b809e;">Total de campanhas inativas: {{ inactiveCampaignCount }}</h5>
+{% endblock %}
+
+{% block thead %}
+    <th class="left">Nome</th>
+    <th class="center">Status</th>
+    <th class="left">Pontos de Acesso</th>
+    <th class="center">Período de Veiculação</th>
+    <th class="center">Tipo</th>
+    <th class="center" style="width: 90px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in pagination %}
+        <tr id="{{ entity.id }}" class="gradeX">
+            <td>{{ entity.name }}</td>
+            <td class="center">
+                {% if entity.status == constant('Wideti\\DomainBundle\\Entity\\Campaign::STATUS_INACTIVE') %}
+                    Inativa
+                {% elseif entity.status == constant('Wideti\\DomainBundle\\Entity\\Campaign::STATUS_EXPIRED') %}
+                    Expirada
+                {% elseif entity.status == constant('Wideti\\DomainBundle\\Entity\\Campaign::STATUS_ACTIVE') %}
+                    Ativa
+                {% elseif entity.status == constant('Wideti\\DomainBundle\\Entity\\Campaign::STATUS_DRAFT') %}
+                    Rascunho
+                {% endif %}
+            </td>
+            <td class="left" style="max-width: 300px;">
+                <a href="#" onClick="showHideAps({{ entity.id }}, event);">Exibir/Ocultar</a>
+                <div id="ap{{ entity.id }}" style="display: none;">
+                    {% for id, accessPoint in accessPoints[entity.id] %}
+                        <div>{{ accessPoint }}</div>
+                    {% endfor %}
+                </div>
+            </td>
+            <td class="center">{{ entity.startDate|date('d/m/Y') }} a {{ entity.endDate|date('d/m/Y') }}</td>
+            <td class="center">
+                {{ entity.preLogin ? "<div>Pré-Login</div>" : "" }}
+                {{ entity.posLogin ? "<div>Pós-Login</div>" : "" }}
+            </td>
+            <td class="center">
+                {% if(entity.status == 0) %}
+                    <a href="{{ path('campaign_preview', { 'id': entity.id }) }}"
+                       class="btn-action glyphicons ok btn-success" title="Ativar Campanha"><i></i></a>
+                {% endif %}
+
+                {% if(entity.status == 1) %}
+                    <a href="{{ path('campaign_preview', { 'id': entity.id }) }}"
+                       class="btn-action glyphicons eye_open btn-info" title="Visualizar Campanha"><i></i></a>
+                {% endif %}
+
+                <a href="{{ path('campaign_edit', { 'id': entity.id }) }}"
+                   class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+
+                <a href="#"
+                   class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+            </td>
+        </tr>
+    {% else %}
+        <td>Nenhuma campanha cadastrada</td>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+    <br />
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+    <script type="text/javascript">
+        dojo.ready(function() {
+            dojo.query("#CampaignFilterType_access_points").chosen({batch_select:true});
+        });
+        $(document).ready(function(){
+
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result){
+
+                    if(result){
+
+                        var route = Routing.generate('campaign_delete', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                var title;
+
+                                if (response.type == 'success') {
+                                    title = 'Aviso!';
+                                    parent.remove();
+                                } else {
+                                    title = "Erro ao tentar excluir!";
+                                }
+
+                                $.gritter.add({
+                                    title: title,
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            if ($('#CampaignFilterType_start_date').length && $('#CampaignFilterType_end_date').length) {
+                $( "#CampaignFilterType_start_date" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    changeMonth: false,
+                    numberOfMonths: 1,
+                    onClose: function( selectedDate ) {
+                        $( "#CampaignFilterType_end_date" ).datepicker( "option", "minDate", selectedDate );
+                    }
+                }).datepicker( "option", "maxDate", $('#CampaignFilterType_start_date').text() );
+
+                $( "#CampaignFilterType_end_date" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    changeMonth: false,
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    numberOfMonths: 1,
+                    onClose: function( selectedDate ) {
+                        $( "#CampaignFilterType_start_date" ).datepicker( "option", "maxDate", selectedDate );
+                    }
+                }).datepicker( "option", "minDate", $('#CampaignFilterType_start_date').val() );
+            }
+
+        });
+
+        function showHideAps(id, event) {
+            event.preventDefault();
+            $("#ap" + id).toggle();
+        }
+
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

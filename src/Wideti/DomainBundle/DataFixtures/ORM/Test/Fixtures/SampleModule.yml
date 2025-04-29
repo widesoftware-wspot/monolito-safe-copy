@@ -1,0 +1,84 @@
+Wideti\DomainBundle\Entity\Module:
+  Module1:
+    shortCode: "campaign"
+    name: "Campanhas"
+
+  Module2:
+    shortCode: "access_code"
+    name: "Código de acesso"
+
+  Module3:
+    shortCode: "blacklist"
+    name: "Bloqueio de Dispositivos"
+
+  Module4:
+    shortCode: "business_hours"
+    name: "Horário de Funcionamento"
+
+  Module5:
+    shortCode: "api"
+    name: "Integração via API"
+
+  Module6:
+    shortCode: "white_label"
+    name: "White Label"
+
+  Module7:
+    shortCode: "customer_area"
+    name: "Financeiro"
+
+  Module8:
+    shortCode: "rd_station"
+    name: "Integração com API RD Station"
+
+  Module9:
+    shortCode: "egoi"
+    name: "Integração com API E-goi"
+
+  Module10:
+    shortCode: "segmentation"
+    name: "Segmentação"
+
+  Module11:
+    shortCode: "access_point_monitoring"
+    name: "Monitoramento de Equipamento"
+
+  Module12:
+    shortCode: "sites_blocking"
+    name: "Bloqueio de Sites"
+
+  Module13:
+    shortCode: "sms_marketing"
+    name: "SMS Marketing"
+
+  Module14:
+    shortCode: "survey"
+    name: "Pesquisa"
+
+  Module15:
+    shortCode: "age_restriction"
+    name: "Restrição de idade de acesso"
+
+  Module16:
+    shortCode: "deskbee_integration"
+    name: "Integração com Deskbee"
+
+  Module17:
+    shortCode: "smart_location"
+    name: "Smart Location"
+
+  Module18:
+    shortCode: "heatmap"
+    name: "Mapa de Acessos"
+
+  Module19:
+    shortCode: "hubsoft_integration"
+    name: "Integração com Hubsoft"
+
+  Module20:
+    shortCode: "Ixc_integration"
+    name: "Integração com IXC Soft"
+
+  Module21:
+    shortCode: "sso_integration"
+    name: "Integração com SSOs"

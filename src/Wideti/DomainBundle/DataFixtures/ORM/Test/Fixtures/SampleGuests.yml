@@ -1,0 +1,6 @@
+Wideti\DomainBundle\Entity\Guests:
+  Guest1:
+    client: "@Client"
+
+  Guest2:
+    client: "@Client"

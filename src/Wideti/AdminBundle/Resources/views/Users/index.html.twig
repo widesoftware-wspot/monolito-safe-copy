@@ -1,0 +1,163 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Administradores
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('admin_usuarios_create')}}" style="margin: 0px 0 2px 0;"
+       class="btn btn-primary btn-icon glyphicons circle_plus">
+        <i></i>Cadastrar</a>
+{% endblock %}
+
+{%  block filter %}
+    {{ form(form) }}
+{% endblock %}
+
+{% block messagebar %}
+     Total de Administradores:  {{ users_total }}
+{% endblock %}
+
+{% block thead %}
+    <th class="center">Nome</th>
+    <th class="center">E-mail</th>
+    <th>Último Acesso</th>
+    <th class="center">Perfil</th>
+    <th class="center" style="width: 45px">Status</th>
+    <th class="center">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+
+     {% for user in users %}
+        <tr id="{{ user.id }}" class="gradeX">
+            <td>{{ user.nome }}</td>
+            <td>{{ user.username }}</td>
+            <td>{% if user.ultimoAcesso is null %}
+                    Usuário ainda não realizou nenhum acesso
+                {% else %}
+                    {{ user.ultimoAcesso|date('d/m/Y H:i:s') }}
+                {% endif %}</td>
+            <td>
+                {% for role in user.getRoles %}
+                    {{ role }}
+                {% endfor %}
+            </td>
+            <td>{{ user.getStatusAsString }}</td>
+            <td class="center">
+                <a href="{{ path('admin_usuarios_show', { 'id': user.id }) }}"
+                   class="btn-action glyphicons eye_open btn-info"><i></i></a>
+                {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MANAGER") %}
+                <a href="#"
+                   class="btn-action glyphicons keys btn-key" title="Reenviar Senha"><i></i></a>
+                {% endif %}
+                <a href="{{ path('admin_usuarios_edit', { 'id': user.id }) }}"
+                   class="btn-action glyphicons pencil btn-success"><i></i></a>
+
+                {% if user.getUsername == authUser %}
+                    <a href="#"
+                       class="btn-action glyphicons remove_2 btn-danger"
+                       data-toggle="tooltip"
+                       data-original-title="Exclusão não permitida."
+                       data-placement="top" >
+                        <i></i>
+                    </a>
+                {% else %}
+                    <a href="#"
+                       class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+                {% endif %}
+            </td>
+        </tr>
+     {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% include 'AdminBundle::pagination.html.twig'
+            with {'pagination': pagination,
+                  'route'     : 'admin_usuarios'} %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+                bootbox.confirm("Deseja realmente excluir?", function(result){
+
+                    if(result){
+
+                        var route = Routing.generate('admin_usuarios_delete', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                var title;
+
+                                if (response.type == 'success') {
+                                    title = 'Aviso!';
+                                    parent.remove();
+                                } else {
+                                    title = "Erro ao tentar excluir!";
+                                }
+
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+
+            });
+
+            $('tr.gradeX td.center a.btn-key').click(function()
+            {
+
+                var id = $(this).parent().parent().attr('id');
+
+                bootbox.dialog("<h3>Alteração de senha do usuário</h3>" +
+                        "Ao confirmar, um link será enviado para esse email com o <br/>" +
+                        "passo a passo para cadastrar uma nova senha.<br>"
+                        , [{
+                            "label" : "Enviar",
+                            "class" : "btn-primary",
+                            "callback": function() {
+                                var password = jQuery('input#guestPassword').val();
+                                var sms = jQuery('input#sms').prop('checked');
+                                var data = {'id': id, 'password': password, 'sms': sms};
+                                var route = Routing.generate('user_password_reset', { id: id });
+
+                                $.ajax({
+                                    type: "POST",
+                                    url: route,
+                                    data: data,
+                                    dataType : "json",
+                                    success: function(response)
+                                    {
+                                        $.gritter.add({
+                                            title: 'Aviso!',
+                                            text: response.msg
+                                        });
+                                    }
+                                });
+                            }
+                        }, {
+                            "label" : "Cancelar",
+                            "class" : "btn-default"
+                        }]);
+
+                $('.inputPassword').hide();
+            });
+        });
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

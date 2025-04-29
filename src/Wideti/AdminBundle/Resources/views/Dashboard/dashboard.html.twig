@@ -1,0 +1,678 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <!-- Easy-pie Plugin -->
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+
+    <h3 class="heading-mosaic">Dashboard
+        <span id="refresh" style="float: right; margin-right: 10px; margin-top: 2px; cursor:pointer;">
+            <a>
+                <b class="status">{% if(app.request.cookies.get('dashboardRefresh') == "true") %}Desativar{% else %}Ativar{% endif %}</b> atualizações automáticas
+            </a>
+        </span>
+    </h3>
+
+    {%  block filter %}
+        {{ form_start(filter, {'attr':{'class':'form-inline dashboardFilterRange'} } ) }}
+        {{ form_end(filter) }}
+    {% endblock %}
+
+    <div class="box-generic">
+        <div class="tabsbar tabsbar-2">
+            <ul class="row-fluid row-merge">
+                <li class="span4 glyphicons display active" id="tabOverview"><a data-toggle="tab" id="tabHrefOverview" href="#tabOverview" tab="overview"><i></i> Visão Geral</a></li>
+                <li class="span4 glyphicons group" id="tabGuest"><a  data-toggle="tab" id="tabHrefGuests" href="#tabGuest" tab="guests" id=""><i></i> <span>Visitantes</span></a></li>
+                <li class="span4 glyphicons wifi_alt" id="tabNetwork"><a data-toggle="tab" id="tabHrefNetwork"  href="#tabNetwork" tab="network" data-toggle="tab"><i></i> <span>Rede</span></a></li>
+            </ul>
+        </div>
+
+        <div class="">
+            <div class="tabs active openedBefore" id="overview">
+                <div class="row-fluid">
+                    <div class="span12" style="margin-bottom: 10px;">
+                        <div class="row-fluid">
+
+                            {% if plan == false %}
+                                <div class="span3">
+                                    <a href="#" class="widget-stats widget-stats-2">
+                                        <span class="glyphicons globe" style="opacity: 0.5;"><i></i></span>
+                                        <span class="txt"><span class="count" style="font-size: 20px;!important;">Disponível no plano PRO</span><br> <span style="opacity: 0.5;">Visitantes Online</span></span>
+                                        <div class="clearfix"></div>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="span3">
+                                    <a href="{{ path('admin_online_user_report') }}" class="widget-stats widget-stats-2">
+                                        <span href="#" id="tooltip-online-visitor" class="tooltip-wrapper" style="position: absolute;right: 0%;width: 40px;top: 3%;height: 20px;">
+                                            <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="A contagem de visitantes online pode levar até 90 segundos para ser atualizada."></i>
+                                        </span>
+                                        <span class="glyphicons globe"><i></i></span>
+                                        <span class="txt">
+                                            <span class="count">{{ countOnlineGuests }}</span>
+                                            <br> Visitantes Online
+                                        </span>
+                                        <div class="clearfix"></div>
+                                    </a>
+                                </div>
+                            {% endif %}
+
+                            <div class="span3">
+                                <a href="{{ path('admin_visitantes') }}" class="widget-stats widget-stats-2">
+                                    <span class="glyphicons group"><i></i></span>
+                                    <span class="txt"><span class="count">{{ countTotalGuests }}</span><br> Visitantes Cadastrados <br/></span>
+                                    <p style="color: #a3a3a3; font-weight: 400;">no período selecionado</p>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+
+                            {% if plan == false %}
+                                <div class="span3">
+                                    <a class="widget-stats widget-stats-2 checkinCount">
+                                        <span class="countVisits" style="display: none;">{{ countVisits }}</span>
+                                        <span class="glyphicons random" style="opacity: 0.5;"><i></i></span>
+                                        <span class="txt"><span class="count" style="font-size: 20px;!important;">Disponível no plano PRO</span><br> <span style="opacity: 0.5;">Visitas recebidas</span></span>
+                                        <p style="color: #a3a3a3; font-weight: 400;opacity: 0.5;">no período selecionado</p>
+                                        <div class="clearfix"></div>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="span3">
+                                    <a class="widget-stats widget-stats-2 checkinCount">
+                                        <span class="tooltip-wrapper countVisits" style="position: absolute;right: 0%;width: 40px;top: 3%;height: 20px;">
+                                            <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="É exibido o total de visitas recebidas no período selecionado. Uma visita pode ou não ter gerado acesso."></i>
+                                        </span>
+                                        <span class="countVisits" style="display: none;">{{ countVisits }}</span>
+                                        <span class="glyphicons random"><i></i></span>
+                                        <span class="txt"><span class="count">{{ countVisits }}</span><br> Visitas recebidas</span>
+                                        <p style="color: #a3a3a3; font-weight: 400;">no período selecionado</p>
+                                        <div class="clearfix"></div>
+                                    </a>
+                                </div>
+                            {% endif %}
+
+                            <div class="span3">
+                                <a href="{{ path('access_points') }}" class="widget-stats widget-stats-2">
+                                    <span class="glyphicons router"><i></i></span>
+                                    <span class="txt"><span class="count">{{ countAps }}</span><br> Pontos de Acesso Cadastrados</span>
+                                    <div class="clearfix"></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="span12">
+                            <div class="widget">
+                                <div class="widget-head">
+                                    <h4 class="heading glyphicons charts">
+                                            <i></i>Sua rede nos últimos 7 dias<span>Dados Atualizados em: {{ "now"|date_modify("-1 day")|date("d/m/Y") }}</span>
+                                    </h4>
+                                    <span class="tooltip-wrapper">
+                                        <i class="icon-large icon-question-sign" tabindex="0" data-placement="top" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Esse gráfico não contabiliza membros do grupo funcionários.
+                                         <a href='https://suporte.mambowifi.com/solution/articles/16000098698-contabilizacão-de-visitas-de-membros-do-grupo-funcionários-' target='_blank'>Saiba mais.</a>"></i>
+                                    </span>
+                                    <a href="{{ path('admin_records_per_day_report', { 'dashboard': true })}}" class="details pull-right"><strong>Ver mais</strong></a>
+                                </div>
+                                <div class="widget-body">
+                                    <div id="visits_general" style="height: 250px; text-align: center;">
+                                        <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tabs" id="guests"></div>
+            <div class="tabs" id="network"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.tooltip.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.pie2.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.resize.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.categories.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.time.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.stack.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.orderBars.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/demo/charts.helper.js') }}"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/no-data-to-display.js"></script>
+
+    <script>
+        var countCheckins = $('.countCheckins').text();
+
+        if (countCheckins == 0) {
+            checkinsCount('show');
+        }
+
+        function checkinsCount(action)
+        {
+            $('.checkinCount').popover(action);
+        }
+
+        function loadGraphCheckins(id, response)
+        {
+            $('#'+id).highcharts({
+                chart: {
+                    type: 'column'
+                },
+                credits: {
+                    enabled: false
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: {
+                    categories: response.categories,
+                    crosshair: true
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: null
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [{
+                    name: 'Check-ins',
+                    data: response.quantity,
+                    color: '{{ whiteLabel.panelColor }}'
+                }],
+                lang: {
+                    noData: "Nenhum registro encontrado neste período."
+                }
+            });
+        }
+
+        {%if plan == false%}
+            function loadGraphVisits(id, response)
+            {
+                if (response == undefined) {
+                    response = {{ guestChart|json_encode()|raw }};
+                }
+                $('#'+id).highcharts({
+                    chart: {
+                        type: 'column'
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    title: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: response.categories
+                    },
+                    yAxis: [{
+                        min: 0,
+                        title: {
+                            text: ''
+                        }
+                    }, {
+                        title: {
+                            text: ''
+                        },
+                        opposite: true
+                    }],
+                    legend: {
+                        shadow: false
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    plotOptions: {
+                        column: {
+                            grouping: false,
+                            shadow: false,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Cadastros',
+                        color: '#444444',
+                        data: response.signUps,
+                        pointPadding: 0.3,
+                        pointPlacement: -0.1
+                    }],
+                    lang: {
+                        noData: "Nenhum registro de cadastro neste período."
+                    }
+                });
+            }
+        {% else %}
+            function loadGraphVisits(id, response)
+            {
+                if (response == undefined) {
+                    response = {{ guestChart|json_encode()|raw }};
+                }
+                $('#'+id).highcharts({
+                    chart: {
+                        type: 'column'
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    title: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: response.categories
+                    },
+                    yAxis: [{
+                        min: 0,
+                        title: {
+                            text: ''
+                        }
+                    }, {
+                        title: {
+                            text: ''
+                        },
+                        opposite: true
+                    }],
+                    legend: {
+                        shadow: false
+                    },
+                    tooltip: {
+                        shared: true
+                    },
+                    plotOptions: {
+                        column: {
+                            grouping: false,
+                            shadow: false,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Cadastros',
+                        color: '#444444',
+                        data: response.signUps,
+                        pointPadding: 0.3,
+                        pointPlacement: -0.1
+                    },{
+                        name: 'Visitas',
+                        color: '{{ whiteLabel.panelColor }}',
+                        data: response.signIns,
+                        pointPadding: 0.3,
+                        pointPlacement: 0.1
+                    }],
+                    lang: {
+                        noData: "Nenhum registro de visita neste período."
+                    }
+                });
+            }
+        {% endif %}
+
+        {% if plan != 'basic'  %}
+            function loadGraphAccessByHour(id, response)
+            {
+                if (response == undefined) {
+                    response = {{ accessByHour|json_encode()|raw }};
+                }
+                $('#'+id).highcharts({
+                    chart: {
+                        type: 'column'
+                    },
+                    credits: {
+                        enabled: false
+                    },
+                    title: {
+                        text: ''
+                    },
+                    xAxis: {
+                        categories: response.categories,
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: null
+                        }
+                    },
+                    plotOptions: {
+                        column: {
+                            pointPadding: 0.2,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Acessos',
+                        data: response.quantity,
+                        color: '{{ whiteLabel.panelColor }}'
+                    }],
+                    lang: {
+                        noData: "Nenhum registro de acesso neste período."
+                    }
+                });
+            }
+        {% endif %}
+
+        function setGuestTabCharts(data)
+        {
+            data.platformData.forEach(function(platformDataObject) {
+                if (platformDataObject.label == 'Mobile') {
+                    platformDataObject.label = 'Dispositivos Móveis';
+                }
+            });
+
+            charts.initDevicesChart(data.deviceData);
+            charts.initPlatformChart(data.platformData);
+            charts.initRegisterModeChart(data.registerMode);
+            loadGraphVisits('visits_guests', data.registerMode);
+
+            var apsMostAccessed = {{ dashboardPiechart|json_encode()|raw }};
+            var accessByHour = {{ accessByHour|json_encode()|raw }};
+
+            if ({{ total_aps }} >= 1 && typeof apsMostAccessed !== 'undefined' && (apsMostAccessed.signIns && apsMostAccessed.signIns.length > 0)) {
+                charts.initVisitsPerApChart(apsMostAccessed);
+                var contAccess = 0;
+                apsMostAccessed.signIns.map(apVisit =>{
+                    if(apVisit.data !== 0) contAccess += 1;
+                });
+
+                if (contAccess == 0) {
+                    var element = document.getElementById('chart_donut_visits');
+                    element.innerHTML = '';
+                    element.innerHTML = "<div class=\"widget-body\">\n"+
+"                            <div id=\"access_by_hour\" style=\"height: 250px; text-align: center;\">\n"+
+"                                Sem registros para exibição.\n"+
+"                                <img src=\"{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}\" style=\"padding-top: 110px;\" />\n"+
+"                            </div>\n"+
+"                        </div>";
+                }
+
+            } else {
+                loadGraphAccessByHour('access_by_hour', accessByHour);
+            }
+        }
+
+        function setNetworkTabCharts(data)
+        {
+            charts.initVisitsPerApNetworkTabChart(data.pieChart);
+            charts.initDownloadUploadChart(data.download);
+        }
+
+        jQuery(document).ready(function() {
+            jQuery(".tooltip-wrapper .countVisits").on("click", function (e) { e.preventDefault(); });
+
+            $('#tooltip-online-visitor').click( function(event) {
+              event.preventDefault();
+            });
+
+            if (jQuery('#dashboardFilter_filter').val() === 'custom') {
+                jQuery('.filterRange').removeClass('hide');
+            }
+
+            jQuery('#dashboardFilter_filter').change(function() {
+                if (jQuery(this).val() === 'custom') {
+                    jQuery('.filterRange').removeClass('hide');
+                } else {
+                    jQuery('.filterRange').addClass('hide');
+                }
+            });
+
+            loadGraphVisits('visits_general');
+
+            $('#refresh').on('click', function() {
+                if (document.cookie.indexOf("dashboardRefresh=true") > -1){
+                    document.cookie = "dashboardRefresh=false";
+                } else {
+                    document.cookie = "dashboardRefresh=true";
+                }
+                location.reload();
+            });
+
+            if (document.cookie.indexOf('dashboardRefresh=true') > -1) {
+                setInterval(function() {
+                    if (jQuery('#FreshWidget').css('display') === 'none') {
+                        location.reload();
+                    }
+                }, 30000);
+            }
+
+            jQuery('div.tabsbar ul li a').click(function()
+            {
+                var tab = jQuery(this).attr('tab');
+
+                if( jQuery(this).parent().hasClass('active') ){
+                    return false;
+                }
+
+                jQuery('div.tabs').removeClass('active').hide();
+                jQuery('div.tabsbar ul li').removeClass('active');
+
+                jQuery('div#'+tab).addClass('active').show();
+                jQuery(this).parent().addClass('active');
+
+                // check if the selected tab was opened before to prevent the ajax loading again
+                if( jQuery('div#'+tab).hasClass('openedBefore') ){
+                    return false;
+                }
+                else{
+                    jQuery('div#'+tab).css('text-align', 'center').html('<img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />');
+                }
+
+                $.ajax({
+                    type: "GET",
+                    url: Routing.generate('dashboard_tabs', {
+                        tab : tab
+                    }),
+                    data: {
+                        tab : tab
+                    },
+                    success: function(response)
+                    {
+                        jQuery('div#'+tab).html(response).addClass('openedBefore');
+
+                        if (tab == 'guests') {
+                            genEasyPie();
+                        }
+
+                        jQuery('#content').height(
+                                jQuery(window).height() +
+                                jQuery('.navbar').height() +
+                                jQuery('div#footer > div').height() + 150
+                        )
+                    },
+                    error: function()
+                    {
+                        if (tab == 'guests') {
+                            $('div#guests').html('<h4 style="font-weight: bold">Ops, não foi possível carregar seus visitantes no momento. Estamos trabalhando em melhorias.</h4>')
+                        }
+                    }
+                });
+
+            });
+
+            if ($('#dashboardFilter_date_from').length && $('#dashboardFilter_date_to').length) {
+                $( "#dashboardFilter_date_from" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    changeMonth: false,
+                    numberOfMonths: 1,
+                    onClose: function( selectedDate ) {
+                        $( "#dashboardFilter_date_to" ).datepicker( "option", "minDate", selectedDate );
+                    }
+                }).datepicker( "option", "maxDate", $('#maxDate').text() );
+
+                $( "#dashboardFilter_date_to" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    changeMonth: false,
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    numberOfMonths: 1,
+                    onClose: function( selectedDate ) {
+                        $( "#dashboardFilter_date_from" ).datepicker( "option", "maxDate", selectedDate );
+                    }
+                }).datepicker( "option", "minDate", $('#dashboardFilter_date_to').val() );
+            }
+                    //         if(!getCookie('firstAccess')) {
+                    // bootbox
+                    //     .dialog($('#modal-banner'))
+                    //     .on('shown.bs.modal', function() {
+                    //         $('.bootbox.modal.fade.in').removeAttr('style');
+                    //         $('#modal-banner').show();
+                    //     })
+                    // }
+                var now = new Date();
+                now.setDate(now.getDate() + 365);
+
+                $('#closeForm').click(function() {
+                    if($("#dont_show_again").is(":checked")){
+                        // setCookie('firstAccess',true,now);
+                        setCookie('firstAccessFusao',true,now);
+                    }
+                    bootbox.hideAll();
+                });
+
+                $('#search').click(function() {
+                    setCookie('firstAccessFusao',true,now);
+                    bootbox.hideAll();
+                });
+
+                // //criando a função para inserir cookie
+                // function setCookie(name, value, duration) {
+                //     var cookie = name + "=" + escape(value) +
+                //         ((duration) ? "; expires=" + duration.toGMTString() : "");
+                //     document.cookie = cookie;
+                // }
+                // //criando a função para buscar cookie
+                // function getCookie(name) {
+                //     var cookies = document.cookie;
+                //     var prefix = name + "=";
+                //     var begin = cookies.indexOf("; " + prefix);
+                //
+                //     if (begin == -1) {
+                //
+                //         begin = cookies.indexOf(prefix);
+                //
+                //         if (begin != 0) {
+                //             return null;
+                //         }
+                //
+                //     } else {
+                //         begin += 2;
+                //     }
+                //     var end = cookies.indexOf(";", begin);
+                //
+                //     if (end == -1) {
+                //         end = cookies.length;
+                //     }
+                //
+                //     return unescape(cookies.substring(begin + prefix.length, end));
+                // }
+                // //criando a função para deletar cookie
+                // function deleteCookie(name) {
+                //     if (getCookie(name)) {
+                //         document.cookie = name + "=" + "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+                //     }
+                // }
+
+        });
+
+        function gd(year, month, day) {
+            return new Date(year, month - 1, day).getTime();
+        }
+
+         tab1 = $('#tabOverview');
+         tab2 = $('#tabGuest');
+         tab3 = $('#tabNetwork');
+
+         tabHrefGuest = $('#tabHrefGuests');
+         tabHrefOveriew = $('#tabHrefOverview');
+         tabHrefNetwork = $('#tabHrefNetwork');
+
+        $(window).ready( function() {
+            if (location.hash) {
+              $('a[href=\'' + location.hash + '\']').trigger('click');
+            }
+            var activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+              $('a[href="' + activeTab + '"]').trigger('click');
+            }
+
+            $('body').on('click', 'a[data-toggle=\'tab\']', function (e) {
+              e.preventDefault()
+              var tab_name = this.getAttribute('href')
+
+              if (history.pushState) {
+                history.pushState(null, null, tab_name)
+              }
+              else {
+                location.hash = tab_name
+              }
+              localStorage.setItem('activeTab', tab_name)
+            });
+
+              $('#tabHrefOverview').on('click', function(e){
+               e.preventDefault()
+              var tab_name = this.getAttribute('href')
+
+              if (history.pushState) {
+                history.pushState(null, null, tab_name)
+              }
+              else {
+                location.hash = tab_name
+              }
+              localStorage.setItem('activeTab', tab_name)
+          });
+        });
+
+    </script>
+
+    {% if client and client.status == 1 and not client.isWhiteLabel %}
+
+        <!-- begin Wootric code -->
+        <script type="text/javascript" src="https://cdn.wootric.com/wootric-sdk.js"></script>
+
+        <script type="text/javascript">
+            {% if pocEndDate %}
+               date = {{ client.pocEndDate | date('U') }}
+            {% else %}
+               date = {{ app.user.dataCadastro.date | date('U') }}
+            {% endif %}
+            var domain = (window.location.host).split('.')[0];
+
+            window.wootricSettings = {
+            email: '{{ app.user.username }}',
+            external_id: `${domain}`,
+            created_at: `${date}`,
+            account_token: 'NPS-34674c87'
+            };
+
+            window.wootric('run');
+        </script>
+        <!-- end Wootric code -->
+
+
+    {% endif %}
+{% endblock %}

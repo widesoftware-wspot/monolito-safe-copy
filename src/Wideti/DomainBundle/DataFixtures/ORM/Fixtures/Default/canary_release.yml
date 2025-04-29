@@ -1,0 +1,4 @@
+Wideti\DomainBundle\Entity\ReleaseFeature:
+  ReleaseVideo:
+    feature: "campaign_video"
+    domains: "dev,"

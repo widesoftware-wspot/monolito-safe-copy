@@ -1,0 +1,3 @@
+panel_sms_gateway_edit:
+  path:  /edit
+  defaults: { _controller: wspot.panel.controler.sms_gateway:editAction }

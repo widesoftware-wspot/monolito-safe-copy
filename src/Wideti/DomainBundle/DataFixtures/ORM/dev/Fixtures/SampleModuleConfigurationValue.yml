@@ -1,0 +1,153 @@
+Wideti\DomainBundle\Entity\ModuleConfigurationValue:
+  enableAccessCode:
+    client: "@Client"
+    items: "@ModuleConfiguration1"
+    value: 0
+
+  enableBlacklist:
+    client: "@Client"
+    items: "@ModuleConfiguration2"
+    value: 1
+
+  enableBusinessHours:
+    client: "@Client"
+    items: "@ModuleConfiguration3"
+    value: 0
+
+  enableWhiteLabel:
+    client: "@Client"
+    items: "@ModuleConfiguration4"
+    value: 1
+
+
+  enableHubsoftIntegration:
+    client: "@Client"
+    items: "@ModuleConfiguration10"
+    value: 1  # Ativando a integração com Hubsoft
+
+  enableHubsoftAuthentication:
+    client: "@Client"
+    items: "@ModuleConfiguration11"
+    value: 1  # Ativando autenticação via Hubsoft
+
+  enableHubsoftProspecting:
+    client: "@Client"
+    items: "@ModuleConfiguration12"
+    value: 0  # Desativando envio de dados de prospecto
+
+  hubsoftAuthButton:
+    client: "@Client"
+    items: "@ModuleConfiguration13"
+    value: "Login com Hubsoft"  # Texto do botão de autenticação
+
+  hubsoftIdCrm:
+    client: "@Client"
+    items: "@ModuleConfiguration14"
+    value: "12345"  # Exemplo de ID do CRM
+
+  hubsoftIdOrigin:
+    client: "@Client"
+    items: "@ModuleConfiguration15"
+    value: "origin_01"  # Exemplo de ID da origem
+
+  hubsoftIdService:
+    client: "@Client"
+    items: "@ModuleConfiguration16"
+    value: "service_01"  # Exemplo de ID do serviço
+
+  hubsoftClientGroup:
+    client: "@Client"
+    items: "@ModuleConfiguration17"
+    value: "group_01"  # Exemplo de grupo de clientes autenticados
+
+  hubsoftHost:
+    client: "@Client"
+    items: "@ModuleConfiguration18"
+    value: "https://hubsoft.example.com"  # Exemplo de host
+
+  hubsoftPassword:
+    client: "@Client"
+    items: "@ModuleConfiguration19"
+    value: "your_password"  # Exemplo de senha
+
+  hubsoftUsername:
+    client: "@Client"
+    items: "@ModuleConfiguration20"
+    value: "your_username"  # Exemplo de nome de usuário
+
+  hubsoftClientSecret:
+    client: "@Client"
+    items: "@ModuleConfiguration21"
+    value: "your_client_secret"  # Exemplo de Client Secret
+
+  hubsoftClientId:
+    client: "@Client"
+    items: "@ModuleConfiguration22"
+    value: "your_client_id"  # Exemplo de Client ID
+
+
+
+  enableIxcIntegration:
+    client: "@Client"
+    items: "@ModuleConfiguration23"
+    value: 1  # 1 significa que a integração está habilitada
+
+  enableIxcAuthentication:
+    client: "@Client"
+    items: "@ModuleConfiguration24"
+    value: 1  # 1 significa que a autenticação está habilitada
+
+  enableIxcProspecting:
+    client: "@Client"
+    items: "@ModuleConfiguration25"
+    value: 0  # 0 significa que a prospecção não está habilitada
+
+  ixcAuthButton:
+    client: "@Client"
+    items: "@ModuleConfiguration26"
+    value: "Login com IXC Soft"
+
+  ixcIdCrm:
+    client: "@Client"
+    items: "@ModuleConfiguration27"
+    value: "Login com IXC Soft"
+
+  ixcIdOrigin:
+    client: "@Client"
+    items: "@ModuleConfiguration28"
+    value: "Entre com email e senha usados na Ixc Soft"
+
+  ixcIdService:
+    client: "@Client"
+    items: "@ModuleConfiguration29"
+    value: "Service123"
+
+  ixcClientGroup:
+    client: "@Client"
+    items: "@ModuleConfiguration30"
+    value: "Grupo 1"
+
+  ixcHost:
+    client: "@Client"
+    items: "@ModuleConfiguration31"
+    value: "https://demo.ixcsoft.com.br"
+
+  ixcClientSecret:
+    client: "@Client"
+    items: "@ModuleConfiguration32"
+    value: "seu_token_aqui"
+  # ixcPassword:
+  #   client: "@Client"
+  #   items: "@ModuleConfiguration32"
+  #   value: "sua_senha_aqui"
+
+  # ixcUsername:
+  #   client: "@Client"
+  #   items: "@ModuleConfiguration33"
+  #   value: "seu_usuario_aqui"
+
+
+  # ixcClientId:
+  #   client: "@Client"
+  #   items: "@ModuleConfiguration35"
+  #   value: "seu_client_id_aqui"

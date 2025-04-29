@@ -1,0 +1,163 @@
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% if wspotNas.vendorName  == 'openwrt' %}
+        <script src="{{ asset(assets_path ~'/js/md5.js') }}"></script>
+    {% elseif wspotNas.vendorName  == 'coovachilli' or wspotNas.vendorName  == 'plenatech' %}
+        <script src="{{ asset(assets_path ~'/js/ChilliLibrary.js') }}"></script>
+    {% endif %}
+
+    <style>
+        #submit, .submit {
+            display: none;
+        }
+        .loading-unifi {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+        .loading-unifi > .img-loading {
+            width: 50px;
+            height: 50px;
+            background: url({{ asset(assets_path ~'/images/loading-unifi.gif')}});
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-unifi">
+        <div class="img-loading" />
+    </div>
+    
+{{ form(form) }}
+
+<script src="{{ asset(assets_path ~'/js/jquery.min.js')}}"></script>
+<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+<script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+<script src="{{ asset(assets_path ~'/js/jquery.bgluminance.js')}}"></script>
+
+<script type="text/javascript">
+    function formSubmit(){
+        {% if app.session.get('preview') %}
+                console.log('[url]', '{{ path('frontend_redirection_url') }}');
+                location.href = '{{ path('frontend_redirection_url') }}';
+        {% elseif wspotNas.vendorName  == 'coovachilli' or wspotNas.vendorName  == 'plenatech' %}
+            connect();
+        {% elseif wspotNas.vendorName  == 'teltonika' or wspotNas.vendorName  == 'edgecore' or wspotNas.vendorName == 'openwifi' %}
+            $('#button').click();
+        {% elseif wspotNas.vendorName  == 'tp_link_v4' %}
+            postJson(
+                'http://' + $('#target').val() + ':8088/portal/radius/auth',
+                {
+                    'username': $('#username').val(),
+                    'password': $('#password').val(),
+                    'originUrl': $('#originUrl').val(),
+                    'clientIp': $('#clientIp').val(),
+                    'gatewayMac': $('#gatewayMac').val(),
+                    'clientMac': $('#clientMac').val(),
+                    'apMac': $('#apMac').val(),
+                    'ssidName': $('#ssidName').val(),
+                    'radioId': parseInt($('#radioId').val()),
+                    'radiusServerIp': $('#radiusServerIp').val(),
+                    'vid': $('#vid').val(),
+                    'targetPort': parseInt($('#targetPort').val()),
+                    'authType': 2
+                },
+                $('#originUrl').val()
+            )
+        {% elseif wspotNas.vendorName  == 'aruba_v2' %}
+            console.log('[aruba_v2] formPostControllerForMacAuthentication.html')
+            function redirectToInsecure() {
+                const form = document.getElementById('formLoginControladora');
+                if (!form) {
+                    console.error("Formulário não encontrado!");
+                    return;
+                }
+
+                const actionUrl = form.action;
+                const formData = new FormData(form);
+                const queryParams = new URLSearchParams();
+
+                formData.forEach((value, key) => {
+                    queryParams.append(key, value);
+                });
+
+                const destinationUrl = `${actionUrl}?${queryParams.toString()}`;
+
+                console.log(`Redirecionando para: ${destinationUrl}`);
+                window.location.href = destinationUrl;
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                redirectToInsecure();
+            });
+        {% else %}
+            $('#submit').click();
+        {% endif %}
+    }
+
+    function postJson(url, jsonData, redirectUrl) {
+        $.ajax({
+            url: url,
+            type: "POST",
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            data: JSON.stringify(jsonData),
+            cors: true,
+            contentType:'application/json',
+            secure: true,
+            headers: {
+            'Access-Control-Allow-Origin': '*',
+            },
+            success: function(data) {
+                console.log('success');
+                console.log(data);
+                document.location = redirectUrl;
+            },
+            error: function(data) {
+                console.log('error');
+                console.log(data);
+            }
+        });
+    }
+
+    {% if wspotNas.vendorName == 'openwrt' %}
+        var CHAR_SIZE = 8;
+        // convert array to binary little-endian format.
+        function array2binl(str) {
+            var bin = Array();
+            var mask = (1 << CHAR_SIZE) - 1;
+            for (var i = 0; i < str.length * CHAR_SIZE; i += CHAR_SIZE) {
+                bin[i >> 5] |= (str[i / CHAR_SIZE] & mask) << (i % 32);
+            }
+            return bin;
+        }
+
+        // calculate the CHAP response
+        function hotspot_response(password, challenge)
+        {
+            var ch = Array();
+            for (var i = 0; i < challenge.length; i += 2) {
+                var num = challenge.substr(i, 2);
+                ch[i/2] = parseInt(num, 16);
+            }
+            var arr = [0];
+            for (var i = 0; i < password.length; i ++) {
+                arr[i+1] = password.charCodeAt(i);
+            }
+            arr=arr.concat(ch);
+            var bin = array2binl(arr);
+            return binl2hex(core_md5(bin, arr.length * CHAR_SIZE));
+        }
+
+        document.getElementById('formLoginControladora').response.value = hotspot_response('{{ password }}', '{{ app.session.get('challenge') }}');
+    {% else %}
+        formSubmit();
+    {% endif %}
+</script>
+</body>
+</html>

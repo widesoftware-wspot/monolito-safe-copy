@@ -1,0 +1,148 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block dataTitle %}
+    Código de Acesso
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('access_code_new')}}" style="margin: 0px 0 2px 0;" class="btn btn-primary btn-icon glyphicons circle_plus">
+        <i></i>Cadastrar</a>
+{% endblock %}
+
+{% block filter %}
+    <div style="float: left; position:relative;left: 20px;top: 2px;">
+        {% if (enableActive == true) %}
+            <div>
+                {% if(moduleStatus == false) %}
+                    A funcionalidade está&nbsp;<b>desativada</b>, clique ao lado para ativar
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-content="Ao ativar essa funcionadalide, o código de acesso será solicitado para todo visitante que tentar acessar a rede Wi-Fi."></i>
+                    <a href="{{ path('access_code_module', {'status':'enable'}) }}" class="btn btn-success" style="margin-left: 10px; margin-bottom: 5px"><i></i>Ativar</a>
+                {% else %}
+                    A funcionalidade está&nbsp;<b>ativada</b>, clique ao lado para desativar
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-content="Ao desativar essa funcionadade, a solicitação do código de acesso para o visitante será desabilitada."></i>
+                    <a href="{{ path('access_code_module', {'status':'disable'}) }}" class="btn btn-primary" style="margin-left: 10px; margin-bottom: 5px"><i></i>Desativar</a>
+
+                    <a href="{{ path('access_code_preferences', {'id': settings}) }}" class="btn btn-default btn-icon glyphicons cogwheels" style="margin-left: 10px;margin-bottom: 4px;"><i></i>Preferências</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <div style="color: #e04545;">
+                Para ativar o módulo é preciso ter pelo menos um registro criado.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block thead %}
+    <div style="margin-bottom: 20px;">
+        É possível criar dois tipos de Código de acesso:
+        <p>
+            <br><b>- Código pré definido</b>: você deverá informar o código que solicitaremos ao cliente, <b>ex: CODIGO123</b>.
+            <br><b>- Códigos aleatórios</b>: já aqui, os códigos serão gerados aleatoriamente a partir da quantidade que você informar, <b>ex: W5T495</b>.
+        </p>
+        <p>Além disso, é possível escolher em que momento solicitaremos o código ao visitante. Seja na primeira página (<b>Primeira tela</b>) ou após preencher o formulário de cadastro (<b>Após o cadastro</b>).</p>
+        <p style="color: #e04545;">Uma regra importante é que <b>NÃO</b> é permitido cadastrar diferentes tipos de solicitações (Primeira tela/Após o cadastro) para o mesmo Ponto de Acesso.</p>
+    </div>
+    {% if (block == true) %}
+        <div style="margin-bottom: 20px; color: #e04545;">
+            Não é possível habilitar a funcionalidade de <b>Código de Acesso</b> caso um dos módulos abaixo estejam ativos:
+            <p>
+                <br><b>- Bloqueio por tempo / Validade de acesso (Grupo de visitantes)</b>
+                <br><b>- Confirmação de Cadastro por E-mail</b>
+                <br><b>- Horário de Funcionamento</b>
+            </p>
+        </div>
+    {% endif %}
+
+    <th class="center" style="width: 65px;">Tipo</th>
+    <th class="center" style="width: 80px;">Solicitado no</th>
+    <th class="center" style="width: 140px;" colspan="2">Vigência <br/> Início - Fim</th>
+    <th class="center" style="width: 65px;">Tempo de conexão</th>
+    <th class="center" style="width: 75px;">Código</th>
+    <th class="center" style="width: 72px;">Qtde</th>
+    <th class="center" style="width: 64px;">Utilizados</th>
+    <th class="center" style="width: 50px;">Status</th>
+    <th class="center" style="width: 110px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entities %}
+        <tr id="{{ entity.id }}" class="gradeX">
+            <td class="center">{{ (entity.type == 'predefined') ? 'Pré definido' : 'Aleatório' }}</td>
+            <td class="center">{{ (entity.step == 'login') ? 'Primeira tela' : 'Após o cadastro' }}</td>
+            <td class="center">{{ entity.period_from }}</td>
+            <td class="center">{{ entity.period_to }}</td>
+            <td class="center">{{ entity.connection_time }}</td>
+            {% if entity.type == 'predefined' %}
+                {% for codes in entity.codes %}
+                    <td class="center">{{ codes.code }}</td>
+                {% endfor %}
+            {% else %}
+                    <td class="center">-</td>
+            {% endif %}
+            <td class="center">{{ entity.quantity }}</td>
+            <td class="center">{{ entity.used }}</td>
+            <td class="center">{{ entity.status }}</td>
+            <td class="center">
+                <a href="{{ path('access_code_edit', { 'id': entity.id }) }}" class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+                <a href="{{ path('access_code_print', { 'id': entity.id }) }}" target="_blank" class="btn-action glyphicons print btn" title="Imprimir"><i></i></a>
+                {% if (entity.type == 'random') %}
+                    <a href="{{ path('access_code_exportcsv', { 'id': entity.id }) }}" class="btn-action glyphicons download btn-info" title="Download dos Códigos"><i></i></a>
+                {% endif %}
+                <a href="#" class="btn-action glyphicons remove_2 btn-danger delete-row" title="Excluir"><i></i></a>
+            </td>
+        </tr>
+    {% else %}
+        <td colspan="2">Nenhum Lote gerado</td>
+    {% endfor %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result){
+
+                    if(result){
+                        var route = Routing.generate('access_code_delete', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                if (response.message !== 'Exclusão não permitida') {
+                                    parent.remove();
+                                }
+                                window.location.reload();
+
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+        });
+
+        {% for flashMessage in app.session.flashbag.get('error') %}
+            $.gritter.add({
+                title: 'Aviso!',
+                text: ' {{ flashMessage }} '
+            });
+        {% endfor %}
+
+    </script>
+{% endblock %}

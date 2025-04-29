@@ -1,0 +1,20 @@
+access_points_get_aps_and_groups_select_box:
+    path: /search
+    defaults: { _controller: wspot.admin.controller.access_points_and_groups:getAccessPointOrGroupToSelectBox}
+    requirements: { methods: get }
+    options:
+      expose: true
+
+access_points_and_groups_get_by_campaign_id:
+    path: /campaign/{id}
+    defaults: { _controller: wspot.admin.controller.access_points_and_groups:getByApsAndGroupsByCampaignId}
+    requirements: { methods: get }
+    options:
+      expose: true
+
+access_points_and_groups_get_by_guest_group_id:
+    path: /guest-group/{id}
+    defaults: { _controller: wspot.admin.controller.access_points_and_groups:getByApsAndGroupsByGuestGroupId}
+    requirements: { methods: get }
+    options:
+      expose: true

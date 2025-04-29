@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<!-- BEGIN HEAD -->
+<head>
+    <link href="{{ asset('bundles/admin/bootstrap/css/bootstrap.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/css/error.css')}}" rel="stylesheet" />
+    <title>Um erro ocorreu: {{ status_code }}</title>
+    {% if app.session.get('wspotClient') != null %}
+        {% if app.session.get('wspotClient').isWhiteLabel == true %}
+            <link rel="icon" type="image/x-icon" href="{{ asset('favicon2.ico') }}" />
+        {% endif %}
+    {% endif %}
+</head>
+<!-- END HEAD -->
+<!-- BEGIN BODY -->
+<body class="page-500-full-page">
+<div class="row">
+    <div class="col-md-12 page-500">
+        <div class=" number default-error-number">
+            {{ status_code }}
+        </div>
+        <div class=" details">
+            <h3>Oops! Alguma coisa deu errado.</h3>
+            <p>
+                Nossa equipe já foi automaticamente notificada sobre o ocorrido.<br/>
+                Por favor, tente novamente ou entre em contato com o nosso suporte <br/>
+                suporte@mambowifi.com<br/>
+            </p>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+</html>

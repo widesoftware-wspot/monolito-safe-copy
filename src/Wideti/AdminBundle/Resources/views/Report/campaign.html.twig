@@ -1,0 +1,282 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.css') }}"
+          rel="stylesheet" xmlns="http://www.w3.org/1999/html"/>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block dataTitle %}
+    Campanhas
+{% endblock %}
+
+{% block table %}
+
+    <div class="row-fluid">
+
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading">
+                        10 campanhas com mais visualizações
+                        <span>Dados Atualizados em: {{ "now"|date_modify("-1 day")|date("d/m/Y") }}</span>
+                    </h4>
+                </div>
+                <div class="widget-body">
+                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Campanha</th>
+                                <th>Total</th>
+                                <th width="20%" style="text-align: center;">Detalhar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for views in campaignViews %}
+                            {% set params = app.request.query.all|merge({ 'id': views.id }) %}
+                            <tr class="gradeX">
+                                <td>{{ views.name }}</td>
+                                <td>{{ views.total }} visualizações</td>
+                                <td style="text-align: center;">
+                                    <a href="{{ path('admin_campaign_report_detail', params) }}"
+                                       class="btn-action glyphicons eye_open btn-info"><i></i></a>
+                            </tr>
+                        {% else %}
+                            <tr class="gradeX">
+                                <td colspan="3">Nenhum registro de visualizações neste período.</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading glyphicons charts">
+                        <i></i>
+                        Visualizações <span>Baseado em Campanhas</span>
+                    </h4>
+                </div>
+                <div class="widget-body">
+                    {% if campaignViews | length > 0 %}
+                        <div id="chart_donut_campaign_views" style="height: 450px; text-align: center;">
+                            <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+                        </div>
+                    {% else %}
+                        <div id="chart_donut_campaign_views">
+                             <tr class="gradeX">
+                                 <td colspan="3">Nenhum registro de visualizações neste período.</td>
+                              </tr>
+                        </div>
+                    {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if campaignViews | length > 0 %}
+        <div class="row-fluid">
+            <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+                <form name="export" method="get" action="{{ path('admin_export_campaign') }}" class="form-inline" novalidate="novalidate" target="_blank">
+                    <div class="modal-body">
+                        <input type="hidden" id="filters" name="filters" value="{{ path('admin_export_campaign', app.request.query.all) }}"/>
+                        <input type="hidden" id="fileFormat" name="fileFormat" value="" />
+                        <h3>Exportação de relatório</h3>
+                        <div class='span6'>
+                            <div class='control-group'>
+                                <label class='control-label required' for='endDate' aria-required='true'>Exportar no formato: </label>
+                                <div class='controls'>
+                                    <select name="charset" id="charset">
+                                        <option value="windows">Windows/Mac</option>
+                                        <option value="linux">Linux</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a id="close" data-handler="1" class="btn btn-default">Cancelar</a>
+                        <button id="export" type="submit" class="btn btn-primary">Exportar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    {% endif %}
+
+    {% embed "AdminBundle::filesReportEmbed.html.twig" %}
+        {% block exportar %}
+            {% if campaignViews | length > 0 %}
+                <div class="loadReportFiles">
+                    <h3>Download de Relatórios  &nbsp &nbsp<a data-toggle="tooltip" data-placement="top" data-original-title="Atualizar Listagem" id="refresh-report-list" class="glyphicons refresh" ><i></i></a></h3>
+                    <div class="btn-group btn-block">
+                        <div class="leadcontainer">
+                            <button class="btn dropdown-lead btn-primary center">Exportar</button>
+                        </div>
+                        <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span> </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li class="center"><a class="file" data-format="Csv" data-placement="right" href="#">CSV</a></li>
+                            <li class="center"><a class="file" data-format="Xlsx" data-placement="right" href="#">EXCEL</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="export-generating-alert"></div>
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.tooltip.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.pie2.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.resize.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.categories.min.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.time.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/demo/charts.helper.js') }}"></script>
+
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot.report.files.js')}}"></script>
+
+    <script>
+        jQuery(document).ready(function(){
+            /**
+             * Ajax Load Report Files on S3
+             * Function created to view the generated reports that are available for download in S3.
+             */
+            loadReportFiles('{{ reportType }}');
+
+            $('#refresh-report-list').click(function(){
+                loadReportFiles('{{ reportType }}');
+            });
+
+            $('a.file').click(function() {
+                var format = $(this).data('format');
+
+                bootbox
+                        .dialog($('#modal'))
+                        .on('shown.bs.modal', function() {
+                            $('.bootbox.modal.fade.in').removeAttr('style');
+                            $('#modal').show();
+                            $('#fileFormat').val(format);
+                        })
+                ;
+            });
+
+            $('#close').click(function() {
+                bootbox.hideAll();
+                $('meta[http-equiv=refresh]').attr('content', '0');
+            });
+
+            $('#export').click(function() {
+                $('#export-generating-alert').addClass('alert alert-primary export-class');
+                $('#export-generating-alert').html('<center>Aguarde! Estamos processando</center>' +
+                                                 '<center>sua(s) solicitação(ões).</center>');
+                $('#listExport').html('');
+                bootbox.hideAll();
+
+                window.setTimeout(function(){
+                    $('#export-generating-alert').hide();
+                }, 5000);
+            });
+        });
+
+            dojo.ready(function() {
+            dojo.query("#campaignReportFilter_campaign").chosen({batch_select:true});
+            dojo.query("#campaignReportFilter_access_point").chosen({batch_select:true});
+        });
+
+        var yesterday = formatedDateNow();
+
+        $('#campaignReportFilter_date_from').on('change', function(){
+            var initDate = $(this).val();
+            var dmy = initDate.split("/");
+            var joindate = new Date(
+                    parseInt(dmy[2], 10),
+                    parseInt(dmy[1], 10) - 1,
+                    parseInt(dmy[0], 10)
+            );
+
+            joindate.setDate(joindate.getDate() + 30);
+
+            var maxDate = ("0" + joindate.getDate()).slice(-2) + "/" +
+                    ("0" + (joindate.getMonth() + 1)).slice(-2) + "/" +
+                    joindate.getFullYear();
+
+            if (maxDate > yesterday) {
+                maxDate = yesterday;
+            }
+
+            $( "#campaignReportFilter_date_to" ).datepicker({
+                maxDate: maxDate
+            }).datepicker("option", "maxDate", maxDate);
+
+        });
+
+        // daterange
+        if ($('#campaignReportFilter_date_from').length && $('#campaignReportFilter_date_to').length)
+        {
+            $( "#campaignReportFilter_date_from" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                changeMonth: false,
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#campaignReportFilter_date_to" ).datepicker( "option", "minDate", selectedDate );
+                }
+            }).datepicker( "option", "maxDate", yesterday );
+
+            $( "#campaignReportFilter_date_to" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                changeMonth: false,
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#campaignReportFilter_date_from" ).datepicker( "option", "maxDate", yesterday );
+                }
+            })
+                .datepicker( "option", "minDate", $('#campaignReportFilter_date_to').val() )
+                .datepicker( "option", "maxDate", yesterday )
+            ;
+        }
+
+        function formatedDateNow(){
+            var date    = new Date();
+            date.setDate(date.getDate() - 1);
+            var day   = date.getDate().toString().padStart(2, '0');
+            var month = (date.getMonth()+1).toString().padStart(2, '0');
+            var year  = date.getFullYear();
+            return day+"/"+month+"/"+year;
+        }
+
+        charts.initViewsChart(
+                {{ jsonChart | json_encode | raw }}
+        );
+    </script>
+{% endblock %}

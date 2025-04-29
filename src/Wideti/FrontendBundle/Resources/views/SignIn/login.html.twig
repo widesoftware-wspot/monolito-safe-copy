@@ -1,0 +1,1661 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% if app.request.host in ['shformas.mambowifi.com'] %}
+    {% set openExternalBrowseriPhone = 1 %}
+{% endif %}
+
+{% block translation %}
+    {% if (config.translation == 1) %}
+        {% if app.session.get('preview') %}
+            <div style="background-color: #9f2323; color: #fff;text-align: center;padding: 1em; font-weight: bolder">
+                {{ 'wspot.preview.alert_text'|trans }}
+            </div>
+        {% elseif isMockView is defined and isMockView == true %}
+            <div style="background-color: #9f2323; color: #fff;text-align: center;padding: 1em; font-weight: bolder">
+                {{ 'wspot.login_page.preview_page_alert'|trans }}
+            </div>
+        {% else %}
+            <div class="language-box">
+                {{ 'wspot.default.selected_language'|trans }}
+            </div>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block container %}
+    {% set display = '' %}
+
+    {% if (config.login_form == 1 and config.signup_form == 0) %}
+        {% set display = 'singleBox' %}
+    {% elseif (config.login_form == 0 and config.signup_form == 1) %}
+        {% set display = 'singleBox' %}
+    {% elseif (config.login_form == 0 and config.signup_form == 0) %}
+        {% set display = 'singleBox' %}
+    {% elseif (client.enablePasswordAuthentication == 0) %}
+        {% set display = 'singleBox' %}
+    {% endif %}
+
+
+    <noscript>
+        <meta http-equiv="refresh" content="0;url={{ path('frontend_active_js') }}">
+    </noscript>
+
+    <style type="text/css">
+        {% if config.login_form == 1 and config.signup_form == 0 and client.enablePasswordAuthentication %}
+        section.container div#loginBox.boxes{display: block;}
+        {% endif %}
+        {% if config.signup_form == 1 and config.login_form == 0 and client.enablePasswordAuthentication %}
+        section.container div#signUpBox.boxes{display: block;}
+        {% endif %}
+        {% if not client.enablePasswordAuthentication %}
+        section.container div#signUpBox.boxes{display: block;}
+        {% endif %}
+        .btn-adfs {
+            background: {{ template.loginButtonColor }};
+            background-color: {{ template.loginButtonColor }};
+            background-image: linear-gradient(to bottom, {{ template.loginButtonColor }}, {{ template.loginButtonColor }}) !important;
+            color: {{ template.loginButtonFontColor }} !important;
+        }
+    </style>
+    <link href="{{ asset('bundles/admin/fontawesome/css/all.css')}}" rel="stylesheet" />
+    {% if (config.google_login or oauths  or showHubsoftAuth or showIxcAuth) and isMobile in ["ios-wv", "android-wv"] %}
+        <style>
+            body {
+                box-sizing: border-box !important;
+            }
+
+            @font-face {
+                font-family: 'Inter';
+                src: url({{ asset(assets_path ~'/fonts/Inter/Inter-VariableFont_slnt_wght.ttf') }}) format('truetype');
+                font-weight: normal;
+                font-style: normal;
+            }
+            .ssoWrapper {
+                height: 100%;
+                padding: 0 3rem;
+
+                justify-content: center;
+                font-family: 'Inter', sans-serif;
+
+                display:none;
+                flex-direction: column;
+            }
+            
+            .webview-login-instructions {
+                margin-top: 2.25rem;
+
+                color: #000;
+                font-size: 1.15rem;
+                font-weight: 400;
+                line-height: 130.52%;
+
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btnCopyLink {
+
+                background-color: #EC203A;
+                border: none;
+                border-radius: 6px !important;
+
+                padding: 12px 0;
+                margin-top: 2.25rem;
+                width: 100%;
+
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1rem;
+
+                color: #fff;
+                font-weight: bold;
+                font-family: "Inter", sans-serif;
+                font-size: 1.125rem;
+            }
+
+            .btnGoBackWrapper {
+                display: flex;
+                justify-content: center;
+            }
+
+            .goBackLink {
+                margin-top: 2.75rem;
+
+                color: #000;
+                font-family: "Inter", sans-serif;
+                font-size: 0.75rem;
+
+                text-decoration: underline;
+
+                background: transparent;
+                border: none;
+            }
+        </style>
+        <section class="ssoWrapper" id="divSessionGoogle">
+            <div style="background-color:  white;">
+                <div class="box-content">
+                    {# <h3>{{ 'wspot.login_page.signup_title'|trans }}</h3> #}
+                    <div class="webview-login-instructions">
+                        <p>Para fazer o login por este método, é necessário:</p>
+                        <span>1 - Clicar no botão abaixo para <strong>copiar o link</strong>.</span>
+                        <span>2 - Clicar no botão <strong>Cancelar</strong> no topo direito dessa página e após isso <strong>Usar sem internet</strong></span>
+                        <span>3 - Abrir o <strong>navegador</strong> de sua preferência e colar o link na barra de busca.</span>
+                    </div>
+                    <button class="btnCopyLink" data-clipboard-text="{{app.session.get('request_url_origin', 'http://wificheck.com.br')}}">
+                        <img src="{{ asset(assets_path ~'/images/copyimg.png') }}" alt="ícone de copiar texto">
+                        COPIAR LINK
+                    </button>
+                    <div class="btnGoBackWrapper">
+                        <button onclick="showInfoExternalBrowser(false)" class="goBackLink">Realizar login de outra forma</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <script src="{{ asset('bundles/admin/scripts/clipboard.min.js')}}" /></script>
+
+        <script>
+            function showInfoExternalBrowser(openExternal){
+                if (openExternal) {
+                    divSessionGoogle.style.display = 'flex';
+                    showHiddenSessionLogin('none')
+                    console.log('show info login in extelnal browser');
+                } else {
+                    divSessionGoogle.style.display = 'none';
+                    showHiddenSessionLogin('flex')
+                    console.log('Hide info login in extelnal browser');
+                }
+            }
+
+            function showHiddenSessionLogin(status) {
+                let divSessionLoginMobile   = document.getElementById('divSessionLoginMobile');
+                let divSessionLogin         = document.getElementById('divSessionLogin');
+                let termsFooter             = document.getElementById('terms-footer');
+
+                if (divSessionLoginMobile) {
+                    divSessionLoginMobile.style.display = status;
+                }
+                if (divSessionLogin) {
+                    divSessionLogin.style.display = status;
+                }
+                if (termsFooter) {
+                    termsFooter.style.display = status;
+                }
+            }
+            new ClipboardJS('.btnCopyLink');
+        </script>
+    {%  endif %}
+    <section class="container {{ display }} sessionLoginMobile" id="divSessionLoginMobile" {{ (config.translation == false) ? 'style="padding-top:20px;"' : '' }}>
+        {% if ((config.login_form == 1 and config.signup_form == 1) or config.login_form == 0 and config.signup_form == 0) %}
+            <div id="defaultBox" class="boxes fullBox visible-phone">
+
+                {% if config.facebook_login %}
+                    {% if isMockView is defined and isMockView %}
+                        <div class="social-button-large">
+                            <button onclick="return false" class="btn btn-large btn-large-facebook btn-icon-stacked glyphicons facebook" type="button">
+                                <i></i>
+                                {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.facebook_account' | trans }}
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="social-button-large">
+                            <button onclick="location.href='{{ path('facebook_auth_index') }}'" class="btn btn-large btn-large-facebook btn-icon-stacked glyphicons facebook" type="button">
+                                <i></i>
+                                {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.facebook_account' | trans }}
+                            </button>
+                            <a id="loaderBtnLargeFacebook" class="btn-large btnLoaderFacebook" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                            {% if(social_error == 1 or app.request.get('facebookError') == 1) %}
+                                <p class="social_error">{{ 'wspot.login_page.facebook_error' | trans }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+                {% if config.linkedin_login %}
+                    {% if isMockView is defined and isMockView %}
+                        <div class="social-button-large">
+                            <button onclick="return false" class="btn btn-large btn-large-linkedin btn-icon-stacked glyphicons linked_in " type="button">
+                                <i></i>
+                                {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.linkedin_account' | trans }}
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="social-button-large">
+                            <button onclick="location.href='{{ path('linkedin_auth_login') }}'" class="btn btn-large btn-large-linkedin btn-icon-stacked glyphicons linked_in" type="button">
+                                <i></i>
+                                {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.linkedin_account' | trans }}
+                            </button>
+                            <a id="loaderBtnLargeLinkedin" class="btn-large btnLoaderLinkedin" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                            {% if(social_error == 1 or app.request.get('linkedinError') == 1) %}
+                                <p class="social_error">{{ 'wspot.login_page.linkedin_error' | trans }}</p>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endif %}
+
+{#                {% if config.twitter_login %}#}
+{#                    {% if isMockView is defined and isMockView %}#}
+{#                        <div class="social-button-large">#}
+{#                            <button onclick="return false;" class="btn btn-large btn-blue-light btn-icon-stacked glyphicons twitter" type="button">#}
+{#                                <i></i>#}
+{#                                {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.twitter_account' | trans }}#}
+{#                            </button>#}
+{#                        </div>#}
+{#                    {% else %}#}
+{#                        <div class="social-button-large">#}
+{#                            <button onclick="location.href='{{ path('frontend_twitter_login') }}'" class="btn btn-large btn-blue-light btn-icon-stacked glyphicons twitter" type="button">#}
+{#                                <i></i>#}
+{#                                {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.twitter_account' | trans }}#}
+{#                            </button>#}
+{#                            <a id="loaderBtnLargeTwitter" class="btn-large btnLoaderTwitter" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>#}
+{#                            {% if(social_error == 2) %}#}
+{#                                <p class="social_error">{{ 'wspot.login_page.twitter_error' | trans }}</p>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                    {% endif %}#}
+{#                {% endif %}#}
+
+                    {% if config.google_login %}
+
+                        {% if isMockView is defined and isMockView %}
+                            <div class="social-button-large">
+                                <button class="btn btn-large btn-google-custom btn-icon-stacked glyphicons fab fa-google" onclick="showInfoExternalBrowser(true)" type="button">
+                                    <i></i>
+                                    {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.google_account' | trans }}
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="social-button-large">
+                                {% if isMobile == "android-wv" and compatibleOpenExternalBrowser %}
+                                    <button onclick="location.href='intent:{{ google_auth_url }}#Intent;end'" class="btn btn-large btn-icon-stacked glyphicon" type="button">
+                                {% elseif isMobile in ["ios-wv", "android-wv"] %}
+                                    <button onclick="showInfoExternalBrowser(true)" class="btn btn-large btn-icon-stacked glyphicon" type="button">
+                                {% else %}
+                                    <button onclick="location.href='{{ google_auth_url }}'" class="btn btn-large btn-google-custom btn-icon-stacked glyphicon" type="button">
+                                {% endif %}
+                                <i></i>
+                                <span class="icon mobile"></span>
+                                {{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.google_account' | trans }}
+                                </button>
+                                {% if not isMobile in ["ios-wv", "android-wv"] %}
+                                    <a id="loaderBtnLargeGoogle" class="btn-large btnLoaderGoogle" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                                {%  endif  %}
+                                {% if(social_error == 2) %}
+                                    <p class="social_error">{{ 'wspot.login_page.google_error' | trans }}</p>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+
+                {% if (oauths) %}
+                    {% for oauth in oauths %}
+                        <div class="social-button-large">
+                        {% if (isMobile == "android-wv" and compatibleOpenExternalBrowser) and (isGoogleAuth == true or openExternalBrowseriPhone )%}
+                            <button onclick="location.href='intent:{{ path('frontend_oauth_login', {'oauth_client_id': oauth.clientId}) }}#Intent;end'" class="btn btn-large btn-icon-stacked glyphicon" type="button">
+                        {% elseif isMobile in ["ios-wv", "android-wv"] and (isGoogleAuth == true or openExternalBrowseriPhone) %}
+                            <button onclick="showInfoExternalBrowser(true)" class="btn btn-large btn-icon-stacked glyphicon" type="button">
+                        {% else %}
+                            <button onclick="location.href='{{ path('frontend_oauth_login', {'oauth_client_id': oauth.clientId}) }}'" class="btn btn-large btn-large-third btn-icon-stacked glyphicons btn-adfs" type="button">
+                        {% endif %}
+                            <i></i>
+                            {% if (app.request.locale == 'es' and oauth.labelEs is not null and oauth.labelEs != "") %}
+                                {{ oauth.labelEs }}
+                            {% elseif (app.request.locale == 'en' and oauth.labelEn is not null and oauth.labelEn != "") %}
+                                {{ oauth.labelEn }}
+                            {% else %}
+                                {{ oauth.label }}
+                            {% endif %}
+                        </button>
+                        {% if not isMobile in ["ios-wv", "android-wv"] %}
+                            <a id="loaderBtnLargeGoogle" class="btn-large btnLoaderGoogle" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                        {%  endif  %}
+                        {% if(social_error == 2) %}
+                            <p class="social_error">{{ 'wspot.login_page.sso_error' | trans }}</p>
+                        {% endif %}
+                    </div>
+                        
+                    {% endfor %}
+                {% endif %}
+
+                {% if (showHubsoftAuth) %}
+                    <div class="social-button-large">
+                                <button 
+                                    onclick="location.href='{{ path('frontend_hubsoft_auth') }}'" 
+                                    class="btn btn-large btn-large-third btn-icon-stacked glyphicons btn-adfs" 
+                                    style="
+                                        {% if hubsoftButtonColor != "" %}
+                                            background-color: {{ hubsoftButtonColor }} !important; 
+                                            background-image: linear-gradient(to bottom, {{ hubsoftButtonColor }}, {{ hubsoftButtonColor }}) !important;
+                                        {% endif %}
+                                    " type="button">
+                                <i></i>
+                                {{ hubsoftAuthButton }}
+                            </button>
+                            {% if not isMobile in ["ios-wv", "android-wv"] %}
+                                <a id="loaderBtnLargeGoogle" class="btn-large btnLoaderGoogle" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                            {%  endif  %}
+                            {% if(social_error == 2) %}
+                                <p class="social_error">{{ 'wspot.login_page.sso_error' | trans }}</p>
+                            {% endif %}
+                        </div>
+                {% endif %}
+
+                {% if (showIxcAuth) %}
+                    <div class="social-button-large">
+                                <button 
+                                    onclick="location.href='{{ path('frontend_Ixc_auth') }}'" 
+                                    class="btn btn-large btn-large-third btn-icon-stacked glyphicons btn-adfs" 
+                                    style="
+                                        {% if IxcButtonColor != "" %}
+                                            background-color: {{ IxcButtonColor }} !important; 
+                                            background-image: linear-gradient(to bottom, {{ IxcButtonColor }}, {{ IxcButtonColor }}) !important;
+                                        {% endif %}
+                                    " type="button">
+                                <i></i>
+                                {{ IxcAuthButton }}
+                            </button>
+                            {% if not isMobile in ["ios-wv", "android-wv"] %}
+                                <a id="loaderBtnLargeGoogle" class="btn-large btnLoaderGoogle" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                            {%  endif  %}
+                            {% if(social_error == 2) %}
+                                <p class="social_error">{{ 'wspot.login_page.sso_error' | trans }}</p>
+                            {% endif %}
+                        </div>
+                {% endif %}
+
+                {% if config.login_form == 1 and client.enablePasswordAuthentication %}
+                    <button id="loginAccount" class="btn btn-large btn-warning" type="button">{{ 'wspot.login_page.have_account'|trans }}</button>
+                {% endif %}
+                {% if config.signup_form == 1 and client.enablePasswordAuthentication  %}
+                    <button id="signupAccount" class="btn btn-large btn-info" type="button">{{ 'wspot.login_page.have_no_account'|trans }}</button>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if config.login_form == 1 and client.enablePasswordAuthentication %}
+            <div id="loginBox" class="boxes {{ (display == 'singleBox') ? "fullBox" }}">
+                {% form_theme login_form 'FrontendBundle:Form:frontendCustomForm.html.twig' %}
+                <div class="box-content">
+
+                    <h3>{{ 'wspot.login_page.login_title'|trans }}</h3>
+
+                    {{ form_start(login_form, {attr: {novalidate: 'novalidate', 'id': 'loginForm'}}) }}
+                    {{ form_errors(login_form) }}
+
+                    {% for property in login_form.properties %}
+                        {% if (property.vars.id == "wspot_signup_properties_zip_code" and hubsoftProspectIsActive) %}
+                            <div id="search_cep_group">
+                                {{ form_row(property) }}
+                                <button id="get_address" class="btnConfirmation"> Buscar </button>
+                            </div>
+                            <div id="cep_validate"></div>
+                        {% else %}
+                            {{ form_row(property) }}
+                        {% endif %}
+                    {% endfor %}
+                    {{ form_row(login_form.password) }}
+
+                    <span class="errorBox">{{ login_error }}</span>
+                    <span class="success">{{ emailUpdate }}</span>
+
+                    <div class="forgotPassword" style="display: none;">
+                        <a href="{{ path('frontend_forget_password') }}" id="forgotPassword" title="{{ 'wspot.login_page.forgot_password'|trans }}">{{ 'wspot.login_page.forgot_password'|trans }}</a>
+                    </div>
+
+                    {% if config.signup_form == 0 %}
+                    <br>
+                    <div class="content" style="display: inline-block;">
+                        {% if (config.terms_required == 1) %}
+                            <div class="termsOfUse">
+                                <input type="checkbox" id="wspot_signup_terms_required" name="wspot_signup_terms_required" placeholder="" value="1">
+                               {% if (app.request.locale == 'pt_br') %}
+                                    {{ config.call_to_terms_pt | replace( { '{ use_terms }':  ('<a href="%s" title="%s">%s</a>'| format(path('frontend_terms_of_use') ,  'wspot.login_page.terms_required_msg2'|trans,  'wspot.login_page.terms_required_msg2'|trans))})|raw }}
+                                {% elseif (app.request.locale == 'en') %}
+                                    {{ config.call_to_terms_en | replace( { '{ use_terms }':  ('<a href="%s" title="%s">%s</a>'| format(path('frontend_terms_of_use') ,  'wspot.login_page.terms_required_msg2'|trans,  'wspot.login_page.terms_required_msg2'|trans) )})|raw }}
+                                {% else %}
+                                    {{ config.call_to_terms_es | replace( { '{ use_terms }':  ('<a href="%s" title="%s">%s</a>'| format(      path('frontend_terms_of_use') ,  'wspot.login_page.terms_required_msg2'|trans, 'wspot.login_page.terms_required_msg2'|trans))})|raw }}
+                                {% endif %}
+                                <p id="wspot_signup_terms_required-error" class="error terms" for="wspot_signup_terms_required" style="display: none;">
+                                    {{ 'wspot.signup_page.terms_required'|trans }}
+                                </p>
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <a style="background-color: #B26501; display: none;" id="loaderBtnLogin" class="btnLoader"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+
+                    {{ form_row(login_form.entrar, {'label': 'wspot.login_page.login_submit_input'|trans }) }}
+                    {{ form_end(login_form) }}
+
+                    {% block social_buttons %}
+                        {% form_theme login_form 'FrontendBundle:Form:frontendCustomForm.html.twig' %}
+
+                        {% if config.facebook_login %}
+                            {% if isMockView is defined and isMockView %}
+                                <div class="social-button">
+                                    <a href="#" onclick="return false;" class="btn btn-icon-stacked btn-block btn-facebook glyphicons facebook hidden-phone">
+                                        <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.facebook_account' | trans }}</b></span>
+                                        <span class="strong"></span>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="social-button">
+                                    <a href="{{ path('facebook_auth_index') }}" class="btn btn-icon-stacked btn-block btn-facebook glyphicons facebook hidden-phone">
+                                        <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.facebook_account' | trans }}</b></span>
+                                        <span class="strong"></span>
+                                    </a>
+                                    <a id="loaderBtnFacebook" class="btnFacebook btnLoader" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                                    {% if(social_error == 1 or app.request.get('facebookError') == 1) %}
+                                        <p class="social_error">{{ 'wspot.login_page.facebook_error' | trans }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+                        {% if config.linkedin_login %}
+                            {% if isMockView is defined and isMockView %}
+                                <div class="social-button">
+                                    <a href="#" onclick="return false;" class="btn btn-icon-stacked btn-block btn-linkedin glyphicons  linked_in hidden-phone">
+                                        <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.linkedin_account' | trans }}</b></span>
+                                        <span class="strong"></span>
+                                    </a>
+                                </div>
+                            {% else %}
+                                <div class="social-button">
+                                    <a href="{{ path('linkedin_auth_login') }}" class="btn btn-icon-stacked btn-block btn-linkedin glyphicons  linked_in hidden-phone">
+                                        <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.linkedin_account' | trans }}</b></span>
+                                        <span class="strong"></span>
+                                    </a>
+                                    <a id="loaderBtnLinkedin" class="btnLinkedin btnLoader" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                                    {% if(social_error == 1 or app.request.get('linkedinError') == 1) %}
+                                        <p class="social_error">{{ 'wspot.login_page.linkedin_error' | trans }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+
+
+{#                        {% if config.twitter_login %}#}
+{#                            <div class="social-button">#}
+{#                                <a href="{{ path('frontend_twitter_login') }}" class="btn btn-icon-stacked btn-block btn-twitter glyphicons twitter hidden-phone">#}
+{#                                    <i></i><span>{{ 'wspot.login_page.connect_using' | trans }} <b>{{ 'wspot.login_page.twitter_account' | trans }}</b></span>#}
+{#                                    <span class="strong"></span>#}
+{#                                </a>#}
+{#                                <a id="loaderBtnTwitter" class="btnTwitter btnLoader" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>#}
+{#                                {% if(social_error == 2) %}#}
+{#                                    <p class="social_error">{{ 'wspot.login_page.twitter_error' | trans }}</p>#}
+{#                                {% endif %}#}
+{#                            </div>#}
+{#                        {% endif %}#}
+
+                            {% if config.google_login %}
+                                <div class="social-button">
+                                    {% if isMobile == "android-wv" and compatibleOpenExternalBrowser %}
+                                            <a href="intent:{{ google_auth_url }}#Intent;end" >
+                                                <div id="customBtn" class="customGPlusSignIn btn-google" style="display: flex; align-items: center;">
+                                                    <span class="icon"></span>
+                                                    <span class="buttonText">{{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.google_account' | trans }}</span>
+                                                    <span class="strong"></span>
+                                                </div>
+                                            </a>
+                                            <a id="loaderBtnGoogle" class="btnGoogle btnLoader" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                                    {% elseif isMobile in ["ios-wv", "android-wv"] %}
+                                        <a>
+                                            <div id="customBtn" onclick="showInfoExternalBrowser(true)"  style="display: flex; align-items: center;">
+                                                <span class="icon"></span>
+                                                <span class="buttonText">{{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.google_account' | trans }}</span>
+                                                <span class="strong"></span>
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        {% if google_auth_url %}
+                                            <a href={{ google_auth_url }} >
+                                                <div id="customBtn" class="customGPlusSignIn btn-google" style="display: flex; align-items: center;">
+                                                    <span class="icon"></span>
+                                                    <span class="buttonText">{{ 'wspot.login_page.connect_using' | trans }} {{ 'wspot.login_page.google_account' | trans }}</span>
+                                                    <span class="strong"></span>
+                                                </div>
+                                            </a>
+                                            <a id="loaderBtnGoogle" class="btnGoogle btnLoader" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                                        {% endif %}
+
+                                        {% if(social_error == 2) %}
+                                            <p class="social_error">{{ 'wspot.login_page.google_error' | trans }}</p>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+
+                        {% if (oauths) %}
+                            {% for oauth in oauths %}
+                                <div class="social-button">
+                                    {% if (isMobile == "android-wv" and compatibleOpenExternalBrowser) and (isGoogleAuth == true or  openExternalBrowseriPhone) %}
+                                        <a href="intent:'+'{{ path('frontend_oauth_login', {'oauth_client_id': oauth.clientId}) }}'+'#Intent;end" class="btn btn-icon-stacked btn-block btn-third hidden-phone btn-adfs">
+                                            <i></i>
+                                            <span>
+                                                {% if (app.request.locale == 'es' and oauth.labelEs is not null and oauth.labelEs != "") %}
+                                                    {{ oauth.labelEs }}
+                                                {% elseif (app.request.locale == 'en' and oauth.labelEn is not null and oauth.labelEn != "") %}
+                                                    {{ oauth.labelEn }}
+                                                {% else %}
+                                                    {{ oauth.label }}
+                                                {% endif %}
+                                            </span>
+                                            <span class="strong"></span>
+                                        </a>
+                                    {% elseif isMobile in ["ios-wv", "android-wv"] and (isGoogleAuth == true and openExternalBrowseriPhone) %}
+                                        <a onclick="showInfoExternalBrowser(true)" class="btn btn-icon-stacked btn-block btn-third hidden-phone btn-adfs">
+                                            <i></i>
+                                            <span>
+                                                {% if (app.request.locale == 'es' and oauth.labelEs is not null and oauth.labelEs != "") %}
+                                                    {{ oauth.labelEs }}
+                                                {% elseif (app.request.locale == 'en' and oauth.labelEn is not null and oauth.labelEn != "") %}
+                                                    {{ oauth.labelEn }}
+                                                {% else %}
+                                                    {{ oauth.label }}
+                                                {% endif %}
+                                            </span>
+                                            <span class="strong"></span>
+                                        </a>
+                                    {%  else %}
+                                        <a href="{{ path('frontend_oauth_login', {'oauth_client_id': oauth.clientId}) }}" class="btn btn-icon-stacked btn-block btn-third hidden-phone btn-adfs">
+                                            <i></i>
+                                            <span>
+                                                {% if (app.request.locale == 'es' and oauth.labelEs is not null and oauth.labelEs != "") %}
+                                                    {{ oauth.labelEs }}
+                                                {% elseif (app.request.locale == 'en' and oauth.labelEn is not null and oauth.labelEn != "") %}
+                                                    {{ oauth.labelEn }}
+                                                {% else %}
+                                                    {{ oauth.label }}
+                                                {% endif %}
+                                            </span>
+                                            <span class="strong"></span>
+                                        </a>
+                                    {% endif %}
+                                    <a id="loaderBtnGoogle" class="btnGoogle btnLoader" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                                    {% if(social_error == 2) %}
+                                        <p class="social_error">{{ 'wspot.login_page.sso_error' | trans }}</p>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if (showHubsoftAuth) %}
+                            <div class="social-button">
+                                    <a href="{{ path('frontend_hubsoft_auth') }}" class="btn btn-icon-stacked btn-block btn-third hidden-phone btn-adfs" 
+                                        style="
+                                        {% if hubsoftButtonColor != "" %}
+                                            background-color: {{ hubsoftButtonColor }} !important; 
+                                            background-image: linear-gradient(to bottom, {{ hubsoftButtonColor }}, {{ hubsoftButtonColor }}) !important;
+                                        {% endif %}
+                                        "  >
+                                        <i></i>
+                                        <span>
+                                            {{ hubsoftAuthButton }}
+                                        </span>
+                                        <span class="strong"></span>
+                                    </a>
+                                <a id="loaderBtnGoogle" class="btnGoogle btnLoader" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                                {% if(social_error == 2) %}
+                                    <p class="social_error">{{ 'wspot.login_page.sso_error' | trans }}</p>
+                                {% endif %}
+                            </div>
+                {% endif %}
+
+                {% if (showIxcAuth) %}
+                    <div class="social-button">
+                            <a href="{{ path('frontend_Ixc_auth') }}" class="btn btn-icon-stacked btn-block btn-third hidden-phone btn-adfs" 
+                                style="
+                                {% if IxcButtonColor != "" %}
+                                    background-color: {{ IxcButtonColor }} !important; 
+                                    background-image: linear-gradient(to bottom, {{ IxcButtonColor }}, {{ IxcButtonColor }}) !important;
+                                {% endif %}
+                                "  >
+                                <i></i>
+                                <span>
+                                    {{ IxcAuthButton }}
+                                </span>
+                                <span class="strong"></span>
+                            </a>
+                        <a id="loaderBtnGoogle" class="btnGoogle btnLoader" style="display: none;"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+                        {% if(social_error == 2) %}
+                            <p class="social_error">{{ 'wspot.login_page.sso_error' | trans }}</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+
+
+                    {% endblock %}
+
+                    {% if config.signup_form == 1 %}
+                        <div class="social-button" style="position:relative;bottom: 10px;">
+                            <button type="button" name="signUpButton" id="btnCadastro">{{ 'wspot.login_page.click_here'|trans }}</button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if config.signup_form == 1 %}
+            <div id="signUpBox" class="boxes {{ (display == 'singleBox') ? "fullBox" }}">
+                <div class="box-content">
+
+                    <h3>
+                        {% if client.enablePasswordAuthentication %}
+                            {{ 'wspot.login_page.signup_title'|trans }}
+                        {% elseif client.getNoRegisterFields() == 0 %}
+                            {{ 'wspot.login_page.signup_identifier'|trans }}
+                        {% endif %}
+                    </h3>
+
+                    {% form_theme signup_form 'FrontendBundle:Form:frontendCustomForm.html.twig' %}
+                    {{ form_start(signup_form, {attr: {novalidate: 'novalidate', 'id': 'signupForm'}}) }}
+
+                    {% for property in signup_form.properties %}
+                        {% if (property.vars.id == 'wspot_signup_properties_email') %}
+                            {{ form_row(property) }}
+                            <div id="email_validate"></div>
+                        {% elseif (property.vars.id == 'wspot_signup_properties_name')  %}
+                            {{ form_row(property) }}
+                            <div id="name_validate"></div>
+                        {% elseif (property.vars.multiple is defined and property.vars.multiple == true) %}
+                            {{ form_row(property, { 'attr': {'class': 'chosen-select', 'data-placeholder': property.vars.label} }) }}
+                        {% elseif (property.vars.id == "wspot_signup_properties_zip_code" and hubsoftProspectIsActive) %}
+                            <div id="search_cep_group">
+                                {{ form_row(property) }}
+                                <button id="get_address" class="btnConfirmation"> Buscar </button>
+                            </div>
+                            <div id="cep_validate"></div>
+                        {% endif %}
+                        {{ form_row(property) }}
+                    {% endfor %}
+
+                    {% if client.enablePasswordAuthentication %}
+                        {{ form_row(signup_form.password) }}
+                    {% endif %}
+
+                    <div class="content" style="display: inline-block;">
+                        {% if config.authorize_email == 1 %}
+                            <div class="authorize_email">
+                                {{ form_row(signup_form.authorizeEmail) }}
+                                {% if (app.request.locale == 'pt_br') %}
+                                    {{ config.content_authorize_email_pt | raw }}
+                                {% elseif (app.request.locale == 'en') %}
+                                    {{ config.content_authorize_email_en | raw }}
+                                {% else %}
+                                    {{ config.content_authorize_email_es | raw }}
+                                {% endif %}
+                                <p id="wspot_signup_authorize_email_required-error" class="error authorize_email" for="wspot_signup_authorize_email_required" style="display: none;">
+                                    {{ 'wspot.signup_page.field_required'|trans }}
+                                </p>
+                            </div>
+                        {% endif %}
+
+                        {% if (config.terms_required == 1) %}
+                            <div class="termsOfUse">
+                                <input type="checkbox" id="wspot_signup_terms_required" name="wspot_signup_terms_required" placeholder="" value="1">
+                               {% if (app.request.locale == 'pt_br') %}
+                                    {{ config.call_to_terms_pt | replace( { '{ use_terms }':  ('<a href="%s" title="%s">%s</a>'| format(path('frontend_terms_of_use') ,  'wspot.login_page.terms_required_msg2'|trans,  'wspot.login_page.terms_required_msg2'|trans))})|raw }}
+                                {% elseif (app.request.locale == 'en') %}
+                                    {{ config.call_to_terms_en | replace( { '{ use_terms }':  ('<a href="%s" title="%s">%s</a>'| format(path('frontend_terms_of_use') ,  'wspot.login_page.terms_required_msg2'|trans,  'wspot.login_page.terms_required_msg2'|trans) )})|raw }}
+                                {% else %}
+                                    {{ config.call_to_terms_es | replace( { '{ use_terms }':  ('<a href="%s" title="%s">%s</a>'| format(      path('frontend_terms_of_use') ,  'wspot.login_page.terms_required_msg2'|trans, 'wspot.login_page.terms_required_msg2'|trans))})|raw }}
+                                {% endif %}
+                                <p id="wspot_signup_terms_required-error" class="error terms" for="wspot_signup_terms_required" style="display: none;">
+                                    {{ 'wspot.signup_page.terms_required'|trans }}
+                                </p>
+                            </div>
+                        {% endif %}
+
+                        <div class="termsOfUse">
+                            {% if activeLegalBase.legalKind.key == constant('Wideti\\DomainBundle\\Entity\\LegalKinds::TERMO_CONSENTIMENTO') %}
+                                <input type="checkbox" id="wspot_signup_consent_term" name="wspot_signup_consent_term" required="required" style="float: left;margin-right: 4px;margin-top: 6px;">
+                                <p>{{ 'wspot.consent_term.link'|trans | replace({'%consentTermPageUrl%': path('frontend_consent_term')}) | raw }}</p>
+                                <label id="wspot_signup_consent_term-error" class="error" for="wspot_signup_consent_term" style="display: none;">
+                                    {{ 'wspot.signup_page.consent_required'|trans }}
+                                </label>
+                            {% endif %}
+                        </div>
+                    </div>
+
+
+
+                    {% if client.enablePasswordAuthentication %}
+                        {{ form_row(signup_form.submit, {'label': 'wspot.login_page.signup_submit_input'|trans}) }}
+                    {% else %}
+                        {{ form_row(signup_form.submit, {'label': 'wspot.login_page.signup_submit_identifier'|trans}) }}
+                    {% endif %}
+
+                    <a style="background-color: #6f6f6f; display: none;" id="loaderBtnSignUp" class="btnLoader"><img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" /></a>
+
+                    {% if config.login_form == 1 %}
+                        <button type="button" name="loginBoxButton" style="margin-top: 0;" id="btnLoginBoxButton">{{ 'wspot.login_page.have_account'|trans }}</button>
+                    {% endif %}
+
+                    {{ form_errors(signup_form) }}
+
+                    {% if config.login_form == 0 and config.signup_form == 1 %}
+                        {{ block('social_buttons') }}
+                    {% endif %}
+
+                    {{ form_end(signup_form) }}
+                </div>
+            </div>
+        {% endif %}
+
+        {% if config.login_form == 0 and config.signup_form == 0 %}
+            <div id="loginBox" class="boxes fullBox">
+                {% form_theme login_form 'FrontendBundle:Form:frontendCustomForm.html.twig' %}
+                <div class="box-content">
+                    <h3>{{ 'wspot.login_page.welcome'|trans }}</h3>
+                    {{ block('social_buttons') }}
+                </div>
+            </div>
+        {% endif %}
+
+    </section>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+
+    {% if vendorName|default(null) and vendorName == 'fake' %}
+        <script type='text/javascript' async src='https://d335luupugsy2.cloudfront.net/js/loader-scripts/34301f73-e641-4a70-94c5-4d81aa7639b2-loader.js'></script>
+    {% endif %}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+    <script>
+        require(["dojo/query", "dojo/domReady!"], function(query) {
+            query(".chosen-select").forEach(function(node) {
+                // Aplicar o plugin Chosen ao elemento
+                dojo.query(node).chosen({batch_select: true});
+            });
+        });
+    </script>
+
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/notifications/Gritter/css/jquery.gritter.css')}}" rel="stylesheet" />
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/notifications/Gritter/js/jquery.gritter.min.js')}}"></script>
+
+    <script type="text/javascript">
+        const mambo_trans = {
+            signup_page: {
+            terms_required: "{{ 'wspot.signup_page.terms_required'|trans }}",
+            consent_required: "{{ 'wspot.signup_page.consent_required'|trans }}"
+            }
+        }
+        const consent_msg = "{{ 'wspot.signup_page.consent_required'|trans }}";
+        $('#signupForm').on('keyup keypress', function(e) {
+            var keyCode = e.keyCode || e.which;
+            if (keyCode === 13) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        function disableSubmitButton()
+        {
+            $('#wspot_signup_submit').attr('onclick', 'return false');
+        }
+
+        function enableSubmitButton()
+        {
+            $('#wspot_signup_submit').attr('onclick', 'return true');
+        }
+
+        function submitButtonControl(status, field) {
+            $(field).attr('error', status);
+
+            var name             = $('#wspot_signup_properties_name').attr('error');
+            var email            = $('#wspot_signup_properties_email').attr('error');
+            var document         = $('#wspot_signup_properties_document').attr('error');
+            var emailValid       = $('#wspot_signup_emailValidate').attr('error');
+            var phone            = $('#wspot_signup_properties_phone').attr('error');
+            var optIn            = $('#wspot_signup_authorizeEmail').attr('error');
+            var termsOfUse       = $('#wspot_signup_terms_required').attr('error');
+            var consentTerm      = $('#wspot_signup_consent_term').attr('error');
+
+            var fields = {name, email, phone, optIn, termsOfUse, consentTerm, emailValid, document};
+
+            $.each(fields, function(i, val) {
+                if (val === "true") {
+                    console.log(`[form] ${i} is required`);
+                    disableSubmitButton();
+                    return false;
+                }
+                console.log(`[form] submitButtonControl pass`);
+                enableSubmitButton()
+            });
+        }
+        function get_language(){
+            if (window.location.pathname.includes('/es'))
+                return 'es'
+            else if (window.location.pathname.includes('/en'))
+                return 'en'
+            else
+                return 'pt'
+        }
+
+
+        // #################### INICIO DAS LÓGICAS DE DO INPUT CUSTOM DOCUMENT SELECTOR ####################
+        const inputSelectDocumentType    = document.getElementById('wspot_signup_properties_custom_oldmambo_document');
+        // Pega tanto campo custom da vivo quanto campo default
+        const inputDocumentId = document.querySelector('#wspot_signup_properties_custom_oldmambo_id_document') || document.querySelector('#wspot_signup_properties_custom_oldmambo_id_document_vivo');
+
+        // Inclusão de select default em input custom_oldmambo_document + idioma atual
+        function set_default_select_oldmambo_document(label) {
+            if (inputSelectDocumentType) {
+                inputSelectDocumentType.innerHTML += `<option value="" selected disabled>${label}</option>`;
+            }
+        }
+
+        // Altera placeholder do campo custom_oldmambo_id_document ao alterar seleção no custom_oldmambo_document
+        if (inputSelectDocumentType && inputDocumentId){
+            function set_oldmambo_document_placeholder() {
+                inputDocumentId.style.display = 'block';
+                let doc_type = inputSelectDocumentType.value;
+                switch (get_language()) {
+                    case 'es':
+                        inputDocumentId.placeholder = ((doc_type == 'Licencia de Conducir') ?`Ingrese el número de la ${doc_type}`:`Ingrese el número ${doc_type}`);
+                        break;
+                    case 'en':
+                        inputDocumentId.placeholder = `Enter the number of the ${doc_type}`;
+                        break;
+                    default:
+                        inputDocumentId.placeholder = ((doc_type == 'CNH') ? `Informe o número da ${doc_type}` : `Informe o número do ${doc_type}`);
+                        break;
+                }
+            }
+            inputSelectDocumentType.addEventListener("change", set_oldmambo_document_placeholder);
+        }
+
+        // Func para inclusão de select default em input custom_oldmambo_document + idioma atual
+        function set_default_select_custom_oldmambo_document() {
+            switch (get_language()) {
+                case 'es':
+                    set_default_select_oldmambo_document("Selecione um tipo de documento:");
+                    break;
+                case 'en':
+                    set_default_select_oldmambo_document("Select a document type:");
+                    break;
+                default:
+                    set_default_select_oldmambo_document("Selecione um tipo de documento:");
+                    break;
+            }
+        }
+        let cpfErrorLabel;
+
+        function formatarCPF(cpf) {
+            cpf = cpf.replace(/\D/g, ''); // Remove caracteres não numéricos
+            cpf = cpf.substring(0, 11); // Limita a 14 dígitos
+            return cpf;
+        }
+
+
+        function validarCPF() {
+            if (!inputSelectDocumentType || (inputSelectDocumentType && inputSelectDocumentType.value !== "CPF" )) {
+                return true
+            }
+            let wspotSignupSubmit = document.querySelector('#wspot_signup_submit');
+            let cpfInput = inputDocumentId;
+            let cpf = cpfInput.value;
+            cpf = formatarCPF(cpf); // Formata o CPF antes da validação
+
+            if (cpf.length < 10 || cpf.length > 11) {
+                if (!cpfErrorLabel) {
+                    cpfErrorLabel = document.createElement('label');
+                    cpfErrorLabel.setAttribute('id', 'cpf-error-label');
+                    cpfErrorLabel.setAttribute('class', 'error');
+                    cpfErrorLabel.textContent = 'CPF deve conter de 10 a 11 dígitos.';
+                    cpfInput.parentNode.insertBefore(cpfErrorLabel, cpfInput.nextSibling);
+                } else {
+                    cpfInput.parentNode.insertBefore(cpfErrorLabel, cpfInput.nextSibling);
+                    cpfErrorLabel.textContent = 'CPF deve conter de 10 a 11 dígitos.';
+                }
+                inputDocumentId.setAttribute('aria-invalid', 'true');
+                inputDocumentId.classList.add('error');
+                inputDocumentId.classList.remove('valid');
+                wspotSignupSubmit.setAttribute('disabled', true);
+                return false;
+            } else if (cpfErrorLabel) {
+                cpfErrorLabel.remove();
+            }
+
+            let soma = 0;
+            let resto;
+
+            for (let i = 1; i <= 9; i++) {
+                soma += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+            }
+
+            resto = (soma * 10) % 11;
+
+            if ((resto === 10) || (resto === 11)) {
+                resto = 0;
+            }
+            let invalidCpfRepetitive = [
+                '00000000000',
+                '11111111111',
+                '22222222222',
+                '33333333333',
+                '44444444444',
+                '55555555555',
+                '66666666666',
+                '77777777777',
+                '88888888888',
+                '99999999999'
+            ]
+            if (resto !== parseInt(cpf.substring(9, 10)) || invalidCpfRepetitive.includes(cpf)) {
+                if (!cpfErrorLabel) {
+                    cpfErrorLabel = document.createElement('label');
+                    cpfErrorLabel.setAttribute('id', 'cpf-error-label');
+                    cpfErrorLabel.setAttribute('class', 'error');
+                    cpfErrorLabel.textContent = 'CPF inválido.';
+                    cpfInput.parentNode.insertBefore(cpfErrorLabel, cpfInput.nextSibling);
+                } else {
+                    cpfInput.parentNode.insertBefore(cpfErrorLabel, cpfInput.nextSibling);
+                    cpfErrorLabel.textContent = 'CPF inválido.';
+                }
+                inputDocumentId.setAttribute('aria-invalid', 'true');
+                inputDocumentId.classList.add('error');
+                inputDocumentId.classList.remove('valid');
+                wspotSignupSubmit.setAttribute('disabled', true);
+                return false;
+            } else if (cpfErrorLabel) {
+                cpfErrorLabel.remove();
+            }
+
+            soma = 0;
+
+            for (let i = 1; i <= 10; i++) {
+                soma += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+            }
+
+            resto = (soma * 10) % 11;
+
+            if ((resto === 10) || (resto === 11)) {
+                resto = 0;
+            }
+
+            if (resto !== parseInt(cpf.substring(10, 11))) {
+                if (!cpfErrorLabel) {
+                    cpfErrorLabel = document.createElement('label');
+                    cpfErrorLabel.setAttribute('id', 'cpf-error-label');
+                    cpfErrorLabel.setAttribute('class', 'error');
+                    cpfErrorLabel.textContent = 'CPF inválido.';
+                    cpfInput.parentNode.insertBefore(cpfErrorLabel, cpfInput.nextSibling);
+                } else {
+                    cpfInput.parentNode.insertBefore(cpfErrorLabel, cpfInput.nextSibling);
+                    cpfErrorLabel.textContent = 'CPF inválido.';
+                }
+                inputDocumentId.setAttribute('aria-invalid', 'true');
+                inputDocumentId.classList.add('error');
+                inputDocumentId.classList.remove('valid');
+                wspotSignupSubmit.setAttribute('disabled', true);
+                return false;
+            } else if (cpfErrorLabel) {
+                cpfErrorLabel.remove();
+            }
+            // Atualiza o valor do campo com o CPF formatado
+            cpf = cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4'); // Aplica a máscara "000.000.000-00"
+            cpfInput.value = cpf;
+            inputDocumentId.classList.remove('error');
+            inputDocumentId.classList.add('valid');
+            inputDocumentId.setAttribute('aria-invalid', 'false');
+            wspotSignupSubmit.removeAttribute('disabled');
+            return true;
+        }
+        function updateInputAttributes() {
+            if (inputSelectDocumentType.value === "CPF") {
+                inputDocumentId.setAttribute("placeholder", "000.000.000-00"); // CPF tem 11 dígitos
+                inputDocumentId.setAttribute("pattern", "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}"); // Formato CPF
+                inputDocumentId.setAttribute("onchange", 'validarCPF()');
+                inputDocumentId.setAttribute("keypress", 'validarCPF()');
+                if (inputDocumentId.value) {
+                    validarCPF();
+                }
+            } else {
+                inputDocumentId.removeAttribute("pattern");
+                inputDocumentId.removeAttribute('onchange');
+                inputDocumentId.removeAttribute('keypress');
+                let errorLabel = document.querySelector('#cpf-error-label')
+                if (errorLabel) {
+                    errorLabel.remove();
+                }
+            }
+        }
+        if (inputSelectDocumentType) {
+            inputSelectDocumentType.addEventListener("change", updateInputAttributes);
+        }
+        // #################### FIM DAS LÓGICAS DE DO INPUT CUSTOM DOCUMENT SELECTOR ####################
+
+        function applyMask() {
+            var valorSemMascara = event.target.value.replace(/\D/g, '');
+
+            // Verifica o tamanho do valor e aplica a máscara adequada
+            if (valorSemMascara.length <= 3) {
+                event.target.value = valorSemMascara;
+            } else if (valorSemMascara.length <= 6) {
+                event.target.value = valorSemMascara.slice(0, 3) + '.' + valorSemMascara.slice(3);
+            } else if (valorSemMascara.length <= 9) {
+                event.target.value = valorSemMascara.slice(0, 3) + '.' + valorSemMascara.slice(3, 6) + '.' + valorSemMascara.slice(6);
+            } else {
+                event.target.value = valorSemMascara.slice(0, 3) + '.' + valorSemMascara.slice(3, 6) + '.' + valorSemMascara.slice(6, 9) + '-' + valorSemMascara.slice(9, 11);
+            }
+        }
+
+
+        function validateForm() {
+            console.log('init validateForm()');
+            let form = document.getElementById('signupForm');
+            function verify_form(form) {
+                if (!form.checkValidity()){
+                    return false
+                }
+                return true
+            }
+            if (form) {
+                let verified = verify_form(form);
+                if (!verified){
+                    console.log('[form] !verified')
+                    return false
+                }
+                if (document.getElementById('wspot_signup_terms_required') && !$('#wspot_signup_terms_required').is(':checked')) {
+                    $('#wspot_signup_terms_required-error').show();
+                    submitButtonControl(true, $('#wspot_signup_terms_required'));
+                    if (document.getElementById('wspot_signup_terms_required-error')){
+                        document.getElementById('wspot_signup_terms_required-error').innerText = mambo_trans.signup_page.terms_required;
+                    }
+                    console.log('[form] wspot_signup_terms_required is required');
+                    return false
+                }
+                if (document.getElementById('wspot_signup_consent_term') && !$('#wspot_signup_consent_term').is(':checked')){
+                    $('#wspot_signup_consent_term-error').show();
+                    submitButtonControl(true, $('#wspot_signup_consent_term'));
+                    if (document.getElementById('wspot_signup_consent_term-error')) {
+                        document.getElementById('wspot_signup_consent_term-error').innerText = mambo_trans.signup_page.consent_required;
+                    }
+                    console.log('[form] wspot_signup_consent_term is required');
+                    return false
+                }
+                if ($('.selected-flag').attr("title") != "Brasil: +55") {
+                    $("#wspot_signup_submit").attr("formnovalidate","formnovalidate");
+                }else{
+                    $("#wspot_signup_submit").removeAttr("formnovalidate");
+                }
+            }
+            return true
+        }
+
+        $(document).ready(function() {
+            if (("{{ hubsoftProspectIsActive }}" == "1" || "{{ hubsoftProspectIsActive }}" == "true") && "{{app.request.locale}}" == 'pt_br') {
+                $("#wspot_signup_properties_address").css("display", "none")
+                $("#wspot_signup_properties_number").css("display", "none")
+                $("#wspot_signup_properties_district").css("display", "none")
+                $("#wspot_signup_properties_zip_code").on('blur', function(e) {
+                    $('#cep_validate').empty();
+                })
+                $("#get_address").on('blur', function(e) {
+                    $('#cep_validate').empty();
+                })
+                $("#get_address").on('click', function(e) {
+                    e.preventDefault()
+
+                    let zipCode = $("#wspot_signup_properties_zip_code").val().replace(/\D/g, ''); // Remove todos os caracteres que não são dígitos
+                    if (zipCode.length === 8) {
+                        let street = ""
+                        let neighborhood = ""
+                        $.ajax({
+                            url: Routing.generate('frontend_get_address', { cep: zipCode } ),
+                            type: 'GET',
+                            success: function(response) {
+                                street = response.street || ''
+                                neighborhood = response.neighborhood || ''
+                                $("#wspot_signup_properties_number").css("display", "block")
+                                $("#wspot_signup_properties_address").css("display", "block")
+                                $("#wspot_signup_properties_district").css("display", "block")
+                                $("#wspot_signup_properties_address").val(street);
+                                $("#wspot_signup_properties_district").val(neighborhood);
+                                if (street) {
+                                    $("#wspot_signup_properties_address").attr("readonly", "readonly")
+                                }
+                                if (neighborhood) {
+                                    $("#wspot_signup_properties_district").attr("readonly", "readonly")
+                                } 
+                                $('#cep_validate').empty();
+                            },
+                            error: function() {
+                                $("#wspot_signup_properties_number").css("display", "block")
+                                $("#wspot_signup_properties_address").css("display", "block")
+                                $("#wspot_signup_properties_district").css("display", "block")
+                                $("#wspot_signup_properties_address").attr("readonly", false)
+                                $("#wspot_signup_properties_district").attr("readonly", false)
+                                $('#cep_validate').empty().prepend('<label id="email_validate_error">{{ 'wspot.signup_page.field_cep_not_found' | trans }}</label>');
+                            }
+                        });
+                    } else {
+                        $("#wspot_signup_properties_address").attr("readonly", false)
+                        $("#wspot_signup_properties_district").attr("readonly", false)
+                        $('#cep_validate').empty().prepend('<label id="email_validate_error">{{ 'wspot.signup_page.field_cep_invalid' | trans }}</label>');
+                    }
+                })
+            }
+            var submitButton = document.getElementById('wspot_signup_submit');
+            var form = document.getElementById('signupForm')
+            if (form) {
+                const handleChange = (event) => { $('#wspot_signup_submit').removeAttr('onclick'); };
+                form.addEventListener('change', handleChange);
+
+                const handleChange2 = (event) => { $('#wspot_signup_submit').removeAttr('onclick'); };
+                form.addEventListener('click', handleChange2);
+            }
+            if (submitButton) {
+                const handleChange3 = (event) => {
+                    if (!validateForm()) {
+                        event.preventDefault();
+                        $('#wspot_signup_submit').attr('onclick', 'return false');
+                    }
+                };
+                submitButton.addEventListener('click', handleChange3);
+            }
+
+            // Set select default em input custom_oldmambo_document + idioma atual
+            if (inputSelectDocumentType) {
+                set_default_select_custom_oldmambo_document();
+            }
+            // Onchange que muda placeholder do input custom_oldmambo_id_documento
+            if (inputDocumentId) {
+                inputDocumentId.style.display = 'none';
+            }
+            $("#wspot_signup_properties_email").attr('autocomplete','new-password');
+
+            let colors = [
+                'rgba(255, 255, 255, 0.0)',
+                'rgba(255, 255, 255, 0.1)',
+                'rgba(255, 255, 255, 0.2)',
+                'rgba(255, 255, 255, 0.3)',
+                'rgba(255, 255, 255, 0.4)',
+                'rgba(255, 255, 255, 0.5)',
+                'rgba(255, 255, 255, 0.6)',
+                'rgba(255, 255, 255, 0.7)',
+                'rgba(255, 255, 255, 0.8)',
+                'rgba(255, 255, 255, 0.9)',
+                'rgba(255, 255, 255, 1.0)',
+                'rgb(255, 255, 255)',
+                '#ffffff',
+                '#fff'
+            ]
+
+            let loginBox = $('#loginBox.boxes').css('background-color')
+            let signUpBox = $('#signUpBox.boxes').css('background-color')
+
+            colors.forEach(color => {
+                if(loginBox === color) {
+                    $('#loginBox input').css("border", "1px solid #96989A")
+                }
+                if(signUpBox === color) {
+                    $('#signUpBox input').css("border", "1px solid #96989A")
+                }
+            })
+
+            // i18n phone flags and country code
+            // https://github.com/jackocnr/intl-tel-input#options
+            $('input[type=tel]').on("keyup blur", function() {
+                if ($(this).intlTelInput("getSelectedCountryData").name != "Brasil") {
+                    $(this).removeAttr('minlength');
+                    $("#signupForm").validate().resetForm();
+                }
+                if (($(this).intlTelInput("getSelectedCountryData").name == "Brasil") && ($(this).val().length == 2)) {
+                    var regexPattern = "((([1,4,6,8,9][1-9])|(2[1,2,4,7,8])|(3[1-8])|(4[1-9])|(5[1-5])|(7[1,3,4,5,7,9])))",
+                        regex = new RegExp(regexPattern);
+
+                    if (!regex.test($(this).val())) {
+                        $(this).val('').focus();
+                        submitButtonControl(true, $(this));
+                    } else {
+                        submitButtonControl(false, $(this));
+                    }
+                }
+            });
+
+            $('#wspot_signup_properties_name').on("focusout", function(){
+                var regexPattern = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
+                var regex = new RegExp(regexPattern);
+                var resutl = regexPattern.exec($(this).val());
+
+                if (!regexPattern.test($(this).val())) {
+                    $('#name_validate').empty().prepend('<label id="email_validate_error" for="wspot_signup_properties_nome">{{ "wspot.invalid_name.name_validate_error"|trans }}</label>');
+                    submitButtonControl(true, $(this));
+                } else {
+                    $('#name_validate').empty();
+                    submitButtonControl(false, $(this));
+                }
+            });
+
+            var phoneField = $('#wspot_signup_properties_phone');
+            var mobileField = $('#wspot_signup_properties_mobile');
+            var phoneCodeField = $('#wspot_signup_country-code-phone');
+            var mobileCodeField = $('#wspot_signup_country-code-mobile');
+
+            var countryData = $.fn.intlTelInput.getCountryData();
+            $.each(countryData, function(i, country) {
+                country.name = country.name.replace(/.+\((.+)\)/,"$1").substring(0, 20);
+            });
+
+            // add field to phone input
+            phoneField.intlTelInput({
+                initialCountry: 'BR',
+                preferredCountries: ['br']
+            });
+            phoneField.attr('autocomplete', 'on');
+
+            mobileField.intlTelInput({
+                initialCountry: 'BR',
+                preferredCountries: ['br']
+            });
+            mobileField.attr('autocomplete', 'on');
+
+            // Add the first code on page load, by default is Br (55)
+            phoneCodeField.val(phoneField.intlTelInput("getSelectedCountryData").dialCode);
+            mobileCodeField.val(mobileField.intlTelInput("getSelectedCountryData").dialCode);
+
+            // on change country, change de value of input hidden
+            phoneField.on('countrychange', function(e, countryData){
+                phoneCodeField.val(countryData.dialCode);
+            });
+
+            mobileField.on('countrychange', function(e, countryData){
+                mobileCodeField.val(countryData.dialCode);
+            });
+
+            var isMock = {{ (isMockView is defined) ? isMockView : 0 }};
+            var bounceValidator = '{{ bounceValidator }}';
+
+            if (isMock) {
+                $('#wspot_signup_submit').attr('onclick', 'return false');
+                $('#wspot_signin_entrar').attr('onclick', 'return false');
+            }
+
+            $('#wspot_signup_terms_required').on('change', function(){
+                if (!$(this).is(':checked')) {
+                    submitButtonControl(true, $(this));
+                    $('#wspot_signup_terms_required-error').show();
+                } else {
+                    submitButtonControl(false, $(this));
+                    $('#wspot_signup_terms_required-error').hide();
+                }
+            });
+
+            function verify_form(form) {
+                if (!form.checkValidity()){
+                    return false
+                }
+                return true
+            }
+
+            var requiredOptIn = '{{ requiredOptIn }}';
+
+            if (requiredOptIn) {
+                $('#wspot_signup_authorizeEmail').on('change', function(){
+                    if (!$(this).is(':checked')) {
+                        submitButtonControl(true, $(this));
+                        $('#wspot_signup_authorize_email_required-error').show();
+                    } else {
+                        submitButtonControl(false, $(this));
+                        $('#wspot_signup_authorize_email_required-error').hide();
+                    }
+                });
+            }
+
+            $('#wspot_signup_consent_term').on('change', function(){
+                if (!$(this).is(':checked')) {
+                    submitButtonControl(true, $(this));
+                    $('#wspot_signup_consent_term_required-error').show();
+                } else {
+                    submitButtonControl(false, $(this));
+                    $('#wspot_signup_consent_term_required-error').hide();
+                }
+            });
+
+            $('#wspot_signup_properties_email').keyup(function(){
+                $(this).val($(this).val().toLowerCase());
+            });
+
+            var clientDomain = '{{ client.domain }}';
+            if (clientDomain === 'kopclub') {
+                $('#wspot_signup_password_first').val("kopclub");
+                $('#wspot_signup_password_second').val("kopclub");
+                $('#wspot_signin_password').val("kopclub");
+            } else {
+                $('.forgotPassword').show();
+            }
+
+            if (bounceValidator == 1) {
+                $('#wspot_signup_properties_email').change(function() {
+                    setTimeout(function(){
+                        if (!$('#wspot_signup_properties_email').hasClass('error')) {
+                            submitButtonControl(true, $(this));
+                            $('#email_validate').empty().prepend('<label id="email_validate_process" class="info" for="wspot_signup_properties_email">{{ "wspot.invalid_email.email_validate_process"|trans }}</label>');
+
+                            var data  = {
+                                'email' : $('#wspot_signup_properties_email').val()
+                            };
+
+                            var route = Routing.generate('email_validate');
+
+                            $.ajax({
+                                type: "POST",
+                                url: route,
+                                data: data,
+                                dataType: "json",
+                                timeout: 10000,
+                                success: function(response)
+                                {
+                                    $('#email_validate').empty().prepend('<label id="email_validate_success" class="success" for="wspot_signup_properties_email">{{ "wspot.invalid_email.email_validate_success"|trans }}</label>');
+                                    $('#wspot_signup_emailValidate').val(response);
+                                    submitButtonControl(false, $('#wspot_signup_emailValidate'));
+                                },
+                                error: function(response, status)
+                                {
+                                    if (status == 'timeout') {
+                                        $('#email_validate').empty();
+                                        submitButtonControl(false, $('#wspot_signup_emailValidate'));
+                                    } else {
+                                        $('#wspot_signup_properties_emailValidate').val('');
+                                        $('#wspot_signup_emailValidate').val(response.responseJSON);
+                                        submitButtonControl(true, $('#wspot_signup_emailValidate'));
+
+                                        $('#email_validate').empty().prepend('<label id="email_validate_error" for="wspot_signup_properties_email">{{ "wspot.invalid_email.email_validate_error"|trans }}</label>');
+                                    }
+                                }
+                            });
+                        }
+                    }, 100);
+                });
+            }
+
+            if(!jQuery(".errorBox").text()){
+                jQuery(".errorBox").css("background-color","transparent");
+                jQuery(".errorBox").css("display","none");
+            }
+
+            if(!jQuery(".success").text()){
+                jQuery(".success").css("background-color","transparent");
+                jQuery(".success").css("display","none");
+            }
+
+            $('.country').on('click', function () {
+                if ($(this).attr("data-dial-code") != "55") {
+                    $(this).removeAttr('minlength');
+                    $("#signupForm").validate().resetForm();
+                }
+            });
+
+            {% if(app.request.locale == 'pt_br') %}
+            jQuery('#wspot_signup_properties_phone').attr('maxlength','11');
+            jQuery("#wspot_signup_properties_document").attr('maxlength','11');
+            {% else %}
+            jQuery("#wspot_signup_properties_document").attr('type','text');
+            {% endif %}
+
+            {% if(app.request.locale != 'pt_br') %}
+            $( "span.label-important" ).each( function(){
+                if($(this).text() == 'Domínio de e-mail não permitido') {
+                    $(this).text('Domain not allowed');
+                }
+            });
+            {% endif %}
+
+            {% if(app.request.locale == 'es') %}
+            $( "span.label-important" ).each( function(){
+                if($(this).text() == 'Domain not allowed') {
+                    $(this).text('Dominio no autorizado');
+                }
+            });
+            {% endif %}
+
+            $( "span.label-important" ).each( function(){
+                if($(this).text() == 'Este valor já está a ser usado.') {
+                    $(this).text('Este valor já está sendo usado.');
+                }
+            });
+
+            jQuery('.btn-facebook').click(function(){
+                if (isMock) return false;
+                jQuery(this).hide();
+                jQuery('#loaderBtnFacebook').show();
+            });
+
+            jQuery('.btn-large-facebook').click(function(){
+                if (isMock) return false;
+                jQuery(this).hide();
+                jQuery('#loaderBtnLargeFacebook').show();
+            });
+
+            jQuery('.btn-twitter').click(function(){
+                if (isMock) return false;
+                jQuery(this).hide();
+                jQuery('#loaderBtnTwitter').show();
+            });
+
+            jQuery('.btn-large.twitter').click(function(){
+                if (isMock) return false;
+                jQuery(this).hide();
+                jQuery('#loaderBtnLargeTwitter').show();
+            });
+
+            jQuery('.btn-google').click(function(){
+                if (isMock) return false;
+                jQuery(this).hide();
+                jQuery('#loaderBtnGoogle').show();
+            });
+
+            jQuery('.btn-google-custom').click(function(){
+                if (isMock) return false;
+                jQuery(this).hide();
+                jQuery('#loaderBtnLargeGoogle').show();
+            });
+
+            if ($('.errorBox').text()) {
+                jQuery('#loginBox').css('display', 'block');
+                jQuery('#defaultBox').hide();
+                jQuery('#loginBox').show();
+            }
+
+            if ($('.label-important').text()) {
+                jQuery('#signUpBox').css('display', 'block');
+                jQuery('#defaultBox').hide();
+                jQuery('#signUpBox').show();
+            }
+
+            jQuery('#loginAccount').click(function(){
+                jQuery('#defaultBox').hide();
+                jQuery('#loginBox').show();
+            });
+
+            jQuery('#signupAccount').click(function(){
+                jQuery('#defaultBox').hide();
+                jQuery('#signUpBox').show();
+            });
+
+            jQuery('#btnCadastro').click(function(){
+                jQuery('#loginBox').hide();
+                jQuery('#signUpBox').show();
+            });
+
+            jQuery('#btnLoginBoxButton').click(function(){
+                jQuery('#loginBox').show();
+                jQuery('#signUpBox').hide();
+            });
+
+            {% if login_error %}
+            if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                jQuery('#defaultBox').hide();
+                jQuery('#signUpBox').hide();
+                jQuery('#loginBox').show();
+            }
+            {% endif %}
+
+            {% if signup_error %}
+            if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+                jQuery('#defaultBox').hide();
+                jQuery('#loginBox').hide();
+                jQuery('#signUpBox').show();
+            }
+            {% endif %}
+
+            var data = {
+                'field': ['city']
+            };
+
+            var route = Routing.generate('check_field_exists');
+
+            $.ajax({
+                type: "POST",
+                url: route,
+                data: data,
+                dataType : "json",
+                success: function(response)
+                {
+                    if (response) {
+                        listCities();
+                    }
+                }
+            });
+        });
+
+        function listCities(){
+            var route = Routing.generate('frontend_load_cities');
+
+            $.ajax({
+                type: "POST",
+                url: route,
+                dataType : "json",
+                success: function(response)
+                {
+                    $("#wspot_signup_properties_city").autocomplete({
+                        source: response
+                    });
+                }
+            });
+        }
+
+        setTimeout(function() {
+            $(".language-box").toggle("drop", {direction: 'up'}, 800);
+        }, 4000);
+
+        if (document.getElementById("wspot_signin_properties_email")) {
+            emailAutoCompleteDomain({0: '#wspot_signin_properties_email'});
+        }
+        if (document.getElementById("wspot_signup_properties_email")) {
+            emailAutoCompleteDomain({0: '#wspot_signup_properties_email'});
+        }
+
+        {% for flashMessage in app.session.flashbag.get('error') %}
+        $.gritter.add({
+            title: 'Aviso!',
+            text: ' {{ flashMessage }} '
+        });
+        {% endfor %}
+    
+    </script>
+
+    <style type="text/css">
+        .error {
+            color: red;
+        }
+        {% if(app.request.locale == 'pt_br') %}
+            #search_cep_group {
+                display: flex;
+                gap: 10px;
+                float: left;
+            }
+
+            #search_cep_group button {
+                margin-top: 0px;
+                height: 35px !important;
+            }
+
+            #get_address {
+                display: show;
+            }
+        {% else %}
+            #get_address {
+                display: none;
+            }
+        {% endif %}
+        #customBtn {
+            display: inline-block;
+            background: white;
+            color: #444;
+            width: 100%;
+            white-space: nowrap;
+        }
+        #customBtn:hover {
+            cursor: pointer;
+        }
+        span.label {
+            font-weight: normal;
+        }
+        span.icon {
+            background: url({{ asset(assets_path ~'/images/google-icon.png') }}) transparent 5px 50% no-repeat;
+            display: inline-block;
+            vertical-align: middle;
+            width: 42px;
+            height: 42px;
+        }
+        span.buttonText {
+            display: inline-block;
+            vertical-align: middle;
+            padding-left: 10px;
+            padding-right: 0px;
+            font-size: 13px;
+            font-weight: normal;
+            position: relative;
+            left: 50%;
+            transform: translate(-80%);
+        }
+
+
+        .btn-red {
+            background: #ec213a !important;
+            background-color: rgb(236, 33, 58);
+            background-image: none;
+            background-color: #ec213a !important;
+            background-image: linear-gradient(to bottom, #ec213a, #ec213a) !important;
+            color: #FFFFFF !important;
+        }
+
+    </style>
+    <script>
+        window.addEventListener('load', function() {
+            console.log('All assets are loaded');
+            if (document.getElementById('logo-wspot')) {
+                let template = localStorage.getItem('template');
+                if (template) {
+                    template = JSON.parse(template);
+                    template['logo-url']                 = document.getElementById('logo-wspot').src.replace(location.origin, '');
+                    template['login-background-color']   = '{{ template.loginBoxColor }}';
+                    template['login-font-color']         = '{{ template.loginFontColor }}';
+                    template['login-btn-color']          = '{{ template.loginButtonColor }}';
+                    template['login-btn-font-color']     = '{{ template.loginButtonFontColor }}';
+                    template['background-color']     = '{{ template.backgroundColor }}';
+                } else {
+                    template = {
+                        'logo-url'                 : document.getElementById('logo-wspot').src.replace(location.origin, ''),
+                        'login-background-color'   : '{{ template.loginBoxColor }}',
+                        'login-font-color'         : '{{ template.loginFontColor }}',
+                        'login-btn-color'          : '{{ template.loginButtonColor }}',
+                        'login-btn-font-color'     : '{{ template.loginButtonFontColor }}',
+                        'background-color'         : '{{ template.backgroundColor }}'
+                    };
+                };
+                localStorage.setItem('template', JSON.stringify(template));
+            }
+        });
+    </script>
+{% endblock %}

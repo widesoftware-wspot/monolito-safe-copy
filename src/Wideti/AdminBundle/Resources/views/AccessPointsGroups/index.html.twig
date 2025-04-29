@@ -1,0 +1,235 @@
+{% extends 'AdminBundle::dataTree.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/frontend/css/jquery.nestable.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/frontend/css/font-awesome.min.css')}}" rel="stylesheet" />
+    <style>
+        #hints li {
+            padding: .5vh;
+        }
+    </style>
+{% endblock %}
+
+{% block dataTitle %}
+    Grupos
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('access_points_groups_new')}}" style="margin: 0px 0 2px 0;"
+       class="btn btn-primary btn-icon glyphicons circle_plus">
+        <i></i>Cadastrar</a>
+{% endblock %}
+
+{% block messagebar %}
+    <b>Instruções:</b>
+    <ul id="hints">
+        <li>Os sinais: (+) e (-), à esquerda do nome, permitem expandir/reduzir a visualização dos grupos abaixo na hierarquia de determinado grupo;</li>
+        <li>Um grupo Master é aquele que não é subgrupo de nenhum outro. Consequentemente, não herda configurações ou template;</li>
+        <li>Se o ícone <a href="#" class="btn-action glyphicons circle_arrow_top btn-default"><i></i></a> aparecer, não é possível alterar as configurações uma vez que o grupo herda as de seu grupo pai;</li>
+        <li>Não é possível excluir um grupo caso hajam grupos vinculados à este;</li>
+        <li>O número de grupos que estão sob hierarquia de determinado grupo pode ser visualizado em: <a href="#" class="btn-action glyphicons eye_open btn-info"><i></i></a></li>
+    </ul>
+{% endblock %}
+
+{% block content %}
+    {{ parent() }}
+    {% block treeView %}
+        <div class="dd" id="nestable3">
+            <ol class='dd-list dd3-list'>
+                <div id="dd-empty-placeholder"></div>
+            </ol>
+        </div>
+    {% endblock %}
+
+    <div class="custom-pagination" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+        <style>
+            .custom-pagination {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+            }
+            .custom-pagination ul {
+                display: flex;
+                padding: 0;
+                margin: 0;
+            }
+            .custom-pagination li {
+                list-style-type: none;
+                margin: 0 5px;
+            }
+            .custom-pagination a {
+                text-decoration: none;
+                padding: 5px 10px;
+            }
+        </style>
+        {% include 'AdminBundle::pagination.html.twig' with {'pagination': pagination, 'route': 'access_points_groups'} %}
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script src="{{ asset('bundles/admin/frontend/js/jquery.nestable.js')}}"></script>
+<script type="text/javascript">
+    var output = '';
+    var json = '{{ jsonGroup }}';
+    json = json.replace(/&quot;/g,'"');
+    console.log(json);
+    var loadSpinner = 'load-spinner-';
+
+    var options = {
+        'beforeDragStop': changeParentGroupDinamically,
+        'maxDepth': 1000
+    }
+
+    $(document).ready(function(){
+
+        $('.delete-access-group').click(function(e){
+            e.preventDefault();
+
+            var id = $(this).data("idGroupAccessPoints");
+            var data = {'id' : id};
+
+            bootbox.confirm("Deseja realmente excluir?", function(result) {
+                if (result) {
+                    var route = Routing.generate('access_points_groups_delete', { id: id });
+                    var routeIndex = Routing.generate('access_points_groups');
+
+                    $.ajax({
+                        type: "POST",
+                        url: route,
+                        data: data,
+                        dataType : "json",
+                        success: function(response)
+                        {
+                            var title;
+                            var responseData = response.data;
+
+                            var json = responseData.replace(/&quot;/g,'"');
+                            json = JSON.parse(json);
+
+                            if (response.type == 'success') {
+                                window.location.href = routeIndex;
+                            } else {
+                                title = "Erro ao tentar excluir!";
+
+                                $.gritter.add({
+                                    title: title,
+                                    text: json.message
+                                });
+                            }
+                        },
+                        error: function(xhr,status,error){
+                            console.log(error);
+                        }
+                    });
+                }
+            });
+        });
+    });
+
+    refreshGroupAccessPointTree(json);
+    $('#nestable3').nestable(options);
+
+    function changeParentGroupDinamically(l,e, p) {
+        var parentDbId = p[0].offsetParent.dataset.dbid;
+        var id = e[0].dataset.dbid;
+        var data = {'id' : id, 'parent_id': parentDbId};
+        var route = Routing.generate('access_points_groups_change_parent');
+
+        var findEl = $(e).find("." + loadSpinner + id);
+        findEl.removeClass("hideElem");
+
+        $.ajax({
+            type: "PUT",
+            url: route,
+            data: data,
+            dataType : "json",
+            success: function(response)
+            {
+                findEl.addClass("hideElem");
+                refreshGroupAccessPointTree(response.json);
+            },
+            error: function(xhr,status,error){
+                errorJson = JSON.parse(JSON.parse(xhr.responseText).data).message;
+                $.gritter.add({
+                    title: "Erro",
+                    text: errorJson
+                });
+            }
+        });
+    }
+
+    function refreshGroupAccessPointTree(json) {
+        output = '';
+        $.each(JSON.parse(json), function (index, item) {
+            output += buildTreeHtml(item);
+        });
+        $('#dd-empty-placeholder').html(output);
+    }
+
+    function configurationsButton(id, isMaster, parentConfigurations) {
+        if ((!isMaster) && (parentConfigurations)) {
+            return parentConfigurationComponent();
+        }
+
+        return "<a href=\"" + Routing.generate('configurations_edit', { groupId: id }) +
+            "\" class=\"btn-action pull-right glyphicons cogwheel btn-default\" title=\"Configurações\"><i></i></a>";
+    }
+    
+    function parentConfigurationComponent() {
+        return "<span class=\"btn-action pull-right glyphicons circle_arrow_top btn-default\" " +
+            "title=\"Herda configurações do grupo pai.\"><i></i></span>";
+    }
+
+    function detailsButton(id) {
+        return "<a href=\"" + Routing.generate('access_points_groups_show', { id: id }) +
+            "\" style='margin-left:3px;' class=\"btn-action pull-right glyphicons eye_open btn-info\" " +
+            "title=\"Detalhes\"><i></i></a>";
+    }
+
+    function editButton(id) {
+        return "<a style='margin-left:3px;' href=\"" + Routing.generate('access_points_groups_edit', { id: id }) +
+            "\" class=\"btn-action pull-right glyphicons pencil btn-success\" title=\"Editar\"><i></i></a>";
+    }
+
+    function deleteButton(id, isDefault) {
+        if (isDefault === true) {
+            return "";
+        }
+
+        return "<a style='margin-left:3px;' href=\"#\" data-id-group-access-points='" + id + "' " +
+            "class=\"btn-action pull-right glyphicons remove_2 btn-danger delete-row delete-access-group\">" +
+            "<i></i></a>";
+    }
+
+    function buildTreeHtml(item) {
+        var html = "<li data-dbid='" + item.dbid + "' class='dd-item dd3-item' data-id='" + item.id + "'>";
+
+        html += "<div class='dd-handle dd3-handle'>Drag</div><div class='dd3-content'><span class='apg-"+
+            item.dbid +"' data-toggle=\"tooltip\" title=\"Template: " +
+            item.template + ", Qtd de pontos de acesso: " + item.qtd_access_points + "\">" + item.id +
+            "</span><i class=\"fa fa-spinner hideElem fa-spin " + loadSpinner+item.dbid + " \"></i>" +
+            deleteButton(item.dbid, item.is_default) +
+            editButton(item.dbid) +
+            detailsButton(item.dbid) +
+            configurationsButton(item.dbid, item.is_master, item.parent_configurations) + "</div>";
+
+        if (item.children) {
+            html += "<ol class='dd-list'>";
+
+            $.each(item.children, function (index, sub) {
+                html += buildTreeHtml(sub);
+            });
+
+            html += "</ol>";
+        }
+
+        html += "</li>";
+
+        return html;
+    }
+</script>
+{% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

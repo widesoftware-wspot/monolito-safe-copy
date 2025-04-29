@@ -1,0 +1,54 @@
+{
+  "template": "erp_changelog_*",
+  "settings": {
+    "number_of_shards": 1
+  },
+  "aliases": {
+    "erp_changelog_all" : {},
+    "erp_changelog_last_30_days":{
+      "filter": {
+        "range": {
+          "date": {
+            "gte": "now-30d"
+          }
+        }
+      }
+    }
+  },
+  "mappings":{
+    "erp_logs" : {
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "clientId": {
+          "type": "long"
+        },
+        "author": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "method": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "url": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "action": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "response": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "date": {
+          "type": "date",
+          "format": "yyyy-MM-dd HH:mm:ss"
+        }
+      }
+    }
+  }
+}

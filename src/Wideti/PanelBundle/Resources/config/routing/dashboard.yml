@@ -1,0 +1,3 @@
+panel_dashboard:
+  path:  /
+  defaults: { _controller: wspot.panel.controller.dashboard:dashboardAction }

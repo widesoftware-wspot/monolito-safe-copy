@@ -1,0 +1,167 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block heading %} Detalhes do botão de Interesse (CTA) da Campanha {% endblock %}
+
+{% block filterBlock %}
+{% endblock %}
+
+{% block table %}
+
+    <div class="row-fluid">
+
+        <div class="span10">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading">Campanha: {{ campaign.name }}</span></h4>
+                </div>
+                <div class="widget-body">
+                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th style="width: 150px;">Publicidade</th>
+                                <th style="width: 130px;">Total de cliques</th>
+                                {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") %}
+                                <th style="text-align: center; width: 120px;">Visualizar Visitantes <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="Serão exibidos os registros de cliques dos últimos 30 dias ou do período selecionado." data-original-title="" title=""></i></th>
+                                {% endif %}
+                                <th style="text-align: center; width: 180px;">Exportar Listagem</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% if preLoginBanner %}
+                                <tr class="gradeX">
+                                    <td>Banner Pré-Login</td>
+                                    <td>{{ preLoginBanner }} cliques</td>
+                                    {% if is_granted("ROLE_SUPER_ADMIN") or is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_USER") or is_granted("ROLE_MARKETING") or is_granted("ROLE_MANAGER") %}
+                                    <td style="text-align: center;">
+                                        <a href="{{ path('admin_campaign_cta_report_guests', { id : campaign.id, type : preLoginType, params : app.request.query.all }) }}"
+                                           class="btn-action glyphicons eye_open btn-info"><i></i></a>
+                                    </td>
+                                    {% endif %}
+                                    <td style="text-align: center;">
+                                        <a class="btn btn-action glyphicons file_export" data-id="{{ campaign.id }}" data-type="{{ preLoginType }}" href="#"><i></i></a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            {% if posLoginBanner %}
+                                <tr class="gradeX">
+                                    <td>Banner Pós-Login</td>
+                                    <td>{{ posLoginBanner }} cliques</td>
+                                    <td style="text-align: center;">
+                                        <a href="{{ path('admin_campaign_cta_report_guests', { id : campaign.id, type : posLoginType, params : app.request.query.all }) }}"
+                                           class="btn-action glyphicons eye_open btn-info"><i></i></a>
+                                    </td>
+                                    <td style="text-align: center;">
+                                        <a class="btn btn-action glyphicons file_export" data-id="{{ campaign.id }}" data-type="{{ posLoginType }}" href="#"><i></i></a>
+                                    </td>
+                                </tr>
+                            {% endif %}
+
+                            {% if not preLoginBanner and not posLoginBanner %}
+                                <tr class="gradeX">
+                                    <td colspan="3">Nenhum registro de acesso neste período.</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="widget-body">
+        <hr class="separator">
+
+        <div class="form-actions right">
+            <a href="{{ path('admin_campaign_cta_report') }}">
+                <button type="button" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>
+                    Voltar
+                </button>
+            </a>
+        </div>
+    </div>
+    <div id="modal-export-success" style="display: none;" class="modal fade in" tabindex="-1" style="overflow:hidden;" aria-hidden="false">
+        <div class="modal-body">
+            <h1>Atenção!</h1>
+            <p id="flashMessage" style="font-size: 15px;"></p>
+        </div>
+        <div id="teste" class="pull-right">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Fechar</button>
+        </div>
+    </div>
+
+    <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+        <form id="modal-form" name="export" method="get" action="{{ path('admin_export_call_to_action', { params : app.request.query.all }) }}" class="form-inline" novalidate="novalidate">
+            <input type="hidden" name="id" id="id" value="" />
+            <input type="hidden" name="type" id="type" value="" />
+            <div class="modal-body">
+                <h3>Aviso</h3>
+                <div class="row-fluid">
+                    <div style="padding: 0.5em; background-color: #eeeeee; margin-top: 10px">
+                        {% if consent.hasError %}
+                            <p style="font-weight: bolder">Ao exportar os dados você está de acordo com as finalidades de uso do seu termo de consentimento.</p>
+                        {% else %}
+                            <p style="font-weight: bolder">Ao exportar os dados você está de acordo com as finalidades de uso abaixo:</p>
+                            <ul id="consent-list">
+                                {% for condition in consent.conditions %}
+                                    <li>{{ condition.description }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="close" data-handler="1" class="btn btn-default">Cancelar</a>
+                <button id="export" type="submit" class="btn btn-primary">Exportar</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            function openModal() {
+                $("#modal").modal({                    // wire up the actual modal functionality and show the dialog
+                    "backdrop"  : "static",
+                    "keyboard"  : true,
+                    "show"      : true                     // ensure the modal is shown immediately
+                });
+            }
+
+           $('a.file_export').on('click', function (ev) {
+                var id = $(this).attr('data-id')
+                var type = $(this).attr('data-type')
+
+                $('form > #id').val(id)
+                $('form > #type').val(type)
+                openModal()
+           });
+
+           $('#close').click(function() {
+                bootbox.hideAll();
+                $('meta[http-equiv=refresh]').attr('content', '0');
+           });
+
+           $('#export').click(function() {
+                $(this).html("Processando...");
+                $(this).attr('disabled', true);
+                $('#modal-form').submit();
+
+                window.setTimeout(function() {
+                    $('#export').attr('disabled', false);
+                    $('#export').html("Exportar");
+                    bootbox.hideAll();
+                }, 2000);
+           });
+
+        });
+    </script>
+
+    {% include 'AdminBundle::alerts.js.twig' %}
+    {% include 'AdminBundle::export-confirmation.html.twig' %}
+{% endblock %}

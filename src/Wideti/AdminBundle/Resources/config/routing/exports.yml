@@ -1,0 +1,58 @@
+admin_export_access_historic:
+    path:  /access-historic
+    defaults: { _controller: wspot.admin.controller.exports:accessHistoric }
+
+admin_export_online_guests:
+    path: /online_guests
+    defaults: { _controller: wspot.admin.controller.exports:exportOnlineGuests }
+    requirements: { methods: get }
+
+admin_export_download_upload:
+    path: /download_upload
+    defaults: { _controller: wspot.admin.controller.exports:downloadUpload }
+    requirements: { methods: get }
+
+admin_export_download_upload_detail:
+    path: /download_upload_detail
+    defaults: { _controller: wspot.admin.controller.exports:downloadUploadDetail }
+    requirements: { methods: get }
+
+admin_export_most_visited_hours:
+    path: /most_visited_hours
+    defaults: { _controller: wspot.admin.controller.exports:mostVisitedHours }
+    requirements: { methods: get }
+
+admin_export_access_points:
+    path: /access_points
+    defaults: { _controller: wspot.admin.controller.exports:accessPoints }
+    requirements: { methods: get }
+
+admin_export_campaign:
+    path: /campaign
+    defaults: { _controller: wspot.admin.controller.exports:campaign }
+    requirements: { methods: get }
+
+admin_export_call_to_action:
+    path: /call_to_action
+    defaults: { _controller: wspot.admin.controller.exports:callToAction }
+    requirements: { methods: get }
+
+admin_export_sms:
+    path: /sms
+    defaults: { _controller: wspot.admin.controller.exports:sms }
+    requirements: { methods: get }
+
+admin_export_records_per_day:
+    path: /records_per_day
+    defaults: { _controller: wspot.admin.controller.exports:recordsPerDay}
+    requirements: { methods: get }
+
+admin_export_guests_report:
+    path: /guests_report
+    defaults: { _controller: wspot.admin.controller.exports:guestsReport}
+    requirements: { methods: get }
+
+admin_export_birthdays:
+    path: /birthdays
+    defaults: { _controller: wspot.admin.controller.exports:birthdays}
+    requirements: { methods: get }

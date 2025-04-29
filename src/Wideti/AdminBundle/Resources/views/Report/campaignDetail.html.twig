@@ -1,0 +1,55 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block heading %} Detalhes de Visualizações da Campanha {% endblock %}
+
+{% block filterBlock %}
+{% endblock %}
+
+{% block table %}
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="widget">
+                <div class="widget-head">
+                    <h4 class="heading">{{ campaign.name }}</span></h4>
+                </div>
+                <div class="widget-body">
+                    <table class="dynamicTable table table-striped table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>Publicidade</th>
+                                <th>Total de visualizações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for view in views %}
+                                <tr class="gradeX">
+                                    <td>
+                                        {{ view.step == 1 ? 'Pré-Login' : 'Pós-Login' }}
+                                    </td>
+                                    <td>{{ view.total }} visualizações</td>
+                                </tr>
+                            {% else %}
+                                <tr class="gradeX">
+                                    <td colspan="3">Nenhum registro de visualizações neste período.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="widget-body">
+        <hr class="separator">
+
+        <div class="form-actions right">
+            <a href="{{ path('admin_campaign_report') }}">
+                <button type="button" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>
+                    Voltar
+                </button>
+            </a>
+        </div>
+    </div>
+{% endblock %}

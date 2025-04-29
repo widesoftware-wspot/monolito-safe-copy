@@ -1,0 +1,33 @@
+{% block _wideti_AdminBundle_template_color_widget %}
+    {% spaceless %}
+        <div class="control-group color {{  (form_errors(form)) ? 'error' : ''  }}">
+            {{ form_label(form) }}
+            <div class="controls input-group">
+                {{ form_widget(form) }}
+                <span class="input-group-addon"><i></i></span>
+                {{ form_errors(form) }}
+            </div>
+        </div>
+    {% endspaceless %}
+{% endblock _wideti_AdminBundle_template_color_widget %}
+
+{% block file_widget %}
+    {% spaceless %}
+        <div data-provides="fileupload" class="fileupload fileupload-new">
+            <input type="hidden" value="" name="">
+            <div class="input-append">
+                <div class="uneditable-input span3">
+                    <i class="icon-file fileupload-exists"></i>
+                    <span class="fileupload-preview"></span>
+                </div>
+                <span class="btn btn-default btn-file">
+                    <span class="fileupload-new">Selecionar arquivo</span>
+                    <span class="fileupload-exists">Alterar</span>
+                    {{ form_widget(form) }}
+                </span>
+                <a data-dismiss="fileupload" class="btn fileupload-exists" href="#">Remover</a>
+                <p>{{ form_errors(form) }}</p>
+            </div>
+        </div>
+    {% endspaceless %}
+{% endblock file_widget %}

@@ -1,0 +1,159 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <style>
+
+        #number-error ul li {
+            background: #9f2323 none repeat scroll 0 0 !important;
+            border-radius: 3px;
+            color: #ffffff;
+            display: inline-block;
+            font-size: 11.8px;
+            font-weight: bold;
+            line-height: 14px;
+            padding: 2px 4px;
+            position: relative;
+            text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+            top: 10px;
+            vertical-align: baseline;
+            white-space: nowrap;
+        }
+
+    </style>
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;">
+            <div class="box-content">
+            {% if action == 'login' %}
+                <h3>{{ 'wspot.confirmation.title_login'|trans }}</h3>
+            {% else %}
+                <h3>{{ 'wspot.confirmation.title'|trans }}</h3>
+            {% endif %}
+                {% if (resend == 'code') %}
+                    <h4 class="resend">{{ 'wspot.confirmation.resend_code'|trans }}</h4>
+                {% elseif (resend == 'email') %}
+                    <h4 class="resend">{{ 'wspot.confirmation.resend_url'|trans }}</h4>
+                {% endif %}
+
+                {% set query = app.request.query.all %}
+
+                {% if type == 'sms' %}
+                    <div class="content-center">
+                        {% if action == 'login' %}
+                            {{ 'wspot.confirmation.sms_message_1_login'|trans }}
+                            {% set guestSessionData = app.session.get('guest') %}
+                            {% set oauthPhone = guestSessionData.oauth_data.phone is defined ? guestSessionData.oauth_data.phone : null %}
+                            {% set oauthMobile = guestSessionData.oauth_data.mobile is defined ? guestSessionData.oauth_data.mobile : null %}
+
+                            {% if oauthPhone %}
+                                <strong>{{ oauthPhone }}</strong>.
+                            {% elseif oauthMobile %}
+                                <strong>{{ oauthMobile }}</strong>.
+                            {% endif %}
+                        {% else %}
+                            {{ 'wspot.confirmation.sms_message_1'|trans }}
+                        {% endif %}
+                        {% if ('mobile' in guest.properties|keys) %}
+                            <strong>{{ guest.properties.mobile }}</strong>.
+                        {% elseif ('phone' in guest.properties|keys) %}
+                            <strong>{{ guest.properties.phone }}</strong>.
+                        {% endif %}
+                    </div>
+                    <div id="number-error">
+                        <ul></ul>
+                    </div>
+
+                    {{ form(form) }}
+
+                    {% if type == 'sms' and smsSend != 'fail' %}
+                        <a id="resendButton" class="btnConfirmation" href="{{ path('frontend_resend_confirmation', {'guest': guest.mysql, 'mode': 'code', 'locale': 'pt_br'}) }}" style="display: none;">{{ 'wspot.confirmation.resend_sms_code'|trans }}</a>
+                        <a style="height: 25px; margin-left: 0; position: relative; bottom: 4px; display: none;" id="loaderBtnResendSms" class="btnLoader">
+                            <img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" />
+                        </a>
+                        <a id="waitingToSendSmsAgain" class="btnConfirmation" href="#">
+                            {{ 'wspot.confirmation.resend_sms_waiting_1'|trans }} <b id="seconds">30</b> {{ 'wspot.confirmation.resend_sms_waiting_2'|trans }}
+                        </a>
+
+                    {% endif %}
+
+
+                    {% if ('mobile' in guest.properties|keys and action != 'login') %}
+                        <a class="btnChangeData" href="{{ path('frontend_edit_data', query|merge({'fields[]':'mobile', 'guest' : guest.mysql }) ) }}">{{ 'wspot.confirmation.phone_change'|trans }}</a>
+                    {% elseif ('phone' in guest.properties|keys and action != 'login') %}
+                        <a class="btnChangeData" href="{{ path('frontend_edit_data', query|merge({'fields[]':'phone', 'guest' : guest.mysql }) ) }}">{{ 'wspot.confirmation.phone_change'|trans }}</a>
+                    {% endif %}
+                {% elseif type == 'email' %}
+                    <div class="content-center">
+                        {{ 'wspot.confirmation.email_message_1'|trans }} <strong>{{ guest.properties.email }}</strong> {{ 'wspot.confirmation.email_message_1_1'|trans }}
+                        <strong>{{ config.confirmation_email_limit_time|confirmationTimeFormat }}</strong>. {{ 'wspot.confirmation.email_message_1_2'|trans }}
+                    </div>
+
+                    <a class="btnConfirmation" href="{{ path('frontend_resend_confirmation', { 'guest' : guest.mysql, 'mode': 'email' }) }}">{{ 'wspot.confirmation.resend_email_url'|trans }}</a>
+                    <a style="height: 25px; margin-left: 0; position: relative; bottom: 4px; display: none;" id="loaderBtnChange" class="btnLoader">
+                        <img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" />
+                    </a>
+                    <a class="btnChangeData" href="{{ path('frontend_edit_data', query|merge({'fields[]':'email','guest' : guest.mysql}) ) }}" style="margin-top: 15px;">{{ 'wspot.confirmation.email_change'|trans }}</a>
+
+                    <form action="{{ path('frontend_start_navigation') }}" method="POST">
+                        <input type="hidden" name="action" value="confirmation"/>
+                        <input name="email" type="hidden" value="{{ guest.properties.email }}" />
+                        <input name="password" type="hidden" value="{{ guest.password }}" />
+                        <button type="submit" id="">{{ 'wspot.confirmation.continue_button'|trans }}</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset(assets_path ~'/js/fingerprinting.js')}}"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function(){
+            $('#loaderBtnChange').hide();
+            $('#loaderBtnResendSms').hide();
+
+            $('#confirmation_code').prop('type', 'tel');
+
+            {% if type == 'email' %}
+            $('.btnConfirmation').on('click', function(){
+                $(this).hide();
+                $('#loaderBtnChange').show();
+            });
+            {% endif %}
+
+            {% if type == 'sms' and smsSend == 'fail' %}
+                $("#resendButton").css("display", "none");
+                $("#waitingToSendSmsAgain").css("display", "none");
+            {% endif %}
+        });
+
+        {% if type == 'sms' %}
+            $('#resendButton').on('click', function(){
+                $(this).hide();
+                $('#loaderBtnResendSms').show();
+            });
+
+            $("#resendButton").hide();
+            let counter = 30;
+            setInterval(function() {
+                counter--;
+                if (counter >= 0) {
+                    $("#seconds").html(counter);
+                }
+                if (counter === 0) {
+                    clearInterval(counter);
+                    $("#waitingToSendSmsAgain").hide();
+                    $("#resendButton").show();
+                }
+            }, 1000);
+        {% endif %}
+
+        {% if type == 'sms' and smsSend == 'fail' %}
+            $("#number-error ul").css("text-align","center");
+            $("#number-error ul").append("<li>{{ 'wspot.confirmation.sms_invalid_number'|trans }}</li>");
+        {% endif %}
+    </script>
+{% endblock %}

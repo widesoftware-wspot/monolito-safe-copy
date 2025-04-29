@@ -1,0 +1,82 @@
+{% extends 'AdminBundle::dataList.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/fancybox/jquery.fancybox-1.3.4.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block dataTitle %}
+    Gerenciar SSOs(Single Sign-On)
+{% endblock %}
+
+{% block buttonRight %}
+    <a href="{{ path('sso_integration_new')}}" style="float: right; margin-top: 2px;"
+       class="btn btn-primary btn-icon glyphicons circle_plus">
+        <i></i>Cadastrar</a>
+{% endblock %}
+
+{% block thead %}
+    <th class="center">Nome da conexão</th>
+    <th class="center">Tipo de conexão</th>
+    <th class="center">Client ID</th>
+    <th class="center" style="width: 130px;">Ações</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for oauth in oauths %}
+        <tr id="{{ oauth.id }}" class="gradeX">
+            <td class="center">{{ oauth.name }}</td>
+            {% if oauth.ssoType == "" %}
+                <td class="center">-</td>
+            {% else %}
+                <td class="center">{{ ssoTypes[oauth.ssoType] }}</td>
+            {% endif %}
+            <td class="center">{{ oauth.clientId }}</td>
+            <td class="center">
+                <a href="{{ path('sso_integration_edit', { 'id': oauth.id }) }}" class="btn-action glyphicons pencil btn-success" title="Editar"><i></i></a>
+                <a href="#" class="btn-action glyphicons remove_2 btn-danger delete-row"><i></i></a>
+            </td>
+        </tr>
+    {% else %}
+        <td colspan="3">Nenhuma integração sso cadastrada</td>
+    {% endfor %}
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('tr.gradeX td.center a.delete-row').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("Deseja realmente excluir?", function(result) {
+                    if (result) {
+                        var route = Routing.generate('sso_integration_delete', { id: id });
+
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                if (response.message != 'Exclusão de SSO não permitida.') {
+                                    parent.remove();
+                                }
+
+                                $.gritter.add({
+                                    title: 'Aviso!',
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

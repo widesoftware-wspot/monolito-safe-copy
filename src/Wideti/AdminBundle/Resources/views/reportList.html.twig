@@ -1,0 +1,88 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <style>.timezone {font-size: 11px;}</style>
+{% endblock %}
+
+{% block content %}
+
+    <ul class="breadcrumb"></ul>
+    <div class="separator bottom"></div>
+
+    <div class="heading-buttons">
+        <h3>
+            {% block dataTitle %}
+            {% endblock %}
+        </h3>
+        <div class="buttons pull-right">
+            {% block buttonRight %}
+            {% endblock %}
+        </div>
+    </div>
+    <div class="separator bottom"></div>
+
+    {% block filterBlock %}
+    <div class="filter-bar">
+        {% block filter %}
+            {% form_theme filter 'AdminBundle:Form:fields.html.twig' %}
+            {{ form(filter) }}
+        {% endblock %}
+        <div class="clearfix"></div>
+    </div>
+    <div class="innerLR">
+
+   {% endblock %}
+
+        <div class="widget">
+            <div class="widget-body">
+
+                {% block charts %}
+                {% endblock %}
+                {% block resultsInfo %}{% endblock %}
+
+
+                {% block table %}
+                    <div class="defaultTable" style="overflow-x:auto;">
+                        <table class="dynamicTable table table-striped table-condensed" id="someTable" style="overflow-x:auto;">
+                            <!-- Table heading -->
+                            <thead>
+                                <tr>
+                                    {% block thead %}
+                                        <th></th>
+                                    {% endblock %}
+                                </tr>
+                            </thead>
+                            <!-- // Table heading END -->
+                            <!-- Table body -->
+                            <tbody>
+                                <!-- Table row -->
+                                {% block tbody %}
+                                    <tr class="gradeX">
+                                        <td></td>
+                                    </tr>
+                                {% endblock %}
+                                <!-- // Table row END -->
+                            </tbody>
+                            <!-- // Table body END -->
+                        </table>
+                    </div>
+
+                <!-- // Table END -->
+                <div class="separator top form-inline small">
+                    {% block pagination %}
+                    {% endblock %}
+                </div>
+                {% block action%}
+                {%endblock%}
+
+            {% endblock %}
+        </div>
+  </div>
+
+{% block extraTable %}
+{% endblock %}
+
+<!-- // Widget END -->
+</div>
+{% endblock %}

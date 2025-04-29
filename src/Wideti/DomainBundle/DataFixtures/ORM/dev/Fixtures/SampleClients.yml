@@ -1,0 +1,85 @@
+Wideti\DomainBundle\Entity\Client:
+  Client:
+    erpId: 1083
+    type: 1
+    segment: "@Segment3"
+    plan: "@Pro"
+    domain: dev
+    company: Cliente Ambiente de Desenvolvimento
+    document: 17512419000125
+    address: Rua Avelino Silveira Franco, 149 - Sala 353
+    district: Sousas
+    city: Campinas
+    state: SP
+    zipCode: 13105-822
+    status: 1
+    smsCost: "0,24"
+    contractedAccessPoints: 10
+    closingDate: 27
+    apCheck: 0
+    madeRdIntegration: 0
+    created: <dateTimeBetween('-1 days', 'now')>
+    module: [ "@Module1", "@Module2", "@Module3", "@Module4", "@Module5", "@Module6", "@Module7", "@Module8", "@Module9", "@Module10" ]
+    createdBy: "painel-azul"
+    isWhiteLabel: 0
+    mongoDatabaseName: dev
+    emailSenderDefault: 'no-reply@mambowifi.com'
+    enablePasswordAuthentication: true
+
+  FacebookAuthTeste:
+    erpId: 4501
+    type: 1
+    segment: "@Segment3"
+    plan: "@Pro"
+    domain: facebookteste
+    company: Authenticação com Facebook teste
+    document: 85334492000104
+    address: Rua Avelino Silveira Franco, 149 - Sala 353
+    district: Sousas
+    city: Campinas
+    state: SP
+    zipCode: 13105-822
+    status: 1
+    smsCost: "0,24"
+    contractedAccessPoints: 10
+    closingDate: 27
+    apCheck: 0
+    madeRdIntegration: 0
+    created: <dateTimeBetween('-1 days', 'now')>
+    module: [ "@Module13" ]
+    createdBy: "painel-azul"
+    isWhiteLabel: 0
+    initialSetup: 1
+    mongoDatabaseName: facebookteste
+    emailSenderDefault: 'no-reply@mambowifi.com'
+    enablePasswordAuthentication: true
+
+  TwitterAuthTeste:
+    erpId: 4501
+    type: 1
+    segment: "@Segment3"
+    plan: "@Pro"
+    domain: twitterauthdev
+    company: Authenticação com Twitter teste
+    document: 85334492000104
+    address: Rua Avelino Silveira Franco, 149 - Sala 353
+    district: Sousas
+    city: Campinas
+    state: SP
+    zipCode: 13105-822
+    status: 1
+    smsCost: "0,24"
+    contractedAccessPoints: 10
+    closingDate: 27
+    apCheck: 0
+    madeRdIntegration: 0
+    created: <dateTimeBetween('-1 days', 'now')>
+    module: [ "@Module13" ]
+    createdBy: "painel-azul"
+    isWhiteLabel: 0
+    initialSetup: 1
+    mongoDatabaseName: twitterauthdev
+    emailSenderDefault: 'no-reply@mambowifi.com'
+    enablePasswordAuthentication: true
+
+

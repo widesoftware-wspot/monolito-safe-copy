@@ -1,0 +1,56 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+{% block header %}{% endblock %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;padding-top:20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">Cliente solicitou cancelamento!</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;padding-top:20px;font-size:25px;line-height:30px;color:#909090;font-family:Arial;margin-top: 20px;">Dados do cliente:</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550">
+                <tbody>
+                    <tr>
+                        <td style="padding: 30px 0px 5px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">ERP ID: <a style="color: #ec213a; font-weight: normal; text-decoration: none;">{{ client.getErpId }}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 0px 5px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">Razao Social: <a style="color: #ec213a; font-weight: normal; text-decoration: none;">{{ client.getCompany }}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 0px 5px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">Documento: <a style="color: #ec213a; font-weight: normal; text-decoration: none;">{{ client.getDocument }}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0px 0px 5px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">Domínio: <a style="color: #ec213a; font-weight: normal; text-decoration: none;">{{ client.getDomain }}.mambowifi.com</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0 0px 5px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">Solicitante: <a style="color: #ec213a; font-weight: normal; text-decoration: none;">{{ requester }}</a></td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0 0px 30px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">Motivo de cancelamento: <a style="color: #ec213a; font-weight: normal; text-decoration: none;">{{ client.getCancellationReason }}</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block signature %}
+{% endblock %}

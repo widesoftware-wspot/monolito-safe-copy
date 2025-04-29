@@ -1,0 +1,1567 @@
+{
+  "dashboard" : {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": false,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "links": [],
+    "panels": [
+      {
+        "cacheTimeout": null,
+        "colorBackground": false,
+        "colorPostfix": false,
+        "colorPrefix": false,
+        "colorValue": false,
+        "colors": [
+          "#299c46",
+          "rgba(237, 129, 40, 0.89)",
+          "#d44a3a"
+        ],
+        "datasource": "Monitoramento Equipamento",
+        "decimals": null,
+        "format": "none",
+        "gauge": {
+          "maxValue": 100,
+          "minValue": 0,
+          "show": false,
+          "thresholdLabels": false,
+          "thresholdMarkers": true
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 5,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "interval": "",
+        "links": [],
+        "mappingType": 1,
+        "mappingTypes": [
+          {
+            "name": "value to text",
+            "value": 1
+          },
+          {
+            "name": "range to text",
+            "value": 2
+          }
+        ],
+        "maxDataPoints": 100,
+        "nullPointMode": "connected",
+        "nullText": null,
+        "pluginVersion": "6.7.3",
+        "postfix": "",
+        "postfixFontSize": "80%",
+        "prefix": "",
+        "prefixFontSize": "50%",
+        "rangeMaps": [
+          {
+            "from": "null",
+            "text": "N/A",
+            "to": "null"
+          }
+        ],
+        "sparkline": {
+          "fillColor": "rgba(31, 118, 189, 0.18)",
+          "full": false,
+          "lineColor": "rgb(31, 120, 193)",
+          "show": false,
+          "ymax": null,
+          "ymin": null
+        },
+        "tableColumn": "uptime.keyword",
+        "targets": [
+          {
+            "bucketAggs": [
+              {
+                "field": "uptime.keyword",
+                "id": "2",
+                "settings": {
+                  "min_doc_count": 1,
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "1"
+                },
+                "type": "terms"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "select field",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "sum"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": "",
+        "timeFrom": null,
+        "timeShift": null,
+        "title": "Total de tempo ligado",
+        "type": "singlestat",
+        "valueFontSize": "100%",
+        "valueMaps": [
+          {
+            "op": "=",
+            "text": "N/A",
+            "value": "null"
+          }
+        ],
+        "valueName": "first"
+      },
+      {
+        "cacheTimeout": null,
+        "colorBackground": false,
+        "colorPostfix": false,
+        "colorPrefix": false,
+        "colorValue": false,
+        "colors": [
+          "#299c46",
+          "rgba(237, 129, 40, 0.89)",
+          "#d44a3a"
+        ],
+        "datasource": "Monitoramento Equipamento",
+        "decimals": 2,
+        "format": "decbytes",
+        "gauge": {
+          "maxValue": 100,
+          "minValue": 0,
+          "show": false,
+          "thresholdLabels": false,
+          "thresholdMarkers": true
+        },
+        "gridPos": {
+          "h": 4,
+          "w": 5,
+          "x": 5,
+          "y": 0
+        },
+        "id": 2,
+        "interval": "",
+        "links": [],
+        "mappingType": 1,
+        "mappingTypes": [
+          {
+            "name": "value to text",
+            "value": 1
+          },
+          {
+            "name": "range to text",
+            "value": 2
+          }
+        ],
+        "maxDataPoints": 100,
+        "nullPointMode": "connected",
+        "nullText": null,
+        "pluginVersion": "6.7.3",
+        "postfix": "",
+        "postfixFontSize": "80%",
+        "prefix": "",
+        "prefixFontSize": "50%",
+        "rangeMaps": [
+          {
+            "from": "null",
+            "text": "N/A",
+            "to": "null"
+          }
+        ],
+        "sparkline": {
+          "fillColor": "rgba(31, 118, 189, 0.18)",
+          "full": false,
+          "lineColor": "rgb(31, 120, 193)",
+          "show": false,
+          "ymax": null,
+          "ymin": null
+        },
+        "tableColumn": "version.keyword",
+        "targets": [
+          {
+            "bucketAggs": [
+              {
+                "field": "version.keyword",
+                "id": "2",
+                "settings": {
+                  "min_doc_count": 1,
+                  "order": "desc",
+                  "orderBy": "_term",
+                  "size": "1"
+                },
+                "type": "terms"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "vewr",
+                "id": "3",
+                "inlineScript": null,
+                "meta": {},
+                "settings": {},
+                "type": "avg"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": "",
+        "timeFrom": null,
+        "timeShift": null,
+        "title": "Versão",
+        "type": "singlestat",
+        "valueFontSize": "100%",
+        "valueMaps": [
+          {
+            "op": "=",
+            "text": "N/A",
+            "value": "null"
+          }
+        ],
+        "valueName": "first"
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 4
+        },
+        "hiddenSeries": false,
+        "id": 3,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "Download",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "wanrxrate",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "avg"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          },
+          {
+            "alias": "Upload",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "wantxrate",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "avg"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "B",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Download/Upload | TEMPO REAL",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "decbytes",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 8,
+          "y": 4
+        },
+        "hiddenSeries": false,
+        "id": 4,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null as zero",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "Download",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "wanrxbyte",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          },
+          {
+            "alias": "Upload",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "hide": false,
+            "metrics": [
+              {
+                "field": "wantxbyte",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "B",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Download/Upload | ACUMULADO",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "decbytes",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "cacheTimeout": null,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 11
+        },
+        "hiddenSeries": false,
+        "id": 5,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "nullPointMode": "null as zero",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "livre",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 1,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "hide": false,
+            "metrics": [
+              {
+                "field": "freehddspace",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "C",
+            "timeField": "@timestamp"
+          },
+          {
+            "alias": "utilizado",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 1,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "hide": false,
+            "metrics": [
+              {
+                "field": "totalhddspace",
+                "hide": true,
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              },
+              {
+                "field": "freehddspace",
+                "hide": true,
+                "id": "3",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              },
+              {
+                "field": "select field",
+                "id": "4",
+                "meta": {},
+                "pipelineVariables": [
+                  {
+                    "name": "total",
+                    "pipelineAgg": "1"
+                  },
+                  {
+                    "name": "free",
+                    "pipelineAgg": "3"
+                  }
+                ],
+                "settings": {
+                  "script": "params.total - params.free"
+                },
+                "type": "bucket_script"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "B",
+            "timeField": "@timestamp"
+          },
+          {
+            "alias": "total",
+            "bucketAggs": [
+              {
+                "fake": true,
+                "field": "@timestamp",
+                "id": "5",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 1,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "hide": false,
+            "metrics": [
+              {
+                "field": "totalhddspace",
+                "id": "7",
+                "meta": {},
+                "pipelineVariables": [
+                  {
+                    "name": "total",
+                    "pipelineAgg": "8"
+                  },
+                  {
+                    "name": "free",
+                    "pipelineAgg": "9"
+                  }
+                ],
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Disco",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "decbytes",
+            "label": "",
+            "logBase": 1,
+            "max": null,
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "cacheTimeout": null,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 8,
+          "y": 11
+        },
+        "hiddenSeries": false,
+        "id": 6,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "nullPointMode": "null as zero",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "livre",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 1,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "hide": false,
+            "metrics": [
+              {
+                "field": "freememory",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "C",
+            "timeField": "@timestamp"
+          },
+          {
+            "alias": "utilizado",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 1,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "hide": false,
+            "metrics": [
+              {
+                "field": "totalmemory",
+                "hide": true,
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              },
+              {
+                "field": "freememory",
+                "hide": true,
+                "id": "3",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              },
+              {
+                "field": "select field",
+                "id": "4",
+                "meta": {},
+                "pipelineVariables": [
+                  {
+                    "name": "total",
+                    "pipelineAgg": "1"
+                  },
+                  {
+                    "name": "free",
+                    "pipelineAgg": "3"
+                  }
+                ],
+                "settings": {
+                  "script": "params.total - params.free"
+                },
+                "type": "bucket_script"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "B",
+            "timeField": "@timestamp"
+          },
+          {
+            "alias": "total",
+            "bucketAggs": [
+              {
+                "fake": true,
+                "field": "@timestamp",
+                "id": "5",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 1,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "hide": false,
+            "metrics": [
+              {
+                "field": "totalmemory",
+                "id": "7",
+                "meta": {},
+                "pipelineVariables": [
+                  {
+                    "name": "total",
+                    "pipelineAgg": "8"
+                  },
+                  {
+                    "name": "free",
+                    "pipelineAgg": "9"
+                  }
+                ],
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Memória",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "decbytes",
+            "label": "",
+            "logBase": 1,
+            "max": null,
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": false
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "cacheTimeout": null,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 18
+        },
+        "hiddenSeries": false,
+        "id": 7,
+        "legend": {
+          "alignAsTable": true,
+          "avg": true,
+          "current": true,
+          "max": false,
+          "min": true,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "nullPointMode": "null as zero",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "Load",
+            "bucketAggs": [
+              {
+                "fake": true,
+                "field": "@timestamp",
+                "id": "5",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "cpuload",
+                "id": "3",
+                "inlineScript": null,
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "CPU",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": 0,
+            "format": "short",
+            "label": "",
+            "logBase": 1,
+            "max": null,
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "decimals": 0,
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 8,
+          "y": 18
+        },
+        "hiddenSeries": false,
+        "id": 8,
+        "legend": {
+          "alignAsTable": true,
+          "avg": true,
+          "current": true,
+          "hideEmpty": false,
+          "hideZero": false,
+          "max": false,
+          "min": true,
+          "rightSide": false,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null as zero",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "Sinal",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "overalltxccq",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Qualidade do sinal Wi-Fi (CCQ)",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": null,
+            "format": "percent",
+            "label": "",
+            "logBase": 1,
+            "max": "100",
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": "",
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 0,
+          "y": 25
+        },
+        "hiddenSeries": false,
+        "id": 9,
+        "legend": {
+          "alignAsTable": true,
+          "avg": true,
+          "current": true,
+          "max": false,
+          "min": true,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null as zero",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "Perdas",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "packet_loss_gw",
+                "id": "3",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Perda de pacotes para o gateway",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "percent",
+            "label": null,
+            "logBase": 1,
+            "max": "100",
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 8,
+          "y": 25
+        },
+        "hiddenSeries": false,
+        "id": 10,
+        "legend": {
+          "alignAsTable": true,
+          "avg": true,
+          "current": true,
+          "hideEmpty": false,
+          "max": false,
+          "min": true,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null as zero",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "Perdas",
+            "bucketAggs": [
+              {
+                "field": "@timestamp",
+                "id": "2",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "packet_loss_google",
+                "id": "1",
+                "meta": {},
+                "settings": {},
+                "type": "max"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Perda de pacotes para 8.8.8.8",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": null,
+            "format": "percent",
+            "label": null,
+            "logBase": 1,
+            "max": "100",
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "none",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "aliasColors": {},
+        "bars": false,
+        "cacheTimeout": null,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": "Monitoramento Equipamento",
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 7,
+          "w": 8,
+          "x": 8,
+          "y": 32
+        },
+        "hiddenSeries": false,
+        "id": 11,
+        "legend": {
+          "alignAsTable": true,
+          "avg": true,
+          "current": true,
+          "max": false,
+          "min": true,
+          "show": true,
+          "total": false,
+          "values": true
+        },
+        "lines": true,
+        "linewidth": 1,
+        "links": [],
+        "nullPointMode": "null as zero",
+        "options": {
+          "dataLinks": []
+        },
+        "percentage": false,
+        "pluginVersion": "6.7.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "alias": "Erros",
+            "bucketAggs": [
+              {
+                "fake": true,
+                "field": "@timestamp",
+                "id": "5",
+                "settings": {
+                  "interval": "1m",
+                  "min_doc_count": 0,
+                  "trimEdges": 0
+                },
+                "type": "date_histogram"
+              }
+            ],
+            "metrics": [
+              {
+                "field": "wanrxerror",
+                "hide": true,
+                "id": "3",
+                "inlineScript": null,
+                "meta": {},
+                "settings": {},
+                "type": "sum"
+              },
+              {
+                "field": "wantxerror",
+                "hide": true,
+                "id": "6",
+                "meta": {},
+                "settings": {},
+                "type": "sum"
+              },
+              {
+                "field": "select field",
+                "id": "7",
+                "meta": {},
+                "pipelineVariables": [
+                  {
+                    "name": "rx",
+                    "pipelineAgg": "3"
+                  },
+                  {
+                    "name": "tx",
+                    "pipelineAgg": "6"
+                  }
+                ],
+                "settings": {
+                  "script": "params.rx + params.tx"
+                },
+                "type": "bucket_script"
+              }
+            ],
+            "query": "domain: dominio_empresa AND identity: \"identificador_ponto_acesso\"",
+            "refId": "A",
+            "timeField": "@timestamp"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Erros na interface WAN",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "decimals": 0,
+            "format": "short",
+            "label": "",
+            "logBase": 1,
+            "max": null,
+            "min": "0",
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      }
+    ],
+    "refresh": "1m",
+    "schemaVersion": 22,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "timepicker": {
+      "hidden": false,
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ]
+    },
+    "variables": {
+      "list": []
+    },
+    "timezone": "",
+    "version": 1,
+    "uid": "",
+    "title": ""
+  },
+  "folderId": ""
+}

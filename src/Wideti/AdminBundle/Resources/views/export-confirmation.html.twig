@@ -1,0 +1,6 @@
+<script type="text/javascript">
+    {% for flashMessage in app.session.flashbag.get('export') %}
+        $("#flashMessage").html("Este relatório pode levar alguns minutos para ser gerado. Assim que estiver pronto enviaremos por e-mail.");
+        bootbox.dialog($('#modal-export-success').html());
+    {% endfor %}
+</script>

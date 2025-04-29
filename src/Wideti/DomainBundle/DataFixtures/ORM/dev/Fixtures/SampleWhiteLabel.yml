@@ -1,0 +1,21 @@
+Wideti\DomainBundle\Entity\WhiteLabel:
+  WhiteLabel:
+    client: "@Client"
+    companyName: 'Mambo WiFi'
+    panelColor: '#ec213a'
+    logotipo: '/bundles/admin/frontend/images/logo-mambo.png'
+    signature: '© {ano} - Mambo WiFi. <a href="www.mambowifi.com" target="_blank">www.mambowifi.com</a>'
+
+  WhiteLabelF:
+    client: "@FacebookAuthTeste"
+    companyName: 'Authenticação com Facebook teste'
+    panelColor: '#ec213a'
+    logotipo: '/bundles/admin/frontend/images/logo-mambo.png'
+    signature: '© {ano} - Mambo WiFi. <a href="www.mambowifi.com" target="_blank">www.mambowifi.com</a>'
+
+  WhiteLabelT:
+    client: "@TwitterAuthTeste"
+    companyName: 'Authenticação com Twitter teste'
+    panelColor: '#ec213a'
+    logotipo: '/bundles/admin/frontend/images/logo-mambo.png'
+    signature: '© {ano} - Mambo WiFi. <a href="www.mambowifi.com" target="_blank">www.mambowifi.com</a>'

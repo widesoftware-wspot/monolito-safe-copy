@@ -1,0 +1,649 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplateMailReport.html.twig' %}
+
+{% block header %}
+
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:40px;font-size:30px;line-height:48px;color:{{ obj.whiteLabel.panelColor }};font-family:Arial;font-weight:bold; text-align: center;" colspan="2"> {{ obj.whiteLabel.companyName }}</td>
+    </tr>
+{% endblock %}
+
+{% block content %}
+
+    <tr>
+        <td style="padding-left:30px;padding-right:30px;padding-top:10px;">
+            <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;position: relative;left: 0%;" width="600" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td style="border-collapse:collapse">
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;text-align:left" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="padding-right: 0; text-align: center; padding-left: 0; font-size: 20px; line-height: 22px; color: #909090; font-family: Arial;">
+                                    {{ 'mail_report.intro_dominio'|trans() }}: <a href="https://{{ obj.clientDomain }} "target="_blank">{{ obj.clientDomain }}</a>
+                                    <br/><br/>
+                                    {{ 'mail_report.intro_1'|trans({'%companyName%': obj.whiteLabel.companyName, '%amountOfDays%': amountOfDays}) }}
+                                    <br/><br/>
+                                    {{ 'mail_report.intro_2'|trans() }}
+                                    <br /><br /><br/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:50px;padding-right:0;padding-bottom:6px;padding-left:0">
+                                    <h2 style="font-family:Arial,sans-serif;font-weight:bold;color:#5f5f5f;font-size:24px;line-height:24px;margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">
+                                        {{ 'mail_report.guests_title'|trans() }}
+                                    </h2>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;position: relative;" width="600" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td style="border-collapse:collapse;padding-top:15px;padding-right:0;padding-bottom:0;padding-left:0">
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse">
+                                    <table border="0" width="600" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;background-color:{{ obj.whiteLabel.panelColor }}" bgcolor="{{ obj.whiteLabel.panelColor }}" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="border-collapse:collapse;vertical-align:top;text-align:left;color:#ffffff;padding-top:15px;padding-right:15px;padding-bottom:15px;padding-left:15px" align="left" valign="top">
+                                                <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;color:#ffffff;font-size:14px;line-height:18px" cellpadding="0" cellspacing="0">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td style="border-collapse:collapse;vertical-align:top;text-align:left;color:#ffffff;font-size:13px;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0" align="left" valign="top">
+                                                            {{ 'mail_report.guests_tip'|trans({'%amountOfDays%': amountOfDays}) }}
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;color:#5f5f5f;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td style="border-collapse:collapse">
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:16px;color:#5f5f5f;width:271px!important;text-align:center;text-transform:uppercase;vertical-align:middle;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="271">{{ 'mail_report.total_signups_guests'|trans() }}</td>
+                                <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">&nbsp;</td>
+                                <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:16px;color:#5f5f5f;width:271px!important;text-align:center;text-transform:uppercase;vertical-align:middle;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="271">{{ 'mail_report.total_signups_guests'|trans() }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border-collapse:collapse;width:291px!important;text-align:center;vertical-align:middle;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;border-bottom-width:1px;border-bottom-color:#dbdbdb;border-bottom-style:solid;height:93px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="291">
+                                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:291px!important" width="291" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr><td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:28px;line-height:28px;color:#000001;text-align:center" align="center">{{ obj.countTotalGuests }}</td></tr>
+                                        <tr><td style="border-collapse:collapse;text-align:center;padding-top:15px" align="center"><div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">{{ 'mail_report.all'|trans() }}</div></td></tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">&nbsp;</td>
+                                <td style="border-collapse:collapse;width:291px!important;text-align:center;vertical-align:middle;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;border-bottom-width:1px;border-bottom-color:#dbdbdb;border-bottom-style:solid;height:93px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="291">
+                                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:291px!important" width="291" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr><td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:28px;line-height:28px;color:#000001;text-align:center" align="center">{{ obj.countTotalGuestsLastWeek }}</td></tr>
+                                        <tr><td style="border-collapse:collapse;text-align:center;padding-top:15px" align="center"><div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">{{ 'mail_report.period'|trans({'%amountOfDays%': amountOfDays}) }}</div></td></tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                                    <table style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;text-align:center;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" bgcolor="#FFFFFF" width="600" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <th style="border-collapse:collapse;color:#5f5f5f;height:12px;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#dbdbdb;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:19px;text-transform:uppercase;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0">
+                                                {{ 'mail_report.most_visited_hours'|trans() }}
+                                                <br>
+                                                <div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};text-align: center;">{{ 'mail_report.period'|trans({'%amountOfDays%': amountOfDays}) }}</div>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+                                                {% if obj.hours %}
+                                                    <img src="{{ obj.hours }}" style="outline:none;text-decoration:none" class="CToWUd">
+                                                {% else %}
+                                                    {{ 'mail_report.no_result'|trans() }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;color:#5f5f5f;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td style="border-collapse:collapse">
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                                    <table style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;text-align:center;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" bgcolor="#FFFFFF" width="600" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <th style="border-collapse:collapse;color:#5f5f5f;height:12px;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#dbdbdb;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:19px;text-transform:uppercase;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0">
+                                                {{ 'mail_report.most_visited_days'|trans() }}
+                                                <br>
+                                                <div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};text-align: center;">{{ 'mail_report.period'|trans({'%amountOfDays%': amountOfDays}) }}</div>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+                                                {% if obj.days %}
+                                                    <img src="{{ obj.days }}" style="outline:none;text-decoration:none" class="CToWUd">
+                                                {% else %}
+                                                    {{ 'mail_report.no_result'|trans() }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;color:#5f5f5f;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td style="border-collapse:collapse">
+                        <table border="0" align="center" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:16px;color:#5f5f5f;width:271px!important;text-align:center;text-transform:uppercase;vertical-align:middle;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="271">{{ 'mail_report.unique_guests'|trans() }}</td>
+                                            <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">&nbsp;</td>
+                                            <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:16px;color:#5f5f5f;width:271px!important;text-align:center;text-transform:uppercase;vertical-align:middle;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="271">{{ 'mail_report.returning_guests'|trans() }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;width:291px!important;text-align:center;vertical-align:middle;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;height:83px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="291">
+                                                <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:291px!important" width="291" cellpadding="0" cellspacing="0">
+                                                    <tbody>
+                                                    <tr><td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:28px;line-height:28px;color:#000001;text-align:center" align="center">{{ obj.uniqueAccessGuests }}</td></tr>
+                                                    <tr><td style="border-collapse:collapse;text-align:center;padding-top:5px" align="center"><div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">{{ 'mail_report.period'|trans({'%amountOfDays%': amountOfDays}) }}</div></td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">&nbsp;</td> <td style="border-collapse:collapse;width:291px!important;text-align:center;vertical-align:middle;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;height:83px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="291">
+                                                <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:291px!important" width="291" cellpadding="0" cellspacing="0">
+                                                    <tbody>
+                                                    <tr><td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:28px;line-height:28px;color:#000001;text-align:center" align="center">{{ obj.returningAccessGuests }}</td></tr>
+                                                    <tr><td style="border-collapse:collapse;text-align:center;padding-top:5px" align="center"><div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">{{ 'mail_report.period'|trans({'%amountOfDays%': amountOfDays}) }}</div></td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;width:251px!important;text-align:center;vertical-align:top;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;border-bottom-width:1px;border-bottom-color:#dbdbdb;border-bottom-style:solid;padding-top:0;padding-right:20px;padding-bottom:20px;padding-left:20px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="top" width="251">
+                                                <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:251px!important;border-top-width:1px;border-top-color:#dbdbdb;border-top-style:solid" width="251" cellpadding="0" cellspacing="0">
+                                                    <tbody>
+                                                    <tr><td style="border-collapse:collapse;text-align:center;font-family:Arial,sans-serif;font-weight:normal;font-size:12px;line-height:16px;padding-top:20px" align="center">{{ 'mail_report.unique_guests_info'|trans() }}</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                            <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">&nbsp;</td> <td style="border-collapse:collapse;width:251px!important;text-align:center;vertical-align:top;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;border-bottom-width:1px;border-bottom-color:#dbdbdb;border-bottom-style:solid;padding-top:0;padding-right:20px;padding-bottom:20px;padding-left:20px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="top" width="251">
+                                                <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:251px!important;border-top-width:1px;border-top-color:#dbdbdb;border-top-style:solid" width="251" cellpadding="0" cellspacing="0">
+                                                    <tbody>
+                                                    <tr><td style="border-collapse:collapse;text-align:center;font-family:Arial,sans-serif;font-weight:normal;font-size:12px;line-height:16px;padding-top:20px" align="center">{{ 'mail_report.returning_guests_info'|trans() }}</td></tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                                    <table style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;text-align:center;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" bgcolor="#FFFFFF" width="600" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <th style="border-collapse:collapse;color:#5f5f5f;height:12px;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#dbdbdb;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:19px;text-transform:uppercase;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0">
+                                                {{ 'mail_report.os'|trans() }} (%)
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+                                                {% if obj.osChart %}
+                                                    <img src="{{ obj.osChart }}" style="outline:none;text-decoration:none" class="CToWUd">
+                                                {% else %}
+                                                    {{ 'mail_report.no_result'|trans() }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                                    <table style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;text-align:center;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" bgcolor="#FFFFFF" width="600" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <th style="border-collapse:collapse;color:#5f5f5f;height:12px;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#dbdbdb;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:19px;text-transform:uppercase;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0">
+                                                {{ 'mail_report.devices'|trans() }} (%)
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+                                                {% if obj.platformChart %}
+                                                    <img src="{{ obj.platformChart }}" style="outline:none;text-decoration:none" class="CToWUd">
+                                                {% else %}
+                                                    {{ 'mail_report.no_result'|trans() }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                                    <table style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;text-align:center;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" bgcolor="#FFFFFF" width="600" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <th style="border-collapse:collapse;color:#5f5f5f;height:12px;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#dbdbdb;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:19px;text-transform:uppercase;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0">
+                                                {{ 'mail_report.aps_most_visited'|trans() }}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+                                                {% if obj.mostVisitedAp %}
+                                                    <img src="{{ obj.mostVisitedAp }}" style="outline:none;text-decoration:none" class="CToWUd">
+                                                {% else %}
+                                                    {{ 'mail_report.no_result'|trans() }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:7px;padding-right:0;padding-bottom:0;padding-left:0">
+                                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="border-collapse:collapse">
+                                                <table border="0" width="600" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;background-color:{{ obj.whiteLabel.panelColor }}" bgcolor="{{ obj.whiteLabel.panelColor }}" cellpadding="0" cellspacing="0">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td style="border-collapse:collapse;vertical-align:top;text-align:left;color:#ffffff;padding-top:15px;padding-right:15px;padding-bottom:15px;padding-left:15px" align="left" valign="top">
+                                                            <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;color:#ffffff;font-size:14px;line-height:18px" cellpadding="0" cellspacing="0">
+                                                                <tbody>
+                                                                <tr>
+                                                                    <td style="border-collapse:collapse;vertical-align:top;text-align:left;color:#ffffff;font-size:13px;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0" align="left" valign="top">
+                                                                        {{ 'mail_report.network_tip'|trans({'%amountOfDays%': amountOfDays}) }}
+                                                                    </td>
+                                                                </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;position: relative;" width="600" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td style="border-collapse:collapse">
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;text-align:left" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:20px;padding-right:0;padding-bottom:6px;padding-left:0">
+                                    <h2 style="font-family:Arial,sans-serif;font-weight:bold;color:#5f5f5f;font-size:24px;line-height:24px;margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">
+                                        {{ 'mail_report.network_title'|trans() }}
+                                    </h2>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <table border="0" align="center" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:16px;color:#5f5f5f;width:271px!important;text-align:center;text-transform:uppercase;vertical-align:middle;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="271">
+                                    {{ 'mail_report.download'|trans() }}
+                                </td>
+                                <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">
+                                    &nbsp;
+                                </td>
+                                <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:16px;color:#5f5f5f;width:271px!important;text-align:center;text-transform:uppercase;vertical-align:middle;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="271">
+                                    {{ 'mail_report.upload'|trans() }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-collapse:collapse;width:291px!important;text-align:center;vertical-align:middle;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;height:83px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="291">
+                                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:291px!important" width="291" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:28px;line-height:28px;color:#000001;text-align:center" align="center">
+                                                <br/>{{ obj.download | format_bytes }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;text-align:center;padding-top:5px" align="center">
+                                                <div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">
+                                                    {{ 'mail_report.period'|trans({'%amountOfDays%': amountOfDays}) }}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                                <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">
+                                    &nbsp;
+                                </td>
+                                <td style="border-collapse:collapse;width:291px!important;text-align:center;vertical-align:middle;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;height:83px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="291">
+                                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:291px!important" width="291" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:28px;line-height:28px;color:#000001;text-align:center" align="center">
+                                                <br/>{{ obj.upload | format_bytes }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;text-align:center;padding-top:5px" align="center">
+                                                <div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">
+                                                    {{ 'mail_report.period'|trans({'%amountOfDays%': amountOfDays}) }}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border-collapse:collapse;width:251px!important;text-align:center;vertical-align:top;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;border-bottom-width:1px;border-bottom-color:#dbdbdb;border-bottom-style:solid;padding-top:0;padding-right:20px;padding-bottom:20px;padding-left:20px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="top" width="251">
+
+                                </td>
+                                <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">&nbsp;</td> <td style="border-collapse:collapse;width:251px!important;text-align:center;vertical-align:top;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;border-bottom-width:1px;border-bottom-color:#dbdbdb;border-bottom-style:solid;padding-top:0;padding-right:20px;padding-bottom:20px;padding-left:20px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="top" width="251">
+
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <table border="0" align="center" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                <tbody>
+                <tr>
+                    <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                        <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                            <tbody>
+                            <tr>
+                                <td style="border-collapse:collapse;padding-top:14px;padding-right:0;padding-bottom:0;padding-left:0">
+                                    <table style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;text-align:center;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" bgcolor="#FFFFFF" width="600" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <th style="border-collapse:collapse;color:#5f5f5f;height:12px;border-bottom-width:1px;border-bottom-style:solid;border-bottom-color:#dbdbdb;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:19px;text-transform:uppercase;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0">
+                                                {{ 'mail_report.download_upload'|trans() }}
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <td style="border-collapse:collapse;padding-top:20px;padding-right:20px;padding-bottom:20px;padding-left:20px">
+                                                {% if obj.downloadUploadChart %}
+                                                    <img src="{{ obj.downloadUploadChart }}" style="outline:none;text-decoration:none" class="CToWUd">
+                                                {% else %}
+                                                    {{ 'mail_report.no_result'|trans() }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    {% if obj.countTotalSmsLastMonth > 0 or obj.countTotalSmsCurrentMonth > 0 %}
+        <tr>
+            <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+                <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;position: relative;" width="600" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr>
+                        <td style="border-collapse:collapse">
+                            <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;text-align:left" cellpadding="0" cellspacing="0">
+                                <tbody>
+                                <tr>
+                                    <td style="border-collapse:collapse;padding-top:20px;padding-right:0;padding-bottom:16px;padding-left:0">
+                                        <h2 style="font-family:Arial,sans-serif;font-weight:bold;color:#5f5f5f;font-size:24px;line-height:24px;margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">
+                                            {{ 'mail_report.sms_title'|trans() }}
+                                        </h2>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr>
+                        <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:16px;color:#5f5f5f;width:271px!important;text-align:center;text-transform:uppercase;vertical-align:middle;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="271">{{ 'mail_report.total_sms_send'|trans() }}</td>
+                        <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">&nbsp;</td>
+                        <td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:12px;line-height:16px;color:#5f5f5f;width:271px!important;text-align:center;text-transform:uppercase;vertical-align:middle;padding-top:10px;padding-right:10px;padding-bottom:10px;padding-left:10px;border-top-color:#dbdbdb;border-right-color:#dbdbdb;border-bottom-color:#dbdbdb;border-left-color:#dbdbdb;border-top-style:solid;border-right-style:solid;border-bottom-style:solid;border-left-style:solid;border-top-width:1px;border-right-width:1px;border-bottom-width:1px;border-left-width:1px;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="271">{{ 'mail_report.total_sms_send'|trans() }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border-collapse:collapse;width:291px!important;text-align:center;vertical-align:middle;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;border-bottom-width:1px;border-bottom-color:#dbdbdb;border-bottom-style:solid;height:93px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="291">
+                            <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:291px!important" width="291" cellpadding="0" cellspacing="0">
+                                <tbody>
+                                <tr><td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:28px;line-height:28px;color:#000001;text-align:center" align="center">{{ obj.countTotalSmsLastMonth }}</td></tr>
+                                <tr><td style="border-collapse:collapse;text-align:center;padding-top:15px" align="center"><div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">{{ 'mail_report.last_month'|trans() }}</div></td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td style="border-collapse:collapse;width:14px!important;text-align:center" align="center" width="14">&nbsp;</td>
+                        <td style="border-collapse:collapse;width:291px!important;text-align:center;vertical-align:middle;border-right-width:1px;border-right-style:solid;border-right-color:#dbdbdb;border-left-style:solid;border-left-width:1px;border-left-color:#dbdbdb;border-bottom-width:1px;border-bottom-color:#dbdbdb;border-bottom-style:solid;height:93px;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;background-color:#ffffff" align="center" bgcolor="#ffffff" valign="middle" width="291">
+                            <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:291px!important" width="291" cellpadding="0" cellspacing="0">
+                                <tbody>
+                                <tr><td style="border-collapse:collapse;font-family:Arial,sans-serif;font-weight:bold;font-size:28px;line-height:28px;color:#000001;text-align:center" align="center">{{ obj.countTotalSmsCurrentMonth }}</td></tr>
+                                <tr><td style="border-collapse:collapse;text-align:center;padding-top:15px" align="center"><div style="font-family:Arial,sans-serif;font-weight:bold;font-size:10px;line-height:12px;text-transform:uppercase;color:{{ obj.whiteLabel.panelColor }};margin-top:0;margin-right:0;margin-bottom:0;margin-left:0;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0">{{ 'mail_report.current_month'|trans() }}</div></td></tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important" width="600" cellpadding="0" cellspacing="0">
+                    <tbody>
+                    <tr>
+                        <td style="border-collapse:collapse;padding-top:15px;padding-right:0;padding-bottom:0;padding-left:0">
+                            <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse" cellpadding="0" cellspacing="0">
+                                <tbody>
+                                <tr>
+                                    <td style="border-collapse:collapse">
+                                        <table border="0" width="600" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;width:600px!important;background-color:{{ obj.whiteLabel.panelColor }}" bgcolor="{{ obj.whiteLabel.panelColor }}" cellpadding="0" cellspacing="0">
+                                            <tbody>
+                                            <tr>
+                                                <td style="border-collapse:collapse;vertical-align:top;text-align:left;color:#ffffff;padding-top:15px;padding-right:15px;padding-bottom:15px;padding-left:15px" align="left" valign="top">
+                                                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;color:#ffffff;font-size:14px;line-height:18px" cellpadding="0" cellspacing="0">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td style="border-collapse:collapse;vertical-align:top;text-align:left;color:#ffffff;font-size:13px;padding-top:12px;padding-right:0;padding-bottom:12px;padding-left:0" align="left" valign="top">
+                                                                {{ 'mail_report.sms_cost'|trans({'%smsCost%': obj.smsCost}) }}
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    {% endif %}
+
+{% endblock %}
+
+{% block footer %}
+    {% if obj.isWhiteLabel is defined and obj.isWhiteLabel == false %}
+        <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;position: relative;" width="600" cellpadding="0" cellspacing="0">
+            <tbody>
+            <tr>
+                <td style="border-collapse:collapse">
+                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;text-align:left" cellpadding="0" cellspacing="0">
+                        <tbody>
+                        <tr>
+                            <td style="padding-right: 0; text-align: left; padding-left: 0; font-size: 20px; line-height: 22px; color: #909090; font-family: Arial;">
+                                {{ 'mail_report.contact_us'|trans({'%companyName%': obj.whiteLabel.companyName}) }} <a href="mailto:{{ contact_email }}" style="text-decoration: none; color: {{ obj.whiteLabel.panelColor }}">{{ contact_email }}</a>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% block signature %}
+
+    {% if obj.isWhiteLabel is defined and obj.isWhiteLabel == false %}
+        <table align="center" border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;padding-top:0;padding-right:0;padding-bottom:0;padding-left:0;" width="600" cellpadding="0" cellspacing="0">
+            <tbody>
+            <tr>
+                <td style="border-collapse:collapse">
+                    <table border="0" style="font-family:Arial,sans-serif;font-weight:normal;border-collapse:collapse;text-align:left" cellpadding="0" cellspacing="0">
+                        <tbody>
+                        <tr>
+                            <td style="padding-right:20px;padding-left: 0px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">{{ 'mail_report.signature_1'|trans() }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-right:20px;padding-left: 0px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">{{ 'mail_report.signature_2'|trans() }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding-right:20px;padding-left: 0px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">{{ 'mail_report.signature_3'|trans({'%companyName%': obj.whiteLabel.companyName}) }}</td>
+                        </tr>
+                        <br /><br />
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+            <br/>
+
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% block marco_civil %}
+    {{ 'mail_report.marco_civil'|trans() }}
+{% endblock %}

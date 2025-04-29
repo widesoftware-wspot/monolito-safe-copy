@@ -1,0 +1,48 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    {% set dateFrom = (app.request.get('period')) ?: 'now-24h'  %}
+    {% set dateTo = 'now' %}
+
+    <div style="padding: 40px;">
+        <div class="row-fluid">
+            <div class="span10">
+                <h3>Monitoramento de Equipamento</h3>
+                <h5>{{ accessPoint.friendlyName }} | {{ accessPoint.identifier }}</h5>
+            </div>
+            <div class="span2">
+                <label for="period">Período</label>
+                <select id="period" name="period" style="width:160px;" aria-invalid="false" class="valid">
+                    <option value="now-5m" {{ (dateFrom == 'now-5m') ? 'selected' }}>Últimos 5 minutos</option>
+                    <option value="now-30m" {{ (dateFrom == 'now-30m') ? 'selected' }}>Últimos 30 minutos</option>
+                    <option value="now-1h" {{ (dateFrom == 'now-1h') ? 'selected' }}>Última 1 hora</option>
+                    <option value="now-3h" {{ (dateFrom == 'now-3h') ? 'selected' }}>Últimas 3 horas</option>
+                    <option value="now-6h" {{ (dateFrom == 'now-6h') ? 'selected' }}>Últimas 6 horas</option>
+                    <option value="now-12h" {{ (dateFrom == 'now-12h') ? 'selected' }}>Últimas 12 horas</option>
+                    <option value="now-24h" {{ (dateFrom == 'now-24h') ? 'selected' }}>Últimas 24 horas</option>
+                </select>
+            </div>
+        </div>
+        <div class="row-fluid" style="margin-top: 20px;">
+            <div style="margin-top: 20px;">
+                {% for graph in graphs %}
+                    <iframe src="{{ grafanaUrl }}/d-solo/{{ accessPoint.id }}/{{ accessPoint.identifier }}?orgId=1&refresh=1m&from={{ dateFrom }}&to={{ dateTo }}&theme=light&panelId={{ graph.id }}" width="520" height="200" frameborder="0"></iframe>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#period').change(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('period', $(this).val());
+            window.location.search = urlParams;
+        });
+    })
+</script>
+{% endblock %}

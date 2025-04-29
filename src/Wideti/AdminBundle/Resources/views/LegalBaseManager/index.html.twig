@@ -1,0 +1,84 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Gerenciamento LGPD - Definição da Base Legal'} %}
+    <div class="innerLR">
+        <div class="widget-body">
+            <!-- Widget -->
+            <div class="widget">
+                <!-- Widget heading -->
+                <div class="widget-head">
+                    <h4 class="heading">Alterar a Base Legal do cliente</h4>
+                </div>
+
+                <div class="widget-body">
+                    <!-- Row -->
+                    <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+
+                        <div class="span12">
+
+                            <form method="post">
+                                {% for legalKind in legalKinds %}
+
+                                    <div class="control-label col-md-12">
+                                        <label>
+                                            <input type="radio" name="legalKindKey" class="input-sm form-control" value="{{ legalKind.key }}"
+                                                    {% if activeLegalBase is not null and legalKind.key == activeLegalBase.legalKind.key %}
+                                                        checked
+                                                    {% endif %}
+                                            />
+                                            {{ legalKind.kind  }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                                {% if client.getNoRegisterFields() != 0 %}
+                                    <br>
+                                    <div>
+                                        <span style="color: #ff0000; font-weight: bold;">Aviso:</span> O tipo de captive portal foi configurado sem campos de cadastro ou login, o que significa que nenhum consentimento é necessário, uma vez que não serão coletados dados pessoais. Portanto, a base legal padrão aplicada é o "Legítimo Interesse".
+                                    </div>
+                                {% endif %}
+                                <br>
+                                <button class="btn btn-primary btn-icon glyphicons circle_plus" {{ client.getNoRegisterFields() != 0 ? 'disabled' : '' }}><i></i> Ativar</button>
+                            </form>
+
+                        </div>
+
+                    </div>
+                    <!-- // Row END -->
+                    <hr class="separator">
+                    {% if mustShowForceDisable %}
+                        <div class="alert-danger" style="padding: 10px; border-radius: 5px;"> Termo de consentimento ainda está ativo. </div>
+                    <form method="post">
+                        <input type="hidden" name="force_disable" value="termo_consentimento">
+                        <br>
+                        <button class="btn btn-danger">Forçar inativação do termo de consentimento</button>
+                    </form>
+                    {% endif %}
+
+                    <!-- Form actions -->
+                    <div class="form-actions right">
+                        <div class="buttons pull-right">
+
+                            <a href="javascript:history.back()">
+                                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove">
+                                    <i></i> Cancelar
+                                </button>
+                            </a>
+
+                        </div>
+                    </div>
+                    <!-- // Form actions END -->
+                </div>
+            </div>
+            <!-- // Widget END -->
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

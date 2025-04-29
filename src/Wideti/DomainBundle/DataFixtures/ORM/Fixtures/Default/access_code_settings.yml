@@ -1,0 +1,6 @@
+Wideti\DomainBundle\Entity\AccessCodeSettings:
+  AccessCodeSettings:
+    enableFreeAccess: false
+    freeAccessTime: ""
+    freeAccessPeriod: ""
+    inAccessPoints: false

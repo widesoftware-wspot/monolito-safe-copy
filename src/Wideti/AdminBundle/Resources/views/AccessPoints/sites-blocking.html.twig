@@ -1,0 +1,153 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    <div style="padding: 40px;">
+        <div class="row-fluid" style="margin-bottom: 20px;">
+            <div class="span10">
+                <h3>Bloqueio de Sites</h3>
+                <h5>{{ accessPoint.friendlyName }} | {{ accessPoint.identifier }}</h5>
+                <h6>Informações dos últimos 30 dias</h6>
+            </div>
+        </div>
+
+        <div class="row-fluid" style="margin-bottom: 20px;">
+            <div class="span6">
+                <div class="widget">
+                    <div class="widget-head">
+                        <h4 class="heading glyphicons pie_chart">
+                            <i></i>
+                            Categorias mais bloqueadas<span> Top 5</span>
+                        </h4>
+                    </div>
+
+                    <div class="widget-body">
+                        <div id="chart_donut_blocked_categories" style="height: 250px; text-align: center;">
+                            {% if (reports.blockedCategories is defined and reports.blockedCategories|length > 0) %}
+                                <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+                            {% else %}
+                                Sem registros para exibição.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="span6">
+                <div class="widget">
+                    <div class="widget-head">
+                        <h4 class="heading glyphicons pie_chart">
+                            <i></i>
+                            Categorias mais acessadas<span> Top 5</span>
+                        </h4>
+                    </div>
+                    <div class="widget-body">
+                        <div id="chart_donut_most_accessed_categories" style="height: 250px; text-align: center;">
+                            {% if (reports.mostAccessedCategories is defined and reports.mostAccessedCategories|length > 0) %}
+                                <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+                            {% else %}
+                                Sem registros para exibição.
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span6">
+                <div class="widget">
+                    <div class="widget-head">
+                        <h4 class="heading">Sites mais bloqueados <span>Top 10</span></h4>
+                    </div>
+                    <div class="widget-body">
+                        <table class="dynamicTable table table-striped table-bordered table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Domínio</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if (reports.blockedDomains is defined and reports.blockedDomains|length > 0) %}
+                                {% for data in reports.blockedDomains %}
+                                    <tr class="gradeX">
+                                        <td>{{ data.label }}</td>
+                                        <td>{{ data.data }}</td>
+                                    </tr>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr class="gradeX">
+                                    <td colspan="6">Sem registros para exibição.</td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="span6">
+                <div class="widget">
+                    <div class="widget-head">
+                        <h4 class="heading">Sites mais acessados <span>Top 10</span></h4>
+                    </div>
+                    <div class="widget-body">
+                        <table class="dynamicTable table table-striped table-bordered table-condensed">
+                            <thead>
+                            <tr>
+                                <th>Domínio</th>
+                                <th>Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% if (reports.mostAccessedDomains is defined and reports.mostAccessedDomains|length > 0) %}
+                                {% for data in reports.mostAccessedDomains %}
+                                    <tr class="gradeX">
+                                        <td>{{ data.label }}</td>
+                                        <td>{{ data.data }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr class="gradeX">
+                                    <td colspan="6">Sem registros para exibição.</td>
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+{{ parent() }}
+<script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.js')}}"></script>
+<script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.pie2.js')}}"></script>
+<script src="{{ asset('bundles/admin/theme/scripts/demo/charts.helper.js') }}"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#period').change(function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('period', $(this).val());
+            window.location.search = urlParams;
+        });
+
+        charts.initWSBBlockedCategoriesChart(
+            {{ reports | json_encode | raw }}
+        );
+
+        charts.initWSBMostAccessedCategoriesChart(
+            {{ reports | json_encode | raw }}
+        );
+    })
+</script>
+{% endblock %}

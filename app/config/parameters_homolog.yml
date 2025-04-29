@@ -1,0 +1,228 @@
+# This file is auto-generated during the composer install
+parameters:
+    # MYSQL
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: 3305
+    database_name: radius_wspotv3
+    database_user: wspotv3
+    database_password: abc123
+
+    # RADIUS - SERVER
+    radius_host: radiusv3
+
+    # MONGO
+    mongodb_server1: 127.0.0.1
+    mongodb_port1: 27016
+    mongodb_server2: 127.0.0.1
+    mongodb_port2: 26016
+    mongodb_server3: 127.0.0.1
+    mongodb_port3: 25016
+    mongodb_options:
+        username: wspot
+        password: abc123
+        authSource: admin
+        readPreference: primaryPreferred
+        replicaSet: WSpotHomolog
+    mongodb_database: wspot
+
+    # ELASTICSEARCH
+    elastic_hosts:
+        - 'elastic.wspot.com.br:9201'
+        - 'elastic.wspot.com.br:9201'
+        - 'elastic.wspot.com.br:9201'
+    elastic_log_index: logs
+    elastic_log_type: changelog
+    elastic_api_log_index: api_logs
+
+    # EMAIL
+    mail_sender: ses
+    mail_mandrill_key: secret-key
+    mailer_transport: smtp
+    mailer_host: localhost
+    mailer_user: null
+    mailer_password: null
+    email_sender: no-reply@wspot.com.br
+    email_admin_recipient: contato@wideti.com.br
+    email_financial_recipient: financeiro@mambowifi.com
+    email_commercial_recipient: comercial@wideti.com.br
+    email_support_recipient: suporte@mambowifi.com
+    email_developers_recipient: developers-wspot@wideti.com.br
+
+    dev_delivery_address: developers-wspot@wideti.com.br
+
+    # AWS
+    aws_key: '%env(AWS_ACCOUNT_KEY)%'
+    aws_secret: '%env(AWS_SECRET)%'
+    aws_account_id: '%env(AWS_ACCOUNT_ID)%'
+    aws_bucket_name: uploads.homolog.wspot.com.br
+    aws_sns_region: sa-east-1
+    aws_sns_topic: 'arn:aws:sns:sa-east-1:769177069788:wspot_homolog_wspot_ap_name'
+    aws_sns_reports_topic: 'arn:aws:sns:sa-east-1:769177069788:wspot_homolog_batch_reports'
+    aws_sns_rdstation_topic: 'arn:aws:sns:sa-east-1:769177069788:wspot_homolog_rdstation_integration'
+    aws_queue_rdstation_name: wspot_homolog_rdstation_integration
+    aws_queue_region: sa-east-1
+    aws_queue_name: wspot_homolog_rdstation_integration
+    aws_queue_auth_event: wspot_homolog_auth_event
+    aws_ses_region: us-east-1
+    aws_ses_key: '%env(AWS_SES_KEY)%'
+    aws_ses_secret: '%env(AWS_SES_SECRET)%'
+    aws_queue_egoi_name: wspot_homolog_egoi_integration
+    aws_sns_egoi_topic: 'arn:aws:sns:sa-east-1:769177069788:wspot_homolog_egoi_integration'
+
+    # FACEBOOK
+    facebook_app_id: '%env(FACEBOOK_APP_ID)%'
+    facebook_app_secret: '%env(FACEBOOK_APP_SECRET)%'
+
+    # LinkedIn
+    linkedin_client_id: '%env(LINKEDIN_CLIENT_ID)%'
+    linkedin_client_secret: '%env(LINKEDIN_CLIENT_SECRET)%'
+
+    # TWITTER
+    twitter_consumer_key: '%env(TWITTER_CONSUMER_KEY)%'
+    twitter_consumer_secret: '%env(TWITTER_CONSUMER_SECRET)%'
+
+    #GOOGLE AUTH
+    google_client_id: '%env(GOOGLE_CLIENT_ID)%'
+    google_client_secret: '%env(GOOGLE_CLIENT_SECRET)%'
+    google_url_callback: 'https://googleauth.homolog.wspot.com.br/google-callback'
+    google_url_protocol: 'https://'
+    google_url_wspot_callback: '.homolog.wspot.com.br/google-login?'
+    wspot_url_client: '.wspot.com.br/'
+
+    # SMS
+    sms_cost: '0,13'
+    zenvia_account: wideti.corp
+    zenvia_password: '%env(ZENVIA_PASSWORD)%'
+    wavy_token: '%env(WAVY_TOKEN)%'
+    wavy_username: '%env(WAVY_USERNAME)%'
+    twilio_account_id: '%env(TWILLIO_ACCOUNT_ID)%'
+    twilio_auth_token: '%env(TWILLIO_AUTH_TOKEN)%'
+    twilio_number: '%env(TWILLIO_NUMBER)%'
+
+    # LOGGLY
+    loggly_token: '%env(LOGGLY_TOKEN)%'
+    loggly_tag: wspot-homolog.monolog
+
+    # RD STATION
+    rd_station_auth_token: '%env(RD_STATION_AUTH_TOKEN)%'
+
+    # SUPERL�GICA
+    superlogica_domain: mambo
+    superlogica_access_token: '%env(SUPERLOGICA_ACCESS_TOKEN)%'
+    superlogica_app_token: '%env(SUPERLOGICA_APP_TOKEN)%'
+
+    # EXPORT REPORT (GUESTS / ACCESS)
+    ftp_server: null
+    ftp_user: null
+    ftp_pass: null
+
+    temp_files_folder: /tmp/
+    assets_path: bundles/admin/frontend
+    video_bucket_source_on_s3: 'campaign-video-converter-source-1czz3i1jbqz59'
+    video_bucket_destination_on_s3: 'campaign-video-converter-destination-qwmoe4seh941'
+
+    # API
+    api_guests_list_limit_per_page: 20
+    api_guests_bulk_create_limit: 100
+    api_purchase_wspot_url: 'https://contratacao.wspot.com.br'
+
+    # CACHE - Elasticache - Redis
+    cache_active: false
+    cache_host: 'redis://127.0.0.1:6378'
+    cache_port: 6378
+
+    # POLICY CACHE - Elasticache - Redis
+    policy_cache_active: false
+    policy_cache_host: 'redis://127.0.0.1:6378'
+    policy_cache_port: 6378
+
+    # Bounced Validation
+    bounce_validator_active: true
+    bounce_validator_api_key: '%env(BOUNCE_VALIDATION_API_KEY)%'
+    bounce_validator_ticket_api: '%env(BOUNCE_VALIDATION_TICKET_API)%'
+
+    # Mailchimp List
+    mailchimp_api_key: '%env(MAILCHIMP_API_KEY)%'
+    mailchimp_list_id: 5f63990054
+
+    # Redis dsn cluster
+    redis_dsn_cluster: '127.0.0.1:6378'
+    redis_session_ttl: 3600
+
+    #Nas Check url
+    empty_nas_url_redirect: 'http://wificheck.com.br'
+    empty_nas_unchecked_routes:
+      - frontend_pre_login
+      - frontend_confirm_url
+      - frontend_preview
+      - frontend_preview_admin
+      - client_change_plan
+      - frontend_first_config_block
+      - frontend_bad_parameter_ap_error
+      - frontend_ap_not_registered
+      - frontend_google_oauth_sign_in
+      - frontend_terms_of_use
+      - frontend_authorize_error_url
+      - frontend_preview_done
+    # OTHERS
+    max_auto_download: 20000
+    delete_inactive_clients_period: 90
+    max_number_sms_sending_poc: 5
+    max_report_lines_poc: 10
+    pagination_limit_number: 10
+    test_client_domain: dev
+    google_api_key: '%env(GOOGLE_API_KEY)%'
+    locale: pt_br
+    secret: '%env(SECRET)%'
+    wspot_version: homolog
+    environments_available_subdomains: ['dev', 'teste', 'homolog', 'pre-prod']
+
+    # Webhook experimental configurations
+    # Obs: Essa lista de domínios não pode ser adicionado outros clientes, é apenas para testes do matchspot
+    allowed_domains:
+        - dev
+        - matchspot
+        - matchspot-hapvida
+    hook_enable: false
+    matchspot_sns_hook_arn: 'arn:aws:sns:sa-east-1:769177069788:wspot_dev_campaign_view'
+
+    # Analytics - Amplitude
+    analytics_active: true
+    aws_queue_analytics_name: wspot_homolog_analytics_queue
+    analytics_analyzer: 'amplitude'
+    # esse token deve ser usado apenas em ambiente de homologação (teste, dev, homolog, pre-prod).
+    # será enviado para o projetoo wspot-homologação dentro do Amplitude
+    analytics_api_key: '%env(ANALYTICS_API_KEY)%'
+
+    # Send Guest to Accounting Processor
+    aws_queue_guest_to_acct_processor: wspot_homolog_guest_to_acct_processor
+    aws_queue_guest_to_kopclub: wspot_homolog_guest_kopclub
+
+    # Delete Guest From S3
+    aws_queue_delete_guest_from_s3: wspot_homolog_delete_guest_from_s3
+
+    # S3 Policies
+    s3_policies_bucket: entities.dev.wspot.com.br
+    aws_key_acct_processor: '%env(AWS_KEY_ACCT_PROCESSOR)%'
+    aws_secret_acct_processor: '%env(AWS_SECRET_ACCT_PROCESSOR)%'
+
+    # Rabbitmq
+    rabbitmq_host: rabbitmq.internal.wspot.com.br
+    rabbitmq_port: 5672
+    rabbitmq_username: '%env(RABBITMQ_USERNAME)%'
+    rabbitmq_password: '%env(RABBITMQ_PASSWORD)%'
+
+    # API Online Guests
+    api_online_guests_url: 'http://www.mocky.io/v2/5e0e390f330000b580aa8a85'
+
+    # Flowplayer Token - player to reproduce campaign video
+    flowplayer_token: '%env(FLOWPLAYER_TOKEN)%'
+
+    # Access Point Monitoring - Grafana API
+    ap_monitoring_grafana_url: 'http://grafana.monitoring.wspot.com.br'
+    ap_monitoring_grafana_api_key: '%env(GRAFANA_API_KEY)%'
+
+    sites_blocking_api_host: 'https://api.sitesblockingreports.wspot.com.br'
+    sms_marketing_report_api_host: 'https://api.smsmarketingreport.wspot.com.br'
+    url_shortner_api_host: 'https://api.urlshortner.wspot.com.br'

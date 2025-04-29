@@ -1,0 +1,99 @@
+panel_client_list:
+  path:  /list
+  defaults: { _controller: wspot.panel.controler.client:indexAction }
+  requirements: { methods: post|get }
+
+panel_client_create:
+    path:  /create
+    defaults: { _controller: wspot.panel.controler.client:newAction }
+    requirements: { methods: post|get }
+
+panel_client_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.panel.controler.client:editAction }
+
+panel_client_show:
+    path:  /{id}/show
+    defaults: { _controller: wspot.panel.controler.client:showAction }
+
+panel_client_download_mikrotik_files:
+    path:  /mikrotik/download/configfiles/{domain}
+    defaults: { _controller: wspot.panel.controler.client:downloadMikrotikFilesAction }
+
+panel_client_send_configuration_email:
+    path:  /{id}/sendconfiguration/{userEmail}
+    defaults: { _controller: wspot.panel.controler.client:sendConfigurationMailAction}
+    options:
+      expose: true
+
+panel_client_change_domain:
+    path:  /change_domain
+    defaults: { _controller: wspot.panel.controler.client:changeDomainAction }
+    options:
+      expose: true
+
+panel_client_manual_billing_sms:
+    path:  /manual_billing_sms
+    defaults: { _controller: wspot.panel.controler.client:manualBillingSmsAction }
+    options:
+      expose: true
+
+panel_client_enable_wspot:
+    path:  /enable_wspot
+    defaults: { _controller: wspot.panel.controler.client:enableWSpotAction }
+    options:
+      expose: true
+
+panel_client_disable_wspot:
+    path:  /disable_wspot
+    defaults: { _controller: wspot.panel.controler.client:disableWSpotAction }
+    options:
+      expose: true
+
+panel_check_new_admin_data:
+    path:  /check_new_admin_data
+    defaults: { _controller: wspot.panel.controler.client:checkNewAdminDataAction }
+    options:
+      expose: true
+
+panel_user_list:
+    path: /panel_user_list
+    defaults: { _controller: wspot.panel.controller.user:indexAction }
+    options:
+      expose: true
+
+panel_user_create:
+    path: /panel_user_create
+    defaults: { _controller: wspot.panel.controller.user:newAction }
+    options:
+      expose: true
+
+panel_user_edit:
+    path:  /{id}/panel_user_edit
+    defaults: { _controller: wspot.panel.controller.user:editAction }
+
+panel_user_check_email:
+    path:  /{mail}/panel_user_check_email
+    defaults: { _controller: wspot.panel.controller.user:checkEmailAction }
+    options:
+        expose: true
+
+panel_user_sms_billing_control:
+    path: /panel_user_sms_billing_control
+    defaults: { _controller: wspot.panel.controller.sms_billing:indexAction }
+    options:
+      expose: true
+
+panel_user_sms_billing_control_generate:
+  path: /panel_user_sms_billing_control_generate
+  defaults: { _controller: wspot.panel.controller.sms_billing:generateBillingAction }
+
+panel_user_sms_billing_control_status:
+    path: /{id}/panel_user_sms_billing_control/status
+    defaults: { _controller: wspot.panel.controller.sms_billing:changeStatusAction }
+    options:
+      expose: true
+
+panel_check_sms_gateway:
+  path:  /sms_gateway
+  defaults: { _controller: wspot.panel.controler.client:smsGatewayAction }

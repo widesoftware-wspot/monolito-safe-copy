@@ -1,0 +1,56 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes complete fullBox changeData" style="display: block !important;">
+            <div class="box-content">
+                <h3>{{ 'wspot.invalid_email.title'|trans }}</h3>
+
+                <div class="content-center">
+                    <p>{{ 'wspot.invalid_email.message_1'|trans }}<strong>{{ data.properties.name|default('') }}</strong></p>
+                    <p>{{ 'wspot.invalid_email.message_2'|trans }}<strong>{{ data.properties.email }}</strong>{{ 'wspot.invalid_email.message_3'|trans }}</p>
+                </div>
+
+                {% form_theme form 'FrontendBundle:Form:frontendCustomForm.html.twig' %}
+                {{ form_start(form, {attr: {novalidate: 'novalidate', 'id': 'changeForm'} }) }}
+
+                {{ form(form) }}
+
+                <a style="background-color: #6f6f6f; display: none;" id="loaderBtnChange" class="btnLoader">
+                    <img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" />
+                </a>
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+
+    <script src="{{ asset(assets_path ~'/js/jquery.maskedinput.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/fingerprinting.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery.validate.min.js')}}"></script>
+
+    <script type="text/javascript">
+        $("#changeForm").validate({
+            rules: {
+                'wspot_change[properties][email]': {
+                    required: true,
+                    email: true
+                }
+            },
+            messages: {
+                'wspot_change[properties][email]': {
+                    required: "{{ 'wspot.signup_page.field_required'|trans }}",email: "{{ 'wspot.signup_page.field_valid_email'|trans }}"
+                }
+            },
+            submitHandler: function(form) {
+                form.submit();
+                jQuery('#wspot_change_alterar').hide();
+                jQuery('#loaderBtnChange').show();
+            }
+        });
+    </script>
+{% endblock %}

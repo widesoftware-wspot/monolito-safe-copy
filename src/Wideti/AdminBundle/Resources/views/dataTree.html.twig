@@ -1,0 +1,55 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    <ul class="breadcrumb"></ul>
+    <div class="separator bottom"></div>
+
+    <div class="heading-buttons">
+        <h3>
+            {% block dataTitle %}
+            {% endblock %}
+        </h3>
+        <div class="buttons pull-right">
+            {% block buttonRight %}
+            {% endblock %}
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="separator bottom"></div>
+    <div class="filter-bar">
+        {% block filter %}
+        {% endblock %}
+
+        {% block addButton %}
+        {% endblock %}
+    </div>
+    <div class="innerLR">
+        <div class="innerLR">
+
+            {% block emailTemplate %}
+            {% endblock %}
+
+            {% block moduleConfig %}
+            {% endblock %}
+
+            <!-- Widget -->
+            <div class="widget" style="margin-top: -1px;">
+                <div class="widget-body">
+                    <!-- Total bookings & sort by options -->
+                    <div class="separator bottom form-inline small">
+                        {% block messagebar %}
+                        {% endblock %}
+                    </div>
+                    {% block treeView %}
+                    {% endblock %}
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

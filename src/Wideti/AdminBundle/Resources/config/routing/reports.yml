@@ -1,0 +1,116 @@
+disconnect_user:
+    path: /disconnect_user
+    defaults: { _controller: wspot.admin.controller.report:disconnectGuestAction }
+    methods: [POST]
+
+admin_relatorio_historico:
+    path:  /historic/{page}
+    defaults: { _controller: wspot.admin.controller.report:historicAction, page:1 }
+    requirements: { methods: post|get }
+
+admin_download_upload_report:
+    path:  /download_upload/{page}
+    defaults: { _controller: wspot.admin.controller.report:downloadUploadAction, page:1 }
+
+admin_online_user_report:
+    path:  /online_users/{page}
+    defaults: { _controller: wspot.admin.controller.report:onlineUserAction, page:1 }
+
+admin_map_access_report:
+    path:  /map_access
+    defaults: { _controller: wspot.admin.controller.report:heatMapAction, page:1 }
+
+admin_download_upload_detail_report:
+    path:  /download_upload/detail/{year}/{month}
+    defaults: { _controller: wspot.admin.controller.report:downloadUploadDetailAction }
+    requirements:
+      methods: GET
+      year: \d+
+      month: \d+
+
+admin_most_visited_hours_report:
+    path:  /most_visited_hours
+    defaults: { _controller: wspot.admin.controller.report:mostVisitedHoursAction }
+
+admin_records_per_day_report:
+    path:  /records_per_day
+    defaults: { _controller: wspot.admin.controller.report:recordsPerDayAction }
+
+admin_download_upload_chart:
+  path:  /admin_download_upload_chart.{_format}
+  defaults: { _controller: wspot.admin.controller.report:downloadUploadChartsAction, _format: json }
+  requirements: { _format: (xml|json), methods: POST }
+  options:
+    expose: true
+
+admin_access_points_report:
+    path:  /access_points_report
+    defaults: { _controller: wspot.admin.controller.report:accessPointAction }
+
+admin_campaign_report:
+    path:  /campaign_report
+    defaults: { _controller: wspot.admin.controller.report:campaignAction }
+
+admin_campaign_report_detail:
+    path: /campaign_report_detail/{id}
+    defaults: { _controller: wspot.admin.controller.report:campaignDetailAction }
+    requirements:
+      methods: GET
+      id: \d+
+
+admin_campaign_cta_report:
+    path:  /campaign_cta_report
+    defaults: { _controller: wspot.admin.controller.report:campaignCTAAction }
+
+admin_campaign_cta_report_detail:
+    path: /campaign_cta_report_detail/{id}
+    defaults: { _controller: wspot.admin.controller.report:campaignCTADetailAction }
+    requirements:
+      methods: GET
+      id: \d+
+
+admin_campaign_cta_report_guests:
+    path: /campaign_cta_report_guests
+    defaults: { _controller: wspot.admin.controller.report:campaignCTAGuestsAction }
+    options:
+      expose: true
+
+admin_guests_reports:
+    path:  /visitantes/{page}
+    defaults: { _controller: wspot.admin.controller.report:guestsAction, page:1 }
+
+admin_birthdays_reports:
+    path:  /aniversariantes/{page}
+    defaults: { _controller: wspot.admin.controller.report:birthdaysAction, page:1 }
+
+admin_sms_report:
+    path:  /sms/{page}
+    defaults: { _controller: wspot.admin.controller.report:smsReportAction, page:1 }
+
+admin_audit_report:
+    path:  /audit_report/{page}
+    defaults: { _controller: wspot.admin.controller.report:auditLogAction, page:1 }
+
+admin_report_batch:
+    path: /batch
+    defaults: { _controller: wspot.admin.controller.report:batchReportProcess }
+    requirements: { methods: post|get }
+
+admin_available_reports_s3:
+    path:  /available-report
+    defaults: { _controller: wspot.admin.controller.report:getAvailableReportsOnS3 }
+    options:
+      expose: true
+
+admin_campaign_view_details:
+    path: /admin_campaign_view_details/{id}/{type}
+    defaults: { _controller: wspot.admin.controller.report:viewDetails, page:1 }
+    options:
+      expose: true
+
+admin_signed_url_reports_s3:
+  path:  /signed_url
+  defaults: { _controller: wspot.admin.controller.report:generateSignedUrl }
+  requirements: { methods: post }
+  options:
+    expose: true

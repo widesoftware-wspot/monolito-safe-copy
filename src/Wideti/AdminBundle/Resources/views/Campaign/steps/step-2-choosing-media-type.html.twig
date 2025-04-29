@@ -1,0 +1,97 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/css/campaign.css')}}" type="text/css" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/fontawesome/css/fontawesome.css')}}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Campanhas'} %}
+    <div class="innerLR">
+        <div id="formScreen" style="display: block;">
+            <div class="widget widget-tabs border-bottom-none">
+                <div class="widget-body">
+                    <div class="row-fluid">
+                        <div class="span12">
+                            {% if (step == 'pre-login') %}
+                                <h2>Pré Login</h2>
+                            {% else %}
+                                <h2>Pós Login</h2>
+                            {% endif %}
+                            <p>
+                                É a campanha que será exibida para o visitante
+                                {% if (step == 'pre-login') %}
+                                    <b>ANTES</b> da
+                                {% else %}
+                                    <b>APÓS</b>
+                                {% endif %}
+                                sua autenticação na rede.
+                            </p><br>
+                            <p><b>Escolha agora qual tipo de mídia deseja inserir:</b></p>
+
+                            <div class="campaign-choosing-media-opt">
+                                <a href="{{ path('campaign_step_upload_media', { id: entity.id, step: step, mediaType: 'image', action: action }) }}">
+                                    <div class="campaign-choosing-media-opt-item">
+                                        <img src="{{ asset('bundles/admin/theme/images/ico-picture.png') }}">
+                                    </div>
+                                    <p>Imagem</p>
+                                </a>
+                            </div>
+                            <div class="campaign-choosing-media-opt">
+                                <p class="or">- ou -</p>
+                            </div>
+                            <div class="campaign-choosing-media-opt">
+                                <a href="{{ path('campaign_step_upload_media', { id: entity.id, step: step, mediaType: 'video', action: action }) }}">
+                                    <div class="campaign-choosing-media-opt-item">
+                                        <img src="{{ asset('bundles/admin/theme/images/ico-video.png') }}">
+                                    </div>
+                                    <p>Vídeo</p>
+                                </a>
+                            </div>
+                            <div class="campaign-choosing-media-opt">
+                                <p class="or">- ou -</p>
+                            </div>
+                            <div class="campaign-choosing-media-opt" style="margin-left: -20px;">
+                                {% if (step == 'pre-login') %}
+                                    <a href="{{ path('campaign_step_choosing_media', { id: entity.id, step: 'pos-login', action: action }) }}">
+                                {% elseif (step == 'pos-login') %}
+                                    {% if (hasPreLoginImage) %}
+                                        <a href="{{ path('campaign_step_call_to_action', { id: entity.id, action: action }) }}">
+                                    {% else %}
+                                        <a href="{{ path('campaign_preview', { id: entity.id }) }}">
+                                    {% endif %}
+                                {% endif %}
+                                    <div class="campaign-choosing-media-opt-item">
+                                        <img src="{{ asset('bundles/admin/theme/images/ico-skip.png') }}">
+                                    </div>
+                                    <p>Pular essa etapa</p>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr class="separator">
+
+        <div class="form-actions right">
+        {% if (step == 'pre-login') %}
+            <a href="{{ path('campaign_edit', { id: entity.id }) }}">
+        {% else %}
+            <a href="{{ path('campaign_step_choosing_media', { id: entity.id, step: 'pre-login', action: app.request.get('action') }) }}">
+        {% endif %}
+                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>Cancelar</button>
+            </a>
+            <a href="{{ path('campaign') }}">
+                <button type="button" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar para listagem</button>
+            </a>
+        </div>
+    </div>
+{% endblock%}
+
+{% block javascript %}
+{{ parent() }}
+<script type="text/javascript">
+</script>
+{% endblock %}

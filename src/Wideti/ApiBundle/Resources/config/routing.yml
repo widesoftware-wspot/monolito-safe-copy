@@ -1,0 +1,284 @@
+########################################################################################################################
+##### API CLIENTS ######################################################################################################
+########################################################################################################################
+api_client:
+    path:     /rdstation/client
+    defaults: { _controller: wspot.api.controller.rdstation:createClientAction}
+    methods: [POST]
+
+api_check_domain:
+    path:     /clients/check_domain/{domain}
+    defaults: { _controller: wspot.api.controller.client:isDomainAvailableAction}
+    methods: [GET]
+
+api_check_document:
+    path:     /clients/check_document/{document}
+    defaults: { _controller: wspot.api.controller.client:isDocumentAvailableAction}
+    methods: [GET]
+
+api_client_hash:
+    path:     /clients/hash/{hash}
+    defaults: { _controller: wspot.api.controller.client:getClientInfoByHash}
+    methods: [GET]
+
+api_client_trial:
+    path:     /clients/trial
+    defaults: { _controller: wspot.api.controller.client:trialAction}
+    methods: [POST]
+
+api_client_purchase:
+    path:     /clients/purchase
+    defaults: { _controller: wspot.api.controller.client:purchaseAction}
+    methods: [POST]
+
+api_client_vinculateerpclient:
+    path:     /clients/vinculateerpclient
+    defaults: { _controller: wspot.api.controller.client:vinculateErpClientAction}
+    methods: [PUT]
+
+api_client_changestatus:
+    path:     /clients/changestatus
+    defaults: { _controller: wspot.api.controller.client:changeStatusAction}
+    methods: [PUT]
+
+api_client_settled_charges:
+    path:     /clients/settled-charges
+    defaults: { _controller: wspot.api.controller.client:getSettledChargesAction }
+    methods: [POST]
+
+api_client_sync_data:
+    path:     /clients/sync-data
+    defaults: { _controller: wspot.api.controller.client:syncDataAction }
+    methods: [POST]
+
+api_client_change_status:
+    path:     /clients/change-status
+    defaults: { _controller: wspot.api.controller.client:erpChangeStatusAction}
+    methods: [POST]
+
+api_client_validate_ap:
+    path:     /clients/{id}/access-points/{identifier}/check
+    defaults: { _controller: wspot.api.controller.client:validateClientAp}
+    methods: [POST]
+
+
+
+########################################################################################################################
+##### API GUESTS #######################################################################################################
+########################################################################################################################
+api_guests_custom_fields:
+    path: /guests/fields
+    defaults: { _controller: wspot.api.controller.guests:getCustomFields }
+    methods: [GET]
+
+# ------------------ GUESTS v1
+api_guests_list:
+    path: /guests
+    defaults: { _controller: wspot.api.controller.guests:listGuests }
+    methods: [GET]
+
+api_guests_detail:
+    path: /guests/{id}
+    defaults: { _controller: wspot.api.controller.guests:detail }
+    methods: [GET]
+
+api_guests_create:
+    path: /guests/{_locale}
+    defaults: { _controller: wspot.api.controller.guests:create, _locale:pt_br }
+    methods: [POST]
+    requirements:
+        _locale: en|es|pt_br
+
+api_guests_bulk_create:
+    path: /guests/bulk/{_locale}
+    defaults: { _controller: wspot.api.controller.guests:bulkCreate, _locale:pt_br }
+    methods: [POST]
+    requirements:
+        _locale: en|es|pt_br
+
+api_guests_update:
+    path: /guests/{_locale}
+    defaults: { _controller: wspot.api.controller.guests:update, _locale:pt_br }
+    methods: [PUT]
+    requirements:
+        _locale: en|es|pt_br
+
+# ----------------------------
+# ------------------ GUESTS v2
+api_guests_list_v2:
+    path: /v2/guests
+    defaults: { _controller: wspot.api.controller.guests.v2:listGuests }
+    methods: [GET]
+
+api_guests_detail_v2:
+    path: /v2/guests/{id}
+    defaults: { _controller: wspot.api.controller.guests.v2:detail }
+    methods: [GET]
+
+api_guests_create_v2:
+    path: /v2/guests/{_locale}
+    defaults: { _controller: wspot.api.controller.guests.v2:create, _locale:pt_br }
+    methods: [POST]
+    requirements:
+        _locale: en|es|pt_br
+
+api_guests_update_v2:
+    path: /v2/guests/{_locale}
+    defaults: { _controller: wspot.api.controller.guests.v2:update, _locale:pt_br }
+    methods: [PUT]
+    requirements:
+        _locale: en|es|pt_br
+
+api_guests_devices:
+    path: /v2/guests/{id}/devices
+    defaults: { _controller: wspot.api.controller.guests.v2:guestDevices }
+    methods: [GET]
+
+########################################################################################################################
+##### API ACCESS POINTS ################################################################################################
+########################################################################################################################
+api_access_points_list:
+    path: /access-points
+    defaults: { _controller: wspot.api.controller.access_points:listAction }
+    methods: [GET]
+
+api_access_points_create:
+    path: /access-points
+    defaults: { _controller: wspot.api.controller.access_points:createAction }
+    methods: [POST]
+
+api_access_points_list_vendors:
+    path: /access-points/vendors
+    defaults: { _controller: wspot.api.controller.access_points:listVendorsAction }
+    methods: [GET]
+
+api_access_points_detail:
+    path: /access-points/{id}
+    defaults: { _controller: wspot.api.controller.access_points:detailAction }
+    methods: [GET]
+
+api_access_point_group_list:
+    path: /access-point-groups
+    defaults: { _controller: wspot.api.controller.access_point_groups:listAction }
+    methods: [GET]
+
+api_access_points_update:
+    path: /access-points/{id}
+    defaults: { _controller: wspot.api.controller.access_points:updateAction }
+    methods: [PUT]
+
+########################################################################################################################
+##### API ACCESS #######################################################################################################
+########################################################################################################################
+api_accounting_stream:
+    path: /access
+    defaults: { _controller: wspot.api.controller.accounting:getStreamAction }
+    methods: [GET]
+
+api_accounting_get_data:
+    path: /access-by-ids
+    defaults: { _controller: wspot.api.controller.accounting:getAccountingDataAction }
+    methods: [POST]
+
+########################################################################################################################
+##### API SEGMENTATION #################################################################################################
+########################################################################################################################
+api_segmentation_default_schema:
+    path: /segmentation/schema
+    defaults: { _controller: wspot.api.controller.segmentation:defaultSchemaAction }
+    methods: [GET]
+
+api_segmentation_preview:
+    path: /segmentation/preview
+    defaults: { _controller: wspot.api.controller.segmentation:previewAction }
+    methods: [POST]
+    options:
+        expose: true
+
+api_segmentation_create:
+    path: /segmentation
+    defaults: { _controller: wspot.api.controller.segmentation:createAction }
+    methods: [POST]
+
+api_segmentation_edit:
+    path: /segmentation/edit/{id}
+    defaults: { _controller: wspot.api.controller.segmentation:editAction }
+    methods: [POST]
+
+api_segmentation_list:
+    path: /segmentation
+    defaults: { _controller: wspot.api.controller.segmentation:listAction }
+    methods: [GET]
+
+api_segmentation_delete:
+    path: /segmentation/{id}
+    defaults: { _controller: wspot.api.controller.segmentation:deleteAction }
+    methods: [DELETE]
+
+api_segmentation_export:
+    path: /segmentation/export
+    defaults: { _controller: wspot.api.controller.segmentation:exportAction }
+    methods: [POST]
+
+api_segmentation_convert_to_schema:
+    path: /segmentation/convert-to-schema
+    defaults: { _controller: wspot.api.controller.segmentation:convertToSchemaAction }
+    methods: [POST]
+
+########################################################################################################################
+##### API INTERNAL #####################################################################################################
+########################################################################################################################
+api_internal_access_points_create:
+    path: /internal/access-points
+    defaults: { _controller: wspot.api.controller.internal_access_points:createAction }
+    methods: [POST]
+
+api_internal_sms_callback:
+    path: /internal/sms-callback
+    defaults: { _controller: wspot.api.controller.internal_sms:callbackAction }
+    methods: [POST]
+
+api_internal_campaign_video_url:
+    path: /internal/campaign-video-url
+    defaults: { _controller: wspot.api.controller.internal_campaign_video_url:persistUrlAction }
+    methods: [POST]
+
+api_internal_clients_aps:
+    path: /internal/clients/{id}/access-points
+    defaults: { _controller: wspot.api.controller.internal_access_points:loadAccessPoints}
+    methods: [GET]
+
+api_internal_clients_ap_groups:
+    path: /internal/clients/{id}/access-point-groups
+    defaults: { _controller: wspot.api.controller.internal_access_point_groups:loadAccessPointsGroups }
+    methods: [GET]
+
+api_internal_clients_search:
+    path: /internal/clients
+    defaults: { _controller: wspot.api.controller.internal_clients:searchClient }
+    methods: [GET]
+
+api_internal_signed_consent_revoke:
+    path: /internal/revoke-signed-consent
+    defaults: { _controller: wspot.api.controller.internal_consent:revokeSignedConsent }
+    methods: [POST]
+
+api_internal_whitelabel:
+    path: /internal/clients/{id}/templatedata
+    defaults: { _controller: wspot.api.controller.internal_clients:getTemplateData }
+    methods: [ GET ]
+
+api_internal_clients_edit:
+    path: /internal/spots/{id}
+    defaults: { _controller: wspot.api.controller.internal_clients:editAction }
+    methods: [POST]
+
+api_internal_client_update:
+    path: /internal/spots/{id}
+    defaults: {_controller: wspot.api.controller.internal_clients:updateClientAction }
+    methods: [PATCH]
+
+api_client_sync_white_label_data:
+    path: /internal/sync-white-label-data
+    defaults: { _controller: wspot.api.controller.internal_clients:syncWhiteLabelData }
+    methods: [PUT]

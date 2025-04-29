@@ -1,0 +1,61 @@
+campaign:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.campaign:indexAction }
+
+campaign_new:
+    path:  /new
+    defaults: { _controller: wspot.admin.controller.campaign:newAction }
+    options:
+        expose: true
+
+campaign_step_choosing_media:
+    path:  /{id}/{step}/choosing-media
+    defaults: { _controller: wspot.admin.controller.campaign:stepChoosingMediaTypeAction }
+    requirements:
+        _step: pre-login|pos-login
+
+campaign_step_upload_media:
+    path:  /{id}/{step}/upload/{mediaType}
+    defaults: { _controller: wspot.admin.controller.campaign:stepUploadMediaAction }
+    requirements:
+        _step: pre-login|pos-login
+        _mediaType: image|video
+
+campaign_step_call_to_action:
+    path:  /{id}/call-to-action
+    defaults: { _controller: wspot.admin.controller.campaign:stepCallToActionAction }
+
+campaign_preview:
+    path:  /{id}/preview
+    defaults: { _controller: wspot.admin.controller.campaign:previewAction }
+    options:
+        expose: true
+
+campaign_activate:
+    path:  /{id}/activate
+    defaults: { _controller: wspot.admin.controller.campaign:activateAction }
+    options:
+        expose: true
+
+campaign_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.campaign:editAction }
+    options:
+        expose: true
+
+campaign_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.campaign:deleteAction }
+    requirements: { methods: post|delete }
+    options:
+        expose: true
+
+campaign_media_upload:
+    path: /{id}/media-upload/{step}/{mediaType}
+    defaults: { _controller: wspot.admin.controller.campaign:uploadMediaAction, _mediaType: image }
+    requirements:
+        _step: pre|pos
+        _mediaType: image|video
+    options:
+        expose: true
+

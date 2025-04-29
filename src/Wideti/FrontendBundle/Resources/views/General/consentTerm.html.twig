@@ -1,0 +1,35 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block title %}
+    <title>{{ whiteLabel.companyName }} - {{ 'wspot.consent_term.page_title'|trans }}</title>
+{% endblock %}
+
+{% block header %}
+    {{ parent() }}
+
+    <style>
+        @media (max-width: 460px) {
+            #terms {
+                overflow: scroll;
+                overflow-x: hidden;
+                border-radius: 5px;
+                max-height: 70vh;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block container %}
+    <section id="terms" class="container terms">
+        <h2>{{ 'wspot.consent_term.page_title'|trans }}</h2>
+
+        <div class="content-terms">
+            {{ 'wspot.consent_term.page_content'|trans | replace({'%formUrl%': formUrl, '%admin_email%': config.from_email, '%conditions%': conditionsAsHTML(consent) }) | raw }}
+        </div>
+        <p style="padding-top:.2em;text-align:center;">
+            <button class="btn button-back" onclick="window.history.back();">< {{ 'wspot.generic.go_back'|trans }}</button>
+        </p>
+    </section>
+{% endblock %}
+
+{% block footer %}{% endblock %}

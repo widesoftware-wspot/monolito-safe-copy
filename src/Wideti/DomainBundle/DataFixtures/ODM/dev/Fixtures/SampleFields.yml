@@ -1,0 +1,32 @@
+Wideti\DomainBundle\Document\CustomFields\Field:
+  CustomFields1:
+    type: "email"
+    setNames:
+      - { "pt_br" : "E-mail", "en" : "Email", "es" : "Email" }
+    identifier: "email"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ] }, { "type" : "email", "value" : true, "message" : "wspot.signup_page.field_valid_email", "locale" : [ "pt_br", "en", "es" ] }]
+    isLogin: false
+    isUnique: true
+
+  CustomFields2:
+    type: "text"
+    setNames:
+      - { "pt_br" : "Nome", "en" : "Name", "es" : "Nombre" }
+    identifier: "name"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : [ "pt_br", "en", "es" ]}]
+
+  CustomFields3:
+    type: "phone"
+    setNames:
+      - { "pt_br" : "Telefone", "en" : "Phone Number", "es" : "Teléfono" }
+    identifier: "phone"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : ["pt_br", "en", "es"]}, { "type" : "minlength", "value" : 10, "message" : "wspot.signup_page.field_phone_min_characters_required", "locale" : ["pt_br"]}]
+    mask: { "pt_br" : "99999999999", "en" : "", "es" : "" }
+
+  CustomFields4:
+    type: "document"
+    setNames:
+      - { "pt_br" : "CPF", "en" : "Passport", "es" : "Pasaporte" }
+    identifier: "document"
+    validations: [{ "type" : "required", "value" : true, "message" : "wspot.signup_page.field_required", "locale" : ["pt_br", "en", "es"]}, { "type" : "minlength", "value" : 10, "message" : "wspot.signup_page.field_document_min_characters_required", "locale" : ["pt_br"]}, { "type" : "CpfValidator", "value" : { "required" : true}, "message" : "wspot.signup_page.field_invalid_document", "locale" : ["pt_br"]}]
+    mask: { "pt_br" : "99999999999", "en" : "", "es" : "" }

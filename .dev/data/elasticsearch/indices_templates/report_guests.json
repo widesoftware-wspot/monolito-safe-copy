@@ -1,0 +1,77 @@
+{
+  "order": 0,
+  "template": "report_guests*",
+  "settings": {
+    "index": {
+      "analysis": {
+        "analyzer": {
+          "case_insensitive": {
+            "filter": [
+              "lowercase"
+            ],
+            "type": "custom",
+            "tokenizer": "keyword"
+          }
+        }
+      },
+      "number_of_shards": "1"
+    }
+  },
+  "mappings": {
+    "report": {
+      "_all": {
+        "enabled": false
+      },
+      "properties": {
+        "download": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "clientId": {
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "averageTime": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "loginValue": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "upload": {
+          "index": "not_analyzed",
+          "type": "long"
+        },
+        "created": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "name": {
+          "index": "not_analyzed",
+          "type": "string"
+        },
+        "lastAccess": {
+          "format": "yyyy-MM-dd HH:mm:ss",
+          "type": "date"
+        },
+        "guestId": {
+          "index": "not_analyzed",
+          "type": "integer"
+        }
+      }
+    }
+  },
+  "aliases": {
+    "report_guests_all": {},
+    "report_guests_last_30_days": {
+      "filter": {
+        "range": {
+          "lastAccess": {
+            "gte": "now-30d"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important; min-height: 400px;">
+            <div class="box-content">
+                <h3 style="font-size: 24px !important;">{{ 'wspot.confirmation.block_title'|trans }}</h3>
+
+                <div class="content-center">
+                    {{ 'wspot.confirmation.block_message_1'|trans }}<strong>{{ config.confirmation_email_block_time|confirmationTimeFormat }}</strong>.
+                    {{ 'wspot.confirmation.block_message_2'|trans }}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

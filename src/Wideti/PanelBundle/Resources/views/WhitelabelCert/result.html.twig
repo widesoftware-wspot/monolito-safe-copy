@@ -1,0 +1,27 @@
+{% extends 'PanelBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Resultado da Geração de Certificado</h3>
+            </div>
+            <div class="panel-body">
+                {% if message starts with 'OK' %}
+                    <div class="alert alert-success">
+                        {{ message }}
+                    </div>
+                {% else %}
+                    <strong>Pendência:</strong>
+                    <div class="alert alert-warning">
+                        {% set cleanedMessage = message|replace({'exec error: exit status 1': ''}) %}
+                        {% set errors = cleanedMessage|split('->') %}
+                        {% for error in errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

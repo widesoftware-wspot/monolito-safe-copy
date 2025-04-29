@@ -1,0 +1,87 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Administradores'} %}
+
+    <div class="innerLR">
+
+        <!-- Widget -->
+        <div class="widget widget-tabs widget-tabs border-bottom-none">
+
+            <!-- Widget heading -->
+            <div class="widget-head">
+                <ul>
+                    <ul>
+                        <li class="active"><a class="glyphicons eye_open" data-toggle="tab"><i></i>Visualizar</a></li>
+                    </ul>
+                </ul>
+            </div>
+            <!-- // Widget heading END -->
+
+            <div class="widget-body">
+
+                <div class="tab-content" style="padding: 0;">
+
+                    <div class="tab-pane active widget-body-regular" id="overview">
+
+                        <div class="row-fluid row-merge">
+                            <div class="span12">
+
+                                <div class="innerL">
+                                    <div class="span4">
+                                        <h4>{{ entity.nome }} </h4>
+                                        <ul class="unstyled icons">
+                                            <li class="glyphicons envelope"><i></i> {{ entity.username }} </li>
+                                            <li class="glyphicons tie"><i></i>
+                                                Perfil:
+                                                {% for role in entity.roles %}
+                                                    {{ role }}
+                                                {% endfor %}
+                                            </li>
+                                            <li class="glyphicons certificate"><i></i> Status: {{ entity.statusAsString }} </li>
+                                            <li class="glyphicons stats"><i></i> Relatório via e-mail: {{ entity.receiveReportMailAsString }} </li>
+                                            <li class="glyphicons globe_af"><i></i> Idioma do Relatório: {{ entity.reportMailLanguageAsString }} </li>
+                                        </ul>
+                                        <p></p>
+                                    </div>
+
+                                    <div class="span4">
+                                        <h4>Dados de acesso</h4>
+                                        <ul class="unstyled icons">
+                                            <li class="glyphicons calendar"><i></i> Data cadastro: {{ entity.dataCadastro|date('d/m/Y H:i:s') }} </li>
+                                            <li class="glyphicons calendar"><i></i> Último acesso: {{ (entity.ultimoAcesso is not null) ? entity.ultimoAcesso|date('d/m/Y H:i:s') : 'Nunca fez login' }} </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="form-actions right">
+                    {% set urlBackButton = app.request.headers.get('referer') %}
+
+                    {% if ('edit' in urlBackButton) %}
+                        <a href="{{ path('admin_usuarios') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar para Listagem</a>
+                    {%  else %}
+                        <a href="{{ urlBackButton }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+                    {% endif %}
+
+                    <a href="{{ path('admin_usuarios_edit', { 'id': entity.id }) }}" class="btn btn-icon btn-default glyphicons pencil"><i></i>Editar</a>
+                    <a href="{{ path('admin_usuarios_delete', {'id': entity.id }) }}" class="btn btn-icon btn-primary glyphicons circle_remove"><i></i>Excluir usuário</a>
+                </div>
+            </div>
+            <!-- // Tab content END -->
+        </div>
+
+    </div>
+    </div>
+    <!-- // Widget END -->
+
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

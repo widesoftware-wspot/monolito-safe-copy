@@ -1,0 +1,15 @@
+first_config_index:
+    path:  /
+    defaults: { _controller: wspot.admin.controller.first_config:index}
+
+first_config_load_template_field:
+    path:  /ajax/template-fields
+    defaults: { _controller: wspot.admin.controller.first_config:ajaxLoadTemplateFields}
+    options:
+      expose: true
+
+first_config_save_fields:
+    path:  /ajax/save-fields
+    defaults: { _controller: wspot.admin.controller.first_config:ajaxSaveFields}
+    options:
+      expose: true

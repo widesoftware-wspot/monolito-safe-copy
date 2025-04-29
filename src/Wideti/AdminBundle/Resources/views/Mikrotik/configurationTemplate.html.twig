@@ -1,0 +1,112 @@
+<p style="padding-right:20px;font-size:25px;line-height:30px;color:#909090;font-family:Arial;">
+    Configurações MikroTik
+</p>
+
+<div>
+    # oct/22/2014 13:36:52 by RouterOS 6.19
+    # software id = N7WP-J0VF
+    #
+    /interface ethernet<br>
+    set [ find default-name=ether1 ] name=ether1-gateway<br>
+    set [ find default-name=ether2 ] name=ether2-master-local<br>
+    set [ find default-name=ether3 ] master-port=ether2-master-local name=ether3-slave-local<br>
+    set [ find default-name=ether4 ] master-port=ether2-master-local name=ether4-slave-local<br>
+    set [ find default-name=ether5 ] master-port=ether2-master-local name=ether5-slave-local<br>
+    <br>
+    /interface wireless<br>
+    set [ find default-name=wlan1 ] band=2ghz-b/g/n channel-width=20/40mhz-ht-above country=brazil disabled=no distance=indoors l2mtu=2290 mode=ap-bridge ssid="{{ ssid }}" wireless-protocol=802.11<br>
+    <br>
+    /ip neighbor discovery<br>
+    set ether1-gateway discover=no<br>
+    <br>
+    /ip pool<br>
+    remove default-dhcp<br>
+    add name=dhcp_pool-wspot ranges=192.168.100.2-192.168.100.254<br>
+    <br>
+    /ip hotspot<br>
+    add address-pool=dhcp_pool-wspot disabled=no interface=wlan1 keepalive-timeout=5m name={{ identity }}<br>
+    set {{ identity }} address-pool=none<br>
+    <br>
+    /ip hotspot profile<br>
+    set [ find default=yes ] html-directory=wspot login-by=http-chap,https,http-pap,mac-cookie radius-interim-update=15m radius-mac-format=XX-XX-XX-XX-XX-XX use-radius=yes<br>
+    <br>
+    /ip dhcp-server<br>
+    remove default<br>
+    add address-pool=dhcp_pool-wspot disabled=no interface=wlan1 name=dhcp1 lease-time=30m<br>
+    <br>
+    /ip hotspot user profile<br>
+    set [ find default=yes ] address-pool=dhcp_pool-wspot idle-timeout=1h keepalive-timeout=1m mac-cookie-timeout=2h shared-users=unlimited<br>
+    set default address-pool=none<br>
+    <br>
+    /interface bridge port<br>
+    disable numbers=1<br>
+    <br>
+    /ip address<br>
+    add address=192.168.100.1/24 comment="default configuration" interface=wlan1 network=192.168.100.0<br>
+    <br>
+    /ip dhcp-client<br>
+    add dhcp-options=hostname,clientid disabled=no interface=bridge-local<br>
+    <br>
+    /ip dhcp-server network<br>
+    remove numbers=0<br>
+    add address=192.168.100.0/24 gateway=192.168.100.1<br>
+    <br>
+    /ip dns<br>
+    set allow-remote-requests=yes servers=8.8.8.8<br>
+    <br>
+    /ip firewall filter<br>
+    add action=passthrough chain=unused-hs-chain comment="place hotspot rules here" disabled=yes<br>
+    disable numbers=3<br>
+    <br>
+    /ip firewall nat<br>
+    add action=masquerade chain=srcnat out-interface=bridge-local<br>
+    <br>
+    /ip hotspot walled-garden<br>
+    #facebook<br>
+    add dst-host=*wspot*<br>
+    add dst-host=*mambowifi*<br>
+    add dst-host=*facebook.com*<br>
+    add dst-host=*akamai*<br>
+    add dst-host=*facebook.net*<br>
+    #twitter<br>
+    add dst-host=*twitter*<br>
+    add dst-host=*twimg*<br>
+    add dst-host=*fastly.net*<br>
+    add dst-host=*edgecastcdn.net*<br>
+    #google plus<br>
+    add dst-host=*googleusercontent*<br>
+    add dst-host=*googleapis*<br>
+    add dst-host=*gstatic*<br>
+    add dst-host=*www.google.com*<br>
+    add dst-host=*accounts.l.google.com*<br>
+    add dst-host=*accounts-cctld.l.google.com*<br>
+    add dst-host=*goo.gl*<br>
+    #youtube<br>
+    add dst-host=youtube-ui.l.google.com<br>
+    add dst-host=*googlevideo.com*<br>
+    <br>
+    /ip hotspot walled-garden ip<br>
+    add action=accept comment=Gerenc disabled=no dst-address=192.168.88.1<br>
+    <br>
+    <br>
+    /ip upnp<br>
+    set allow-disable-external-interface=no<br>
+    <br>
+    /radius<br>
+    add accounting-port=1813 address=54.207.48.161 authentication-port=1812 secret="wide\$123" service=hotspot timeout=3s<br>
+    add accounting-port=1813 address=54.207.62.56 authentication-port=1812 secret="wide\$123" service=hotspot timeout=3s<br>
+    <br>
+    /system clock<br>
+    set time-zone-name=America/Sao_Paulo<br>
+    <br>
+    /system identity<br>
+    set name={{ identity }}<br>
+    <br>
+    /system ntp client<br>
+    set enabled=yes primary-ntp=200.192.112.8 secondary-ntp=200.129.0.46<br>
+    <br>
+    /ip dns<br>
+    set allow-remote-requests=no<br>
+    <br>
+    / password new-password=12@wspot34 confirm-new-password=12@wspot34 old-password=""<br>
+</div>

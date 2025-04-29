@@ -1,0 +1,131 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.css')}}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('bundles/admin/theme/scripts/plugins/forms/bootstrap-fileinput/bootstrap-fileinput.css') }}"/>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/lightbox/lightbox.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+
+{% set route = app.request.attributes.get('_route') %}
+
+<h3 class="heading-mosaic">Código de Acesso</h3>
+
+<div class="innerLR">
+    <div class="widget widget-tabs border-bottom-none">
+        <div class="widget-head">
+            <ul>
+                <li class="active">
+                    <a class="glyphicons cogwheels" data-toggle="tab"><i></i>
+                    Preferências
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="widget-body">
+
+            {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+            {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+            {{ form_errors(form) }}
+
+            <div class="row-fluid">
+                <div class="span6">
+                    <h3>Tempo de Cortesia</h3>
+                    <p>Aqui você pode definir um tempo de cortesia que seu cliente/visitante poderá<br>acessar a rede Wi-Fi sem que seja necessário informar o Código de Acesso.</p>
+                    <p style="margin-bottom: 20px;">Após atingir o tempo a conexão será bloqueada.</p>
+                    {{ form_row(form.enableFreeAccess) }}
+                    {{ form_row(form.freeAccessTime) }}
+                    {{ form_row(form.freeAccessPeriod) }}
+                    <p style="color: red;position: relative;left: 147px;top: -15px;margin-bottom: -20px;">O valor definido no campo [Período] deve ser <b>maior</b> que o [Tempo de conexão].</p>
+
+                    <br>
+                    {{ form_label(form.endPeriodText, null, { 'label_attr': {'class': 'control-label tip'} }) }}
+                    <i class="icon-large icon-question-sign" tabindex="0" data-placement="right" role="button" data-toggle="popover" data-trigger="focus" data-content="Texto que será exibido para o visitante quando o período de navegação dele se expirar." style="position: relative;top: 6px;"></i>
+                    <div class="controls" style="position: relative;bottom: 20px;">
+                        {{ form_widget(form.endPeriodText) }}
+                        {{ form_errors(form.endPeriodText) }}
+                    </div>
+                </div>
+
+                <div class="span6">
+                    <h3>Pontos de acesso</h3>
+                    <p style="margin-bottom: 20px;">Aqui você pode escolher em quais Pontos de Acesso o módulo de Código de Acesso funcionará.</p>
+                    {{ form_row(form.inAccessPoints) }}
+
+                    <div class="access-points-block control-group">
+                        {{ form_row(form.accessPoints) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="separator line bottom"></div>
+
+            <div class="form-actions right">
+                <a href="{{ path('access_code') }}">
+                    <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                        Cancelar
+                    </button>
+                </a>
+                {{ form_widget(form.submit) }}
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/frontend/js/jquery.maskedinput.js') }}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/bootstrap-colorpicker.js')}}"></script>
+    <script src="{{ asset('bundles/admin/bootstrap-colorpicker/js/docs.js')}}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/color/farbtastic/farbtastic.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script type="text/javascript">
+    function controlSelectAccessPoints()
+    {
+        var inAccessPoints = $("#wspot_access_code_settings_inAccessPoints").val();
+        var accessPoints   = $(".access-points-block");
+
+        if (!inAccessPoints) {
+            accessPoints.addClass('hide');
+            return;
+        }
+        accessPoints.removeClass('hide');
+        dojo.query("#wspot_access_code_settings_accessPoints").chosen({batch_select:true});
+    }
+
+    jQuery('document').ready(function(){
+
+        controlSelectAccessPoints();
+
+        $('.label.label-important').each( function(){
+            if ($(this).text() == "Este campo deve ser preenchido.") {
+            }
+        });
+
+        $('input').keypress(function (e) {
+            var code = null;
+            code = (e.keyCode ? e.keyCode : e.which);
+            return (code == 13) ? false : true;
+        });
+
+        $('#wspot_access_code_settings_inAccessPoints').on('change', function(e){
+            controlSelectAccessPoints();
+        });
+
+    });
+
+    customScripts.init();
+    </script>
+{% endblock %}

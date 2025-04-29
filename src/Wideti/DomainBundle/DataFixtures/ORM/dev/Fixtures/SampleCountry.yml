@@ -1,0 +1,4 @@
+Wideti\DomainBundle\Entity\Country:
+  Country:
+    countryCode: BR
+    countryName: 'Brazil'

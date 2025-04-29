@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-js">
+<!--<![endif]-->
+<head>
+    <link href="{{ asset('bundles/admin/bootstrap/css/bootstrap.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/css/error.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/css/style-light.css')}}" rel="stylesheet" />
+    <title>Acesso não permitido</title>
+</head>
+<body class="page-404-full-page">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 page-404">
+                <h1 style="color:{{ whiteLabel.panelColor }};">
+                    Ponto de acesso não cadastrado!
+                </h1>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 page-404">
+                <div class="details">
+                    <p class="text-muted" style="font-size: 2em; line-height: 1.2em; color: #636363" >
+                        A navegação neste ponto de acesso não está disponível.<br/><br/>
+                        O responsável pelo serviço já foi notificado, tente novamente mais tarde.
+                    </p>
+                    <p style="margin-top: 5em; color: #807a7b">
+                        Ponto de acesso: {{ message }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

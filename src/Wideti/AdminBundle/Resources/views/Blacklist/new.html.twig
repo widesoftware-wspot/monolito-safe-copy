@@ -1,0 +1,120 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/select2/select2.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Bloqueio de Dispositivos'} %}
+
+<div class="innerLR">
+
+ <div class="widget widget-tabs border-bottom-none">
+    <!-- Widget heading -->
+    <div class="widget-head">
+        <ul>
+            <li class="active">
+                <a class="glyphicons edit" data-toggle="tab"><i></i>Novo bloqueio</a>
+            </li>
+        </ul>
+    </div>
+    <!-- // Widget heading END -->
+    <div class="widget-body">
+
+        {{ form_start(form, { 'attr': {'class': 'form-horizontal'} }) }}
+        {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+        <!-- Widget -->
+        <div class="widget">
+
+            <!-- Widget heading -->
+            <div class="widget-head">
+                <h4 class="heading">Bloquear dispositivos</h4>
+            </div>
+
+            <div class="widget-body">
+
+                {{ form_errors(form) }}
+
+                <!-- Row -->
+                <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+
+                    <div class="span6">
+                        {{ form_row(form.macAddress) }}
+                    </div>
+
+                    <div class="span6">
+
+                    </div>
+
+                </div>
+                <!-- // Row END -->
+
+                <hr class="separator">
+
+                <!-- Row -->
+                <div class="row-fluid uniformjs" style="margin:0 auto;">
+                    <!-- Column -->
+                    <div class="span5" style="margin: 20px 50px ;">
+                        <h4 style="margin-bottom: 10px;">Bloqueio de acesso</h4>
+                        <label>
+                            <p>
+                                Ao bloquear um Mac Address, o dispositivo em questão não mais conseguirá efetuar login na rede.
+                            </p>
+
+                            <b>Importante</b>
+                            <p>
+                                Caso o dispositivo ainda esteja conectado à rede durante a configuração do bloqueio, o acesso não será interrompido.
+                                A restrição passa a valer a partir da próxima tentativa de login.
+                            </p>
+                        </label>
+                    </div>
+                    <!-- // Column END -->
+
+                    <!-- Column -->
+                    <div class="span5" style="margin-top:20px;">
+
+                    </div>
+                    <!-- // Column END -->
+                </div>
+                <!-- // Row END -->
+
+                <hr class="separator">
+
+                <!-- Form actions -->
+                <div class="form-actions right">
+
+                    <a href="{{ app.request.headers.get('referer') }}">
+                        <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                            Cancelar
+                        </button>
+                    </a>
+
+                    {{ form_widget(form.submit) }}
+                </div>
+                <!-- // Form actions END -->
+            </div>
+        </div>
+        <!-- // Widget END -->
+
+        {{ form_end(form) }}
+
+    </div>
+    <!-- // Tab content END -->
+
+    </div>
+    </div>
+	<!-- // Widget END -->
+ </div>
+{% endblock %}
+{% block javascript %}
+    {{ parent() }}
+
+    <script>
+        $(document).ready(function(){
+            $("#wspot_blacklist_form_macAddress").mask("AA-AA-AA-AA-AA-AA");
+        });
+    </script>
+
+{% endblock %}

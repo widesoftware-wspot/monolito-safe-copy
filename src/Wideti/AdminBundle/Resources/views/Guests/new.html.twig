@@ -1,0 +1,199 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Visitantes'} %}
+
+    <div class="innerLR">
+
+        <div class="widget widget-tabs border-bottom-none">
+            <!-- Widget heading -->
+            <div class="widget-head">
+                <ul>
+                    <li class="active">
+                        <a class="glyphicons edit" data-toggle="tab"><i></i>Incluir</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- // Widget heading END -->
+            <div class="widget-body">
+
+                {{ form_start(form, { 'attr': {'class': 'form-horizontal', 'novalidate': 'novalidate', 'id': 'guestForm'} }) }}
+                {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+
+                    <!-- Widget -->
+                    <div class="widget">
+
+                        <!-- Widget heading -->
+                        <div class="widget-head">
+                            <h4 class="heading">Inclusão de novo visitante.</h4>
+                        </div>
+                        <!-- // Widget heading END -->
+
+                            <div class="widget-body">
+
+                                {{ form_errors(form) }}
+
+                                <!-- Row -->
+                                <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                                    <div class="span6">
+                                        <input type="hidden" id="locale" value="pt_br"/>
+                                        {{ form_row(form.status) }}
+                                        {{ form_row(form.group) }}
+                                        {{ form_row(form.locale) }}
+                                        {% if (config.authorize_email == 1) %}
+                                            {{ form_row(form.authorizeEmail) }}
+                                        {% endif %}
+                                        {{ form_row(form.registrationMacAddress) }}
+                                    </div>
+
+                                    <div class="span6">
+                                        {% for property in form.properties %}
+                                            {% if (property.vars.id == 'wspot_guest_properties_email') %}
+                                                {{ form_row(property) }}
+                                                <div id="email_validate"></div>
+                                            {% endif %}
+
+                                            {% if (property.vars.id == 'wspot_guest_properties_document') %}
+                                                <div id="document" style="margin-bottom: 20px;">
+                                                    {{ form_row(property) }}
+                                                </div>
+                                            {% endif %}
+                                            {% if (property.vars.multiple is defined and property.vars.multiple == true) %}
+                                                {{ form_row(property, { 'attr': {'class': 'chosen-select', 'data-placeholder': property.vars.label}, 'label_attr': {'class': 'control-label'} }) }}
+                                            {% endif %}
+
+                                            {{ form_row(property) }}
+                                        {% endfor %}
+
+                                        {{ form_row(form.password.first) }}
+                                        {{ form_row(form.password.second) }}
+                                    </div>
+                                </div>
+                                <!-- // Row END -->
+
+                                <div class="row-fluid"></div>
+
+                                <hr class="separator">
+
+                                <div class="row-fluid uniformjs" style="margin:0 auto;">
+                                    <!-- Column -->
+                                    <div class="span5" style="margin: 20px 50px ;">
+                                        <h4 style="margin-bottom: 10px;">Aviso!</h4>
+                                        <label>
+                                            <span>
+                                                O campo <strong>idioma</strong> define a linguagem na qual serão enviadas informações para o visitante, via email e/ou SMS.
+                                                Ao selecionar "inglês" ou "espanhol", o cadastro de visitantes pelo número do passaporte será habilitado.
+                                            </span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Form actions -->
+                                <div class="form-actions right">
+
+                                    <a href="{{ app.request.headers.get('referer') }}">
+                                        <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                            Cancelar
+                                        </button>
+                                    </a>
+
+                                    {{ form_widget(form.submit) }}
+                                </div>
+                                <!-- // Form actions END -->
+                            </div>
+                    </div>
+                    <!-- // Widget END -->
+
+                {{ form_end(form) }}
+
+            </div>
+            <!-- // Tab content END -->
+        </div>
+    </div>
+    <!-- // Widget END -->
+    </div>
+{% endblock %}
+
+{% block jsLibraries %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $('#wspot_guest_properties_name').on('change keyup', function() {
+            var string = $(this).val().replace(/[0-9]/g, '');
+            string = string.replace(/\.(?=.*\.)/, '');
+            $(this).val(string);
+        });
+
+        $('#wspot_guest_locale').on('change keyup', function() {
+            if ($(this).val() == 'pt_br') {
+                $('.label_document').html('CPF');
+                $('#wspot_guest_properties_document').mask('99999999999');
+            } else {
+                $('.label_document').html('Passaporte');
+                $('#wspot_guest_properties_document').remove();
+                $('#wspot_guest_properties_document-error').remove();
+                $('#document .controls').append('<input type="text" id="wspot_guest_properties_document" name="wspot_guest[properties][document]" class="span12" required />');
+            }
+        });
+
+        jQuery(document).ready(function(){
+            var bounceValidator = '{{ bounceValidator }}';
+
+            if (bounceValidator == 1) {
+                $('#wspot_guest_properties_email').change(function() {
+                    setTimeout(function(){
+                        if (!$('#wspot_guest_properties_email').hasClass('error')) {
+                            $('#wspot_guest_submit').attr('onclick', 'return false');
+                            $('#email_validate').empty().prepend('<label id="email_validate_process" class="error info" for="wspot_guest_properties_email">{{ "wspot.invalid_email.email_validate_process"|trans }}</label>');
+
+                            var data  = {
+                                'email' : $('#wspot_guest_properties_email').val()
+                            };
+
+                            var route = Routing.generate('email_validate');
+
+                            $.ajax({
+                                type: "POST",
+                                url: route,
+                                data: data,
+                                dataType: "json",
+                                timeout: 10000,
+                                success: function(response)
+                                {
+                                    $('#email_validate').empty().prepend('<label id="email_validate_success" class="error success" for="wspot_guest_properties_email">{{ "wspot.invalid_email.email_validate_success"|trans }}</label>');
+                                    $('#wspot_guest_emailValidate').val(response);
+                                    $('#wspot_guest_submit').removeAttr('onclick');
+                                },
+                                error: function(response, status)
+                                {
+                                    if (status == 'timeout') {
+                                        $('#email_validate').empty();
+                                        $('#wspot_guest_submit').removeAttr('onclick');
+                                    } else {
+                                        $('#wspot_guest_emailValidate').val('');
+                                        $('#email_validate').empty().prepend('<label id="email_validate_error" class="error-validate" for="wspot_guest_properties_email">{{ "wspot.invalid_email.email_validate_error"|trans }}</label>');
+                                    }
+                                }
+                            });
+                        }
+                    }, 100);
+                });
+            }
+        });
+    </script>
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+    <script>
+        require(["dojo/query", "dojo/domReady!"], function(query) {
+            query(".chosen-select").forEach(function(node) {
+                dojo.query(node).chosen({batch_select: true});
+            });
+        });
+    </script>
+{% endblock %}

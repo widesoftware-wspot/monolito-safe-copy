@@ -1,0 +1,43 @@
+admin_usuarios:
+    path:  /{page}
+    defaults: { _controller: wspot.admin.controller.users:indexAction, page:1 }
+    requirements:
+      page: \d+
+
+admin_usuarios_show:
+    path:  /{id}/show
+    defaults: { _controller: wspot.admin.controller.users:showAction }
+
+admin_usuarios_create:
+    path:  /create
+    defaults: { _controller: wspot.admin.controller.users:createAction }
+    requirements: { methods: post|get }
+
+admin_usuarios_edit:
+    path:  /{id}/edit
+    defaults: { _controller: wspot.admin.controller.users:editAction }
+
+admin_usuarios_delete:
+    path:  /{id}/delete
+    defaults: { _controller: wspot.admin.controller.users:deleteAction }
+    options:
+        expose: true
+
+user_check_exists:
+  path:  /user_check_exists.{_format}
+  defaults: { _controller: wspot.admin.controller.users:checkIfExistsAction, _format: json }
+  requirements: { _format: (xml|json), methods: POST }
+  options:
+      expose: true
+
+user_password_reset:
+  path:  reset/{id}/password
+  defaults: { _controller: wspot.admin.controller.users:resetPasswordAction }
+  options:
+      expose: true
+
+reseted_to_strong_password:
+  path:  /reseted_to_strong_password
+  defaults: { _controller: wspot.admin.controller.users:verifyIfResetedToStrongPasswordAction }
+  options:
+      expose: true

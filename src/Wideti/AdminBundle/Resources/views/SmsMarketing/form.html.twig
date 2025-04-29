@@ -1,0 +1,496 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/css/sms-marketing.css')}}" type="text/css" rel="stylesheet" />
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'SMS Marketing'} %}
+
+    {% if (entity.id) %}
+        <p class="status">
+            <span class="statusColor {{ entity.status|lower }}" style="font-size: 20px;">{{ entity.status|translate_status }}</span>
+        </p>
+    {% endif %}
+
+    <div class="innerLR">
+        <div class="widget widget-tabs border-bottom-none">
+            <div class="widget-body">
+                <div class="">
+                    {{ form_start(filterGuestsForm, { 'attr': {'class': 'form-horizontal', 'novalidate':'novalidate', 'id': 'filterGuestsForm'} }) }}
+                    {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+                    <div class="">
+                        <h3 class="heading">Selecionar contatos</h3>
+                        <h5>Utilize os filtros abaixo para selecionar os contatos que receberão sua mensagem:</h5>
+
+                        <div class="row filter-bar">
+                            {{ form_start(filterGuestsForm) }}
+                            {{ form_row(filterGuestsForm.group) }}
+                            {{ form_row(filterGuestsForm.ddd) }}
+                            {{ form_row(filterGuestsForm.dateFrom) }}
+                            {{ form_row(filterGuestsForm.dateTo) }}
+                            {{ form_row(filterGuestsForm.submit) }}
+                            {{ form_end(filterGuestsForm) }}
+                        </div>
+                        <div>
+                            <p id="sms-error-msg" style="background: #d04a5a; color: #fff; text-align: center; padding: 1em; display: none"></p>
+                        </div>
+                        <div class="" style="margin: 30px 5px;">
+                            <h5>Total de contatos selecionados: <span id="totalGuests">{{ entity.totalSms|default("0") }}</span></h5>
+                            <p>Saldo de SMS disponível: {{ creditAvailable }}</p>
+
+                            <div id="insufficientCredit" style="display: none;">
+                                <h5>Você não possui saldo suficiente.</h5>
+                                <p>Compre mais créditos de SMS ou restrinja o número de destinatários selecionados no filtro acima.</p>
+                            </div>
+                        </div>
+                    </div>
+                    {{ form_end(filterGuestsForm) }}
+
+                    <hr/>
+
+                    {{ form_start(form, { 'attr': {'class': 'form-horizontal', 'novalidate':'novalidate'} }) }}
+                    {% form_theme form 'AdminBundle:Form:fields.html.twig' %}
+                    <div class="widget-body formFields">
+                        <h3>Escrever mensagem</h3>
+                        <p>Mensagens com link trazem mais resultados. Deseja inserir um link ao final do seu SMS?</p>
+
+                        {{ form_widget(form.enableSmsLink) }}
+
+                        <div class="row url-block hide">
+                            <p style="margin: 20px 0 10px 10px;">Adicione um link ou um número de WhatsApp para contato (o link será encurtado):</p>
+                            <div class="span4">
+                                <div class="sms-link-opt">
+                                    <div class="sms-link-opt-item ico-whatsapp" onclick="chooseUrlType('whatsapp')">
+                                        <img src="{{ asset('bundles/admin/theme/images/ico-whatsapp.png') }}">
+                                    </div>
+                                </div>
+                                <div class="sms-link-opt">
+                                    <p class="or">ou</p>
+                                </div>
+                                <div class="sms-link-opt">
+                                    <div class="sms-link-opt-item ico-url" onclick="chooseUrlType('url')">
+                                        <img src="{{ asset('bundles/admin/theme/images/ico-url.png') }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span8">
+                                <div class="inputUrl hide">
+                                    <p class="url-hint" style="margin-bottom: 20px;"></p>
+                                    <input type="text" id="fullUrl" placeholder="Digite o número do telefone ou a URL"style="width: 310px;">
+                                    <button type="button" id="url-shortner" class="btn btn-icon btn-primary" onclick="urlShortner()"><i></i>Encurtar URL</button>
+                                    <label id="fullUrl-error" class="error" for="fullUrl" style="display: none;">Campo obrigatório</label>
+                                </div>
+                                <div style="display: flex;">
+                                    <p id="url-shortned-success" class="hide" style="margin: 10px 0;"></p>
+                                    <label class="error url-shortned-fail hide">Falha ao encurtar a URL.</label>
+                                    <label class="error invalid-url hide">O valor informado está inválido.</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-left: 2px; margin-top: 20px;">
+                            <div class="control-group span6" style="border: 1px solid #DDD; border-radius: 10px; padding: 10px;">
+                                <div class="header" style="border-bottom: 2px solid #DDD;height: 30px;margin-bottom: 10px;">
+                                    <h5 style="float: left;">Escreva a mensagem aqui: </h5>
+                                    <b style="float: right;"><span id="message-char-count"></span>/160</b>
+                                </div>
+                                <div onfocusout="validateAllMessage('#smsValidate','#wideti_AdminBundle_smsMarketing_message')">{{ form_widget(form.message) }} <p id="smsValidate"></p></div>
+                            </div>
+                        </div>
+                        <p style="margin: 5px;">
+                            <span>*O tamanho da mensagem deve ser de no máximo 160 caracteres.</span><br>
+                            <span style="color: darkred">*A mensagem não irá conter acentos e/ou caracteres especiais.</span>
+                        </p>
+
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                            <div class="span6">
+                                {{ form_errors(form) }}
+                                {{ form_row(form.lotNumber) }}
+                                {{ form_row(form.query) }}
+                                {{ form_row(form.totalSms) }}
+                                {{ form_row(form.urlShortnedType) }}
+                                {{ form_row(form.urlShortned) }}
+                                {{ form_row(form.urlShortnedHash) }}
+                            </div>
+                        </div>
+
+                        <div class="row-fluid"></div>
+
+                        <div class="form-actions right">
+                            <a href="{{ path('sms_marketing') }}">
+                                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                                    Cancelar
+                                </button>
+                            </a>
+                            {{ form_widget(form.submit) }}
+                            {% if (entity.id) %}
+                                <a href="#">
+                                    <button type="button" class="btn btn-icon btn-success glyphicons circle_ok send-button"><i></i>
+                                        Enviar
+                                    </button>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock%}
+
+{% block javascript %}
+    {{ parent() }}
+    <script>
+        function validateAllMessage(idValidate, idMessage){
+            var regexPattern = /^[0-9A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ \b.:/?,-]+$/;
+            if (!regexPattern.test($(idMessage).val())) {
+                $(idValidate).html('Caracteres especiais não são aceitos');
+                $(idValidate).addClass('validateLabel');
+                $("#wideti_AdminBundle_smsMarketing_submit").hide();
+            } else {
+                $(idValidate).removeClass('validateLabel');
+                $(idValidate).empty();
+                $("#wideti_AdminBundle_smsMarketing_submit").show();
+            }
+        }
+
+        function removeSpecialCharacters(string) {
+            string = string
+                .replace(/[\\"'%#@&*!$()_+\-=\[\]]/g, "")
+                .replace(/\s+/g, " ")
+                .replace(/(\r\n|\n|\r)/gm, " ");
+
+            accents   = '.|áàãâäéèêëíìîïóòõôöúùûüçÁÀÃÂÄÉÈÊËÍÌÎÏÓÒÕÖÔÚÙÛÜÇ';
+            replaced  = '.|aaaaaeeeeiiiiooooouuuucAAAAAEEEEIIIIOOOOOUUUUC';
+            newString = '';
+
+            for(i=0;i<string.length;i++) {
+                if (accents.search(string.substr(i,1))>=0) {
+                    newString+=replaced.substr(accents.search(string.substr(i,1)),1);
+                }
+                else {
+                    newString+=string.substr(i,1);
+                }
+            }
+            return newString;
+        }
+
+        function countingWords(element, counter) {
+            const length = $(element).val().length;
+            if (length >= 160) {
+                $(counter).text(0);
+            }
+            $(counter).text(160 - length);
+        }
+
+        function urlShortner() {
+            const urlType = $("#wideti_AdminBundle_smsMarketing_urlShortnedType").val();
+            let url = $("#fullUrl").val();
+
+            if (!url) {
+                $(".invalid-url").show();
+                return;
+            }
+
+            if (urlType === 'whatsapp') {
+                const regexPattern = /^[0123456789]+$/;
+                if (!regexPattern.test(url)) {
+                    $("#url-shortned-success").hide();
+                    $(".invalid-url").show();
+                    return;
+                }
+            }
+
+            $(".invalid-url").hide();
+
+            if (urlType === 'whatsapp') {
+                url = "https://api.whatsapp.com/send?phone=55" + url;
+            }
+
+            $("#url-shortner").html("Encurtando... <img src=\"{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}\" alt=\"\" class=\"loader-post\" style=\"width: 15px;\" />");
+            document.getElementById("url-shortner").disabled = true;
+
+            var route = Routing.generate('sms_marketing_url_shortner');
+
+            $.ajax({
+                type: "POST",
+                url: route,
+                data: { url: url },
+                dataType : "json",
+                success: function(response)
+                {
+                    $("#wideti_AdminBundle_smsMarketing_urlShortned").val(response.urlShortned);
+                    $("#wideti_AdminBundle_smsMarketing_urlShortnedHash").val(response.hash);
+                    $("#url-shortner").html("Encurtar URL");
+                    document.getElementById("url-shortner").disabled = false;
+
+                    if (response.type === "success") {
+                        $("#url-shortned-success").html("<p>URL encurtada: <b>" + response.urlShortned + "</b></p>");
+                        $("#url-shortned-success").show();
+                        $(".url-shortned-fail").hide();
+
+                        const smsMessageElement = $('#wideti_AdminBundle_smsMarketing_message');
+                        smsMessageElement.val($('#wideti_AdminBundle_smsMarketing_message').val() + " " + response.urlShortned);
+                    }
+
+                    if (response.type === "error") {
+                        $("#url-shortned-success").hide();
+                        $(".url-shortned-fail").show();
+                    }
+                }
+            });
+        }
+
+        function chooseUrlType(type) {
+            let fullUrlInput = document.getElementById("fullUrl");
+            $(fullUrlInput).val("");
+            $(".inputUrl").removeClass("hide");
+            $(".sms-link-opt-item.ico-whatsapp").removeClass("active");
+            $(".sms-link-opt-item.ico-url").removeClass("active");
+            $(".sms-link-opt-item.ico-" + type).addClass("active");
+            $("#wideti_AdminBundle_smsMarketing_urlShortnedType").val(type);
+
+            if (type === 'whatsapp') {
+                $(".url-hint").html("*o número do WhatsApp deve ser digitado com o código de área e o número do telefone. Ex: 19900000000.");
+                fullUrlInput.type = "text";
+                $(fullUrlInput).attr('maxlength', '12');
+            } else {
+                $(".url-hint").html("");
+                fullUrlInput.type = "text";
+                $(fullUrlInput).removeAttr('maxlength');
+            }
+        }
+
+        function fillFieldsOnEditMode() {
+            $('#wideti_AdminBundle_smsMarketing_enableSmsLink').val(1);
+            $('#wideti_AdminBundle_smsMarketing_enableSmsLink').attr('checked', true);
+            let parentDiv = document.getElementById("wideti_AdminBundle_smsMarketing_enableSmsLink").parentElement;
+            parentDiv.setAttribute("style", "left: 0px; width: 150px;");
+
+            $('.url-block').show();
+            $('.inputUrl').show();
+            $('#fullUrl').val('{{ entity.urlShortned }}');
+
+            $(".sms-link-opt-item.ico-{{ entity.urlShortnedType }}").addClass("active");
+
+            var totalGuests = document.getElementById("totalGuests");
+            totalGuests.innerHTML = '{{ entity.totalSms }}';
+        }
+
+        function enableSmsCheck(elem) {
+            var check = $(elem).attr('checked');
+
+            if (check) {
+                $('.url-block').removeClass('hide');
+                $('.url-block').css('display', 'block');
+                document.getElementById("fullUrl").required = true;
+            } else {
+                $('.url-block').addClass('hide');
+                $('.url-block').css('display', 'none');
+                document.getElementById("fullUrl").required = false;
+
+                $("#fullUrl").val("");
+                $(".sms-link-opt-item.ico-whatsapp").removeClass("active");
+                $(".sms-link-opt-item.ico-url").removeClass("active");
+                $("#wideti_AdminBundle_smsMarketing_urlShortnedType").val("");
+                $("#wideti_AdminBundle_smsMarketing_urlShortned").val("");
+                $("#wideti_AdminBundle_smsMarketing_urlShortnedHash").val("");
+            }
+        }
+
+        $('document').ready(function() {
+            if ('{{ entity.id }}' && '{{ entity.urlShortned }}') {
+                fillFieldsOnEditMode();
+            }
+
+            if ($('#wspot_sms_marketing_filter_guests_dateFrom').length && $('#wspot_sms_marketing_filter_guests_dateTo').length) {
+                $( "#wspot_sms_marketing_filter_guests_dateFrom" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    changeMonth: false,
+                    numberOfMonths: 1,
+                    maxDate:new Date(),
+                    onClose: function( selectedDate ) {
+                        $( "#wspot_sms_marketing_filter_guests_dateTo" ).datepicker( "option", "minDate", selectedDate );
+                    }
+                });
+
+                $( "#wspot_sms_marketing_filter_guests_dateTo" ).datepicker({
+                    defaultDate: "+1w",
+                    dateFormat: 'dd/mm/yy',
+                    dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                    dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                    dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                    monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                    monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                    changeMonth: false,
+                    nextText: 'Próximo',
+                    prevText: 'Anterior',
+                    numberOfMonths: 1,
+                    maxDate:new Date(),
+                    onClose: function( selectedDate ) {
+                        $( "#wspot_sms_marketing_filter_guests_dateFrom" ).datepicker( "option", "maxDate", selectedDate );
+                    }
+                });
+            }
+
+            $('#wspot_sms_marketing_filter_guests_submit').on('click', function() {
+                filteringGuestsOn();
+                searchGuests();
+            });
+
+            enableSmsCheck($("#wideti_AdminBundle_smsMarketing_enableSmsLink"));
+
+            $('#wideti_AdminBundle_smsMarketing_enableSmsLink').on('change',function(){
+                enableSmsCheck(this);
+            });
+
+            $('#message-char-count').text((160) - $('#wideti_AdminBundle_smsMarketing_message').val().length);
+
+            const inputMessage = document.getElementById("wideti_AdminBundle_smsMarketing_message");
+            inputMessage.addEventListener('keyup', e => {
+                countingWords(inputMessage, '#message-char-count');
+            })
+
+            $('.send-button').click(function(){
+                var id = $(this).parent().parent().attr('id');
+                var data = {'id' : id};
+                var parent = $(this).parent().parent();
+
+                bootbox.confirm("<div>\n"+
+"            <h5>Atenção, confirme as informações abaixo antes de realizar o envio</h5>\n"+
+"            <p>Você está prestes a enviar o total de <b>{{ entity.totalSms }}</b> mensagens.</p>\n"+
+"            <p>O conteúdo enviado será:</p>\n"+
+"            <p style=\"background-color: lightgray;padding: 5px;display: inline-block;\">{{ entity.message }}</p>\n"+
+"            <p>Caso todas informações estejam corretas e queira realizar o envio, clique em '<b>OK</b>'.</p>\n"+
+"        </div>", function(result){
+
+                    if(result){
+                        var id = '{{ entity.id }}';
+                        var route = Routing.generate('sms_marketing_send', { id: id });
+
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                if (response.type === "error") {
+                                    $.gritter.add({
+                                        title: 'Aviso!',
+                                        text: response.message
+                                    });
+                                }
+
+                                setInterval(function() {
+                                    window.location.href = "{{ path('sms_marketing')}}";
+                                }, 3000)
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        function filteringGuestsOn() {
+            var div = document.getElementById("totalGuests");
+            div.innerHTML = "<img src=\"{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}\" alt=\"\" class=\"loader-post\" style=\"width: 15px;\" />";
+            document.getElementById("wspot_sms_marketing_filter_guests_submit").disabled = true;
+        }
+
+        function filteringGuestsOff() {
+            document.getElementById("wspot_sms_marketing_filter_guests_submit").disabled = false;
+        }
+
+        function searchGuests() {
+            var data = {
+                'filter': {
+                    'group': document.getElementById("wspot_sms_marketing_filter_guests_group").value,
+                    'ddd': document.getElementById("wspot_sms_marketing_filter_guests_ddd").value,
+                    'dateFrom': document.getElementById("wspot_sms_marketing_filter_guests_dateFrom").value,
+                    'dateTo': document.getElementById("wspot_sms_marketing_filter_guests_dateTo").value
+                }
+            };
+
+            var route = Routing.generate('sms_marketing_search_guests');
+
+            $.ajax({
+                type: "POST",
+                url: route,
+                data: data,
+                dataType : "json",
+                success: function(response)
+                {
+                    var totalGuests = 0;
+
+                    if (response.type === "no_phone_field") {
+                        $('#sms-error-msg').html("É necessário ativar o campo <b>Telefone</b> ou <b>Celular</b> no seu formulário de cadastro para usar essa funcionalidade. Clique <a href=\"{{ path('custom_fields_index') }}\" style=\"color: yellow; font-weight:bolder;\">aqui</a> e ative!")
+                        $('#sms-error-msg').css({"display": "block"})
+                    }
+
+                    if (response.type === "success") {
+                        totalGuests = response.totalGuests;
+                        $("#wideti_AdminBundle_smsMarketing_query").val(response.query);
+                    }
+
+                    filteringGuestsOff();
+
+                    var div = document.getElementById("totalGuests");
+                    div.innerHTML = totalGuests;
+
+                    $("#wideti_AdminBundle_smsMarketing_totalSms").val(totalGuests);
+
+                    if (totalGuests === 0) {
+                        controlFormFields("off");
+                    } else if (totalGuests > {{ creditAvailable }}) {
+                        insufficientCreditAlert("on");
+                    } else {
+                        insufficientCreditAlert("off");
+                    }
+                }
+            });
+        }
+
+        function insufficientCreditAlert(mode, ) {
+            const alertBox = $("#insufficientCredit");
+
+            if (mode === "on") {
+                alertBox.show();
+                controlFormFields("off");
+            } else {
+                alertBox.hide();
+                controlFormFields("on");
+            }
+        }
+
+        function controlFormFields(mode) {
+            const formFields = $(".formFields");
+
+            if (mode === "on") {
+                formFields.show();
+            } else {
+                formFields.hide();
+            }
+        }
+
+        $('#wideti_AdminBundle_smsMarketing_message').on('keypress', function (event) {
+            var regex = new RegExp("^[a-zA-Z0-9? ,]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+               event.preventDefault();
+               return false;
+        }
+});
+    </script>
+{% endblock %}

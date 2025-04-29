@@ -1,0 +1,372 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Controlador de Dados'} %}
+    <div class="innerLR">
+
+        <div id="app">
+            <component v-bind:is="active_component" v-bind:has_record="has_record" v-bind:data_controller="data_controller" >
+            </component>
+        </div>
+
+        <div class="widget-body">
+            <!-- Widget -->
+            <div class="widget">
+                <!-- Widget heading -->
+                <div class="widget-head">
+                    <h4 class="heading">Sobre o Controlador de Dados</h4>
+                </div>
+
+                <div class="widget-body">
+                    <!-- Row -->
+                    <div class="row-fluid uniformjs" style="margin:0 auto;">
+
+                            <!-- Column -->
+                            <div class="span5" style="margin: 20px 50px ;">
+                                <h4></h4>
+                                <div class="gray">
+                                    <h4>LGPD e o Controlador de Dados</h4>
+                                    <p>É a empresa que toma as decisões em relação aos dados pessoais coletados {{ app.session.get('isRegularDomain')? 'pela Mambo WiFi' : 'pela plataforma' }} através do seu WiFi. Quando e como serão coletados, para quais finalidades, onde e por quanto tempo serão armazenados, etc.</p>
+                                    <p>Controlador de dados é aquele que vai definir as regras e finalidades para as quais os dados coletados serão utilizados. Por exemplo: Os dados serão coletados via Wi-Fi e serão utilizados para envio de promoções e novidades ou análise de perfil dos visitantes cadastrados.</p>
+                                </div>
+                            </div>
+                            <!-- // Column END -->
+                            {% if app.session.get('isRegularDomain') %}
+                            <!-- Column -->
+                            <div class="span5" style="margin-top:20px;">
+                                <div class="gray">
+                                    <h4>Outras referências</h4>
+                                    <p>Para mais informações sobre LGPD acesse <a href="https://mambowifi.com/lgpd/" target="_blank">https://mambowifi.com/lgpd/</a></p>
+                                </div>
+                            </div>
+                            <!-- // Column END -->
+                            {%  endif %}
+                    </div>
+                    <!-- // Row END -->
+                </div>
+            </div>
+            <!-- // Widget END -->
+        </div>
+    </div>
+
+{#    Templates Vue #}
+    <template id="show-info">
+        <div class="widget-body">
+            <!-- Widget -->
+            <div class="widget">
+                <!-- Widget heading -->
+                <div class="widget-head">
+                    <h4 class="heading">Informações do Controlador de Dados</h4>
+                </div>
+
+                <div class="widget-body">
+
+                    <div class="heading-buttons">
+                        <div class="buttons pull-right">
+                            {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MANAGER") %}
+                            <a href="#" style="margin: 0px 0 2px 0;"
+                               class="btn btn-primary btn-icon glyphicons circle_plus"
+                                @click.stop.prevent="openForm">
+                                <i></i>
+                                <span v-if="has_record">Editar</span>
+                                <span v-else>Adicionar</span>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Row -->
+                    <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+
+                        <div class="span6" v-if="has_record">
+                            <h5 class="glyphicons shield"><i></i> ${data_controller.fullName} <span>Controlador de Dados</span></h5>
+                            <div class="separator bottom"></div>
+                            <ul class="unstyled icons">
+                                <li class="glyphicons envelope"><i></i>${data_controller.email}</li>
+                                <li class="glyphicons vcard"><i></i>${data_controller.cpf}</li>
+                                <li class="glyphicons iphone"><i></i>${data_controller.phoneNumber}</li>
+                                <li class="glyphicons birthday_cake"><i></i> <span class="label label-default">${data_controller.birthday | dateFormat }</span></li>
+                                <li class="glyphicons tie"><i></i> Cargo: ${data_controller.jobOccupation} </li>
+                            </ul>
+                        </div>
+                        <div class="span6" v-else>
+                            <div class="alert alert-primary">
+                                Ei, parece que você não tem um Controlador de Dados definido ainda. Clique em adicionar e crie um :)
+                            </div>
+                        </div>
+                        <div class="span6">
+
+                        </div>
+
+                    </div>
+                    <!-- // Row END -->
+                </div>
+            </div>
+            <!-- // Widget END -->
+        </div>
+        <!-- // Tab content END -->
+    </template>
+
+    <template id="form-info">
+        <div class="widget-body">
+            <!-- Widget -->
+            <div class="widget">
+                <!-- Widget heading -->
+                <div class="widget-head">
+                    <h4 class="heading" v-if="has_record">Editar Controlador de Dados</h4>
+                    <h4 class="heading" v-else>Adicionar Controlador de Dados</h4>
+                </div>
+
+                <div class="widget-body">
+                    <!-- Row -->
+                    <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+
+                        <div class="span12">
+
+                            <div class="span6">
+                                <div class="col-md-12">
+                                    <label class="control-label">Nome: </label>
+                                    <input v-model="data_controller.fullName" type="text" placeholder="Nome" class="input-sm form-control span12"/>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="control-label">E-mail: </label>
+                                    <input v-model="data_controller.email" type="text" placeholder="Email" class="input-sm form-control span12"/>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="control-label">CPF: (somente números) </label>
+                                    <input v-model="data_controller.cpf" type="text" placeholder="CPF" class="input-sm form-control span12 number-only" maxlength="11"/>
+                                </div>
+                            </div>
+
+                            <div class="span6">
+                                <div class="col-md-12">
+                                    <label class="control-label">Data de Nascimento: </label>
+                                    <input v-model="data_controller.birthday" type="date" placeholder="Data de Nascimento" class="input-sm form-control span12"/>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="control-label">Cargo: </label>
+                                    <input v-model="data_controller.jobOccupation" type="text" placeholder="Cargo" class="input-sm form-control span12"/>
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="control-label">Telefone: (código de área + número do telefone. Ex.: 1930000000)</label>
+                                    <input v-model="data_controller.phoneNumber" type="text" placeholder="Número de telefone" class="input-sm form-control span12" maxlength="11"/>
+                                </div>
+                            </div>
+
+                            <div v-if="error" class="validateLabel">
+                                ${error}
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- // Row END -->
+                    <hr class="separator">
+                    <!-- Form actions -->
+                    <div class="form-actions right">
+                        <div class="buttons pull-right">
+
+                            <a href="#">
+                                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"
+                                        @click.stop.prevent="cancelForm"><i></i>
+                                    Cancelar
+                                </button>
+                            </a>
+
+                            <a v-if="has_record" href="#" style="margin: 0px 0 2px 0;"
+                               class="btn btn-primary btn-icon glyphicons circle_plus"
+                               @click.stop.prevent="updateDataController">
+                                <i></i>Salvar</a>
+                            <a v-else href="#" style="margin: 0px 0 2px 0;"
+                               class="btn btn-primary btn-icon glyphicons circle_plus"
+                               @click.stop.prevent="createDataController">
+                                <i></i>Salvar</a>
+
+                        </div>
+                    </div>
+                    <!-- // Form actions END -->
+                </div>
+            </div>
+            <!-- // Widget END -->
+        </div>
+        <!-- // Tab content END -->
+    </template>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{#    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>#}
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script>
+
+        var mixin = {
+            filters: {
+                dateFormat: function (dateSring){
+                    var dateRawUTC = new Date(dateSring);
+                    date = dateRawUTC.getUTCDate();
+                    month = (dateRawUTC.getUTCMonth() + 1).toString();
+                    month = month.length == 2 ? month : "0"+month;
+                    year = dateRawUTC.getUTCFullYear();
+                    return  date + "/" +
+                            month + "/" +
+                            year;
+                }
+            }
+        };
+        Vue.component('data-controller-info',{
+            delimiters: ['${', '}'],
+            template: "#show-info",
+            mixins: [mixin],
+            props: {
+                has_record: {
+                    type: Boolean,
+                    required: true
+                },
+                data_controller: {
+                    type: Object,
+                    default: {}
+                }
+            },
+            methods: {
+                openForm: () => {
+                    eventBus.$emit('interaction', {
+                        navigate_to:'data-controller-form',
+                        action: 'open-form'
+                    });
+                }
+            }
+        });
+
+        Vue.component('data-controller-form',{
+            delimiters: ['${', '}'],
+            template: "#form-info",
+            props: {
+                has_record: {
+                    type: Boolean,
+                    required: true
+                }
+            },
+            data(){
+                return {
+                    data_controller: {},
+                    fields: {
+                        'fullName': "Nome",
+                        'email': "E-mail",
+                        'cpf': "CPF",
+                        'birthday': "Data de Nascimento",
+                        'phoneNumber': "Telefone",
+                        'jobOccupation': "Cargo"
+                    },
+                    error: ''
+                }
+            },
+            created (){
+                this.data_controller = {...app.data_controller};
+            },
+            methods: {
+                createDataController: function (){
+                    var routeCreate = Routing.generate('data_controller_create');
+                    var instance = this;
+                    $.ajax({
+                            type: "POST",
+                            url: routeCreate,
+                            data: this.data_controller,
+                            dataType : "json",
+                            success: function(response, status, responseInfo)
+                            {
+                                eventBus.$emit('interaction', {
+                                    navigate_to:'data-controller-info',
+                                    action: 'create',
+                                    data: response
+                                });
+                            },
+                            error: function (err){
+                                instance.processError(err)
+                            }
+                        });
+                },
+                processError(err){
+                    errMsg = JSON.parse(err.responseText);
+                    if (err.status == 400){
+                        if (errMsg.type == "FIELD_REQUIRED" || errMsg.type == "INVALID_FIELD"){
+                            field = errMsg.field;
+                            this.error = errMsg.message.replace('['+ field +']', this.fields[field]);
+                        }
+                    }
+                    console.log(errMsg);
+                },
+                updateDataController: function () {
+                    var routeUpdate = Routing.generate('data_controller_update');
+                    var instance = this;
+                    $.ajax({
+                            type: "PUT",
+                            url: routeUpdate,
+                            data: this.data_controller,
+                            dataType : "json",
+                            success: function(response, status, responseInfo)
+                            {
+                                eventBus.$emit('interaction', {
+                                    navigate_to:'data-controller-info',
+                                    action: 'update',
+                                    data:response
+                                });
+                            },
+                            error: function (err){
+                                instance.processError(err);
+                            }
+                        });
+                },
+                cancelForm: () => {
+                    eventBus.$emit('interaction', {
+                        navigate_to:'data-controller-info',
+                        action: 'back'
+                    });
+                }
+            }
+        });
+
+        var eventBus = new Vue();
+        var app = new Vue({
+            delimiters: ['${', '}'],
+            el: '#app',
+            data: {
+                has_record: false,
+                active_component: 'data-controller-info',
+                data_controller: {},
+                message: 'Hello Vue!',
+            },
+            created: function () {
+                eventBus.$on('interaction', (event) => {
+                    if (event.action == 'create'){
+                        this.has_record = true;
+                    }
+                    if (event.data){
+                        this.data_controller = event.data;
+                    }
+                    this.active_component = event.navigate_to;
+                });
+
+                var instance = this;
+                var routeGet = Routing.generate('data_controller_get');
+                $.ajax({
+                        type: "GET",
+                        url: routeGet,
+                        dataType : "json",
+                        success: function(response, status, responseInfo)
+                        {
+                            instance.data_controller = response;
+                            instance.has_record = true;
+                        },
+                        error: function (err){
+                            console.log(JSON.parse(err.responseText));
+                        }
+                    });
+            }
+        });
+    </script>
+{% endblock %}

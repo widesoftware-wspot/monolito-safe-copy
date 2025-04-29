@@ -1,0 +1,242 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block meta %}
+    <meta http-equiv="refresh" content="">
+{% endblock %}
+
+{% block css %}
+    {{ parent() }}
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/charts/easy-pie/jquery.easy-pie-chart.css')}}" rel="stylesheet" />
+    <link href="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen.css')}}" rel="stylesheet" />
+{% endblock %}
+
+{% block dataTitle %}
+    Download e Upload
+{% endblock %}
+
+{% block buttonRight %}
+{% endblock %}
+
+{% block tableHead %} Download e Upload {% endblock %}
+
+{% block charts %}
+    <div id="updatedData" class="heading-buttons">
+        <b>Dados Atualizados em: {{ "now"|date_modify("-1 day")|date("d/m/Y") }} </b>
+    </div>
+    <div class="widget">
+        <div class="widget-head">
+            <h4 id="headChartBox" class="heading">Download e Upload</h4>
+            <i class="icon-large icon-question-sign" tabindex="0" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-content="Os dados do grupo de funcionários não são exibidos neste relatório."></i>
+        </div>
+        <div class="widget-body">
+            <div id="chart_lines_fill_nopoints" style="height: 250px; text-align: center;">
+                <img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block thead %}
+    <th>Ano</th>
+    <th>Mês</th>
+    <th>Download</th>
+    <th>Upload</th>
+    <th width="80">Detalhar</th>
+{% endblock %}
+
+{% block tbody %}
+    {% for entity in entity %}
+        <tr class="gradeX">
+            <td>{{ entity.key_as_string|slice(0,4) }}</td>
+            <td>{{ entity.key_as_string|slice(5,2)|format_month }}</td>
+            <td>{{ entity.download['value'] | format_bytes }}</td>
+            <td>{{ entity.upload['value'] | format_bytes }}</td>
+            <td>
+                <a href="#" class="btn-action glyphicons charts btn-success monthChart" data-year="{{ entity.key_as_string|slice(0,4) }}"
+                data-month="{{ entity.key_as_string|slice(5,2) }}" data-accesspoint="{{ apsToGraph }}" title="Gráfico do mês"><i></i></a>
+
+                <a href="{{ path('admin_download_upload_detail_report', { 'year': entity.key_as_string|slice(0,4), 'month': entity.key_as_string|slice(5,2), 'accessPoint' : accessPoint }) }}"
+                class="btn-action glyphicons eye_open btn-info"><i></i></a>
+            </td>
+        </tr>
+    {% else %}
+        <tr class="gradeX">
+            <td colspan="5">Nenhum registro encontrado.</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
+
+{% block pagination %}
+    {% set accessPointFilter = app.request.get('downloadUploadFilter')['access_point'] is defined ? app.request.get('downloadUploadFilter')['access_point'] : "" %}
+    {% set yearFilter = app.request.get('downloadUploadFilter')['year'] is defined ? app.request.get('downloadUploadFilter')['year'] : "" %}
+    {% set monthFilter = app.request.get('downloadUploadFilter')['month'] is defined ? app.request.get('downloadUploadFilter')['month'] : "" %}
+
+    {% if entity | length > 0 %}
+        <div id="modal" class="bootbox modal fade in" tabindex="-1" style="display: none; overflow:hidden;" aria-hidden="false">
+            <form name="export" method="get" action="{{ path('admin_export_download_upload') }}" class="form-inline" novalidate="novalidate">
+                <div class="modal-body">
+                    <input type="hidden" id="filters" name="filters" value="{{ path('admin_export_download_upload', app.request.query.all) }}"/>
+                    <input type="hidden" id="fileFormat" name="fileFormat" value="" />
+                    <h3>Exportação de relatório</h3>
+                    <div class='span6'>
+                        <div class='control-group'>
+                            <label class='control-label required' for='endDate' aria-required='true'>Exportar no formato: </label>
+                            <div class='controls'>
+                                <select name="charset" id="charset">
+                                    <option value="windows">Windows/Mac</option>
+                                    <option value="linux">Linux</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="close" data-handler="1" class="btn btn-default">Cancelar</a>
+                    <button id="export" type="submit" class="btn btn-primary">Exportar</button>
+                </div>
+            </form>
+        </div>
+    {% endif %}
+
+    {% include 'AdminBundle::pagination.html.twig'
+            with {'pagination': pagination,
+                  'route'     : 'admin_download_upload_report'} %}
+
+    {% embed "AdminBundle::filesReportEmbed.html.twig" %}
+        {% block exportar %}
+            {% if entity | length > 0 %}
+                <h3>Download de Relatórios  &nbsp &nbsp<a data-toggle="tooltip" data-placement="top" data-original-title="Atualizar Listagem" id="refresh-report-list" class="glyphicons refresh"><i></i></a></h3>
+                <div class="btn-group btn-block">
+                    <div class="leadcontainer">
+                        <button class="btn dropdown-lead btn-primary center">Exportar</button>
+                    </div>
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span> </a>
+                    <ul class="dropdown-menu pull-right">
+                        <li class="center"><a class="file" data-format="Csv" data-placement="right" href="#">CSV</a></li>
+                        <li class="center"><a class="file" data-format="Xlsx" data-placement="right" href="#">EXCEL</a></li>
+                        <li class="center"><a class="file" data-format="Pdf" data-placement="right" href="#">PDF</a></li>
+                    </ul>
+                </div>
+                </div>
+                <br>
+                <br>
+                <div id="export-generating-alert"></div>
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+
+    <style>
+        .widget > .widget-head {
+            color: #000000 !important;
+        }
+    </style>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script src="{{ asset('bundles/admin/frontend/js/dojo/dojo.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/chosen/chosen-dojo.js')}}"></script>
+
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.tooltip.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/charts/flot/jquery.flot.time.js') }}"></script>
+    <script src="{{ asset('bundles/admin/theme/scripts/demo/charts.helper.js') }}"></script>
+    <script src="{{ asset('bundles/admin/frontend/js/wspot.report.files.js')}}"></script>
+
+    <script>
+        jQuery(document).ready(function(){
+            dojo.ready(function() {
+                dojo.query("#downloadUploadFilter_access_point").chosen({batch_select:true});
+            });
+
+            var accessPoint = jQuery('.monthChart').data('accesspoint');
+            var year        = jQuery('#downloadUploadFilter_year').val();
+            var month       = jQuery('#downloadUploadFilter_month').val();
+
+            if ("{{ hasResult }}") {
+                if (month) {
+                    loadChart(accessPoint, month, year);
+                } else {
+                    loadDefaultChart({{ "now"|date('Y') }});
+                }
+            } else {
+                charts.initDownloadUploadChart([]);
+            }
+
+            jQuery('.monthChart').click(function(e){
+                e.preventDefault();
+
+                var accessPoint  = jQuery(this).data('accesspoint');
+                var month        = jQuery(this).data('month');
+                var year         = jQuery(this).data('year');
+
+                jQuery('#headChartBox span').html(month+'/'+year);
+
+                loadChart(accessPoint, month, year);
+            });
+
+            /**
+             * Ajax Load Report Files on S3
+             * Function created to view the generated reports that are available for download in S3.
+             */
+            loadReportFiles('{{ reportType }}');
+
+            $('#refresh-report-list').click(function(){
+                loadReportFiles('{{ reportType }}');
+            });
+
+            $('a.file').click(function() {
+                var format = $(this).data('format');
+
+                bootbox
+                        .dialog($('#modal'))
+                        .on('shown.bs.modal', function() {
+                            $('.bootbox.modal.fade.in').removeAttr('style');
+                            $('#modal').show();
+                            $('#fileFormat').val(format);
+                        })
+                ;
+            });
+
+            $('#close').click(function() {
+                bootbox.hideAll();
+                $('meta[http-equiv=refresh]').attr('content', '0');
+            });
+
+            $('#export').click(function() {
+                $('#export-generating-alert').addClass('alert alert-primary export-class');
+                $('#export-generating-alert').html('<center>Aguarde! Estamos processando</center>' +
+                                                 '<center>sua(s) solicitação(ões).</center>');
+                $('#listExport').html('');
+                bootbox.hideAll();
+
+                window.setTimeout(function(){
+                    $('#export-generating-alert').hide();
+                }, 5000);
+            });
+        });
+
+        function loadChart(accessPoint, month, year){
+            jQuery('#chart_lines_fill_nopoints').html('<img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />');
+            var url_downloadUploadChart = Routing.generate('admin_download_upload_chart') + '.json';
+            $.post(url_downloadUploadChart, { accessPoint:accessPoint, month: month, year: year},
+                function(response){
+                    var data = (response.download || response.upload) ? response : [];
+                    charts.initDownloadUploadChart(data);
+                }
+            );
+        }
+
+        function loadDefaultChart(year){
+            jQuery('#chart_lines_fill_nopoints').html('<img src="{{ asset('bundles/admin/theme/images/ajax-loader.gif') }}" style="padding-top: 110px;" />');
+            var url_downloadUploadChartDefault = Routing.generate('admin_download_upload_chart') + '.json';
+            $.post(url_downloadUploadChartDefault, { month: null, year: year},
+                function(response){
+                    var data = (response.download || response.upload) ? response : [];
+                    charts.initDownloadUploadChartDefault(data);
+                }
+            );
+        }
+    </script>
+{% endblock %}

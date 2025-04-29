@@ -1,0 +1,2379 @@
+openapi: 3.0.0
+servers:
+  - url: 'https://{{domain}}/api'
+info:
+  description: >-
+    Bem vindo a API de integração do Mambo wifi, qualquer dúvida com nossa
+    integração, entre em contato com suporte@mambowifi.com
+    <h1>Como Autenticar na API</h1> A API do Mambo wifi é REST, então toda requisição deverá ser autenticada através de um token que deverá ser previamente gerado a partir do painel administrativo na opção “Integração via API”. <br><br>Você poderá criar token para dois tipos de permissão Leitura (GET) e Escrita (POST , PUT e GET). <br><br>A requisição poderá ser autenticada de duas maneiras, a primeira é enviando o token através do header “X-TOKEN” e a outra forma como demonstrado abaixo é enviar o token como parâmetro da requisição: <br><br>**https://{{domain}}/api/guests?token=meu_token_gerado**
+      <br><br> Nosso "rate limit" é de 2 requisições por segundo. Caso seja excedido você receberá o erro HTTP 429 (Too many requests).
+  version: "1.0.6"
+  title: API REST Mambo wifi
+tags:
+  - name: Acesso de visitantes
+  - name: Campos customizados
+  - name: Grupos de pontos de acesso
+  - name: Pontos de acesso
+  - name: Visitantes
+  
+paths:
+  /access:
+    get:
+      tags:
+        - Acesso de visitantes
+      summary: Buscar dados de acessos
+      description: |
+        Este recurso da API tem como objetivo buscar os dados de acesso de seus visitantes. Como estes dados são muitos, este endpoint funciona como data stream.
+        
+          - Como ele funciona: 
+          
+            - Faz a consulta utilizando os filtros listados abaixo
+            
+            - Caso tenha resultados, eles serão mostrados em janelas de 100 em 100
+            
+            - O retorno da pesquisa irá retornar os campos:
+            
+              - **totalRegistries:** Total de acessos baseado nos filtros
+              
+              - **nextToken**: Token utilizado para pegar a próxima janela de 100 registros, consecutivamente, até chegar no final dos registros.
+              
+              - **data**: Os acessos buscados.
+                - **Legenda**:
+                  - acctInputOctets: **DOWNLOAD** para equipamentos em modo "bridge" e **UPLOAD** para modo "router".
+                  - acctOutputOctets: **UPLOAD** para equipamentos em modo "bridge" e **DOWNLOAD** para modo "router".
+                  - Ambos os valores são gravados em formato de bytes.
+              
+            - Para buscar os próximos 100 registros utilize o **“nextToken”** na requisição, ex: **/api/access?nextToken=asd786as8d6as8d**
+            - Ao adicionar o **“nextToken”** na requisição, você não poderá mudar os filtros, caso queira mudar o valor de algum filtro, deve fazer uma nova pesquisa sem o **“nextToken”**
+            - O **“nextToken”** possui uma válidade de 60 segundos, ou seja, após fazer uma consulta que possui **200 “totalRegistries”**, você já receberá os 100 primeiros registros, caso você demorar mais do que 60 segundos para consultar os próximos 100 registros, o token ficará inválido, sendo necessário inciar a operação novamente.
+            - Ao adicionar o **“nextToken”**  na requisição, você pode remover o restantes dos filtros caso queria, pois os filtros ficam salvos na sessão do **“nextToken”**  e não podem mais serem alterados.
+      parameters:
+        - name: from
+          in: query
+          description: |
+            **string** (optional) **Default**: 30 dias atrás a partir de hoje. _Exemplo: 2018-01-01 00:00:00_
+            
+            Data inicial para buscar os acessos
+          required: false
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: |
+            **string** (opcional) **Default**: Hoje às 23:59:59  _Exemplo: 2018-05-10 23:59:59_
+            
+            Data final para buscar os acessos
+          required: false
+          schema:
+            type: number
+        - name: order
+          in: query
+          description: |
+            **string** (opcional) **Default**: desc  _Exemplo: "desc"_
+            
+            Ordenação do resultado, baseado na data de “Start” do acesso
+            
+            **Choices**: "desc" "asc"
+          required: false
+          schema:
+            type: string
+        - name: nextToken
+          in: query
+          description: |
+            **string** (opcional) _Exemplo: "HSUSGDGSH6777877_788=""_
+            
+            Token utilizado para pegar os próximos 100 resultados
+          required: false
+          schema:
+            type: string
+        - name: guest
+          in: query
+          description: |
+            **string** (opcional) _Exemplo: 234_
+            
+            **“refId”** de um visitante, para buscar somente os acessos dele, no recurso de visitantes, ao buscar um visitante, você terá o **“refId”** que deve ser usado nesse campo para busca, o **“id”** do visitante não será válido.
+          required: false
+          schema:
+            type: integer
+        - name: identifier
+          in: query
+          description: |
+            **string** (opcional)
+            
+            Identificador do ponto de acesso, para filtrar somente acessos deste ponto de acesso
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: |
+            Operação realizada com sucesso.
+            
+            Quando é encontrado resultados baseados nos filtros, retorna o valor com os resultados, sem limitado a 100 resultados por consulta o campo “totalRegistries” sempre será o total de registros baseados no filtro.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessGET200'
+        '404':
+          description: |
+            Caso não seja encontrado nenhum resultado baseado nos filtros.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessGET404'
+        '400':
+          description: |
+            Caso não seja encontrado nenhum resultado baseado nos filtros.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessGET400'
+        '500':
+          description: |
+            Caso ocorra algum erro no servidor no momento da busca. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+  
+  /access-by-ids:
+    post:
+      tags:
+        - Acesso de visitantes
+      summary: Buscar dados de acessos por meio de uma lista de IDs
+      description: |
+        Este recurso da API tem como objetivo buscar os dados de acesso de seus visitantes. É obrigatório o envio de uma lista de IDs.
+        
+          - Como funciona: 
+          
+            - Faz a consulta utilizando o filtro por ID (pode ser um único ID ou uma lista);
+            
+            - Caso não hajam resultados, será exibido como retorno um array vazio;
+            
+            - Somente ID válido exibirá resultados. Do contrário, nada será exibido;
+
+      parameters:
+        - name: ids
+          in: query
+          description: |
+            **array** Array contendo os ID's que serão buscados. _Exemplo: [ "10", "20", "30" ]_
+            
+            Lista de IDs que serão buscados.
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+              properties:
+                id:
+                  type: string
+        
+      responses:
+        '200':
+          description: |
+            Operação realizada com sucesso.
+            
+            Quando é encontrado resultados baseados nos filtros, retorna o valor com os resultados.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAccessByIdPOST200'
+        '500':
+          description: |
+            Caso ocorra algum erro no servidor no momento da busca. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+  
+  /access-points/{id}:
+    put:
+      tags:
+        - Pontos de acesso
+      summary: Atualizar ponto de acesso
+      description: |
+        Campos disponibilizados para atualização “friendlyName”, “local”, “status”, “templateId”, “grupoId”. 
+        
+        Você poderá enviar um, ou mais campos para atualização.
+        
+          - Campos da requisição:
+
+            - **friendlyName - [String]:** É o nome do ponto de acesso.
+            
+            - **local - [String]:** Apenas uma descrição para identificar o local onde o ponto de acesso esta fisicamente.
+            
+            - **status - [Integer]:** Este campo é a definição de status do seu ponto de acesso pode ser “0” para intativo ou “1” para ativo.
+            
+            - **templateId - [Integer]:** Associar o ponto de acesso a um template.
+            
+            - **groupId - [Integer]:** Associar o ponto de acesso a um grupo. Lista de grupos poderá ser obtida pelo recurso “[GET] /api/access-point-groups”.
+      parameters:
+        - name: id
+          in: path
+          description: Id do ponto de acesso
+          required: true
+          schema:
+            type: number
+      requestBody:
+        description: Atualizar ponto de acesso
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessPointsPUT'
+      responses:
+        '204':
+          description: Sucesso, sem conteúdo de retorno.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsPUT204'
+        '400':
+          description: Caso não seja encontrado nenhum resultado baseado nos filtros.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsPUT400'
+        '500':
+          description: Caso ocorra algum erro no servidor no momento da busca. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+                
+    get:
+      tags:
+        - Pontos de acesso
+      summary: Detalhar ponto de acesso
+      description: |
+        Exibir detalhes de um único ponto de acesso
+      parameters:
+        - name: id
+          in: path
+          description: Id do ponto de acesso
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Sucesso, conteúdo recuperado.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsGET200'
+        '400':
+          description: |
+            Resposta quando o id solicitado possui um formato inválido
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsGET400'
+        '404':
+          description: |
+            Caso não seja encontrado nenhum resultado baseado no id.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/404NotFound'
+        '500':
+          description: Caso ocorra algum erro no servidor no momento da busca. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+  
+  /access-points:
+    post:
+      tags:
+        - Pontos de acesso
+      summary: Criar novo ponto de acesso
+      description: |
+        Para cadastrar o ponto de acesso via API você precisa respeitar os campos obrigatórios: “friendlyName”, “vendor”, “identifier”, “groupId”.
+        
+        Campos da requisição:
+          - **friendlyName - [String]** É o nome do ponto de acesso.
+
+          - **vendor - [String] Campo obrigatório:** É o nome do fabricante do seu ponto de acesso, deve ser um nome compatível com o Mambo wifi, esse campo deve ser qualquer valor da lista retornada pelo recurso “[GET] /api/access-points/vendors”
+          
+          - **identifier - [String] Campo obrigatório:** É o identificador que o ponto de acesso envia para o Mambo wifi realizar operações como autenticação e log de acesso, esse identificador deverá respeitar o campo “mask” que é atribuído ao vendor, verificar no recurso “[GET] /api/access-points/vendors”
+          
+          - **local - [String]:** Este campo é opcional, apenas uma descrição para identificar o local onde o ponto de acesso esta fisicamente.
+          
+          - **status - [Integer] Campo obrigatório:** Este campo é a definição de status do seu ponto de acesso pode ser “0” para intativo ou “1” para ativo.
+          
+          - **templateId - [Integer]:** Caso você queira associar um ponto de acesso a um template, basta passar o Id do template neste campo, caso contrário, não coloque este campo na requisição pois o sistema tentará associar um template inexistente e dará erro.
+          
+          - **groupId - [Integer] Campo obrigatório:** Este campo é obrigatório, deve ser informado o grupo qual o ponto de acesso fará parte. Lista de grupos poderá ser obtida pelo recurso “[GET] /api/access-point-groups”.
+      requestBody:
+        description: Criar ponto de acesso
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessPointsPOST'
+      responses:
+        '201':
+          description: Sucesso, conteúdo criado.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsPOST201'
+        '400':
+          description: Problemas com a requisição
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsPOST400'
+        '500':
+          description: Caso ocorra algum erro no servidor no momento da requisição. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+                
+    get:
+      tags:
+        - Pontos de acesso
+      summary: Listar pontos de acesso
+      description: |
+        Este endpoint é utilizado para listar os pontos de acesso.
+      parameters:
+        - name: friendlyName
+          in: query
+          description: |
+            **string** (opcional)
+            
+            Nome do ponto de acesso
+          required: false
+          schema:
+            type: string
+        - name: identifier
+          in: query
+          description: |
+            **string** (opcional)
+            
+            Identificador do ponto de acesso
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: |
+            **string** (opcional)
+            
+            Status do ponto de acesso **1 - Ativo / 0 - Inativo**
+            
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: |
+            **number** (optional) Padrão: 0. 
+            
+            Valor máximo de limit por page: 100 Exemplo: 10. 
+            
+            Limite de visitantes que será listado
+          required: false
+          schema:
+            type: number
+        - name: page
+          in: query
+          description: |
+            **number** (optional) Padrão: 0 Exemplo: 0. 
+            
+            Qual página deseja buscar, caso haja paginação
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Sucesso, conteúdo recupedrado.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsGET200'
+        '500':
+          description: Caso ocorra algum erro no servidor no momento da busca. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+                
+  /access-points/vendors:
+    get:
+      tags:
+        - Pontos de acesso
+      summary: Listar fabricantes (vendors)
+      description: |
+        Esta lista é utilizada para cadastrar novos pontos de acesso, o vendor deve ser um desta lista respeitando o campo “mask” para preencher o “identifier”.
+      responses:
+        '200':
+          description: Sucesso, conteúdo recuperado.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsVendorsGET200'
+
+  /access-point-groups:
+    get:
+      tags:
+        - Grupos de pontos de acesso
+      summary: Listar grupos
+      description: |
+        Lista todos ou um grupo(s) de ponto(s) de acesso.
+      parameters:
+        - name: name
+          in: query
+          description: |
+            **string** (opcional)
+            
+            Nome do grupo que será listado
+          required: false
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: |
+            **number** (opcional). Padrão: 10
+            
+            Limite de grupos que será listado
+          required: false
+          schema:
+            type: number
+        - name: page
+          in: query
+          description: |
+            **number** (opcional). Padrão: 0
+            
+            Qual página deseja buscar, caso haja paginação
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: Sucesso, conteúdo recuperado.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessPointsGroupsGET200'
+        '500':
+          description: Caso ocorra algum erro no servidor no momento da busca. Nossa equipe será notificada automaticamente, mas sinta-se a vontade de abrir um ticket de suporte através de seu painel administrativo.
+          headers:
+            application/json:
+              schema:
+                type: object
+                properties:   
+                  message:
+                    type: string
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/500Error'
+  /guests:
+    get:
+      tags:
+        - Visitantes
+      summary: Todos visitantes paginados
+      description: |
+        No resultado do visitante o campo **“refId”** é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.
+        
+        # Exemplos:
+        ## Filtrar por data
+        Neste caso que os filtros são datas utilizamos os parâmetros "from" e "to" ao invés de "value" juntos com o "filter"
+        ### "lastAccess" e "created" exemplo:
+        
+        - ```/api/guests?filter=lastAccess&from=2018-09-13 00:00:00&to=2018-09-19 23:00:00```
+        - ```/api/guests?filter=created&from=2018-09-13 00:00:00&to=2018-09-19 23:00:00```
+        
+        ## Fitrar pelas propriedades do visitante
+        Neste caso que os filtros são "strings" utilizamos o parâmetro "value" junto com o "filter"
+        ### "group", "registerMode" e "properties.email"
+        
+        - ```/api/guests?filter=group&value=guest```
+        - ```/api/guests?filter=registerMode&value=Facebook```
+        - ```/api/guests?filter=properties.email&value=visitante@gmail.com```
+      parameters:
+        - name: limit
+          in: query
+          description: |
+            **number** (opcional) Padrão: 0. 
+            
+            Valor máximo de limit por page: 100 Exemplo: 10. 
+            
+            Limite de visitantes que será listado
+          required: false
+          schema:
+            type: number
+        - name: page
+          in: query
+          description: |
+            **number** (opcional) Padrão: 0 Exemplo: 0. 
+            
+            Qual página deseja buscar, caso haja paginação
+          required: false
+          schema:
+            type: number
+        - name: sort
+          in: query
+          description: |
+            **string** (opcional) Padrão: "desc" Exemplo: "desc". 
+            
+            Ordem da listagem. Choices: "desc" "asc"
+          required: false
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: |
+            **string** (opcional) Exemplo: "properties.email". 
+            
+            Nome do campo a serbuscado no cadastro do visitante, todos campos dentro de
+            “properties”, deve possuir “properties.” antes do campo
+          required: false
+          schema:
+            type: string
+        - name: from
+          in: query
+          description: |
+            **string** (opcional) Exemplo: 2018-09-10 12:00:00. 
+            
+            Data inicial do range de data do campo especificado no parâmetro filter
+          required: false
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: |
+            **string** (opcional) Exemplo: 2018-09-10 23:00:00.
+            
+              Valor buscado, do campo especificado em “filter”, somente para campos do tipo string
+          required: false
+          schema:
+            type: string
+            
+        - name: value
+          in: query
+          description: |
+            **string** (opcional) Exemplo: "visitante@mambowifi.com".
+            
+            Valor buscado, do campo especificado em “filter”, somente para campos do tipo string
+          required: false
+          schema:
+            type: string
+            
+        - name: status
+          in: query
+          description: |
+            **boolean** (opcional) Exemplo: "0". 
+            
+            Status do visitante (0 para inativo ou 1 para ativo)
+          required: false
+          schema:
+            type: number
+            
+        - name: refId
+          in: query
+          description: |
+            **number** (opcional) Exemplo: "101010".
+            
+              ID do visitante
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guests200'
+    delete:
+      tags:
+        - Visitantes
+      summary: Excluir visitante
+      description: |
+        Atualmente a exclusão de visitantes via API não é permitida. 
+        
+        Excluir um visitante impacta na exclusão de todos seus dados de acesso. 
+
+      responses:
+        '200':
+          description: successful operation
+          
+  '/guests/{id}':
+    get:
+      tags:
+        - Visitantes
+      summary: Buscar um visitante
+      description: |
+        No resultado do visitante o campo **“refId”** é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.
+      parameters:
+        - name: id
+          in: path
+          description: |
+            **string** (obrigatório). 
+            
+            Id do visitante
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Guests200'
+                
+                
+  '/guests/{locale}':
+    post:
+      tags:
+        - Visitantes
+      summary: Criar visitante 
+      description: |
+        Antes de criar um visitante, caso você possua campos personalizados em
+        seu formulário, é necessário fazer uma requisição de campos customizados
+        antes de enviar a requisição. No exemplo deste request possui os campos
+        customizados “name”, “city”, “document” e “email”. 
+        
+        O campo “status” deve ser um número inteiro com os valor [0 = Inativo] ou [1 =
+        Ativo], não é obrigatório, por padrão é 1. 
+        
+        O campo “registrationMacAddress” é o Mac Address/IP referente ao ponto de acesso em que o visitante está se cadastrando. Essa informação será útil para carregarmos as configurações, que agora cada Grupo de Ponto de acesso possui suas configurações específicas. Caso nenhum valor seja informado
+        nesse campo, carregaremos as configurações do Grupo padrão. Campo opcional.
+        
+        O campo "group" refere-se ao grupo de visitantes no qual o visitante será inserido. Se a informação enviada não corresponder a um grupo existente, um erro de validação retornará. Se nenhum grupo for informado, o grupo Visitantes será inserido por padrão. Campo opcional.
+        
+        É possível enviar SMS de boas-vindas para um visitante cadastrado pela API. Para isso, basta definir o campo "sendWelcomeSMS" como verdadeiro.
+      operationId: createGuest
+      parameters:
+        - name: locale
+          in: path
+          description: |
+            **string** (opcional) Padrão: "pt_br" 
+            
+            Locale qual o visitante será salvo na Mambo Wifi Choices: "pt_br" "en" "es"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestCreateResponse'
+          headers:
+            x-token:
+              schema:
+                type: 'string'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuestCreateRequest'
+              
+    put:
+      tags:
+        - Visitantes
+      summary: Atualizar visitante ou Alterar regras de acesso de visitante
+      description: |
+        Atualizar visitante - o campo “status” deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo].
+      
+        
+        Alterar regras de acesso de visitante - o processo de alteração de regras de acesso do visitante é similar a atualização dos dados de um visitante, a diferença é que você passa o atributo “group” com o “identifier” da regra. O “identifier” pode ser encontrado através do seu “painel administrativo > visitantes > regras de acesso > regra”. O parâmetro “properties” deve ser enviado também, senão dara erro de validação dos campos customizados do seu Hotspot.
+      operationId: updateGuestBulk updateGuestGroupBulk
+      parameters:
+        - name: locale
+          in: path
+          description: |
+            string (optional) Default: "pt_br" 
+            
+            Locale qual o visitante será salvo no Mambo Wifi Choices: "pt_br" "en" "es"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/GuestUpdateRequest'
+                - $ref: '#/components/schemas/GuestGroupUpdateRequest'
+              example:
+                id: string
+                group: "identificador da regra de acesso. Usar esse campo somente para atualizações de regras de acesso"
+                properties: {
+                  email: string,
+                  name:  string,
+                  city:  string,
+                  document:  string
+                }
+                
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestUpdateResponse'
+          headers:
+            x-token:
+              schema:
+                type: 'string'
+              
+  '/guests/bulk/{locale}':
+    post:
+      tags:
+        - Visitantes
+      summary: Criar bulk de visitantes
+      description: |
+        Antes de criar um visitante, caso você possua campos personalizados em seu formulário, é necessário fazer uma requisição de campos customizados antes de enviar a requisição. No exemplo deste request possui os campos customizados “name”, “city”, “document” e “email”.
+        
+        O campo “status” deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo], não é obrigatório, por padrão é 1.<br><br>O campo “registrationMacAddress” é o Mac Address/IP referente ao ponto de acesso em que o visitante está se cadastrando. Essa informação será útil para carregarmos as configurações, que agora cada Grupo de Ponto de acesso possui suas configurações específicas. Caso nenhum valor seja informado nesse campo, carregaremos as configurações do Grupo padrão. Campo opcional.
+        
+        É possível enviar SMS de boas-vindas para um visitante cadastrado pela API. Para isso, basta definir o campo "sendWelcomeSMS" como verdadeiro.
+      operationId: createGuestBulk
+      parameters:
+        - name: locale
+          in: path
+          description: |
+            string (optional) Default: "pt_br" 
+            
+            Locale qual o visitante será salvo no Mambo Wifi Choices: "pt_br" "en" "es"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuestCreateBulkRequest'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestCreateBulkResponse'
+          headers:
+            x-token:
+              schema:
+                type: 'string'
+      
+  '/guests/fields':
+    get:
+      tags:
+        - Campos customizados
+      summary: Listar campos
+      description: 'Lista todos os campos customizados que existem no formulário de cadastro.'
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestCustomFieldsResponse'
+          headers:
+            x-token:
+              schema:
+                type: 'string'
+  
+  
+  
+  
+  
+  
+  '/v2/guests':
+    get:
+      tags:
+        - Visitantes
+      summary: Todos visitantes paginados
+      description: |
+        No resultado do visitante o campo **“id”** é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.
+        
+        # Exemplos:
+        ## Filtrar por data
+        Neste caso que os filtros são datas utilizamos os parâmetros "from" e "to" ao invés de "value" juntos com o "filter"
+        ### "lastAccess" e "created" exemplo:
+        
+        - ```/api/v2/guests?filter=lastAccess&from=2018-09-13 00:00:00&to=2018-09-19 23:00:00```
+        - ```/api/v2/guests?filter=created&from=2018-09-13 00:00:00&to=2018-09-19 23:00:00```
+        
+        ## Fitrar pelas propriedades do visitante
+        Neste caso que os filtros são "strings" utilizamos o parâmetro "value" junto com o "filter"
+        ### "group", "registerMode" e "properties.email"
+        
+        - ```/api/v2/guests?filter=group&value=guest```
+        - ```/api/v2/guests?filter=registerMode&value=Facebook```
+        - ```/api/v2/guests?filter=properties.email&value=visitante@gmail.com```
+      parameters:
+        - name: limit
+          in: query
+          description: |
+            **number** (opcional) Padrão: 0. 
+            
+            Valor máximo de limit por page: 100 Exemplo: 10. 
+            
+            Limite de visitantes que será listado
+          required: false
+          schema:
+            type: number
+        - name: page
+          in: query
+          description: |
+            **number** (opcional) Padrão: 0 Exemplo: 0. 
+            
+            Qual página deseja buscar, caso haja paginação
+          required: false
+          schema:
+            type: number
+        - name: sort
+          in: query
+          description: |
+            **string** (opcional) Padrão: "desc" Exemplo: "desc". 
+            
+            Ordem da listagem. Choices: "desc" "asc"
+          required: false
+          schema:
+            type: string
+        - name: filter
+          in: query
+          description: |
+            **string** (opcional) Exemplo: "properties.email". 
+            
+            Nome do campo a serbuscado no cadastro do visitante, todos campos dentro de
+            “properties”, deve possuir “properties.” antes do campo
+          required: false
+          schema:
+            type: string
+        - name: from
+          in: query
+          description: |
+            **string** (opcional) Exemplo: 2018-09-10 12:00:00. 
+            
+            Data inicial do range de data do campo especificado no parâmetro filter
+          required: false
+          schema:
+            type: string
+        - name: to
+          in: query
+          description: |
+            **string** (opcional) Exemplo: 2018-09-10 23:00:00.
+            
+              Valor buscado, do campo especificado em “filter”, somente para campos do tipo string
+          required: false
+          schema:
+            type: string
+            
+        - name: value
+          in: query
+          description: |
+            **string** (opcional) Exemplo: "visitante@mambowifi.com".
+            
+            Valor buscado, do campo especificado em “filter”, somente para campos do tipo string
+          required: false
+          schema:
+            type: string
+            
+        - name: status
+          in: query
+          description: |
+            **boolean** (opcional) Exemplo: "0". 
+            
+            Status do visitante (0 para inativo ou 1 para ativo)
+          required: false
+          schema:
+            type: number
+            
+        - name: id
+          in: query
+          description: |
+            **number** (opcional) Exemplo: "101010".
+            
+              ID do visitante
+          required: false
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestsV2200'
+    delete:
+      tags:
+        - Visitantes
+      summary: Excluir visitante
+      description: |
+        Atualmente a exclusão de visitantes via API não é permitida. 
+        
+        Excluir um visitante impacta na exclusão de todos seus dados de acesso. 
+
+      responses:
+        '405':
+          description: Method Not Allowed
+          
+  '/v2/guests/{id}':
+    get:
+      tags:
+        - Visitantes
+      summary: Buscar um visitante
+      description: |
+        No resultado do visitante o campo **“id”** é utilizado para consultar os acessos do visitante no recurso [GET] /api/access.
+      parameters:
+        - name: id
+          in: path
+          description: |
+            **string** (obrigatório). 
+            
+            Id do visitante
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestsV2200'
+                
+                
+  '/v2/guests/{locale}':
+    post:
+      tags:
+        - Visitantes
+      summary: Criar visitante 
+      description: |
+        Antes de criar um visitante, caso você possua campos personalizados em
+        seu formulário, é necessário fazer uma requisição de campos customizados
+        antes de enviar a requisição. No exemplo deste request possui os campos
+        customizados “name”, “city”, “document” e “email”. 
+        
+        O campo “status” deve ser um número inteiro com os valor [0 = Inativo] ou [1 =
+        Ativo], não é obrigatório, por padrão é 1. 
+        
+        O campo “registrationMacAddress” é o Mac Address/IP referente ao ponto de acesso em que o visitante está se cadastrando. Essa informação será útil para carregarmos as configurações, que agora cada Grupo de Ponto de acesso possui suas configurações específicas. Caso nenhum valor seja informado
+        nesse campo, carregaremos as configurações do Grupo padrão. Campo opcional.
+        
+        O campo "group" refere-se ao grupo de visitantes no qual o visitante será inserido. Se a informação enviada não corresponder a um grupo existente, um erro de validação retornará. Se nenhum grupo for informado, o grupo Visitantes será inserido por padrão. Campo opcional.
+        
+        É possível enviar SMS de boas-vindas para um visitante cadastrado pela API. Para isso, basta definir o campo "sendWelcomeSMS" como verdadeiro.
+      operationId: createGuestV2
+      parameters:
+        - name: locale
+          in: path
+          description: |
+            **string** (opcional) Padrão: "pt_br" 
+            
+            Locale qual o visitante será salvo no Mambo Wifi Choices: "pt_br" "en" "es"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestV2CreateResponse'
+          headers:
+            x-token:
+              schema:
+                type: 'string'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GuestV2CreateRequest'
+              
+    put:
+      tags:
+        - Visitantes
+      summary: Atualizar visitante ou Alterar regras de acesso de visitante
+      description: |
+        Atualizar visitante - o campo “status” deve ser um número inteiro com os valor [0 = Inativo] ou [1 = Ativo].
+      
+        
+        Alterar regras de acesso de visitante - o processo de alteração de regras de acesso do visitante é similar a atualização dos dados de um visitante, a diferença é que você passa o atributo “group” com o “identifier” da regra. O “identifier” pode ser encontrado através do seu “painel administrativo > visitantes > regras de acesso > regra”. O parâmetro “properties” deve ser enviado também, senão dara erro de validação dos campos customizados do seu Hotspot.
+      operationId: updateGuestV2Bulk updateGuestV2GroupBulk
+      parameters:
+        - name: locale
+          in: path
+          description: |
+            string (optional) Default: "pt_br" 
+            
+            Locale qual o visitante será salvo no Mambo Wifi Choices: "pt_br" "en" "es"
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/GuestV2UpdateRequest'
+                - $ref: '#/components/schemas/GuestV2GroupUpdateRequest'
+              example:
+                id: string
+                group: "identificador da regra de acesso. Usar esse campo somente para atualizações de regras de acesso"
+                properties: {
+                  email: string,
+                  name:  string,
+                  city:  string,
+                  document:  string
+                }
+                
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GuestUpdateResponse'
+          headers:
+            x-token:
+              schema:
+                type: 'string'
+            
+  
+  '/v2/guests/{id}/devices':
+    get:
+      tags:
+        - Visitantes
+      summary: Buscar os dispositivos de um visitante
+      description: |
+        São listados os dispositivos cadastrados ligados ao vistante buscado
+      parameters:
+        - name: id
+          in: path
+          description: |
+            **string** (obrigatório). 
+            
+            Id do visitante
+          required: true
+      responses:
+        '200':
+          description: successful operation
+          headers:
+            x-token:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceEntries'
+
+            
+components:
+  schemas:
+    404NotFound:
+      type: object
+    500Error:
+      type: object
+      error:
+        type: string
+        example: "Ocorreu um problema em nosso serivor, nossa equipe ja foi notificada."
+    AccessGET200:
+      type: object
+      properties:
+        totalRegistries:
+          type: integer
+          example: 450
+        nextToken:
+          type: string
+          example: "AASD887AS6AS70ASU0D8UAS90D8AS09DAS8D"
+        data:
+          type: object
+          properties:
+              id:
+                type: integer
+                example: 23
+              guest:
+                type: integer
+                example: 10437769
+              isEmployee:
+                type: boolean
+                example: false
+              guestDevice:
+                type: string
+                example: "E4-90-7E-B2-AB-28"
+              guestIp:
+                type: string
+                example: "10.97.8.173"
+              nasIpAddress:
+                type: string
+                example: "10.1.1.1"
+              identifier:
+                type: string
+                example: "64-d1-54-4b-a5-e4"
+              friendlyName:
+                type: string
+                example: "Meu ponto de acesso"
+              start:
+                type: string
+                format: date
+                example: "2018-06-04 23:58:40"
+              stop:
+                type: string
+                format: date
+                example: "2018-06-05 01:44:59"
+              acctInputOctets:
+                type: integer
+                example: 633671
+              acctOutputOctets:
+                type: integer
+                example: 422854
+    AccessGET404:
+      type: object
+      properties:
+        totalRegistries:
+          type: integer
+          example: 0
+        nextToken:
+          example: "null"
+        data:
+          type: string
+          example: null
+    AccessGET400:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Data inválida: 2018-01-333334, formato correto: Y-m-d H:i:s"
+          
+    GetAccessByIdPOST200:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+              id:
+                type: integer
+                example: 10437769
+              guest:
+                type: integer
+                example: 101010
+              isEmployee:
+                type: boolean
+                example: false
+              guestDevice:
+                type: string
+                example: "BC-A9-20-CD-38-E7"
+              guestIp:
+                type: string
+                example: "192.168.1.229"
+              nasIpAddress:
+                type: string
+                example: "10.1.1.121"
+              identifier:
+                type: string
+                example: "6c-aa-b3-11-ba-0c"
+              friendlyName:
+                type: string
+                example: "6c-aa-b3-11-ba-0c"
+              start:
+                type: string
+                example: "2018-08-02 14:46:40"
+              stop:
+                type: string
+                example: "2018-08-02 14:49:14"
+              acctInputOctets:
+                type: integer
+                example: 1137482
+              acctOutputOctets:
+                type: integer
+                example: 1137482
+    AccessPointsPUT:
+      type: object
+      properties:
+        friendlyName:
+          type: string
+          example: "Meu ponto de acesso"
+        local:
+          type: string
+          example: "Ponto de acesso do salão"
+        status:
+          type: integer
+          example: 1
+        templateId:
+          type: integer
+          example: 1
+        grupoId:
+          type: integer
+          example: 1
+    AccessPointsPUT204:
+      type: object
+      example: 
+    AccessPointsPUT400:
+      type: object
+      properties:
+        friendlyName:
+          type: string
+          example: "Meu ponto de acesso"
+        status:
+          type: string
+          example: "Status inválido, deve ser 1 = Ativo ou 0 = Inativo"
+        vendor:
+          type: string
+          example: "Deve possuir um valor válido, consulte a documentação"
+        templateId:
+          type: string
+          example: "Template informado não existe"
+        grupoId:
+          type: string
+          example: "O grupo informado não existe"
+   
+          
+    AccessPointsPOST:
+      type: object
+      properties:
+        friendlyName:
+          type: string
+          example: "Meu ponto de acesso"   
+        vendor:
+          type: string
+          example: "mikrotik"  
+        identifier:
+          type: string
+          example: "64-D1-54-E3-2A-D4"  
+        local:
+          type: string
+          example: "Ponto de acesso do salão"  
+        status:
+          type: integer
+          example: 1
+        templateId:
+          type: integer
+          example: 1
+        groupId:
+          type: integer
+          example: 1
+    AccessPointsPOST201:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        friendlyName:
+          type: string
+          example: "Meu ponto de acesso"  
+        created:
+          type: string
+          example: "2018-06-05 09:29:44"  
+        updated:
+          type: string
+          example: "2018-06-05 09:29:44"  
+        vendor:
+          type: string
+          example: "mikrotik"
+        identifier:
+          type: string
+          example: "64-D1-54-E3-2A-D4" 
+        local:
+          type: string
+          example: "Ponto de acesso do salão"  
+        verified:
+          type: boolean
+          example: false 
+        status:
+          type: integer
+          example: 1
+        templateId:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: "Template Padrão"
+        group:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: "Grupo padrão"
+    AccessPointsPOST400:
+      type: object
+      properties:
+        friendlyName:
+          type: string
+          example: "Campo obrigatório, deve ter de 2 a 100 caracteres"
+        status:
+          type: string
+          example: "Status inválido, deve ser 1 = Ativo ou 0 = Inativo"
+        vendor:
+          type: string
+          example: "Campo obrigatório, deve possuir um valor válido, consulte a documentação" 
+        identifier:
+          type: string
+          example: "Campo identifier é obrigatório" 
+        groupId:
+          type: string
+          example: "O grupo informado não existe"  
+    
+          
+    AccessPointsVendorsGET200:
+      type: object
+      properties:
+        vendor:
+          type: string
+          example: "aerohive"
+        mask:
+          type: string
+          example: "HH-HH-HH-HH-HH-HH" 
+    AccessPointsGET200:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        friendlyName:
+          type: string
+          example: "AP Teste 01"  
+        created:
+          type: string
+          example: "2018-06-05 09:29:44"  
+        updated:
+          type: string
+          example: "2018-06-05 09:29:44"  
+        vendor:
+          type: string
+          example: "mikrotik"
+        identifier:
+          type: string
+          example: "64-D1-54-E3-2A-D4" 
+        local:
+          type: string
+          example: "Ponto de acesso do salão"  
+        verified:
+          type: boolean
+          example: false 
+        status:
+          type: integer
+          example: 1
+        templateId:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: "Template Padrão"
+        group:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: "Grupo padrão"
+    AccessPointsGET400:
+      type: object
+      properties:
+        message:
+          type: integer
+          example: "Id inválido"
+          
+    AccessPointsGroupsGET200:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Grupo padrão"
+        isDefault:
+          type: boolean
+          example: true  
+        template:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            name:
+              type: string
+              example: "Template Padrão"
+  
+    GuestCustomFieldsResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: string
+            example: "585168a1e0e35b6aa83c9f6e"
+          type:
+            type: string
+            example: "document"
+          name:
+            type: object
+            properties:
+              pt_br:
+                type: string
+                example: "CPF"
+              en:
+                type: string
+                example: "Passport"
+              es:
+                type: string
+                example: "Pasaporte"
+          identifier:
+            type: string
+            example: "document"
+          choices:
+            type: string
+            example: null
+          validations:
+            type: array
+            items:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: "required"
+                value:
+                  type: boolean
+                  example: true
+                message:
+                  type: string
+                  example: "wspot.signup_page.field_required"
+                locale:
+                  type: string
+                  example: "pt_br"
+          mask:
+            type: object
+            properties:
+              pt_br:
+                type: string
+                example: "99999999999"
+              en:
+                type: string
+                example: "99999999999"
+              es:
+                type: string
+                example: "99999999999"
+          isUnique:
+            type: boolean
+            example: true
+          isLogin:
+            type: boolean
+            example: false
+    GuestGroupUpdateRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        group:
+          type: string
+          example: "Grupo padrão"
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "contato@mambowifi.com"
+            name:
+              type: string
+              example: "José Silva"
+    GuestUpdateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "586a9b99024925fe1a054923"
+        created:
+          type: object
+          properties:
+            sec:
+              type: integer
+              example: 1483381656
+            usec:
+              type: integer
+              example: 462000
+        validated:
+          type: boolean
+        lastAccess:
+          type: string
+        group:
+          type: string
+        status:
+          type: integer
+        locale:
+          type: string
+          example: "pt_br"
+        documentType:
+          type: string
+          example: "CPF"
+        authorizeEmail:
+          type: string
+        registrationMacAddress:
+          type: string
+          example: "12-32-43-54-65-76"
+        returning:
+          type: string
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "visitante@mambowifi.com"
+            name:
+              type: string
+              example: "Teste User"
+            city:
+              type: string
+              example: "Campinas"
+            document:
+              type: string
+              example: "27658434817"
+        social:
+          type: object
+        accessData:
+          type: object
+        employee:
+          type:
+            string
+    GuestUpdateRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 2
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+            name:
+              type: string
+            city:
+              type: string
+            document:
+              type: string
+    GuestCreateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "586a9b99024925fe1a054923"
+        created:
+          type: object
+          properties:
+            sec:
+              type: integer
+              example: 1483381656
+            usec:
+              type: integer
+              example: 462000
+        group:
+          type: string
+          example: "guest"
+        validated:
+          type: boolean
+          example: null
+        lastAccess:
+          type: string
+          example: null
+        status:
+          type: integer
+          example: 1
+        locale:
+          type: string
+          example: "pt_br"
+        documentType:
+          type: string
+          example: "CPF"
+        authorizeEmail:
+          type: string
+          example: null
+        registrationMacAddress:
+          type: string
+          example: "99-99-99-99-99-99"
+        returning:
+          type: string
+          example: null
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "visitante@mambowifi.com"
+            name:
+              type: string
+              example: "Teste User"
+            city:
+              type: string
+              example: "Campinas"
+            document:
+              type: string
+              example: "27658434817"
+        social:
+          type: object
+          example: 
+        accessData:
+          type: object
+          example: 
+        employee:
+          type: string
+          example: null
+        refId:
+          type: integer
+          example: 18
+    GuestCreateRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          example: "@#123&&*%SA"
+        status:
+          type: integer
+          example: 1
+        registrationMacAddress:
+          type: string
+          example: "99-99-99-99-99-99"
+        group:
+          type: string
+          example: "Visitantes"
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "visitante@mambowifi.com"
+            name:
+              type: string
+              example: "Teste User"
+            city:
+              type: string
+              example: "Campinas"
+            document:
+              type: integer
+              example: "27658434817"
+        sendWelcomeSMS:
+          type: boolean
+          example: true
+    GuestCreateBulkRequest:
+      type: array
+      items:
+        type: object
+        properties:
+          password:
+            type: string
+            example: "@#123&&*%SA"
+          status:
+            type: integer
+            example: 1
+          registrationMacAddress:
+            type: string
+            example: "99-99-99-99-99-99"
+          group:
+            type: string
+            example: "Visitantes"
+          properties:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "visitante@mambowifi.com"
+              name:
+                type: string
+                example: "Teste User"
+              city:
+                type: string
+                example: "Campinas"
+              document:
+                type: integer
+                example: "27658434817"
+          sendWelcomeSMS:
+            type: boolean
+            example: true
+    GuestCreateBulkResponse:
+      type: object
+      properties:
+        hasErrors:
+          type: boolean
+          example: false
+        successTotal:
+          type: integer
+          example: 2
+        errorsTotal:
+          type: integer
+        errors:
+          type: object
+    Guests200:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        totalOfPages:
+          type: integer
+          example: 10
+        totalOfElements:
+          type: integer
+          example: 120
+        limitPerPage:
+          type: string
+          example: 100
+        order:
+          type: string
+          example: desc
+        elements:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "586a7288024925001b054924"
+              created:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    example: "2017-01-02 13:32:22.206000"
+                  timezone_type:
+                    type: integer
+                    example: 3
+                  timezone:
+                    type: string
+                    example: "America/Sao_Paulo"
+              group:
+                type: string
+                example: "guest"
+              validated:
+                type: boolean
+                example: null
+              lastAccess:
+                type: string
+                example: null
+              status:
+                type: integer
+                example: 2
+              locale:
+                type: string
+                example: "pt_br"
+              documentType:
+                type: string
+                example: "CPF"
+              authorizeEmail:
+                type: string
+                example: null
+              registrationMacAddress:
+                type: string
+                example: "AA-BB-CC-DD-EE-FF"
+              returning:
+                type: string
+                example: null
+              properties:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: "visitante@mambowifi.com"
+                  name:
+                    type: string
+                    example: "Antônio Sousa"
+                  city:
+                    type: string
+                    example: "Campinas"
+                  document:
+                    type: string
+                    example: "31546840265"
+              social:
+                type: object
+                example: null
+              accessData:
+                type: object
+                example: null
+              employee:
+                type: string
+                example: null
+              refId:
+                type: integer
+                example: 18
+        nextLink:
+          type: string
+          example: "/api/guests?page=2&limit=1&sort=desc"
+        previusLink:
+          type: string
+          example: null
+          
+          
+      
+    GuestV2UpdateResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "586a9b99024925fe1a054923"
+        created:
+          type: object
+          properties:
+            sec:
+              type: integer
+              example: 1483381656
+            usec:
+              type: integer
+              example: 462000
+        validated:
+          type: boolean
+        lastAccess:
+          type: string
+        group:
+          type: string
+        status:
+          type: integer
+        locale:
+          type: string
+          example: "pt_br"
+        documentType:
+          type: string
+          example: "CPF"
+        authorizeEmail:
+          type: string
+        registrationMacAddress:
+          type: string
+          example: "12-32-43-54-65-76"
+        returning:
+          type: string
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "visitante@mambowifi.com"
+            name:
+              type: string
+              example: "Teste User"
+            city:
+              type: string
+              example: "Campinas"
+            document:
+              type: string
+              example: "27658434817"
+        social:
+          type: object
+        employee:
+          type:
+            string
+    GuestV2UpdateRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+            name:
+              type: string
+            city:
+              type: string
+            document:
+              type: string
+    GuestV2CreateResponse:
+      type: object
+      properties:
+        created:
+          type: integer
+          example: 1483381656
+        group:
+          type: string
+          example: "guest"
+        validated:
+          type: boolean
+          example: null
+        lastAccess:
+          type: string
+          example: null
+        status:
+          type: integer
+          example: 1
+        locale:
+          type: string
+          example: "pt_br"
+        documentType:
+          type: string
+          example: "CPF"
+        authorizeEmail:
+          type: string
+          example: null
+        registrationMacAddress:
+          type: string
+          example: "99-99-99-99-99-99"
+        returning:
+          type: string
+          example: null
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "visitante@mambowifi.com"
+            name:
+              type: string
+              example: "Teste User"
+            city:
+              type: string
+              example: "Campinas"
+            document:
+              type: string
+              example: "27658434817"
+        social:
+          type: object
+          example: 
+        employee:
+          type: string
+          example: null
+        id:
+          type: integer
+          example: 18
+    GuestV2CreateRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          example: "@#123&&*%SA"
+        status:
+          type: integer
+          example: 1
+        registrationMacAddress:
+          type: string
+          example: "99-99-99-99-99-99"
+        group:
+          type: string
+          example: "Visitantes"
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "visitante@mambowifi.com"
+            name:
+              type: string
+              example: "Teste User"
+            city:
+              type: string
+              example: "Campinas"
+            document:
+              type: integer
+              example: "27658434817"
+        sendWelcomeSMS:
+          type: boolean
+          example: true
+    GuestV2CreateBulkRequest:
+      type: array
+      items:
+        type: object
+        properties:
+          password:
+            type: string
+            example: "@#123&&*%SA"
+          status:
+            type: integer
+            example: 1
+          registrationMacAddress:
+            type: string
+            example: "99-99-99-99-99-99"
+          group:
+            type: string
+            example: "Visitantes"
+          properties:
+            type: object
+            properties:
+              email:
+                type: string
+                example: "visitante@mambowifi.com"
+              name:
+                type: string
+                example: "Teste User"
+              city:
+                type: string
+                example: "Campinas"
+              document:
+                type: integer
+                example: "27658434817"
+          sendWelcomeSMS:
+            type: boolean
+            example: true
+    GuestV2CreateBulkResponse:
+      type: object
+      properties:
+        hasErrors:
+          type: boolean
+          example: false
+        successTotal:
+          type: integer
+          example: 2
+        errorsTotal:
+          type: integer
+        errors:
+          type: object
+    GuestsV2200:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        totalOfPages:
+          type: integer
+          example: 10
+        totalOfElements:
+          type: integer
+          example: 120
+        limitPerPage:
+          type: string
+          example: 100
+        order:
+          type: string
+          example: desc
+        elements:
+          type: array
+          items:
+            type: object
+            properties:
+              created:
+                type: object
+                properties:
+                  date:
+                    type: string
+                    example: "2017-01-02 13:32:22.206000"
+                  timezone_type:
+                    type: integer
+                    example: 3
+                  timezone:
+                    type: string
+                    example: "America/Sao_Paulo"
+              group:
+                type: string
+                example: "guest"
+              validated:
+                type: boolean
+                example: null
+              lastAccess:
+                type: string
+                example: null
+              status:
+                type: integer
+                example: 2
+              locale:
+                type: string
+                example: "pt_br"
+              documentType:
+                type: string
+                example: "CPF"
+              authorizeEmail:
+                type: string
+                example: null
+              registrationMacAddress:
+                type: string
+                example: "AA-BB-CC-DD-EE-FF"
+              returning:
+                type: string
+                example: null
+              properties:
+                type: object
+                properties:
+                  email:
+                    type: string
+                    example: "visitante@mambowifi.com"
+                  name:
+                    type: string
+                    example: "Antônio Sousa"
+                  city:
+                    type: string
+                    example: "Campinas"
+                  document:
+                    type: string
+                    example: "31546840265"
+              social:
+                type: object
+                example: null
+              employee:
+                type: string
+                example: null
+              id:
+                type: integer
+                example: 18
+        nextLink:
+          type: string
+          example: "/api/v2/guests?page=2&limit=1&sort=desc"
+        previusLink:
+          type: string
+          example: null
+          
+    DeviceEntries:
+      type: object
+      properties:
+        mac_address:
+          type: string
+          example: "AA-BB-CC-DD-EE-FF"
+        os:
+          type: string
+          exemple: "Linux"
+        plataform:
+          type: string
+          example: "PC"
+        created:
+          type: integer
+          example: 1613648309
+        lastAccess:
+          type: integer
+          example: 1613648309
+          
+    GuestV2GroupUpdateRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1
+        group:
+          type: string
+          example: "Grupo padrão"
+        properties:
+          type: object
+          properties:
+            email:
+              type: string
+              example: "contato@mambowifi.com"
+            name:
+              type: string
+              example: "José Silva"

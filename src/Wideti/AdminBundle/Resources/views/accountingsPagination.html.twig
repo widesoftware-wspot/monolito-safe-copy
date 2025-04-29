@@ -1,0 +1,59 @@
+{% set urlParams = app.request.query.all %}
+
+<div class="pagination pagination-small pull-right" style="margin: 0;">
+    <ul>
+      {% if pagination.total > 0 %}
+          {% if (pagination['currentPage'] == 1) and (pagination.total > 0) %}
+              <li class="prev disabled">
+                  <a>Primeira</a>
+              </li>
+              <li class="disabled">
+                  <a>&laquo;</a>
+              </li>
+          {% else %}
+              <li class="prev">
+                  <a href="{{ path(route,{'page':1, 'id': id}|merge(urlParams) )}}" title="Primeira página">
+                      Primeira
+                  </a>
+              </li>
+              <li>
+                  <a href="{{ path(route,{'page':pagination['previousPage'], 'id': id}|merge(urlParams) )}}" title="página anterior" >
+                         &laquo;
+                  </a>
+              </li>
+          {% endif %}
+      {% endif %}
+
+      {% for page in pagination['pages']%}
+         {% if pagination['currentPage'] == page  %}
+             <li class="active">
+         {% else %}
+             <li>
+         {% endif %}
+                <a href="{{ path(route,{'page': page, 'id': id}|merge(urlParams) )}}">{{ page }}</a>
+            </li>
+      {% endfor %}
+
+      {% if pagination.total > 0 %}
+          {% if pagination['currentPage'] == pagination['lastPage'] %}
+             <li class="disabled">
+                 <a>&raquo;</a>
+             </li>
+             <li class="next disabled">
+                 <a>Última</a>
+          {% else %}
+             <li>
+                 <a href="{{ path(route,{'page':pagination['nextPage'], 'id': id}|merge(urlParams) )}}" title="próxima página">
+                     &raquo;
+                 </a>
+             </li>
+             <li class="next">
+                 <a href="{{ path(route,{'page':pagination['lastPage'], 'id': id}|merge(urlParams) )}}"title="próxima página">
+                     Última
+                 </a>
+          {% endif %}
+      {% endif %}
+    </ul>
+</div>
+
+<div class="clearfix"></div>

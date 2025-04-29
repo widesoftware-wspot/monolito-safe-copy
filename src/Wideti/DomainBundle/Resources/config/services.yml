@@ -1,0 +1,2513 @@
+services:
+
+  Wideti\DomainBundle\DataFixtures\ORM\Test\TestFixtures:
+      tags: ['doctrine.fixture.orm']
+
+  Wideti\DomainBundle\DataFixtures\ODM\Test\TestFixtures:
+      tags: ['doctrine.fixture.odm']
+
+  ## Form
+
+  core.form.guest_field:
+      class: Wideti\DomainBundle\Form\GuestFieldType
+      calls:
+            - [ setTranslatorService, ["@translator"] ]
+      tags:
+          - { name: form.type, alias: wspot_guest_field }
+
+  ## Services
+
+
+  core.service.get_consent_gateway:
+    class: Wideti\DomainBundle\Gateways\Consents\GetConsentGateway
+    arguments:
+      - "%consent_service_host%"
+      - "@core.repository.circuit_breaker"
+    calls:
+      - [ setLogger, ["@logger"] ]
+
+  core.service.list_signature_gateway:
+    class: Wideti\DomainBundle\Gateways\Consents\ListSignatureGateway
+    arguments:
+      - "%consent_service_host%"
+      - "@core.repository.circuit_breaker"
+    calls:
+      - [ setLogger, [ "@logger" ] ]
+
+  core.service.revoke_signed_consent_gateway:
+    class: Wideti\DomainBundle\Gateways\Consents\RevokeSignedConsentGateway
+    arguments:
+      - "%consent_service_host%"
+      - "@core.repository.circuit_breaker"
+    calls:
+      - [ setLogger, ["@logger"] ]
+
+  core.service.post_consent_gateway:
+    class: Wideti\DomainBundle\Gateways\Consents\PostConsentGateway
+    arguments:
+      - "%consent_service_host%"
+      - "@core.repository.circuit_breaker"
+    calls:
+      - [ setLogger, [ "@logger" ] ]
+
+  core.service.post_session_gateway:
+    class: Wideti\DomainBundle\Gateways\Sessions\PostSessionGateway
+    arguments:
+      - "%session_service_host%"
+    calls:
+      - [ setLogger, [ "@logger" ] ]
+
+  core.service.load_survey_gateway:
+    class: Wideti\DomainBundle\Gateways\Survey\GetSurveyGateway
+    arguments:
+      - "%answer_survey_backend%"
+    calls:
+      - [ setLogger, [ "@logger" ] ]
+
+  core.service.redirect_url:
+    class: Wideti\DomainBundle\Service\RedirectUrl\RedirectUrlServiceImp
+    arguments: ['@core.service.campaign_selector', '@core.service.configuration']
+
+  core.service.select_database:
+    class: Wideti\DomainBundle\Service\MongoDatabase\MongoDatabase
+    arguments: ["@doctrine_mongodb.odm.default_document_manager"]
+    tags:
+        - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+
+  core.service.cpfvalidate:
+    class: Wideti\DomainBundle\Validator\CpfValidate
+
+  core.service.mikrotik:
+    class: Wideti\DomainBundle\Service\Mikrotik\MikrotikService
+    calls:
+      - [ setTemplate, ["@templating"] ]
+
+  core.service.unifi:
+    class: Wideti\DomainBundle\Service\Unifi\UnifiService
+    calls:
+      - [ setTemplate, [ "@templating" ] ]
+
+  core.service.send_nas_configuration:
+      class: Wideti\DomainBundle\Service\EmailConfigNas\EmailConfigNasService
+      calls:
+        - [ setMailerService, ["@core.service.mailer"] ]
+        - [ setEmailHeader, ["@core.service.email_header"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setMikrotikService, ["@core.service.mikrotik"] ]
+        - [ setConfigurationService, ["@core.service.configuration"] ]
+
+  core.unique.service.auth_code_validator:
+    class: Wideti\DomainBundle\Validator\Constraints\AuthCodeValidator
+    calls:
+        - [ setAuthorizationCodeService, ["@core.service.authorization_code"] ]
+        - [ setTranslatorService, ["@translator"] ]
+    tags:
+        - { name: validator.constraint_validator, alias: auth_code_validator }
+
+  core.unique.service.custom_fields_validator:
+    class: Wideti\DomainBundle\Validator\Constraints\CustomFieldsValidator
+    calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setTranslatorService, ["@translator"] ]
+        - [ setSession, ["@session"] ]
+    tags:
+        - { name: validator.constraint_validator, alias: custom_fields_validator }
+
+  core.unique.service.domain_email_validator:
+    class: Wideti\DomainBundle\Validator\Constraints\DomainEmailIsValidValidator
+    calls:
+        - [ setTranslatorService, ["@translator"] ]
+    tags:
+        - { name: validator.constraint_validator, alias: domain_email_validator }
+
+  core.unique.service.email_validator:
+    class: Wideti\DomainBundle\Validator\Constraints\EmailIsValidValidator
+    calls:
+        - [ setTranslatorService, ["@translator"] ]
+    tags:
+        - { name: validator.constraint_validator, alias: email_validator }
+
+  core.service.module:
+    class: Wideti\DomainBundle\Service\Module\ModuleService
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setSession, ["@session"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+      - [ setLogger, ["@logger"] ]
+
+  core.service.user:
+    class: Wideti\DomainBundle\Service\User\UserServiceProxy
+    arguments:
+      - "@core.service.configuration"
+      - "@wspot.helper.controller"
+      - "@wspot.white_label"
+      - "@core.service.erp"
+      - "@core.service.cache"
+      - "@core.service.client"
+      - "@core.repository.user"
+      - "@logger"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setPasswordService, ["@web_framework.service.password"] ]
+      - [ setSession, ["@session"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+
+  core.service.accesspoints:
+    class: Wideti\DomainBundle\Service\AccessPoints\AccessPointsService
+    arguments:
+      - "@core.service.cache"
+      - "@core.repository.access_points"
+      - "@logger"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+      - [ setVendor, ["@core.service.vendor"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+      - [ setSession, ["@session"] ]
+
+  core.service.accesspointsgroups:
+    class: Wideti\DomainBundle\Service\AccessPointsGroups\AccessPointsGroupsService
+    arguments:
+      - "@core.service.configuration"
+      - "@core.repository.client"
+      - "@core.service.cache"
+      - "@core.repository.access_points_groups"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setSession, ["@session"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+
+  core.service.get_access_points_groups:
+    class: Wideti\DomainBundle\Service\AccessPointsGroups\GetAccessPointsGroupsService
+    arguments:
+      - "@core.repository.access_points_groups"
+
+  core.service.guest:
+    class: Wideti\DomainBundle\Service\Guest\GuestService
+    arguments:
+      - "@core.repository.guest"
+      - "@core.service.radacct_report"
+      - "@core.service.configuration"
+      - "@service_container"
+      - "@core.service.cache"
+      - "@core.service.timezone"
+      - "@core.service.guest_to_acct_processor_send"
+      - "@core.service.guest_devices"
+      - "@core.service.bounced_validation"
+      - "%bounce_validator_active%"
+      - "@core.service.hubsoft"
+      - "@core.service.Ixc"
+      - "@core.service.audit_log_internal"
+
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setSession, ["@session"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setRadcheckService, ["@core.service.radcheck"] ]
+      - [ setEventDispatcher, ["@event_dispatcher"] ]
+      - [ setGuestSocialService, ["@core.service.guestSocial"] ]
+      - [ setTranslatorService, ["@translator"] ]
+      - [ setLogger, ["@logger"] ]
+      - [ setModuleService, ["@core.service.module"] ]
+      - [ setRouter, ["@router"] ]
+      - [ setGroupService, ["@core.service.group"]]
+      - [ setForm, ["@form.factory"] ]
+      - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+      - [ setNasService, ["@core.service.nas"] ]
+      - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"   ] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+
+  core.service.client:
+      class: Wideti\DomainBundle\Service\Client\ClientService
+      arguments:
+        - "@core.service.configuration"
+        - "@core.service.cache"
+        - "@core.service.erp"
+        - "@core.service.client_logs"
+        - "@core.service.api_wspot"
+        - "@core.service.white_label"
+        - "@core.service.access_code"
+        - "%sms_cost%"
+        - "@core.service.post_consent_gateway"
+        - "@core.service.legal_base_manager_service"
+      calls:
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setTemplateService, ["@core.service.template"] ]
+        - [ setPasswordService, ["@web_framework.service.password"] ]
+        - [ setDocumentManager, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+        - [ setUserService, ["@core.service.user"] ]
+        - [ setAccessPointsGroupsService, ["@core.service.accesspointsgroups"] ]
+        - [ setRdStationService, ["@core.service.rdstation"] ]
+        - [ setConfigurationService, ["@core.service.configuration"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setMailerService, ["@core.service.mailer"] ]
+        - [ setEmailHeader, ["@core.service.email_header"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setSession, ["@session"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+
+  core.service.group_hierarchy_count:
+      class: Wideti\DomainBundle\Service\AccessPointsGroups\GroupHierarchyCountService
+      arguments:
+        - "@core.repository.access_points_groups"
+
+  core.service.select_client_request:
+    class: Wideti\DomainBundle\Service\Client\SelectClientByRequestServiceImp
+    arguments: ['@core.service.client']
+
+  core.service.select_client_domain:
+    class: Wideti\DomainBundle\Service\Client\SelectClientByDomainServiceImp
+    arguments: ['@core.service.client']
+
+  core.service.client_status:
+    class: Wideti\DomainBundle\Service\Client\ClientStatusServiceImp
+    arguments: ['@doctrine.orm.entity_manager', '@core.service.client_logs']
+
+  core.service.guestSocial:
+    class: Wideti\DomainBundle\Service\GuestSocial\GuestSocialService
+    calls:
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setSession, ["@session"] ]
+      - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+  core.service.radcheck:
+    class: Wideti\DomainBundle\Service\Radcheck\RadcheckService
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setSession, ["@session"] ]
+
+  core.service.sms_gateway:
+    class: Wideti\DomainBundle\Service\Sms\SmsGatewayServiceImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+
+  core.service.configuration:
+    class: Wideti\DomainBundle\Service\Configuration\ConfigurationServiceImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@doctrine_mongodb.odm.default_document_manager"
+      - "@core.repository.configuration"
+      - "@core.service.cache"
+      - "@session"
+      - "@core.service.radcheck"
+      - "@monolog.logger"
+      - "@core.service.sms_verificator"
+      - "%google_client_id%"
+      - "%google_client_secret%"
+      - "%google_url_callback%"
+      - "@core.service.accessPointsConfigurations"
+      - "@core.service.guest_devices"
+    calls:
+        - [ setSecurityContext, ["@security.token_storage"] ]
+
+  core.service.get_group_configuration:
+    class: Wideti\DomainBundle\Service\Configuration\GetGroupConfigurationService
+    arguments:
+      - "@core.repository.configuration"
+
+  core.service.get_contract_by_type:
+    class: Wideti\DomainBundle\Service\Contract\GetContractByTypeService
+    arguments:
+      - "@core.repository.contract"
+
+  core.service.get_user_that_confirmed_sms_cost_contract_service:
+    class: Wideti\DomainBundle\Service\Contract\GetUserThatConfirmedSmsCostContractService
+    arguments:
+      - "@core.repository.contract_user"
+
+  core.service.sms_verificator:
+    class: Wideti\DomainBundle\Service\Sms\SmsVerificationImp
+    arguments: ["%max_number_sms_sending_poc%", "@doctrine.orm.entity_manager", "@session"]
+
+  core.service.sms_history:
+    class: Wideti\DomainBundle\Service\Sms\SmsHistoryImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+
+  core.service.template:
+    class: Wideti\DomainBundle\Service\Template\TemplateService
+    arguments: ["%aws_bucket_name%", "@core.service.configuration", "@core.service.template_selector", "@core.service.cache", "@logger"]
+    calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setFileUpload, ["@file_uploader"] ]
+        - [ setValidator, ["@validator"] ]
+
+  core.service.templateImageLogo:
+      class: Wideti\DomainBundle\Service\Template\PartnerLogo
+      calls:
+          - [ setTemplateService, ["@core.service.template"] ]
+
+  core.service.templateImagePortrait:
+      class: Wideti\DomainBundle\Service\Template\PortraitImage
+      calls:
+          - [ setTemplateService, ["@core.service.template"] ]
+
+  core.service.templateImageLandscape:
+      class: Wideti\DomainBundle\Service\Template\LandscapeImage
+      calls:
+          - [ setTemplateService, ["@core.service.template"] ]
+
+  core.service.contract:
+    class: Wideti\DomainBundle\Service\Contract\ContractService
+    calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMailerService, ["@core.service.mailer"] ]
+        - [ setEmailHeader, ["@core.service.email_header"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setSession, ["@session"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+
+  core.service.media_image:
+    class: Wideti\DomainBundle\Service\Media\ImageServiceImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@core.service.configuration"
+      - "@validator"
+      - "@file_uploader"
+      - "%aws_bucket_name%"
+    calls:
+      - [ setSession, ["@session"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+
+  core.service.media_video:
+    class: Wideti\DomainBundle\Service\Media\VideoServiceImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@core.service.configuration"
+      - "@validator"
+      - "@file_uploader"
+      - "%video_bucket_source_on_s3%"
+      - "%video_bucket_destination_on_s3%"
+    calls:
+      - [ setSession, ["@session"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+
+  core.service.campaign:
+    class: Wideti\DomainBundle\Service\Campaign\CampaignService
+    arguments:
+      - "@core.service.configuration"
+      - "@core.service.cache"
+      - "@core.repository.campaign_views"
+      - "@core.repository.campaign"
+      - "@logger"
+      - "@doctrine.orm.entity_manager"
+      - "@core.sns_service"
+      - "@core.service.media_image"
+      - "@core.service.media_video"
+      - "%allowed_domains%"
+      - "%hook_enable%"
+      - "%matchspot_sns_hook_arn%"
+    calls:
+      - [ setSession, ["@session"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+
+  core.service.persist_call_to_action:
+    class: Wideti\DomainBundle\Service\CampaignCallToAction\PersistCallToActionService
+    arguments: ['@core.repository.persist_call_to_action', "@logger"]
+
+  core.service.active_campaign_count_service:
+    class: Wideti\DomainBundle\Service\Campaign\ActiveCampaignCountService
+    arguments:
+      - "@core.repository.campaign"
+
+  core.service.inactive_campaign_count_service:
+    class: Wideti\DomainBundle\Service\Campaign\InactiveCampaignCountService
+    arguments:
+      - "@core.repository.campaign"
+
+  core.service.create_call_to_action_access_data:
+      class: Wideti\DomainBundle\Service\CampaignCallToAction\CreateAccessDataService
+      arguments: ["@core.repository.call_to_action_access_data"]
+
+  core.service.search_access_points_and_groups:
+      class: Wideti\DomainBundle\Service\SearchAccessPointsAndGroups\SearchAccessPointsAndGroupsImp
+      arguments: ['@doctrine.orm.entity_manager', "@doctrine.odm.mongodb.document_manager"]
+
+  core.service.campaign_selector:
+    class: Wideti\DomainBundle\Service\Campaign\CampaignSelectorServiceImp
+    calls:
+      - [registerSelector, ['@core.campaign_selector.ssid_and_access_point']]
+      - [registerSelector, ['@core.campaign_selector.ssid']]
+      - [registerSelector, ['@core.campaign_selector.access_point']]
+      - [registerSelector, ['@core.campaign_selector.access_point_group']]
+      - [registerSelector, ['@core.campaign_selector.all']]
+
+  core.campaign_selector.ssid_and_access_point:
+    class: Wideti\DomainBundle\Service\Campaign\Selectors\SsidAndAccessPointCampaignSelector
+    arguments: ['@doctrine.orm.entity_manager']
+
+  core.campaign_selector.ssid:
+    class: Wideti\DomainBundle\Service\Campaign\Selectors\SsidCampaignSelector
+    arguments: ['@doctrine.orm.entity_manager']
+
+  core.campaign_selector.access_point:
+    class: Wideti\DomainBundle\Service\Campaign\Selectors\AccessPointCampaignSelector
+    arguments: ['@doctrine.orm.entity_manager']
+
+  core.campaign_selector.access_point_group:
+    class: Wideti\DomainBundle\Service\Campaign\Selectors\AccessPointGroupCampaignSelector
+    arguments: ['@doctrine.orm.entity_manager']
+
+  core.campaign_selector.all:
+      class: Wideti\DomainBundle\Service\Campaign\Selectors\AllAccessPointsCampaignSelector
+      arguments: ['@doctrine.orm.entity_manager']
+
+  core.service.template_selector:
+    class: Wideti\DomainBundle\Service\Template\TemplateSelector\TemplateSelectorManager
+    calls:
+      - [addSelector, ['@core.service.template_selector.campaign']]
+      - [addSelector, ['@core.service.template_selector.access_point']]
+      - [addSelector, ['@core.service.template_selector.access_point_group']]
+      - [addSelector, ['@core.service.template_selector.client_default']]
+
+  core.service.template_selector.campaign:
+    class: Wideti\DomainBundle\Service\Template\TemplateSelector\CampaignTemplateSelector
+    arguments: ['@doctrine.orm.entity_manager']
+
+  core.service.template_selector.access_point:
+    class: Wideti\DomainBundle\Service\Template\TemplateSelector\AccessPointTemplateSelector
+    arguments: ['@doctrine.orm.entity_manager']
+
+  core.service.template_selector.access_point_group:
+      class: Wideti\DomainBundle\Service\Template\TemplateSelector\AccessPointGroupTemplateSelector
+      arguments: ['@doctrine.orm.entity_manager','@core.service.accesspointsgroups']
+
+  core.service.template_selector.client_default:
+    class: Wideti\DomainBundle\Service\Template\TemplateSelector\DefaultTemplateSelector
+    arguments: ['@doctrine.orm.entity_manager']
+
+  core.service.report_builder:
+    class: Wideti\DomainBundle\Service\ReportBuilder\ReportBuilderService
+    calls:
+        - [ setSession, ["@session"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+
+  core.service.sms_marketing:
+    class: Wideti\DomainBundle\Service\SmsMarketing\SmsMarketingServiceImp
+    arguments:
+      - "@service_container"
+      - "@session"
+      - "@wspot.helper.sms_marketing_helper"
+      - "@logger"
+      - "%sms_marketing_api_host%"
+      - "@core.service.audit_log_internal"
+
+  core.service.sms_marketing_report:
+    class: Wideti\DomainBundle\Service\SmsMarketing\SmsMarketingReportServiceImp
+    arguments:
+      - "@logger"
+      - "%sms_marketing_report_api_host%"
+
+  core.service.url_shortner:
+    class: Wideti\DomainBundle\Service\UrlShortner\UrlShortnerServiceImp
+    arguments:
+      - "@logger"
+      - "%url_shortner_api_host%"
+
+  core.service.url_shortner_report:
+    class: Wideti\DomainBundle\Service\UrlShortner\UrlShortnerReportServiceImp
+    arguments:
+      - "@logger"
+      - "%url_shortner_report_api_host%"
+
+  core.service.auth:
+    class: Wideti\DomainBundle\Service\Auth\AuthService
+    arguments:
+      - "@core.service.configuration"
+      - "@session"
+      - "@core.service.cache"
+      - "@core.service.guest_devices"
+    calls:
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setRadacctService, ["@core.service.radacct"] ]
+        - [ setLogger, ["@logger"]]
+
+  core.service.authorization_token:
+    class: Wideti\DomainBundle\Service\Auth\AuthorizationToken\AuthorizationToken
+    arguments:
+      - "@core.service.module"
+      - "@session"
+      - "%jwt_signature%"
+
+  core.service.signin:
+    class: Wideti\DomainBundle\Service\SignIn\SignInService
+    arguments: ["@core.service.configuration", "@core.service.cache"]
+    calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+        - [ setTranslatorService, ["@translator"] ]
+        - [ setGuestService, ["@core.service.guest"] ]
+        - [ setSession, ["@session"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+        - [ setEventDispatcher, ["@event_dispatcher"] ]
+        - [ setNasService, ["@core.service.nas"] ]
+
+  core.service.mail_report:
+    class: Wideti\DomainBundle\Service\MailReport\MailReportService
+    arguments:
+      - "@core.service.configuration"
+      - "@core.service.guest_devices"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+      - [ setReportRepository, ["@core.repository.elasticsearch.report"] ]
+      - [ setTranslatorService, ["@translator"] ]
+
+  core.service.register_access_points:
+    class: Wideti\DomainBundle\Service\RegisterAccessPoints\RegisterAccessPointsService
+    arguments: ["@core.service.white_label"]
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+      - [ setLogger, ["@logger"] ]
+
+  core.service.access_point_api_validator:
+    class: Wideti\DomainBundle\Service\AccessPoints\AccessPointApiValidatorImp
+    arguments:
+      - '@core.service.vendor'
+      - '@core.repository.template'
+      - '@core.repository.access_points_groups'
+      - '@core.repository.access_points'
+      - '@core.repository.client'
+
+  core.service.access_point_build_entity_dto:
+    class: Wideti\DomainBundle\Service\AccessPoints\BuildAccessPointFromApiCreateDtoServiceImp
+    arguments:
+      - "@core.repository.template"
+      - "@core.repository.access_points_groups"
+      - "@core.repository.access_points"
+
+  core.service.delete_client:
+    class: Wideti\DomainBundle\Service\DeleteClient\DeleteClientService
+    arguments:
+      - "%aws_bucket_name%"
+      - "@core.service.guest_to_acct_processor_remove"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setEventDispatcher, ["@event_dispatcher"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setFileUpload, ["@file_uploader"] ]
+      - [ setValidator, ["@validator"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+      - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+
+  core.service.delete_inactive_clients:
+    class: Wideti\DomainBundle\Service\DeleteInactiveClients\DeleteInactiveClientsService
+    arguments:
+      - "%aws_bucket_name%"
+      - "%delete_inactive_clients_period%"
+      - "@core.service.erp"
+      - "@core.service.client_logs"
+      - "@core.service.guest_to_acct_processor_remove"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setFileUpload, ["@file_uploader"] ]
+      - [ setValidator, ["@validator"] ]
+      - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+      - [ setLogger, ["@logger"] ]
+
+  core.service.aggregate_campaign_views:
+    class: Wideti\DomainBundle\Service\CampaignViews\AggregateViewsService
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@logger"
+
+  core.service.delete_guests:
+    class: Wideti\DomainBundle\Service\DeleteGuests\DeleteGuestsService
+    arguments: ["@core.service.guest_to_acct_processor_remove"]
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"   ] ]
+
+  core.service.delete_guests_accountings:
+      class: Wideti\DomainBundle\Service\DeleteGuestsAndAccountings\DeleteGuestsAndAccountingsService
+      arguments: ["@core.service.guest_to_acct_processor_remove"]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEventDispatcher, ["@event_dispatcher"] ]
+        - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+        - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+
+  core.service.delete_guests_without_access:
+    class: Wideti\DomainBundle\Service\DeleteGuestsWithoutAccess\DeleteGuestsWithoutAccessService
+    arguments: ["@core.service.guest_to_acct_processor_remove"]
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+      - [ setLogger, ["@logger"] ]
+
+  core.service.delete_client_accountings:
+    class: Wideti\DomainBundle\Service\DeleteAccountingsByClient\DeleteAccountingsByClientService
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setEventDispatcher, ["@event_dispatcher"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+
+  core.service.delete_device_guest_accountings:
+    class: Wideti\DomainBundle\Service\DeleteAccountingsByDeviceByGuest\DeleteAccountingsByDeviceByGuestService
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setEventDispatcher, ["@event_dispatcher"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+
+  core.service.dns:
+    class: Wideti\DomainBundle\Service\Dns\DnsService
+    arguments: ["%aws_key%", "%aws_secret%"]
+
+  core.service.rdstation:
+     class: Wideti\DomainBundle\Service\RDStation\RDStationService
+     arguments: ["%rd_station_auth_token%"]
+
+  core.service.erp:
+    class: Wideti\DomainBundle\Service\Erp\ErpServiceImp
+    arguments: ["%superlogica_access_token%", "%superlogica_app_token%", "@core.service.http_request_service", "@logger", "@core.service.roles"]
+
+  core.service.client_logs:
+    class: Wideti\DomainBundle\Service\ClientLogs\ClientLogServiceImp
+    arguments: ["@core.service.elastic_search", "@logger"]
+
+  core.service.watchdog_development:
+    class: Wideti\DomainBundle\Service\Watchdog\DevelopmentReport
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+      - [ setLogger, ["@logger"] ]
+
+  core.service.watchdog_clients_are_not_using:
+    class: Wideti\DomainBundle\Service\Watchdog\ClientsAreNotUsingReport
+    arguments: ["@doctrine_mongodb.odm.default_document_manager"]
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+
+  core.service.inactivateExpiredTrials:
+      class: Wideti\DomainBundle\Service\Trials\InactivateExpiredTrials
+      arguments: ["@core.service.white_label"]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setMailerService, ["@core.service.mailer"] ]
+        - [ setEmailHeader, ["@core.service.email_header"] ]
+
+  core.service.sms_billing:
+      class: Wideti\DomainBundle\Service\SmsBilling\SmsBillingService
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMailerService, ["@core.service.mailer"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setFileUpload, ["@file_uploader"] ]
+        - [ setEmailHeader, ["@core.service.email_header"] ]
+        - [ setMongoDocumentManager, ["@doctrine.odm.mongodb.document_manager"] ]
+
+  core.service.create_billing_control:
+      class: Wideti\DomainBundle\Service\SMSBillingControl\CreateBillingService
+      arguments: [ "@core.repository.sms_billing_control" ]
+
+  core.service.sms_credit:
+    class: Wideti\DomainBundle\Service\SmsCredit\SmsCreditServiceImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+
+  core.service.date_interval_management_control:
+    class: Wideti\DomainBundle\Service\SMSBillingControl\DateIntervalManagementService
+    arguments: [ "@core.repository.sms_billing_control", "@core.service.last_billing_date" ]
+
+  core.service.last_billing_date:
+    class: Wideti\DomainBundle\Service\SMSBillingControl\LastBillingDateService
+    arguments: [ "@core.repository.sms_billing_control" ]
+
+  core.service.change_status_control:
+      class: Wideti\DomainBundle\Service\SMSBillingControl\ChangeStatusService
+      arguments: [ "@core.repository.sms_billing_control" ]
+
+  core.service.billing_exists_control:
+      class: Wideti\DomainBundle\Service\SMSBillingControl\BillingExistsService
+      arguments: [ "@core.repository.sms_billing_control" ]
+
+  core.service.billing_manager_control:
+      class: Wideti\DomainBundle\Service\SMSBillingControl\BillingManager
+      arguments: [ "@core.service.date_interval_management_control", "@core.repository.sms_billing_control", "@core.service.billing_exists_control", "@core.service.create_billing_control" ]
+
+  core.service.billing_filter_control:
+      class: Wideti\DomainBundle\Service\SMSBillingControl\FilterService
+      arguments: [ "@core.repository.sms_billing_control" ]
+
+  core.service.sms_billing_by_month:
+      class: Wideti\DomainBundle\Service\SmsBilling\SmsBillingByMonthService
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMailerService, ["@core.service.mailer"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setFileUpload, ["@file_uploader"] ]
+        - [ setEmailHeader, ["@core.service.email_header"] ]
+        - [ setMongoDocumentManager, ["@doctrine.odm.mongodb.document_manager"] ]
+
+  core.service.client_selector:
+    class: Wideti\DomainBundle\Service\ClientSelector\ClientSelectorService
+    arguments: ["%environments_available_subdomains%"]
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setSession, ["@session"] ]
+
+  core.service.access_code:
+    class: Wideti\DomainBundle\Service\AccessCode\AccessCodeServiceImp
+    arguments:
+      - "%aws_bucket_name%"
+      - "@core.service.configuration"
+      - "@core.service.cache"
+      - "@core.repository.access_code"
+      - "@core.repository.access_code_codes"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setSession, ["@session"] ]
+      - [ setSecurityContext, ["@security.token_storage"] ]
+      - [ setRadcheckService, ["@core.service.radcheck"] ]
+      - [ setTranslatorService, ["@translator"] ]
+      - [ setModuleService, ["@core.service.module"] ]
+      - [ setRadacctService, ["@core.service.radacct"] ]
+      - [ setFileUpload, ["@file_uploader"] ]
+      - [ setValidator, ["@validator"] ]
+      - [ setGuestService, ["@core.service.guest"] ]
+
+  core.service.authorization_code:
+    class: Wideti\DomainBundle\Service\AuthorizationCode\AuthorizationCodeService
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setSession, ["@session"] ]
+
+  core.service.oauth_login:
+    class: Wideti\DomainBundle\Service\OAuthLogin\OAuthLoginService
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setSession, ["@session"] ]
+
+  core.service.vendor:
+    class: Wideti\DomainBundle\Service\Vendor\VendorService
+    arguments: ["@core.repository.vendor","@core.repository.access_points"]
+
+  core.service.sms:
+    class: Wideti\DomainBundle\Service\GuestNotification\Senders\SmsService
+    arguments:
+      - "%max_number_sms_sending_poc%"
+      - "@core.service.notification.sms_limit_reached"
+      - "@core.service.sms_gateway"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setTranslatorService, ["@translator"] ]
+      - [ setSession, ["@session"] ]
+      - [ setMailerService, ["@core.service.mailer"] ]
+      - [ setEmailHeader, ["@core.service.email_header"] ]
+      - [ setTwilio, ["@=service('core.sms.twilio')"] ]
+      - [ setWavy, ["@=service('core.sms.wavy')"] ]
+      - [ setLogger, ["@logger"] ]
+
+  core.service.email:
+    class: Wideti\DomainBundle\Service\GuestNotification\Senders\EmailService
+    arguments: ["@wspot.white_label", "@core.service.configuration", "@session"]
+    calls:
+        - [ setMailerService, ["@core.service.mailer"] ]
+        - [ setEmailHeader, ["@core.service.email_header"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  core.service.elastic_search:
+    class: Wideti\DomainBundle\Service\ElasticSearch\ElasticSearch
+    arguments: ["%elastic_hosts%"]
+    calls:
+        - [ setSerializer, ["@jms_serializer"] ]
+
+  core.service.cache:
+    class: Wideti\DomainBundle\Service\Cache\CacheServiceImp
+    arguments: ["%cache_active%", "%cache_host%", "%cache_port%"]
+    calls:
+        - [ setClientSelectorService, ["@core.service.client_selector"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setSession, ["@session"] ]
+
+  core.service.policy_cache:
+    class: Wideti\DomainBundle\Service\Cache\PolicyCacheServiceImp
+    arguments: ["%policy_cache_active%", "%policy_cache_host%", "%policy_cache_port%"]
+    calls:
+        - [ setClientSelectorService, ["@core.service.client_selector"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setSession, ["@session"] ]
+
+  core.service.ap_cache:
+    class: Wideti\DomainBundle\Service\Cache\AccessPointsCacheServiceImp
+    arguments: [ "%ap_cache_active%", "%ap_cache_host%", "%ap_cache_port%" ]
+    calls:
+      - [ setClientSelectorService, [ "@core.service.client_selector" ] ]
+      - [ setLogger, [ "@logger" ] ]
+      - [ setSession, [ "@session" ] ]
+
+  core.service.policy:
+    class: Wideti\DomainBundle\Service\Policy\GetPolicyServiceImp
+    arguments:
+      - "@core.repository.elasticsearch.policy"
+
+  core.service.entity_logger:
+      class: Wideti\DomainBundle\Service\EntityLogger\EntityLoggerService
+      arguments: ["%elastic_hosts%"]
+      calls:
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setSerializer, ["@serializer"] ]
+      tags:
+        - { name: doctrine.event_listener, event: onFlush, method: onFlush }
+        - { name: doctrine_mongodb.odm.event_listener, event: preUpdate }
+
+  core.service.ap_change_name:
+      class: Wideti\DomainBundle\Service\AccessPointChangeName\AccessPointChangeName
+      arguments: ["%aws_key%", "%aws_secret%"]
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setSnsService, ["@core.sns_service"] ]
+        - [ setLogger, ["@logger"] ]
+      tags:
+        - { name: doctrine.event_listener, event: onFlush }
+
+  core.service.guest_api_validator:
+      class: Wideti\DomainBundle\Service\ApiEntityValidator\GuestApiValidator
+      arguments: ["@validator", "@core.service.accesspoints"]
+      calls:
+        - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+        - [ setCustomFieldValidator, ["@core.api.validate.custom_field_validator"]]
+        - [ setGuestService, ["@core.service.guest"] ]
+        - [ setGroupService, ["@core.service.group"] ]
+
+  core.service.segmentation_api_validator:
+      class: Wideti\DomainBundle\Service\ApiEntityValidator\SegmentationApiValidator
+      arguments: ["@validator"]
+      calls:
+        - [ setGuestService, ["@core.service.guest"] ]
+
+  core.service.email_header:
+      class: Wideti\DomainBundle\Service\Mail\MailHeaderService
+      arguments: ["%email_sender%", "%email_admin_recipient%", "%email_financial_recipient%", "%email_commercial_recipient%", "%email_support_recipient%", "%email_developers_recipient%"]
+
+  core.service.signup:
+    class: Wideti\DomainBundle\Service\SignUp\SignUpService
+    arguments:
+      - "@core.service.configuration"
+      - "@session"
+      - "@core.service.cache"
+    calls:
+        - [setGuestService, ["@core.service.guest"]]
+
+  core.service.mailchimp:
+    class: Wideti\DomainBundle\Service\Mailchimp\MailchimpService
+    arguments: ["%mailchimp_api_key%", "%mailchimp_list_id%"]
+    calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  core.service.group:
+    class: Wideti\DomainBundle\Service\Group\GroupService
+    arguments: [ "@core.repository.access_points" ]
+    calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"]]
+        - [ setPaginator, ["@knp_paginator"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  core.service.two_factor_auth_hapvida:
+      class: Wideti\DomainBundle\Service\TwoFactorAuth\TwoFactorAuthServiceHapVida
+      arguments: ["@doctrine.orm.entity_manager", "@core.service.http_request_service", "@session"]
+
+  core.service.two_factor_auth_accesscode:
+      class: Wideti\DomainBundle\Service\TwoFactorAuth\TwoFactorAuthServiceAccessCode
+      arguments: ["@doctrine.orm.entity_manager", "@core.service.module", "@core.service.http_request_service", "@core.service.access_code", "@session"]
+
+  core.service.http_request_service:
+      class: Wideti\DomainBundle\Service\HttpRequest\HttpRequestServiceImp
+      arguments: ["@core.factory.guzzle"]
+
+  core.service.firts_config:
+      class: Wideti\DomainBundle\Service\FirstConfig\FirstConfigServiceImp
+      arguments: ["@core.service.custom_fields", '@core.service.client']
+
+  core.service.nas:
+      class: Wideti\DomainBundle\Service\NasManager\NasService
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setGuestService, ["@core.service.guest"] ]
+        - [ setLogger, ["@logger"] ]
+      properties:
+        rdIntegrationStep: "@nas.step.rd_integration"
+        egoiIntegrationStep: "@nas.step.egoi_integration"
+        accessCodeStep: "@nas.step.access_code"
+        guestGroupStep: "@nas.step.guest_group"
+        businessHoursStep: "@nas.step.business_hours"
+        policyStep: "@nas.step.policy"
+        authEventStep: "@nas.step.auth_event"
+        updateGuestLastAccessStep: "@nas.step.update_guest_last_access"
+        campaignStep: "@nas.step.campaign"
+        controllerHelper: "@wspot.helper.controller"
+
+  core.service.roles:
+      class: Wideti\DomainBundle\Service\Roles\RolesServiceImp
+
+  core.service.accessPointsConfigurations:
+      class: Wideti\DomainBundle\Service\AccessPointsGroupsConfiguration\AccessPointsGroupsConfigurationServiceImp
+      arguments:
+        - "@doctrine.orm.entity_manager"
+        - "@logger"
+        - "@core.repository.configuration"
+
+  core.service.mac_address_authentication:
+    class: Wideti\DomainBundle\Service\MacAddressAuthentication\MacAddressAuthenticationImp
+    arguments:
+      - "@core.repository.elasticsearch.radacct"
+      - "@core.service.guest"
+      - "@core.service.analytics.frontend_log_manager"
+    calls:
+      - [ setForm, ["@form.factory"] ]
+      - [ setTemplate, ["@templating"] ]
+
+  core.service.fluentd:
+    class: Wideti\DomainBundle\Service\Fluentd\FluentdServiceImp
+    arguments:
+      - "%fluentd_host%"
+      - "%fluentd_port%"
+
+  core.service.auditor:
+    class: Wideti\DomainBundle\Service\AuditLogs\FluentdAuditor
+    arguments:
+      - "%audit_fluentd_port%"
+      - "%audit_fluentd_address%"
+      - "%audit_service_name%"
+      - "%audit_tag%"
+
+  core.service.consent:
+    class: Wideti\DomainBundle\Service\Consent\ConsentRequestImp
+    arguments:
+      - "@core.service.get_consent_gateway"
+      - "@core.service.list_signature_gateway"
+
+  core.service.rd_integration_validator:
+    class: Wideti\DomainBundle\Service\IntegrationValidator\RdIntegrationValidator
+    arguments:
+      - '@core.service.http_request_service'
+      - '%rd_station_conversion_endpoint%'
+
+  nas.step.access_code:
+       class: Wideti\DomainBundle\Service\NasManager\NasAccessCodeStep
+       arguments: ["@wspot.helper.controller", "@core.service.access_code", "%max_report_lines_poc%","@core.service.expiration_time","@core.service.analytics.frontend_log_manager"]
+       calls:
+         - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+         - [ setSession, ["@session"] ]
+         - [ setTemplate, ["@templating"] ]
+         - [ setModuleService, ["@core.service.module"] ]
+         - [ setRadcheckService, ["@core.service.radcheck"] ]
+         - [ setRouter, ["@router"] ]
+         - [ setTemplateService, ["@core.service.template"] ]
+         - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+
+  nas.step.guest_group:
+    class: Wideti\DomainBundle\Service\NasManager\NasGuestGroupStep
+    arguments:
+      - "%max_report_lines_poc%"
+      - "@core.service.accesspoints"
+      - "@core.service.expiration_time"
+      - "@wspot.helper.controller"
+      - "@core.service.analytics.frontend_log_manager"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setSession, ["@session"] ]
+      - [ setTemplate, ["@templating"] ]
+      - [ setRadcheckService, ["@core.service.radcheck"] ]
+      - [ setRouter, ["@router"] ]
+      - [ setTemplateService, ["@core.service.template"] ]
+      - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+      - [ setGroupService, ["@core.service.group"]]
+      - [ setLogger, ["@logger"] ]
+
+  nas.step.update_guest_last_access:
+      class: Wideti\DomainBundle\Service\NasManager\NasUpdateGuestLastAccessStep
+      arguments:
+        - "@core.service.guest_devices"
+
+  nas.step.campaign:
+       class: Wideti\DomainBundle\Service\NasManager\NasCampaignStep
+       arguments:
+         - "@core.service.custom_fields"
+         - "@core.service.configuration"
+         - "@core.service.cache"
+         - "@core.service.create_call_to_action_access_data"
+         - "@core.service.guest_devices"
+         - "%flowplayer_token%"
+         - "@core.service.analytics.frontend_log_manager"
+         - "@core.service.load_survey_gateway"
+         - "@core.service.module"
+         - "%survey_frontend_address%"
+         - "@core.service.accesspoints"
+         - "@request_stack"
+         - "@core.service.deskbee"
+       calls:
+         - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+         - [ setSession, ["@session"] ]
+         - [ setTemplate, ["@templating"] ]
+         - [ setGuestService, ["@core.service.guest"] ]
+         - [ setLogger, ["@logger"] ]
+         - [ setCampaignService, ["@core.service.campaign"] ]
+         - [ setForm, ["@form.factory"] ]
+
+  nas.step.business_hours:
+      class: Wideti\DomainBundle\Service\NasManager\NasBusinessHoursStep
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setTemplate, ["@templating"] ]
+        - [ setRadcheckService, ["@core.service.radcheck"] ]
+        - [ setRouter, ["@router"] ]
+        - [ setTemplateService, ["@core.service.template"] ]
+        - [ setBusinessHoursService, ["@core.service.business_hours"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+
+  nas.step.rd_integration:
+      class: Wideti\DomainBundle\Service\NasManager\NasRDIntegrationStep
+      arguments:
+        - "@core.service.auditor"
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setRouter, ["@router"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+        - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+        - [ setApiRDStationService, ["@core.service.api_rd_station"] ]
+
+  nas.step.egoi_integration:
+      class: Wideti\DomainBundle\Service\NasManager\NasEgoiIntegrationStep
+      arguments:
+        - "@core.service.auditor"
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setRouter, ["@router"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+        - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+        - [ setApiEgoiService, ["@core.service.api_egoi"] ]
+
+  nas.step.policy:
+    class: Wideti\DomainBundle\Service\NasManager\NasPolicyStep
+    arguments: ["@policy.writer.manager", "@core.service.radius_policy", "@logger"]
+
+  nas.step.auth_event:
+    class: Wideti\DomainBundle\Service\NasManager\NasAuthEventStep
+    arguments:
+      - '%aws_key%'
+      - '%aws_secret%'
+      - '%aws_queue_region%'
+      - '%aws_queue_auth_event%'
+      - '@core.repository.access_points'
+
+  core.service.radius_policy:
+    class: Wideti\DomainBundle\Service\RadiusPolicy\RadiusPolicyServiceImp
+    arguments:
+      - "@core.service.elastic_search"
+      - "@core.service.policy_cache"
+      - "@logger"
+      - "@core.service.s3"
+      - "%s3_policies_bucket%"
+      - "@core.service.post_session_gateway"
+
+  core.service.analitcsTest:
+    class: Wideti\DomainBundle\Analytics\TestAnalytic
+    arguments:
+      - "%fluentd_host%"
+      - "%fluentd_port%"
+
+  core.service.analytics_logger:
+    class: Wideti\DomainBundle\Analytics\EventLoggerManager
+    arguments:
+      - "%fluentd_host%"
+      - "%fluentd_port%"
+      - "%analytics_api_key%"
+
+  core.service.analytics.frontend_log_manager:
+    class: Wideti\DomainBundle\Analytics\FrontendAnalyticLogManager
+    arguments:
+      - "%fluentd_host%"
+      - "%fluentd_port%"
+      - "%analytics_captive_api_key%"
+
+
+  policy.writer.manager:
+    class: Wideti\DomainBundle\Service\PolicyWriter\PolicyWriterManager
+    calls:
+      - [ registryWriter, ["@policy.writer.client"]]
+      - [ registryWriter, ["@policy.writer.guest"]]
+      - [ registryWriter, ["@policy.writer.access_point"] ]
+      - [ registryWriter, ["@policy.writer.bandwidth"] ]
+      - [ registryWriter, ["@policy.writer.time_limit"] ]
+
+  policy.writer.client:
+    class: Wideti\DomainBundle\Service\PolicyWriter\ClientPolicyWriter
+
+  policy.writer.guest:
+    class: Wideti\DomainBundle\Service\PolicyWriter\GuestPolicyWriter
+
+  policy.writer.access_point:
+    class: Wideti\DomainBundle\Service\PolicyWriter\AccessPointPolicyWriter
+    arguments: ["@doctrine.orm.entity_manager", "@core.service.configuration","@core.service.vendor"]
+    calls:
+      - [ setLogger, ["@logger"] ]
+
+  policy.writer.bandwidth:
+    class: Wideti\DomainBundle\Service\PolicyWriter\BandwidthPolicyWriter
+    arguments: ["@doctrine_mongodb.odm.default_document_manager"]
+
+  policy.writer.time_limit:
+    class: Wideti\DomainBundle\Service\PolicyWriter\TimeLimitPolicyWriter
+    arguments:
+      - '@doctrine.orm.entity_manager'
+      - '@session'
+      - '@core.service.expiration_time'
+
+  core.service.blacklist:
+      class: Wideti\DomainBundle\Service\Blacklist\BlacklistService
+      arguments: ["@core.repository.blacklist", "@core.service.guest_devices"]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setPaginator, ["@knp_paginator"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+
+  core.service.bounced_validation:
+      class: Wideti\DomainBundle\Service\BouncedValidation\BouncedValidationImp
+      arguments: ["%bounce_validator_api_key%", "%bounce_validator_ticket_api%", "@logger", "%bounce_validator_service_uri%", "%should_use_safetymails%"]
+
+  core.service.business_hours:
+      class: Wideti\DomainBundle\Service\BusinessHours\BusinessHoursService
+      arguments: ["@core.service.timezone", "@core.service.audit_log_internal"]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setSession, ["@session"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+
+  core.service.api_rd_station:
+      class: Wideti\DomainBundle\Service\ApiRDStation\ApiRDStationService
+      arguments: ["%aws_key%", "%aws_secret%", "%aws_sns_region%", "%aws_sns_rdstation_topic%", "%aws_queue_region%",  "%aws_queue_rdstation_name%" ]
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setSession, ["@session"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+
+  core.service.api_egoi:
+      class: Wideti\DomainBundle\Service\ApiEgoi\ApiEgoiService
+      arguments: ["%aws_key%", "%aws_secret%", "%aws_sns_region%", "%aws_sns_egoi_topic%", "%aws_queue_region%",  "%aws_queue_egoi_name%" ]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setSession, ["@session"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+
+  core.service.white_label:
+      class: Wideti\DomainBundle\Service\WhiteLabel\WhiteLabelServiceImp
+      arguments: ["%aws_bucket_name%", "@doctrine.orm.entity_manager", "@core.service.configuration", "@session", "@core.service.cache", "@file_uploader", "@validator"]
+
+  core.service.api_wspot:
+      class: Wideti\DomainBundle\Service\ApiWSpot\ApiWSpotServiceImp
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+
+  core.service.accounting_stream:
+      class: Wideti\DomainBundle\Service\Radacct\AccountingStreamServiceImp
+      arguments:
+        - "@core.repository.elasticsearch.accounting_stream"
+
+  core.service.get_accounting_data:
+      class: Wideti\DomainBundle\Service\Radacct\GetAccountingDataImp
+      arguments:
+        - "@core.service.elastic_search"
+
+  core.service.radacct:
+      class: Wideti\DomainBundle\Service\Radacct\RadacctService
+      arguments: ["@wifi_mode"]
+      calls:
+        - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+
+  core.service.radacct_report:
+      class: Wideti\DomainBundle\Service\RadacctReport\RadacctReportService
+      arguments: ["@wifi_mode", "@core.service.accesspoints", "@core.repository.access_points","@core.service.cache"]
+      calls:
+        - [ setRadacctRepository, ["@core.repository.elasticsearch.radacct"] ]
+        - [ setReportRepository, ["@core.repository.elasticsearch.report"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+
+  core.service.dashboard:
+      class: Wideti\DomainBundle\Service\Dashboard\DashboardService
+      arguments:
+        - "@core.service.configuration"
+        - "@core.service.guest"
+        - "@core.service.cache"
+        - "@core.service.online_guests.total"
+        - "@core.service.guest_devices"
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setReportBuilder, ["@core.service.report_builder"] ]
+        - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+        - [ setSession, ["@session"] ]
+
+  core.service.custom_fields:
+      class: Wideti\DomainBundle\Service\CustomFields\CustomFieldsService
+      arguments:
+        - "@core.service.configuration"
+        - "@core.service.custom_fields_cache"
+        - "@core.repository.guest"
+        - "@core.repository.custom_fields"
+        - "@core.service.plan"
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setTemplate, ["@templating"] ]
+
+  core.service.custom_fields_cache:
+      class: Wideti\DomainBundle\Service\CustomFields\CustomFieldsCacheService
+      arguments:
+        - "@core.service.cache"
+      calls:
+        - [ setTemplate, ["@templating"] ]
+
+  core.service.timezone:
+    class: Wideti\DomainBundle\Service\Timezone\TimezoneService
+    arguments: ["@doctrine.orm.entity_manager" ,"@core.service.accesspoints"]
+
+  core.service.plan:
+    class: Wideti\DomainBundle\Service\Plan\PlanServiceImp
+    arguments: ["@core.repository.plan"]
+    calls:
+      - [ setLogger, ["@logger"] ]
+
+  core.service.credential_check:
+    class: Wideti\DomainBundle\Service\User\CredentialCheckServiceImp
+    arguments:
+      - "@core.repository.user"
+      - "@web_framework.service.password"
+
+  core.service.analytics:
+    class: Wideti\DomainBundle\Service\Analytics\AnalyticsServiceImp
+    arguments:
+      - "@wspot.helper.controller"
+      - "@service_container"
+      - "@core.service.analytics_queue"
+      - "%analytics_active%"
+      - "%analytics_analyzer%"
+
+  core.service.analytics_queue:
+    class: Wideti\DomainBundle\Service\Analytics\AnalyticsQueueServiceImp
+    arguments:
+      - "%aws_key%"
+      - "%aws_secret%"
+      - "%aws_queue_region%"
+      - "%aws_queue_analytics_name%"
+      - "@logger"
+
+  core.service.s3:
+    class: Wideti\DomainBundle\Service\S3Service\S3Service
+    arguments:
+      - "%aws_key_acct_processor%"
+      - "%aws_secret_acct_processor%"
+
+  core.analyzer.amplitude:
+    class: Wideti\DomainBundle\Service\Analytics\AnalysisTarget\Amplitude
+    arguments: ["@service_container"]
+
+  core.service.guest_to_acct_processor_send:
+    class: Wideti\DomainBundle\Service\GuestToAccountingProcessor\Send
+    arguments:
+      - "@doctrine.orm.default_entity_manager"
+      - "@logger"
+      - "@core.service.custom_fields"
+      - "@core.service.guest_devices"
+      - "@old_sound_rabbit_mq.send_guest_producer"
+
+  core.service.disconnect_guest_producer:
+    class: Wideti\DomainBundle\Service\Guest\DisconnectGuestProducer
+    arguments:
+      - "@old_sound_rabbit_mq.disconnect_guest_producer"
+
+  core.service.disconnect_guest_consumer:
+    class: Wideti\DomainBundle\Service\Guest\DisconnectGuestConsumer
+    arguments:
+     - "@logger"
+     - "@wspot.helper.controller"
+
+  core.service.guest_to_acct_processor_remove:
+    class: Wideti\DomainBundle\Service\GuestToAccountingProcessor\Remove
+    arguments:
+      - "@logger"
+      - "@core.service.custom_fields"
+      - "@old_sound_rabbit_mq.send_guest_producer"
+
+  core.service.guest_devices:
+    class: Wideti\DomainBundle\Service\GuestDevices\GuestDevicesImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@core.repository.devices"
+      - "@core.repository.guest_device_entry"
+      - "@core.repository.access_points"
+
+  core.service.audit_log_internal:
+      class: Wideti\DomainBundle\Service\AuditLogInternal\AuditLogService
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSecurityContext, ["@security.token_storage"] ]
+        - [ setSession, ["@session"] ]
+
+  core.service.ap_extra_config:
+    class: Wideti\DomainBundle\Service\AccessPoints\AccessPointsExtraConfigService
+    arguments:
+      - "@doctrine.orm.entity_manager"
+
+  # WSpot Faker
+  core.service.wspot_faker:
+      class: Wideti\DomainBundle\Service\WSpotFaker\WSpotFakerService
+      arguments: ["@wspot_faker.manager"]
+
+  wspot_faker.manager:
+      class: Wideti\DomainBundle\Service\WSpotFaker\WSpotFakerManager
+      calls:
+        - [ registryWSpotFaker, ["@wspot_faker.access_point_group"] ]
+        - [ registryWSpotFaker, ["@wspot_faker.access_point"] ]
+        - [ registryWSpotFaker, ["@wspot_faker.guest"] ]
+        - [ registryWSpotFaker, ["@wspot_faker.accounting"] ]
+        - [ registryWSpotFaker, ["@wspot_faker.reports"] ]
+        # - [ registryWSpotFaker, ["@wspot_faker.checkin"] ]
+        # - [ registryWSpotFaker, ["@wspot_faker.campaign"] ]
+
+  wspot_faker.access_point_group:
+      class: Wideti\DomainBundle\Service\WSpotFaker\AccessPointGroupFaker
+      arguments: [ "@core.service.configuration", "@core.service.accesspointsgroups", "@core.repository.client" ]
+
+  wspot_faker.access_point:
+      class: Wideti\DomainBundle\Service\WSpotFaker\AccessPointFaker
+      arguments: [ "@core.service.accesspoints", "@core.repository.access_points_groups" ]
+
+  wspot_faker.guest:
+      class: Wideti\DomainBundle\Service\WSpotFaker\GuestFaker
+      arguments: [ "@core.service.guest", "@core.repository.guest", "@core.repository.sms_historic", "@core.repository.access_points", "@core.service.custom_fields" ]
+
+  wspot_faker.accounting:
+      class: Wideti\DomainBundle\Service\WSpotFaker\AccountingFaker
+      arguments: [ "@core.repository.guest", "@core.repository.access_points", "@core.service.elastic_search", "@core.repository.elasticsearch.radacct" ]
+
+  wspot_faker.reports:
+      class: Wideti\DomainBundle\Service\WSpotFaker\ReportsFaker
+      arguments: [ "@core.repository.guest", "@core.repository.access_points", "@core.service.elastic_search", "@core.repository.elasticsearch.radacct", '@core.repository.elasticsearch.report' ]
+
+  wspot_faker.checkin:
+      class: Wideti\DomainBundle\Service\WSpotFaker\CheckinFaker
+      arguments: [ "@core.repository.guest", "@core.service.elastic_search" ]
+
+  wspot_faker.campaign:
+      class: Wideti\DomainBundle\Service\WSpotFaker\CampaignFaker
+      arguments: [ "%aws_bucket_name%", "@doctrine.orm.entity_manager", "@file_uploader", "@core.repository.client", "@core.repository.campaign", "@core.repository.campaign_hours", "@core.repository.campaign_views" ]
+  #END WSpot Faker
+
+  # Segmentation
+  #Equality
+  segmentation.equality:
+      class: Wideti\DomainBundle\Service\Segmentation\Equality\EqualityFactoryImp
+      arguments: [ "@service_container" ]
+
+  #Resolver
+  segmentation.resolver:
+      class: Wideti\DomainBundle\Service\Segmentation\Resolver\FilterResolver
+      arguments: [ "@segmentation.equality", "@logger" ]
+
+  segmentation.default_schema:
+      class: Wideti\DomainBundle\Service\Segmentation\GetDefaultSchemaServiceImp
+
+  segmentation.preview:
+      class: Wideti\DomainBundle\Service\Segmentation\PreviewSegmentationServiceImp
+      arguments: [ "@segmentation.resolver", "@core.repository.guest", "@core.service.custom_fields" ]
+
+  segmentation.create:
+      class: Wideti\DomainBundle\Service\Segmentation\CreateSegmentationServiceImp
+      arguments: [ "@core.repository.segmentation" ]
+
+  segmentation.edit:
+      class: Wideti\DomainBundle\Service\Segmentation\EditSegmentationServiceImp
+      arguments: [ "@core.repository.segmentation" ]
+
+  segmentation.list:
+      class: Wideti\DomainBundle\Service\Segmentation\ListSegmentationServiceImp
+      arguments: [ "@core.repository.segmentation" ]
+
+  segmentation.delete:
+      class: Wideti\DomainBundle\Service\Segmentation\DeleteSegmentationServiceImp
+      arguments: [ "@core.repository.segmentation" ]
+
+  segmentation.export:
+      class: Wideti\DomainBundle\Service\Segmentation\ExportSegmentationServiceImp
+      arguments: [ "@core.repository.segmentation", "@core.service.report" ]
+
+  #Datasource
+  segmentation.datasource.birthdays.range:
+      class: Wideti\DomainBundle\Service\Segmentation\Equality\Birthdays\Range
+      arguments: [ "@core.repository.guest"]
+
+  segmentation.datasource.registrations.range:
+      class: Wideti\DomainBundle\Service\Segmentation\Equality\Registrations\Range
+      arguments: [ "@core.repository.guest" ]
+
+  segmentation.datasource.visits.range:
+    class: Wideti\DomainBundle\Service\Segmentation\Equality\Visits\Range
+    arguments: ["@core.repository.guest"]
+
+  segmentation.datasource.uniqueguests.range:
+    class: Wideti\DomainBundle\Service\Segmentation\Equality\UniqueGuests\Range
+    arguments: ["@core.repository.elasticsearch.radacct", "@core.repository.guest"]
+
+  segmentation.datasource.recurringguests.range:
+    class: Wideti\DomainBundle\Service\Segmentation\Equality\RecurringGuests\Range
+    arguments: ["@core.repository.elasticsearch.radacct", "@core.repository.guest"]
+  # END Segmentation
+
+  core.service.online_guests.total:
+    class: Wideti\DomainBundle\Service\OnlineGuests\GetTotalOnlineGuestsByClientImp
+    arguments: ["%api_online_guests_url%", "@logger"]
+
+  core.service.report:
+      class: Wideti\DomainBundle\Service\Report\ReportService
+      arguments: ["%aws_key%", "%aws_secret%", "%aws_sns_reports_topic%", "%aws_sns_region%", "%aws_report_bucket_name%", "%temp_files_folder%", "@file_uploader", "%max_report_lines_poc%", "@core.service.configuration"]
+      calls:
+        - [ setContainer, ["@service_container"] ]
+        - [ setSession, ["@session"]]
+        - [ setLogger, ["@logger"] ]
+        - [ setMailerService, ["@core.service.mailer"] ]
+        - [ setEmailHeader, ["@core.service.email_header"] ]
+        - [ setSecurityContext, ["@security.token_storage"]]
+        - [ setTemplate, ["@templating"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+
+  core.service.access_point_dictionary:
+    class: Wideti\DomainBundle\Service\AccessPointDictionary\AccessPointDictionaryServiceImp
+    arguments: ["@doctrine_mongodb.odm.default_document_manager"]
+
+  core.service.access_point_monitoring:
+    class: Wideti\DomainBundle\Service\AccessPointMonitoring\MonitoringImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@core.service.monitoring_viewer_platform.grafana"
+      - "@core.repository.access_point_monitoring"
+
+  core.service.auditoring.data_controller_service:
+    class: Wideti\DomainBundle\Service\DataProtect\DataController\DataControllerService
+    arguments:
+      - "@core.repository.data_controller_agent"
+
+  core.service.controllers_unifi_service:
+    class: Wideti\DomainBundle\Service\ControllersUnifi\ControllersUnifiService
+    arguments:
+      - "@core.repository.controllers_unifi_repository"
+      - "@core.service.clients_controllers_unifi_service"
+      - "@monolog.logger"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  core.service.clients_controllers_unifi_service:
+    class: Wideti\DomainBundle\Service\ClientsControllersUnifi\ClientsControllersUnifiService
+    arguments:
+      - "@core.repository.clients_controllers_unifi_repository"
+      - "@monolog.logger"
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  core.service.legal_base_manager_service:
+    class: Wideti\DomainBundle\Service\LegalBaseManager\LegalBaseManagerService
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@core.service.auditor"
+      - "@core.service.consent_manager_service"
+      - "@session"
+      - "@logger"
+    calls:
+      - [ setSecurityContext, ["@security.token_storage"] ]
+
+  core.service.consent_manager_service:
+    class: Wideti\DomainBundle\Service\DataProtect\ConsentManager\ConsentManagerService
+    arguments:
+      - "%consent_gateway_url%"
+
+  core.service.monitoring_viewer_platform.grafana:
+    class: Wideti\DomainBundle\Service\AccessPointMonitoring\ViewerPlatform\Grafana\GrafanaImp
+    arguments:
+      - "%ap_monitoring_grafana_url%"
+      - "%ap_monitoring_grafana_api_key%"
+
+  core.service.access_point_sites_blocking:
+    class: Wideti\DomainBundle\Service\AccessPointSitesBlocking\SitesBlockingImp
+    arguments:
+      - "@core.service.sites_blocking_api_request"
+
+  core.service.sites_blocking_api_request:
+    class: Wideti\DomainBundle\Service\AccessPointSitesBlocking\ReportBuilder\ApiRequestServiceImp
+    arguments:
+      - "@logger"
+      - "%sites_blocking_api_host%"
+
+  core.service.sites_blocking.reports.blocked_categories:
+    class: Wideti\DomainBundle\Service\AccessPointSitesBlocking\ReportBuilder\Reports\BlockedCategories
+    arguments:
+      - "@core.service.sites_blocking_api_request"
+
+  core.service.sites_blocking.reports.most_accessed_categories:
+    class: Wideti\DomainBundle\Service\AccessPointSitesBlocking\ReportBuilder\Reports\MostAccessedCategories
+    arguments:
+      - "@core.service.sites_blocking_api_request"
+
+  core.service.sites_blocking.reports.blocked_domains:
+    class: Wideti\DomainBundle\Service\AccessPointSitesBlocking\ReportBuilder\Reports\BlockedDomains
+    arguments:
+      - "@core.service.sites_blocking_api_request"
+
+  core.service.sites_blocking.reports.most_accessed_domains:
+    class: Wideti\DomainBundle\Service\AccessPointSitesBlocking\ReportBuilder\Reports\MostAccessedDomains
+    arguments:
+      - "@core.service.sites_blocking_api_request"
+
+  core.factory.guzzle:
+    class: GuzzleHttp\Client
+    factory: ['Wideti\DomainBundle\Service\Guzzle\GuzzleFactory', create]
+
+  core.service.notification.ap_not_registered:
+    class: Wideti\DomainBundle\Service\Notification\ApNotRegisteredNotification
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@templating"
+      - "@core.service.mailer"
+      - "@core.service.email_header"
+      - "@logger"
+
+  core.service.notification.sms_limit_reached:
+    class: Wideti\DomainBundle\Service\Notification\SmsLimitReachedNotification
+    arguments: ["@doctrine.orm.entity_manager", "@templating", "@core.service.mailer", "@core.service.email_header"]
+
+  core.service.notification.ap_wrong_config:
+    class: Wideti\DomainBundle\Service\Notification\ApWrongConfigNotification
+    arguments:
+      - "@templating"
+      - "@core.service.mailer"
+      - "@core.service.email_header"
+      - "@doctrine.orm.entity_manager"
+      - "@logger"
+
+  core.service.notification.bad_nas_parameters:
+    class: Wideti\DomainBundle\Service\Notification\BadNasParametersNotification
+    arguments:
+      - "@templating"
+      - "@core.service.mailer"
+      - "@core.service.email_header"
+      - "@doctrine.orm.entity_manager"
+      - "@logger"
+
+  core.service.bulk_insert.access_points:
+      class: Wideti\DomainBundle\Service\BulkInsert\AccessPointBulkInsertService
+      arguments: ["@core.service.accesspoints", "@core.service.accesspointsgroups", "@core.service.template", "@core.service.vendor", "@core.service.timezone"]
+
+  core.service.expiration_time:
+    class: Wideti\DomainBundle\Service\ExpirationTime\ExpirationTimeImp
+    arguments:
+      - "@doctrine.orm.entity_manager"
+      - "@core.repository.radcheck"
+
+  #Nas middlewares
+  core.nas.middleware.manager:
+    class: Wideti\DomainBundle\Service\NasCustomMiddleware\NasMiddlewareManagerImp
+
+  #Api custom field validatiom
+  core.api.validate.custom_field_validator:
+      class: Wideti\DomainBundle\Service\ApiEntityValidator\CustomFieldValidator\CustomFieldValidator
+      arguments: ["@service_container"]
+      calls:
+        - [setCustomFieldsService, ["@core.service.custom_fields"]]
+        - [setTranslatorService, ["@translator"] ]
+
+  core.api.validate.rule.minlength:
+      class: Wideti\DomainBundle\Service\ApiEntityValidator\CustomFieldValidator\Rules\MinlengthRule
+
+  core.api.validate.rule.maxlength:
+      class: Wideti\DomainBundle\Service\ApiEntityValidator\CustomFieldValidator\Rules\MaxlengthRule
+
+  core.api.validate.rule.required:
+      class: Wideti\DomainBundle\Service\ApiEntityValidator\CustomFieldValidator\Rules\RequiredRule
+
+  core.api.validate.rule.cpfvalidator:
+      class: Wideti\DomainBundle\Service\ApiEntityValidator\CustomFieldValidator\Rules\CpfvalidatorRule
+
+  core.api.validate.rule.customdate:
+       class: Wideti\DomainBundle\Service\ApiEntityValidator\CustomFieldValidator\Rules\CustomDate
+
+  core.api.validate.rule.age_restriction:
+    class: Wideti\DomainBundle\Service\ApiEntityValidator\CustomFieldValidator\Rules\AgeRestriction
+
+  core.api.validate.rule.email:
+         class: Wideti\DomainBundle\Service\ApiEntityValidator\CustomFieldValidator\Rules\EmailRule
+  #Reports Batch processing
+
+  core.report.guest:
+      class: Wideti\DomainBundle\Service\Report\Reports\GuestReport
+      arguments:
+        - "%aws_report_bucket_name%"
+        - "@file_uploader"
+        - "%temp_files_folder%"
+        - "@core.service.configuration"
+        - "@core.service.auditor"
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+
+  core.report.online_guest:
+        class: Wideti\DomainBundle\Service\Report\Reports\OnlineGuestReport
+        arguments:
+            - "@core.service.auditor"
+        calls:
+          - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+  core.report.records_per_day:
+          class: Wideti\DomainBundle\Service\Report\Reports\RecordsPerDayReport
+          calls:
+            - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+            - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+
+  core.report.access_historic:
+      class: Wideti\DomainBundle\Service\Report\Reports\AccessHistoricReport
+      arguments:
+        - "%aws_report_bucket_name%"
+        - "@file_uploader"
+        - "%temp_files_folder%"
+        - "@core.service.configuration"
+        - "@core.service.auditor"
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+        - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+  core.report.guests:
+      class: Wideti\DomainBundle\Service\Report\Reports\GuestsReport
+      arguments:
+        - "%aws_report_bucket_name%"
+        - "@file_uploader"
+        - "%temp_files_folder%"
+        - "@core.service.guest"
+        - "@core.service.auditor"
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+        - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+        - [ setReportBuilder, ["@core.service.report_builder"] ]
+        - [ setCustomFieldsService, ["@core.service.custom_fields"] ]
+
+  core.report.download_upload:
+      class: Wideti\DomainBundle\Service\Report\Reports\DownloadUploadReport
+      arguments: ["@wifi_mode"]
+      calls:
+          - [ setReportRepository, ["@core.repository.elasticsearch.report"] ]
+
+  core.report.download_upload_detail:
+      class: Wideti\DomainBundle\Service\Report\Reports\DownloadUploadDetailReport
+      arguments: ["@wifi_mode"]
+      calls:
+          - [ setReportRepository, ["@core.repository.elasticsearch.report"] ]
+
+  core.report.most_visited_hours:
+      class: Wideti\DomainBundle\Service\Report\Reports\MostVisitedHoursReport
+      arguments: ["@file_uploader", "%temp_files_folder%"]
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+
+  core.report.access_points:
+      class: Wideti\DomainBundle\Service\Report\Reports\AccessPointsReport
+      arguments: ["@file_uploader", "%temp_files_folder%"]
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setRadacctReportService, ["@core.service.radacct_report"] ]
+
+  core.report.campaign:
+      class: Wideti\DomainBundle\Service\Report\Reports\CampaignReport
+      arguments: ["@file_uploader", "%temp_files_folder%"]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  core.report.call_to_action:
+      class: Wideti\DomainBundle\Service\Report\Reports\CallToActionReport
+      arguments:
+        - "%aws_bucket_name%"
+        - "@file_uploader"
+        - "%temp_files_folder%"
+        - "@core.repository.call_to_action_access_data"
+        - "@core.service.auditor"
+        - "@core.service.legal_base_manager_service"
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+
+  core.report.sms:
+      class: Wideti\DomainBundle\Service\Report\Reports\SmsReport
+      arguments: ["%aws_report_bucket_name%", "@file_uploader", "%temp_files_folder%", "@core.service.legal_base_manager_service"]
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+
+  core.report.birthdays:
+      class: Wideti\DomainBundle\Service\Report\Reports\BirthdaysReport
+      arguments:
+        - "%aws_report_bucket_name%"
+        - "@file_uploader"
+        - "%temp_files_folder%"
+        - "@core.service.configuration"
+        - "@core.service.custom_fields"
+        - "@core.service.auditor"
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+
+  core.report.segmentation:
+      class: Wideti\DomainBundle\Service\Report\Reports\SegmentationReport
+      arguments: ["%aws_bucket_name%", "@file_uploader", "%temp_files_folder%", "@core.service.configuration", "@core.repository.segmentation", "@segmentation.resolver"]
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+        - [ setLogger, ["@logger"] ]
+
+  core.facebook.session.handler:
+      class: Wideti\DomainBundle\Service\Social\Facebook\FacebookPersistentDataHandler
+      calls:
+        - [ setSession, ["@session"] ]
+
+  core.facebook.csrf.fix:
+    class: Wideti\DomainBundle\Service\Social\Facebook\FacebookCsrfFixService
+    arguments: ["@core.service.cache"]
+    calls:
+        - [setFacebookPersistentDataHandler, ["@core.facebook.session.handler"] ]
+
+  # Mailer Providers
+  core.service.mailer:
+      class: Wideti\DomainBundle\Service\Mailer\MailerService
+      arguments: ["%mail_sender%", "%dev_delivery_address%", "@service_container"]
+      calls:
+        - [ setLogger, ["@logger"]]
+
+  core.service.deskbee:
+        class: Wideti\DomainBundle\Service\Deskbee\DeskbeeService
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setLogger, [ "@logger" ] ]
+
+  core.service.hubsoft:
+        class: Wideti\DomainBundle\Service\Hubsoft\HubsoftService
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setLogger, [ "@logger" ] ]
+
+  
+  core.service.Ixc:
+        class: Wideti\DomainBundle\Service\Ixc\IxcService
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setLogger, [ "@logger" ] ]
+
+  core.service.smart_location:
+        class: Wideti\DomainBundle\Service\SmartLocation\SmartLocationService
+        calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setSession, ["@session"] ]
+          - [ setSecurityContext, ["@security.token_storage"] ]
+          - [ setModuleService, ["@core.service.module"] ]
+          - [ setLogger, [ "@logger" ] ]
+
+  mail.provider.mandrill:
+      class: Wideti\DomainBundle\Service\Mailer\Providers\MandrillProvider
+      arguments: ["%mail_mandrill_key%"]
+
+  mail.provider.ses:
+      class: Wideti\DomainBundle\Service\Mailer\Providers\SesProvider
+      arguments: ["%aws_ses_key%", "%aws_ses_secret%", "%aws_ses_region%"]
+      calls:
+        - [ setLogger, [ "@logger" ] ]
+
+  mail.provider.swift_mailer:
+    class: Wideti\DomainBundle\Service\Mailer\Providers\SwiftMailerProvider
+    calls:
+      - [ setMailer, ["@mailer"] ]
+
+  # Email Notification
+  wspot.notification.register:
+      class: Wideti\DomainBundle\Service\GuestNotification\RegisterNotification
+      arguments: ["@core.service.configuration", "@session"]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEmailService, ["@core.service.email"] ]
+        - [ setSmsService, ["@core.service.sms"] ]
+        - [ setGuestService, ["@core.service.guest"] ]
+
+  wspot.notification.confirmation:
+      class: Wideti\DomainBundle\Service\GuestNotification\ConfirmationNotification
+      arguments: ["@core.service.configuration"]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEmailService, ["@core.service.email"] ]
+        - [ setSmsService, ["@core.service.sms"] ]
+        - [ setAuthorizationCodeService, ["@core.service.authorization_code"] ]
+        - [ setRouter, ["@router"] ]
+        - [ setModuleService, ["@core.service.module"] ]
+        - [ setSession, ["@session"] ]
+        - [ setNasService, ["@core.service.nas"] ]
+        - [ setGuestService, ["@core.service.guest"] ]
+
+  wspot.notification.resend_confirmation:
+      class: Wideti\DomainBundle\Service\GuestNotification\ResendConfirmationNotification
+      arguments: ["@core.service.configuration", "@session"]
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEmailService, ["@core.service.email"] ]
+        - [ setSmsService, ["@core.service.sms"] ]
+        - [ setRouter, ["@router"] ]
+        - [ setGuestService, ["@core.service.guest"] ]
+
+  wspot.notification.password:
+      class: Wideti\DomainBundle\Service\GuestNotification\PasswordNotification
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setEmailService, ["@core.service.email"] ]
+        - [ setGuestService, ["@core.service.guest"] ]
+
+  wspot.notification.sms_password:
+      class: Wideti\DomainBundle\Service\GuestNotification\SmsPasswordNotification
+      arguments: ["@core.service.configuration", "@session"]
+      calls:
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+        - [ setSmsService, ["@core.service.sms"] ]
+
+  wspot.service.secretquestion:
+      class: Wideti\DomainBundle\Service\SecretQuestion\SecretQuestionManager
+      arguments: ['%secret_question_url%']
+      calls:
+        - [ setTranslatorService, ["@translator"] ]
+
+  wspot.service.guestpasswordrecovery:
+      class: Wideti\DomainBundle\Service\GuestPasswordRecovery\PasswordRecoveryManager
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  # Twig
+
+  wspot.twig.conditions.html:
+    class: Wideti\DomainBundle\Twig\FormatConsentConditions
+    tags:
+      - { name: twig.extension }
+
+  wspot.twig.entity_logger:
+      class: Wideti\DomainBundle\Service\EntityLogger\Twig\LoggerFilter
+      arguments: ["@wspot.helper.controller"]
+      calls:
+        - [ setTranslatorService, ["@translator.default"] ]
+        - [ setRouter, ["@router"] ]
+        - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.confirmation_time_format:
+      class: Wideti\DomainBundle\Twig\ConfirmationTimeFormat
+      calls:
+        - [ setSession, ["@session"] ]
+        - [ setTranslatorService, ["@translator"] ]
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.date_extension:
+      class: Wideti\DomainBundle\Twig\DateExtension
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.find_mongo:
+      class: Wideti\DomainBundle\Twig\FindGuest
+      tags:
+          - { name: twig.extension }
+      calls:
+          - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+
+  wspot.twig.guest_status:
+      class: Wideti\DomainBundle\Twig\GuestStatus
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.access_point_status:
+      class: Wideti\DomainBundle\Twig\AccessPointStatus
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.aps_by_business_hours:
+      class: Wideti\DomainBundle\Twig\AccessPointsByBusinessHours
+      tags:
+          - { name: twig.extension }
+      calls:
+          - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+          - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+
+  wspot.twig.aps_by_identifier:
+    class: Wideti\DomainBundle\Twig\AccessPointsByIdentifier
+    tags:
+      - { name: twig.extension }
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setSession, ["@session"] ]
+
+  wspot.twig.campaign_exhibition_type:
+    class: Wideti\DomainBundle\Twig\CampaignExhibitionType
+    tags:
+      - { name: twig.extension }
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  wspot.twig.config:
+      class: Wideti\DomainBundle\Twig\Configuration
+      tags:
+          - { name: twig.extension }
+      arguments: ["@core.service.configuration", "@session"]
+
+  wspot.twig.find_ap_name:
+      class: Wideti\DomainBundle\Twig\FindApName
+      tags:
+          - { name: twig.extension }
+      calls:
+        - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+        - [ setSession, ["@session"] ]
+
+  wspot.twig.find_user:
+    class: Wideti\DomainBundle\Twig\FindUser
+    tags:
+      - { name: twig.extension }
+    calls:
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+
+  wspot.twig.translate_status:
+    class: Wideti\DomainBundle\Twig\SmsMarketingStatus
+    tags:
+      - { name: twig.extension }
+
+  wspot.twig.guest_register_mode:
+      class: Wideti\DomainBundle\Twig\GuestRegisterMode
+      tags:
+          - { name: twig.extension }
+      calls:
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+
+  wspot.twig.guest_group:
+      class: Wideti\DomainBundle\Twig\GuestGroup
+      tags:
+          - { name: twig.extension }
+      calls:
+        - [ setMongo, ["@doctrine.odm.mongodb.document_manager"] ]
+
+  wspot.twig.days_of_week:
+      class: Wideti\DomainBundle\Twig\DaysOfWeek
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.format_month:
+      class: Wideti\DomainBundle\Twig\FormatMonth
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.format_hour:
+      class: Wideti\DomainBundle\Twig\FormatHour
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.hex_to_rgb_extension:
+      class: Wideti\DomainBundle\Twig\HexToRgbExtension
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.mongo_date_extension:
+        class: Wideti\DomainBundle\Twig\MongoDateExtension
+        tags:
+            - { name: twig.extension }
+
+  wspot.twig.cpf_format:
+      class: Wideti\DomainBundle\Twig\CpfFormat
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.allowed_module_by_vendor:
+    class: Wideti\DomainBundle\Twig\AllowedModuleByVendor
+    tags:
+      - { name: twig.extension }
+
+  wspot.twig.format_access_time:
+      class: Wideti\DomainBundle\Twig\FormatAccessTime
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.strtotime:
+      class: Wideti\DomainBundle\Twig\DateToStrToTime
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.convert_byte_to_gb_or_mb:
+      class: Wideti\DomainBundle\Twig\FormatByteExtension
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.form_color:
+      class: Wideti\DomainBundle\Twig\FormExtension
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.date_days_formatter:
+      class: Wideti\DomainBundle\Twig\DateDiffInDays
+      tags:
+          - { name: twig.extension }
+
+  wspot.twig.hash_hmac:
+      class: Wideti\DomainBundle\Twig\HashHMac
+      tags:
+          - { name: twig.extension }
+
+# Repositories elasticsearch
+  core.repository.elasticsearch.radacct:
+    class: Wideti\DomainBundle\Repository\Elasticsearch\Radacct\RadacctRepository
+    arguments:
+      - "@core.service.elastic_search"
+
+  core.repository.elasticsearch.policy:
+    class: Wideti\DomainBundle\Repository\Elasticsearch\Policy\PolicyRepository
+    arguments:
+      - "@core.service.elastic_search"
+
+  core.repository.elasticsearch.checkin:
+    class: Wideti\DomainBundle\Repository\Elasticsearch\Checkin\CheckinRepository
+    calls:
+        - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+
+  core.repository.elasticsearch.report:
+    class: Wideti\DomainBundle\Repository\Elasticsearch\Report\ReportRepository
+    arguments:
+      - "@core.service.elastic_search"
+
+  core.repository.elasticsearch.accounting_stream:
+    class: Wideti\DomainBundle\Repository\Elasticsearch\Radacct\AccountingStreamRepositoryImp
+    arguments:
+      - "@core.service.elastic_search"
+
+  # Repositories
+  core.repository.white_label:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    calls:
+        - [ setContainer, ["@service_container"] ]
+    arguments:
+        - Wideti\DomainBundle\Entity\WhiteLabel
+
+  core.repository.user:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\Users
+
+  core.repository.template:
+    class: Doctrine\ORM\EntityRepository
+    factory: ["@doctrine.orm.entity_manager", getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\Template
+
+  core.repository.segmentation:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\Segmentation
+
+  core.repository.client:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\Client
+
+  core.repository.configuration:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\ClientConfiguration
+
+  core.repository.guests:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\Guests
+
+  core.repository.devices:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\Device
+
+  core.repository.guest_device_entry:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\DeviceEntry
+
+  core.repository.guest:
+    class: Doctrine\ODM\MongoDB\DocumentRepository
+    factory: ['@doctrine_mongodb.odm.document_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Document\Guest\Guest
+    calls:
+      - [ setLogger, ["@logger"] ]
+
+  core.repository.custom_fields:
+    class: Doctrine\ODM\MongoDB\DocumentRepository
+    factory: ['@doctrine_mongodb.odm.document_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Document\CustomFields\Field
+
+  core.repository.access_points:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\AccessPoints
+
+  core.repository.access_points_groups:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\AccessPointsGroups
+
+  core.repository.access_point_monitoring:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\AccessPointMonitoring
+
+  core.repository.reserved_domain:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\ReservedDomain
+
+  core.repository.campaign:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\Campaign
+
+  core.repository.persist_call_to_action:
+      class: Doctrine\ORM\EntityRepository
+      factory: ['@doctrine.orm.default_entity_manager', getRepository]
+      arguments:
+          - Wideti\DomainBundle\Entity\CampaignCallToAction
+
+  core.repository.call_to_action_access_data:
+      class: Doctrine\ORM\EntityRepository
+      factory: ['@doctrine.orm.default_entity_manager', getRepository]
+      arguments:
+          - Wideti\DomainBundle\Entity\CallToActionAccessData
+
+  core.repository.campaign_hours:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\CampaignHours
+
+  core.repository.campaign_views:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\CampaignViews
+
+  core.repository.contract:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\Contract
+
+  core.repository.contract_user:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\ContractUser
+
+  core.repository.sms_historic:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\SmsHistoric
+
+  core.repository.sms_billing_historic:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\SmsBillingHistoric
+
+  core.repository.sms_billing_control:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\SMSBillingControl
+
+  core.repository.group:
+    class: Doctrine\ODM\GroupRepository
+    factory: ['@doctrine_mongodb.odm.document_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Document\Group\Group
+
+  core.repository.plan:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\Plan
+
+  core.repository.blacklist:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\Blacklist
+
+  core.repository.vendor:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\Vendor
+
+  core.repository.access_code:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\AccessCode
+
+  core.repository.access_code_codes:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\AccessCodeCodes
+
+  core.repository.radcheck:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\Radcheck
+
+  core.repository.data_controller_agent:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\DataControllerAgent
+
+  core.repository.controllers_unifi_repository:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+      - Wideti\DomainBundle\Entity\ControllersUnifi
+
+  core.repository.deskbee_device:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\DeskbeeDevice
+
+  core.repository.smart_location:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\SmartLocationCredentials
+
+  core.repository.circuit_breaker:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\CircuitBreaker
+
+  core.repository.audit_log:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\AuditLogs
+
+  core.repository.clients_controllers_unifi_repository:
+    class: Doctrine\ORM\EntityRepository
+    factory: ['@doctrine.orm.default_entity_manager', getRepository]
+    arguments:
+        - Wideti\DomainBundle\Entity\ClientsControllersUnifi
+
+  core.queue_service:
+    class: Wideti\DomainBundle\Service\Queue\QueueService
+    arguments: ["%aws_key%", "%aws_secret%", "%aws_queue_region%", "%aws_queue_name%"]
+
+  core.sns_service:
+    class: Wideti\DomainBundle\Service\Sns\SnsService
+    arguments: ["%aws_key%", "%aws_secret%", "%aws_sns_reports_topic%", "%aws_sns_region%"]
+
+  core.sms.twilio:
+    class: Wideti\DomainBundle\Service\Sms\Twilio
+    calls:
+      - [ setAccountId, ["%twilio_account_id%"] ]
+      - [ setNumber, ["%twilio_number%"] ]
+      - [ setToken, ["%twilio_auth_token%"] ]
+      - [ setSession, ["@session"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setTranslatorService, ["@translator.default"] ]
+
+  core.sms.wavy:
+    class: Wideti\DomainBundle\Service\Sms\Wavy
+    calls:
+      - [ setToken, ["%wavy_token%"] ]
+      - [ setUsername, ["%wavy_username%"] ]
+      - [ setSession, ["@session"] ]
+      - [ setMongo, ["@doctrine_mongodb.odm.default_document_manager"] ]
+      - [ setEntityManager, ["@doctrine.orm.entity_manager"] ]
+      - [ setTranslatorService, ["@translator.default"] ]
+      - [ setLogger, ["@logger"] ]
+
+  # Listeners
+  core.listener.authentication:
+      class: Wideti\DomainBundle\Listener\AuthenticationListener
+      calls:
+        - [ setElasticSearchService, ["@core.service.elastic_search"] ]
+        - [ setSession, ["@session"] ]
+      tags:
+        - { name: kernel.event_listener, event: core.event.authentication, method: onAuthentication }
+
+  core.listener.register_client:
+        class: Wideti\DomainBundle\Listener\RegisterClientListener
+        calls:
+          - [ setMailerService, ["@core.service.mailer"] ]
+          - [ setEmailHeader, ["@core.service.email_header"] ]
+          - [ setTemplate, ["@templating"] ]
+        tags:
+          - { name: kernel.event_listener, event: core.event.register_client,    method: register }
+
+  core.listner.kernel_exception:
+        class: Wideti\DomainBundle\Listener\Exception\ExceptionListener
+        arguments: ["@service_container", "@logger"]
+        calls:
+            - [ setTemplate, ["@templating"] ]
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+
+  # Helpers
+
+  password_generator:
+        class: Wideti\DomainBundle\Helpers\PasswordGenerator
+        arguments: ["@service_container"]
+
+  wifi_mode:
+        class: Wideti\DomainBundle\Helpers\WifiMode
+        arguments: ["@core.service.configuration", "@session", "@core.service.cache","@core.service.vendor"]
+
+  facebook_redirect_like_share:
+        class: Wideti\DomainBundle\Helpers\FacebookRedirectLikeAndShareHelper
+        arguments: ["@session"]
+
+  file_uploader:
+        class: Wideti\DomainBundle\Helpers\FileUpload
+        arguments: ["%aws_key%", "%aws_secret%", "@service_container"]
+
+  wspot.helper.controller:
+        class: Wideti\DomainBundle\Helpers\Controller\ControllerHelperImp
+        arguments: ["@form.factory", "@service_container", "@router"]
+
+  wspot.helper.client:
+        class: Wideti\DomainBundle\Helpers\ClientHelper
+        arguments:
+          - '@core.repository.reserved_domain'
+
+  wspot.helper.sms_marketing_helper:
+    class: Wideti\DomainBundle\Helpers\SmsMarketingHelper
+    arguments:
+      - "@core.service.custom_fields"
+
+  # Authenticators
+  wspot.manager_authenticator:
+        class: Wideti\ApiBundle\Security\WSpotManagerGuard

@@ -1,0 +1,160 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+
+framework:
+  #esi:             ~
+  translator:      { fallback: pt_br }
+  secret:          %secret%
+  router:
+    resource: "%kernel.root_dir%/config/routing.yml"
+    strict_requirements: ~
+  form:            ~
+  csrf_protection: ~
+  validation:      { enable_annotations: true }
+  templating:
+    engines: ['twig']
+  default_locale:  "%locale%"
+  trusted_proxies: ~
+  session:
+    handler_id: snc_redis.session.handler
+  fragments: ~
+  http_method_override: true
+
+snc_redis:
+    clients:
+      default:
+        type: predis
+        alias: default
+        dsn: "redis://%redis_dsn_cluster%"
+      session:
+        type: predis
+        alias: session
+        dsn: "redis://%redis_dsn_cluster%"
+        options:
+          read_write_timeout: 0
+    session:
+      client: session
+      prefix: session:wspot
+      ttl: %redis_session_ttl%
+      locking: false
+
+# Twig Configuration
+twig:
+  debug:            %kernel.debug%
+  strict_variables: %kernel.debug%
+  globals:
+      whiteLabel: "@wspot.white_label"
+      aws_bucket_name: %aws_bucket_name%
+      aws_bucket_proxy_name: %aws_bucket_proxy_name%
+      assets_path: %assets_path%
+      wspot_version: %wspot_version%
+
+# Assetic Configuration
+assetic:
+  debug:          %kernel.debug%
+  use_controller: false
+  bundles:        [ ]
+  filters:
+    cssrewrite: ~
+
+# Doctrine Configuration
+doctrine:
+  dbal:
+    default_connection: default
+    connections:
+      default:
+        driver:   %database_driver%
+        host:     %database_host%
+        port:     %database_port%
+        dbname:   %database_name%
+        user:     %database_user%
+        password: %database_password%
+        charset:  UTF8
+
+  orm:
+    auto_generate_proxy_classes: %kernel.debug%
+    default_entity_manager: default
+    entity_managers:
+      default:
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        connection: default
+        mappings:
+          DomainBundle: ~
+          FrontendBundle: ~
+          WebFrameworkBundle: ~
+          AdminBundle: ~
+
+doctrine_mongodb:
+    connections:
+        default:
+            server: "mongodb://%mongodb_server1%:%mongodb_port1%,%mongodb_server2%:%mongodb_port2%,%mongodb_server3%:%mongodb_port3%"
+            options: %mongodb_options%
+    default_database: %mongodb_database%
+    document_managers:
+        default:
+            auto_mapping: true
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: %mailer_transport%
+    host:      %mailer_host%
+    username:  %mailer_user%
+    password:  %mailer_password%
+    sender_address: noreply@wspot.com.br
+#    spool:     { type: memory }
+
+# ATENÇÂO!!!!!
+# Em 21/10/2022 nós aplicamos cache no fos_js_routing. Com isso, sempre que uma rota for adicionada abaixo, é necessário avisar o time de infra para limpar o cache do nginx
+fos_js_routing:
+    routes_to_expose: [admin_dashboard_piechart, admin_dashboard_barchart, admin_visitantes_delete, admin_usuarios_delete, admin_dashboard_traffic_orderedbars, guest_password_reset, guest_check_exists, user_check_exists, access_points_delete, dashboard_tabs]
+
+services:
+  pdo:
+    class: PDO
+    arguments:
+        - "mysql:host=%database_host%;port=%database_port%;dbname=%database_name%"
+        - "%database_user%"
+        - "%database_password%"
+    calls:
+        - [setAttribute, [3, 2]] # \PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION
+
+stof_doctrine_extensions:
+    default_locale: en_US
+    orm:
+      default:
+        timestampable: true
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/Migrations"
+    namespace: Wspot\Migrations
+    table_name: migration_versions
+    name: Wspot Migrations
+
+knp_paginator:
+    page_range: 5                      # default page range used in pagination control
+    default_options:
+      page_name: page                # page query parameter name
+      sort_field_name: sort          # sort field query parameter name
+      sort_direction_name: direction # sort direction query parameter name
+      distinct: true                 # ensure distinct results, useful when ORM queries are using GROUP BY statements
+
+old_sound_rabbit_mq:
+  connections:
+    default:
+      host: %rabbitmq_host%
+      port: 5672
+      user: %rabbitmq_username%
+      password: %rabbitmq_password%
+      lazy: true
+      connection_timeout: 3
+      read_write_timeout: 3
+      keepalive: true
+      heartbeat: 0
+      vhost: '/'
+  producers:
+    send_guest:
+      connection: default
+      exchange_options: {name: 'send_guest', type: 'direct'}
+      queue_options:
+        name: 'wspot-guests'

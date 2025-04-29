@@ -1,0 +1,20 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;"> 
+        <div class="box-content">
+            <h3 class="content-center">{{ 'wspot.business_hours.title'|trans }}</h3>
+        <div class="content-center">
+            {{ 'wspot.business_hours.unavailable'|trans()|raw }}
+                    {% for period in businessHours.periods %}
+                        {{ 'wspot.business_hours.period'|trans({'%starHour%': period.from|slice(0, 5), '%endHour%': period.to|slice(0, 5)})|raw}}
+                        {% if not loop.last %}
+                            {{ 'wspot.business_hours.or'|trans()|raw}}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

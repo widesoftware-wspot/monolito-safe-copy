@@ -1,0 +1,621 @@
+<html>
+
+<head>
+    <link href="{{ asset(assets_path ~'/css/style-video.css') }}" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="{{ asset(assets_path ~'/css/flowplayer.css') }}" rel="stylesheet">
+
+    <script>
+        var isAppleUser = "{{ isAppleUser }}";
+        var device = "{{ device }}";
+        var videoUrl = "{{ campaign.preLoginMediaMobile }}";
+        var videoMp4Url = "{{ campaign.preLoginMp4Media }}";
+        var videoSkip = {{ campaign.videoSkip}};
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+        }
+
+        .container {
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 100%;
+            height: 100vh;
+            max-height: 100%;
+            padding: 20px;
+            background: #000;
+        }
+
+        #app {
+            background: #000;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .hide {
+            display: none;
+        }
+
+
+        #hls {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        #noHlsVideo {
+            height: 100%;
+            width: 100%;
+        }
+
+        #videoflow,
+        .hlsVideo {
+            height: 100%;
+            width: 100%;
+        }
+
+        .hlsVideoPortrait {
+            height: 100%;
+        }
+
+
+        /* CONTROL SOUND */
+        .controls-container,
+        .controls-container-apple,
+        .controls-container-hls,
+        .controls-container-nohls {
+            display: flex;
+        }
+
+        .control-play,
+        .control-play-apple,
+        .control-play-hls,
+        .control-play-nohls {
+            width: 3em;
+            height: 3em;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 3em;
+            left: 2.3em;
+            z-index: 99;
+            cursor: pointer;
+        }
+
+        .control-skip,
+        .control-skip-apple,
+        .control-skip-hls,
+        .control-skip-nohls {
+            width: 3em;
+            height: 3em;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 3em;
+            left: 6em;
+            z-index: 99;
+            cursor: pointer;
+        }
+
+        .control-play .iconVolume,
+        .control-play-apple .iconVolume-apple,
+        .control-play-hls .iconVolume-hls,
+        .control-play-nohls .iconVolume-nohls {
+            width: 100%;
+            height: 100%;
+            transition: all 0.3s ease-in-out;
+            z-index: 99999;
+        }
+
+        .control-play .iconVolume:hover,
+        .control-play-apple .iconVolume-apple:hover,
+        .control-play-hls .iconVolume-hls:hover,
+        .control-play-nohls .iconVolume-nohls:hover {
+            filter: brightness(0.8);
+        }
+
+        .control-skip .iconSkip,
+        .control-skip-apple .iconSkip-apple,
+        .control-skip-hls .iconSkip-hls,
+        .control-skip-nohls .iconSkip-nohls {
+            width: 100%;
+            height: 100%;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .control-skip .iconSkip:hover,
+        .control-skip-apple .iconSkip-apple:hover,
+        .control-skip-hls .iconSkip-hls:hover,
+        .control-skip-nohls .iconSkip-nohls:hover {
+            filter: brightness(0.8);
+        }
+
+        #content {
+            position: absolute;
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            background-color: #000;
+        }
+
+        #loading {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+        }
+
+        #loading .loading-content {
+            background-repeat: no-repeat;
+            background-image: url('http://mambowifi.com/img-video/loading.gif');
+            background-size: contain;
+            width: 60px;
+            height: 60px;
+        }
+
+        .skipMedia {
+            position: relative;
+            width: 100%;
+            z-index: 99;
+        }
+
+        .skipMediaPortrait {
+            position: relative;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+
+        .skipMediaFlowPortrait {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 99;
+        }
+
+        .skipMediaFlow {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: 9;
+        }
+
+        .skipMedia .skipTime,
+        .skipMediaFlow .skipTime,
+        .skipMediaFlowPortrait .skipTime {
+            position: absolute;
+            bottom: 20px;
+            right: 0;
+            cursor: pointer;
+            filter: opacity(0.5);
+            background: #333;
+        }
+
+        .skipMediaPortrait .skipTime {
+            position: absolute;
+            bottom: 40px;
+            right: 0;
+            cursor: pointer;
+            filter: opacity(0.5);
+            background: #333;
+        }
+
+        .skipTime p {
+            padding: 7px 10px;
+            font-size: 14px;
+            color: white;
+
+        }
+
+        .skipTime img {
+            max-height: 100%;
+            height: 8px;
+            margin-left: 6px;
+        }
+
+        #ads {
+            position: absolute;
+            top: 3px;
+            right: 10px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .fp-engine {
+            position: inherit !important;
+        }
+    </style>
+</head>
+
+
+
+<body style="background-color: {{ campaign.bgColor }};">
+    <div class="container">
+        <div id="app">
+            <p id="ads"></p>
+            <div id="content">
+                <div id="loading">
+                    <div class="loading-content"></div>
+                </div>
+                <div style="background-color: red; color: white">
+                    <p id="message_err"></p>
+                </div>
+            </div>
+
+            <!-- HLS -->
+            {% if campaign.preLoginOrientation == 'portrait' %}
+            <div id="hls" class="hide">
+                <div class="skipMediaPortrait">
+                    <video id="hlsVideo" class="hlsVideoPortrait" autoplay muted playsinline></video>
+                    <div onclick="redirect()" class="skipTime hide">
+                        <p>Pular anúncio <img class="" src="https://mambowifi.com/img-video/bkp/play_next.png"></p>
+                    </div>
+                </div>
+                <div class="controls-container-hls">
+                    <div class="control-play-hls hide">
+                        <img class="iconVolume-hls" src="https://mambowifi.com/img-video/bkp/nosound.png">
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div id="hls" class="hide">
+                <div class="skipMedia">
+                    <video id="hlsVideo" class="hlsVideo" autoplay muted playsinline></video>
+                    <div onclick="redirect()" class="skipTime hide">
+                        <p>Pular anúncio <img class="" src="https://mambowifi.com/img-video/bkp/play_next.png"></p>
+                    </div>
+                </div>
+                <div class="controls-container-hls">
+                    <div class="control-play-hls hide">
+                        <img class="iconVolume-hls" src="https://mambowifi.com/img-video/bkp/nosound.png">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- NO HLS -->
+            {% if campaign.preLoginOrientation == 'portrait' %}
+            <div id="noHls" class="hide">
+                <div class="skipMediaPortrait">
+                    <video id="noHlsVideo" autoplay muted playsinline></video>
+                    <div onclick="redirect()" class="skipTime hide">
+                        <p>Pular anúncio <img class="" src="https://mambowifi.com/img-video/bkp/play_next.png"></p>
+                    </div>
+                </div>
+                <div class="controls-container-nohls">
+                    <div class="control-play-nohls hide">
+                        <img class="iconVolume-nohls" src="https://mambowifi.com/img-video/bkp/nosound.png">
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div id="noHls" class="hide">
+                <div class="skipMedia">
+                    <video id="noHlsVideo" autoplay muted playsinline></video>
+                    <div onclick="redirect()" class="skipTime hide">
+                        <p>Pular anúncio <img class="" src="https://mambowifi.com/img-video/bkp/play_next.png"></p>
+                    </div>
+                </div>
+                <div class="controls-container-nohls">
+                    <div class="control-play-nohls hide">
+                        <img class="iconVolume-nohls" src="https://mambowifi.com/img-video/bkp/nosound.png">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {" callback": "fos.Router.setData" }) }}"></script>
+
+    <script src="{{ asset(assets_path ~'/js/jquery.min.js') }}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery.validate.min.js') }}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery.bgluminance.js') }}"></script>
+    <script src="{{ asset(assets_path ~'/js/hls.js') }}"></script>
+
+    <script>
+        function wait(ms){
+            var start = new Date().getTime();
+            var end = start;
+            while(end < start + ms) {
+                end = new Date().getTime();
+            }
+        }
+
+
+        var sendInsertCampaignViews = 0;
+
+        function insertCampaignViews() {
+            if (sendInsertCampaignViews < 1) {
+                var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+                var postUrl = Routing.generate('campaign_count_view') + '/{{ campaign.id }}/{{ guestMacAddress }}/{{ accessPoint }}';
+                request.open('POST', postUrl, true);
+                request.send("campaign={{ campaign.id }}");
+                wait(1000)
+                if (request.status == 200)
+                    sendInsertCampaignViews = 1;
+            }
+            redirect()
+        }
+        function redirect() {
+            window.location.href = '{{ urlRedirect }}';
+        }
+
+
+        function HlsSupported(mp4Supported, videoUrl) {
+            var hlsContainer = document.getElementById('hls')
+            var hlsVideo = document.getElementById('hlsVideo')
+            var controlsContainerHls = document.querySelector('.controls-container-hls')
+            var controlPlayHls = document.querySelector('.control-play-hls')
+            var controlSkipHls = document.querySelector('.control-skip-hls')
+            var iconVolumeHls = document.querySelector('.iconVolume-hls')
+            var iconSkipHls = document.querySelector('.iconSkip-hls')
+
+            if (mp4Supported !== true) {
+                redirect()
+            } else {
+                var nohlsContainer = document.getElementById('noHls')
+                nohlsContainer.remove()
+                var srcHls = videoUrl;
+                var urlVideoHls = srcHls
+                var hls = new Hls();
+                hls.loadSource(urlVideoHls);
+                hls.attachMedia(hlsVideo);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+
+                    hlsContainer.classList.remove('hide')
+                    controlPlayHls.classList.remove('hide')
+
+                    controlPlayHls.addEventListener('click', () => {
+                        if (hlsVideo.muted) {
+                            iconVolumeHls.removeAttribute('src')
+                            iconVolumeHls.setAttribute('src', 'https://mambowifi.com/img-video/bkp/sound.png')
+                            hlsVideo.muted = false
+                        } else {
+                            iconVolumeHls.removeAttribute('src')
+                            iconVolumeHls.setAttribute('src', 'https://mambowifi.com/img-video/bkp/nosound.png')
+                            hlsVideo.muted = true
+                        }
+                    })
+
+                    hlsVideo.addEventListener('timeupdate', () => {
+                        var contentID = document.getElementById('content')
+                        contentID.classList.add('hide')
+                        var adsContent = document.getElementById('ads')
+                        var currentTime = parseInt(hlsVideo.currentTime, 10)
+                        var durationMedia = parseInt(hlsVideo.duration, 10)
+                        var ads = durationMedia - currentTime
+
+                        if (!(isNaN(ads)) && adsContent) {
+                            adsContent.innerHTML = 'Anuncio: ' + ads
+                            if (ads == 0)
+                                adsContent.remove()
+                        }
+
+                        if (currentTime >= videoSkip && videoSkip > 0) {
+                            var skipTimeDiv = document.querySelector('.skipTime')
+                            skipTimeDiv.classList.remove('hide')
+                        }
+
+                        // fix vídeo parando em 1s sem redirecionar
+                        if (ads == 1) {
+                            insertCampaignViews()
+                        }
+                    })
+
+                    hlsVideo.addEventListener('ended', () => {
+                        insertCampaignViews()
+                        var contentID = document.getElementById('content')
+                        contentID.classList.remove('hide')
+                    })
+
+                })
+            }
+        }
+
+        function HlsNotSupported(mp4Supported, videoMp4Url) {
+            loading.classList.add('hide')
+            var contentID = document.getElementById('content')
+            contentID.classList.add('hide')
+            var hlsContainer = document.getElementById('hls')
+            hlsContainer.remove()
+
+            var nohlsVideo = document.getElementById('noHlsVideo')
+            var nohlsContainer = document.getElementById('noHls')
+            var controlsContainerNoHls = document.querySelector('.controls-container-nohls')
+            var controlPlayNoHls = document.querySelector('.control-play-nohls')
+            var controlSkipNoHls = document.querySelector('.control-skip-nohls')
+            var iconVolumeNoHls = document.querySelector('.iconVolume-nohls')
+            var iconSkipNoHls = document.querySelector('.iconSkip-nohls')
+
+            if (mp4Supported !== true) {
+                redirect()
+            } else {
+                nohlsContainer.classList.remove('hide')
+                var srcVideo = document.createElement('source')
+                srcVideo.setAttribute('src', videoMp4Url)
+                nohlsVideo.appendChild(srcVideo)
+                controlPlayNoHls.classList.remove('hide')
+                controlPlayNoHls.addEventListener('click', () => {
+                    if (nohlsVideo.muted) {
+                        iconVolumeNoHls.removeAttribute('src')
+                        iconVolumeNoHls.setAttribute('src', 'https://mambowifi.com/img-video/bkp/sound.png')
+                        nohlsVideo.muted = false
+                    } else {
+                        iconVolumeNoHls.removeAttribute('src')
+                        iconVolumeNoHls.setAttribute('src', 'https://mambowifi.com/img-video/bkp/nosound.png')
+                        nohlsVideo.muted = true
+
+                    }
+                })
+
+                nohlsVideo.addEventListener('timeupdate', () => {
+                    var contentID = document.getElementById('content')
+                    contentID.classList.add('hide')
+                    var adsContent = document.getElementById('ads')
+                    var currentTime = parseInt(nohlsVideo.currentTime, 10)
+                    var durationMedia = parseInt(nohlsVideo.duration, 10)
+                    var ads = durationMedia - currentTime
+
+                    if (!(isNaN(ads)) && adsContent) {
+                        adsContent.innerHTML = 'Anuncio: ' + ads
+                        if (ads == 0)
+                            adsContent.remove()
+                    }
+
+                    if (currentTime >= videoSkip && videoSkip > 0) {
+                        var skipTimeDiv = document.querySelector('.skipTime')
+                        skipTimeDiv.classList.remove('hide')
+                    }
+
+                    // fix vídeo parando em 1s sem redirecionar
+                    if (ads == 1) {
+                        insertCampaignViews()
+                    }
+                })
+
+                nohlsVideo.addEventListener('ended', () => {
+                    insertCampaignViews()
+                    var contentID = document.getElementById('content')
+                    contentID.classList.remove('hide')
+                })
+            }
+        }
+
+        window.onload = function () {
+            (function (window) {
+                {
+                    var unknown = '-';
+                    // browser
+                    var nVer = navigator.appVersion;
+                    var nAgt = navigator.userAgent;
+                    var browser = navigator.appName;
+                    var version = '' + parseFloat(navigator.appVersion);
+                    var majorVersion = parseInt(navigator.appVersion, 10);
+
+                    // system
+                    var os = unknown;
+                    var clientStrings = [
+                        { s: 'Windows 10', r: /(Windows 10.0|Windows NT 10.0)/ },
+                        { s: 'Windows 8.1', r: /(Windows 8.1|Windows NT 6.3)/ },
+                        { s: 'Windows 8', r: /(Windows 8|Windows NT 6.2)/ },
+                        { s: 'Windows 7', r: /(Windows 7|Windows NT 6.1)/ },
+                        { s: 'Windows Vista', r: /Windows NT 6.0/ },
+                        { s: 'Windows Server 2003', r: /Windows NT 5.2/ },
+                        { s: 'Windows XP', r: /(Windows NT 5.1|Windows XP)/ },
+                        { s: 'Windows 2000', r: /(Windows NT 5.0|Windows 2000)/ },
+                        { s: 'Windows ME', r: /(Win 9x 4.90|Windows ME)/ },
+                        { s: 'Windows 98', r: /(Windows 98|Win98)/ },
+                        { s: 'Windows 95', r: /(Windows 95|Win95|Windows_95)/ },
+                        { s: 'Windows NT 4.0', r: /(Windows NT 4.0|WinNT4.0|WinNT|Windows NT)/ },
+                        { s: 'Windows CE', r: /Windows CE/ },
+                        { s: 'Windows 3.11', r: /Win16/ },
+                        { s: 'Android', r: /Android/ },
+                        { s: 'Open BSD', r: /OpenBSD/ },
+                        { s: 'Sun OS', r: /SunOS/ },
+                        { s: 'Chrome OS', r: /CrOS/ },
+                        { s: 'Linux', r: /(Linux|X11(?!.*CrOS))/ },
+                        { s: 'iOS', r: /(iPhone|iPad|iPod)/ },
+                        { s: 'Mac OS X', r: /Mac OS X/ },
+                        { s: 'Mac OS', r: /(MacPPC|MacIntel|Mac_PowerPC|Macintosh)/ },
+                        { s: 'QNX', r: /QNX/ },
+                        { s: 'UNIX', r: /UNIX/ },
+                        { s: 'BeOS', r: /BeOS/ },
+                        { s: 'OS/2', r: /OS\/2/ },
+                        {
+                            s: 'Search Bot',
+                            r: /(nuhk|Googlebot|Yammybot|Openbot|Slurp|MSNBot|Ask Jeeves\/Teoma|ia_archiver)/,
+                        },
+                    ];
+                    for (var id in clientStrings) {
+                        var cs = clientStrings[id];
+                        if (cs.r.test(nAgt)) {
+                            os = cs.s;
+                            break;
+                        }
+                    }
+
+                    var osVersion = unknown;
+
+                    if (/Windows/.test(os)) {
+                        osVersion = /Windows (.*)/.exec(os)[1];
+                        os = 'Windows';
+                    }
+
+                    switch (os) {
+                        case 'Mac OS X':
+                            osVersion = /Mac OS X (10[\.\_\d]+)/.exec(nAgt)[1];
+                            break;
+
+                        case 'Android':
+                            osVersion = /Android ([\.\_\d]+)/.exec(nAgt)[1];
+                            break;
+
+                        case 'iOS':
+                            osVersion = /OS (\d+)_(\d+)_?(\d+)?/.exec(nVer);
+                            osVersion =
+                                osVersion[1] + '.' + osVersion[2] + '.' + (osVersion[3] | 0);
+                            break;
+                    }
+                }
+
+                window.jscd = {
+                    browser: browser,
+                    browserVersion: version,
+                    browserMajorVersion: majorVersion,
+                    os: os,
+                    osVersion: osVersion,
+                };
+            })(this);
+
+            // VERIFICA SE O BROWSER TEM SUPORTE A EXTENSAO E O CODEC MP4
+            var mp4Supported = !!document
+                .createElement('video')
+                .canPlayType('video/mp4; codecs=avc1.42E01E,mp4a.40.2');
+
+
+            try {
+
+                if (jscd.os == 'Mac OS X') {
+                    redirect()
+                } else {
+                    // SUPORTE AO HLS ----------------------------------------------------------------------------------
+                    if (Hls.isSupported()) {
+                        HlsSupported(mp4Supported, videoUrl)
+                    } else {
+                        // SEM SUPORTE AO HLS ------------------------------------------------------------------------------------
+                        HlsNotSupported(mp4Supported, videoMp4Url)
+                    }
+                }
+
+            } catch (err) {
+                document.getElementById("message_err").innerHTML = err.message;
+                redirect()
+            }
+        }
+    </script>
+
+</body>
+
+</html>

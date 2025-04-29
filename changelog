@@ -1,0 +1,45 @@
+2015-03-21  Guilherme Rogieri  <guilherme@wideti.com.br>
+    * Version 2.1 - Changes and hotfixes from sprint called as "Melhorias"
+
+2014-12-10  Guilherme Rogieri  <guilherme@wideti.com.br>
+    * Version 2.0.4 - Config Options update logo fix
+        * src/Wideti/WspotBundle/Controller/ConfigOptionsController.php
+        * Commit #f627f70
+
+2014-12-05  Guilherme Rogieri  <guilherme@wideti.com.br>
+
+    * Version 2.0.3 - S3 files path fix
+        * src/Wideti/WspotBundle/Controller/FrontendController.php
+        * Commit #4cecc6b
+
+2014-12-05  Leonardo Fuzeto  <leonardo.fuzeto@wideti.com.br>
+
+    * Version 2.0.3 Including bug fixes
+        Correção dos textos nos botões de login e cadastro
+        * Commit #2029f32 #702ff6f #27b68eb #bdcaabd #a6702e5 #96d3f0c
+        Translate das mensagens de erro e estilização
+        * Commit #e9197ec
+
+
+
+2014-12-04  Guilherme Rogieri  <guilherme@wideti.com.br>
+
+    * Version 2.0.2 Including bug fixes and OpenWRT/ChilliSpot support
+        * src/Wideti/WspotBundle/Controller/FrontendController.php
+        * src/Wideti/WspotBundle/Form/LoginType.php
+        * src/Wideti/WspotBundle/Resources/public/frontend/js/hotspot.js
+        * src/Wideti/WspotBundle/Resources/views/Frontend/forgetMyPass.html.twig
+        * src/Wideti/WspotBundle/Resources/views/Frontend/formTemplates/openWrtTemplate.html.twig
+        * src/Wideti/WspotBundle/Resources/views/Frontend/login.html.twig
+        * src/Wideti/WspotBundle/Resources/views/Frontend/terms.html.twig
+        * Commit #c4ccd4f
+
+2014-12-02  Guilherme Rogieri  <guilherme@wideti.com.br>
+
+    * Version 2.0.1 Including bug fixes as described below
+
+        * src/Wideti/WspotBundle/Entity/Guests.php - E-mail validation group fix
+        * Commit #e0819f1
+
+        * src/Wideti/WspotBundle/Controller/FrontendController.php - Auth banner fix
+        * Commit #700b1f2

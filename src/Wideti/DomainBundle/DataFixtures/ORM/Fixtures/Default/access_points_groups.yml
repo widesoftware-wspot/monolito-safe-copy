@@ -1,0 +1,7 @@
+Wideti\DomainBundle\Entity\AccessPointsGroups:
+  Group01:
+    groupName: Grupo padrão
+    client: @Client1
+  Group02:
+      groupName: Grupo 2
+      client: @Client1

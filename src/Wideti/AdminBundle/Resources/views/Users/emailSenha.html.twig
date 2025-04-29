@@ -1,0 +1,109 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">Olá <a style="color: {{ whiteLabel.panelColor }}; font-weight: bold; text-decoration: none;">{{ user }}</a>!</td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td style="padding-right:20px;padding-top:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Tudo bem com você?</td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        {% if isWhiteLabel == 0 %}
+                            <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Sua senha de acesso ao painel <b style="color: {{ whiteLabel.panelColor }};">Mambo WiFi {{ domain }}</b> foi alterada com sucesso.</td>
+                        {% else %}
+                            <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Sua senha de acesso ao painel <b style="color: {{ whiteLabel.panelColor }};">H{{ whiteLabel.companyName }} - {{ domain }}</b> foi alterada com sucesso.</td>
+
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Acesse seu painel administrativo:</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550">
+                <tbody>
+                <tr>
+                    <td style="padding: 30px 0px 5px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">Painel: <a href="{{ painel }}" style="color: {{ whiteLabel.panelColor }}; font-weight: normal; text-decoration: none;">{{ painel }}</a></td>
+                </tr>
+                <tr>
+                    <td style="padding: 0px 0px 5px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">Login: <a style="color: {{ whiteLabel.panelColor }}; font-weight: normal; text-decoration: none;">{{ email }}</a></td>
+                </tr>
+                <tr>
+                    <td style="padding: 0 40px 30px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">Senha: <a style="color: {{ whiteLabel.panelColor }}; font-weight: normal; text-decoration: none;">{{ password }}</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        {% if isWhiteLabel == 0 %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Caso precise de ajuda, é só entrar em contato com nosso time de Sucesso do Cliente pelo e-mail <a href="mailto:comercial@mambowifi.com" style="text-decoration: none; color: #ec213a">comercial@mambowifi.com</a>.</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Caso precise de ajuda, é só entrar em contato com nosso time de Sucesso do Cliente pelo e-mail <a href="mailto:{{ from_email }}" style="text-decoration: none; color: {{ whiteLabel.panelColor }}">{{ from_email }}</a>.</td>
+            </tr>
+        {% endif %}
+
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Grande abraço.</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        {% if isWhiteLabel == 0 %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Time Mambo WiFi</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Time {{ whiteLabel.companyName }}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

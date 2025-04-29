@@ -1,0 +1,94 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block header %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:20px;font-size:30px;line-height:48px;color:#ec213a;font-family:Arial;font-weight:bold; text-align: center;" colspan="2">
+
+        </td>
+    </tr>
+{% endblock %}
+
+{% block content %}
+        <tr>
+            <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">
+                            Olá, <a style="color: #ec213a; font-weight: bold; text-decoration: none;">{{ entity.company}}</a>.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                        <tr>
+                            <td style="font-size:16px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                                Chegou o momento de configurar seu equipamento para utilizar o Mambo Wifi!
+
+                                <br><br>
+
+                                Você encontrará as instruções no painel administrativo do Mambo Wifi, acessando
+                                <strong>Pontos de acesso</strong> ->
+                                <strong>Configurar equipamento</strong> ->
+                                <strong>Marca do seu equipamento.</strong>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center; margin-top: 30px;">
+                                <img src="https://www.mambowifi.com/blog/wp-content/uploads/2017/03/gif-config-aps.gif"  alt="Configurar equipamento" title="Configurar equipamento">
+                            </td>
+                        </tr>
+                </table>
+            </td>
+        </tr>
+
+        <tr>
+            <td style="padding-left:30px;padding-bottom:10px;padding-right:30px;padding-top:10px;">
+                <table cellspacing="0" cellpadding="0" border="0">
+                    <tbody>
+                    <tr>
+                        <td style="font-size:16px;padding-right:20px;padding-left: 20px;line-height:30px;color:#909090;font-family:Arial;">
+                            Após configurar o equipamento, sugerimos a leitura
+                            <a href="https://www.mambowifi.com/materiais/WSpot-Manual.pdf" style="text-decoration: underline; color: #ec213a">
+                                desse material para configurar o seu Mambo Wifi
+                            </a>.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+            <tr>
+                <td style="padding-right:10px;padding-left: 20px;font-size:16px;line-height:16px;color:#909090;font-family:Arial;">
+                    Se precisar de ajuda, por favor entre em contato conosco pelo email
+                    <a href="mailto:suporte@mambowifi.com" style="text-decoration: none; color: #ec213a">suporte@mambowifi.com</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:16px;line-height:16px;color:#444444;font-family:Arial;">Teremos o maior prazer em ajud&aacute;-lo.</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:16px;line-height:16px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:16px;line-height:16px;color:#444444;font-family:Arial; font-weight: bold;">Equipe Mambo Wifi</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

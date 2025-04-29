@@ -1,0 +1,145 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplateEs.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">Hola, <a style="color: {{ whiteLabel.panelColor }}; font-weight: bold; text-decoration: none;">{{ guest.properties.name|default('wspot.default.guest'|trans) }}</a>!</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:25px;line-height:30px;color:#909090;font-family:Arial;">Sea muy bienvenido! Acaba de acceder a la red Wi-Fi de <b style="color: {{ whiteLabel.panelColor }};">{{ station }}</b>.</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:40px;padding-right:50px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550">
+                <tbody>
+                <tr>
+                    <td style="padding: 15px 0;border-radius: 2px;text-align: center;font-size:17px;line-height:17px;color:#ffffff;font-family:Arial;background-color: {{ whiteLabel.panelColor }};font-weight: bold;">En tus próximos acessos, solo sigue estos pasos para conectarte:</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:0px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550" style="border-bottom: 1px solid #f8f8f8;">
+                <tbody>
+                <tr>
+                    <td style="color: {{ whiteLabel.panelColor }}; font-weight: bold; font-size: 18px; border-color: #ffffff; border-width: 0 0 25px 0; border-style: solid;">1</td>
+                    <td style="color: #444444; font-weight: bold; font-size: 18px; line-height: 20px; border-color: #ffffff; border-width: 0 0 25px 10px; border-style: solid;">Conéctate a la red Wi-Fi a través de tu dispositivo;</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:0px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550" style="border-bottom: 1px solid #f8f8f8;">
+                <tbody>
+                <tr>
+                    <td style="color: {{ whiteLabel.panelColor }}; font-weight: bold; font-size: 18px; border-color: #ffffff; border-width: 0 0 25px 0; border-style: solid;">2</td>
+                    <td style="color: #444444; font-weight: bold; font-size: 18px; line-height: 20px; border-color: #ffffff; border-width: 0 0 25px 20px; border-style: solid;">Serás redirigido a la página de inicio de sesión. Si no, acceda a cualquier sitio .</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:0px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550" style="border-bottom: 1px solid #f8f8f8;">
+                <tbody>
+                <tr>
+                    <td style="color: {{ whiteLabel.panelColor }}; font-weight: bold; font-size: 18px; border-color: #ffffff; border-width: 0 0 25px 0; border-style: solid;">3</td>
+                    <td style="color: rgb(68, 68, 68); font-weight: bold; font-size: 18px; line-height: 20px; border-color: rgb(255, 255, 255); border-style: solid; border-width: 0px 0px 25px 15px;">Complete los datos solicitados en el formulario de inicio de sesión;</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:0px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550">
+                <tbody>
+                <tr>
+                    <td style="color:{{ whiteLabel.panelColor }};font-weight:bold;font-size:18px;border-color:#ffffff;border-width:0 0 25px 0;border-style:solid;width: 80px;">4</td>
+                    <td style="color: rgb(68, 68, 68); font-weight: bold; font-size: 18px; line-height: 20px; border-color: rgb(255, 255, 255); border-style: solid; border-width: 0px 0px 25px; position: relative; right: 15px;">Listo! <br>  Estás conectado a internet!</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:30px;padding-bottom:20px;padding-right:30px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Solo para recordarle, esta es su credencial de inicio de sesión:</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550">
+                <tbody>
+                <tr>
+                    <td style="padding: 30px 0px 30px 50px;font-size:20px;line-height:30px;color:#444444;font-family:Arial;background-color: #fbfbfb;font-weight: bold;">{{ loginField.name.pt_br }}: <a style="color: {{ whiteLabel.panelColor }}; font-weight: normal; text-decoration: none;">{{ loginFieldValue }}</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block footer %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        {% if fromEmail is not null %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">Si tiene alguna dificultad o problema, solo contacte a su administrador de red  <b style="color: {{ whiteLabel.panelColor }};">{{ station }}</b>.</td>
+            </tr>
+        {% endif %}
+
+        {% if isWhiteLabel == '0'%}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;padding-top:20px;font-size:18px;line-height:18px;color:#909090;font-family:Arial;">P.S.: Si tiene curiosidad sobre cómo funciona <b style="color: {{ whiteLabel.panelColor }};">Mambo WiFi</b>, <a href="http://www.mambowifi.com" target="_blank" style="text-decoration: none; color: {{ whiteLabel.panelColor }}">clic aquí</a>!</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Saludos,</td>
+        </tr>
+
+        {% if isWhiteLabel == '0'%}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Equipo Mambo WiFi</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;"> {{ whiteLabel.companyName }}</td>
+            </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

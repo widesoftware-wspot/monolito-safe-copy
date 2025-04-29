@@ -1,0 +1,544 @@
+<html>
+{% set host = app.request.httpHost %}
+<head>
+    {% if host in 'suaempresa.wspot.com.br' or host in 'suaempresa.mambowifi.com' %}
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44869267-2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'UA-44869267-2');
+        </script>
+    {% endif %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{{ asset(assets_path ~'/css/default.css')}}" rel="stylesheet">
+
+    <style>
+        #submit, .submit {
+            display: none;
+        }
+
+    </style>
+    {% if campaign and (campaign.posLoginMediaDesktop or campaign.posLoginMediaMobile) %}
+
+        <style>
+            body{
+                font-family: 'open_sanslight';
+                background-color: {{ campaign.bgColor }};
+            }
+
+            #warning-message {
+                background-color: #000;
+                color: #fff;
+                text-align: center;
+                padding: 5px;
+                font-size: 0.9em;
+            }
+
+            #campaign {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                max-height: 90%;
+            }
+
+            #container-campaign {
+                display: -webkit-box;
+                display: -ms-flexbox;
+                display: flex;
+                max-height: 95%;
+            }
+
+            {% if callToAction is not null and callToAction.status == 1 and callToAction.campaignType == 2 %}
+                .flex-start_flex-start {
+                    -ms-flex-item-align: start!important;
+                    align-self: flex-start!important;
+                }
+
+                .flex-start_flex-end {
+                    -webkit-box-pack: end!important;
+                    -ms-flex-pack: end!important;
+                    justify-content: flex-end!important;
+                }
+
+                .flex-start_center {
+                    -webkit-box-pack: center!important;
+                    -ms-flex-pack: center!important;
+                    justify-content: center!important;
+                }
+
+                .center_flex-start {
+                    -ms-flex-item-align: start!important;
+                    align-self: flex-start!important;
+                    -webkit-box-align: center!important;
+                    -ms-flex-align: center!important;
+                    align-items: center!important;
+                }
+
+                .center_flex-end {
+                    -webkit-box-pack: end!important;
+                    -ms-flex-pack: end!important;
+                    justify-content: flex-end!important;
+                    -webkit-box-align: center!important;
+                    -ms-flex-align: center!important;
+                    align-items: center!important;
+                }
+
+                .center_center {
+                    -webkit-box-pack: center!important;
+                    -ms-flex-pack: center!important;
+                    justify-content: center!important;
+                    -webkit-box-align: center!important;
+                    -ms-flex-align: center!important;
+                    align-items: center!important;
+                }
+
+                .flex-end_flex-start {
+                    -webkit-box-orient: vertical!important;
+                    -webkit-box-direction: normal!important;
+                    -ms-flex-direction: column!important;
+                    flex-direction: column!important;
+
+                    -webkit-box-pack: end!important;
+
+                    -ms-flex-pack: end!important;
+
+                    justify-content: flex-end!important;
+                    -webkit-justify-content: flex-end!important;
+                }
+
+                .flex-end_flex-end {
+                    -webkit-box-orient: vertical!important;
+                    -webkit-box-direction: normal!important;
+                    -ms-flex-direction: column!important;
+                    flex-direction: column!important;
+                    -webkit-box-pack: end!important;
+                    -ms-flex-pack: end!important;
+                    justify-content: flex-end!important;
+                    -webkit-box-align: end!important;
+                    -ms-flex-align: end!important;
+                    align-items: end!important;
+                }
+
+                .flex-end_flex-end button {
+                    margin-left: auto!important;
+                }
+
+                .flex-end_center {
+                    -webkit-box-orient: vertical!important;
+                    -webkit-box-direction: normal!important;
+                    -ms-flex-direction: column!important;
+                    flex-direction: column!important;
+                    -ms-flex-pack: end!important;
+                    justify-content: flex-end!important;
+                    -webkit-box-align: center!important;
+                    -ms-flex-align: center!important;
+                    align-items: center!important;
+                    -webkit-box-pack: end!important;
+                }
+
+                @media only screen and (orientation: landscape ) {
+                    #callToAction {
+                        font-size: {{ callToAction.landscapeButtonLabelSize }}px;
+                        color: {{ callToAction.landscapeButtonLabelColor }};
+                        border-color: {{ callToAction.landscapeButtonColor }};
+                        width: {{ callToAction.landscapeButtonWidth }}px;
+                        height: {{ callToAction.landscapeButtonSize }}px;
+                        background-color: {{ callToAction.landscapeButtonColor }};
+                        cursor: pointer;
+                    }
+
+                    {% if not campaign.posLoginFullSize %}
+                        #container-image {
+                            width: 50% !important;
+                            height: 100% !important;
+                        }
+
+                        {% if (device == "PC") %}
+                            #container-campaign {
+                                width: 100% !important;
+                                height: 65% !important;
+                                margin: 15% auto 0 auto !important;
+                            }
+                        {% else %}
+                            #container-campaign {
+                                width: 75% !important;
+                            }
+                        {% endif %}
+                    {% endif %}
+                }
+
+                @media only screen and (orientation: portrait ) {
+                    #callToAction {
+                        font-size: {{ callToAction.portraitButtonLabelSize }}px;
+                        color: {{ callToAction.portraitButtonLabelColor }};
+                        border-color: {{ callToAction.portraitButtonColor }};
+                        height: {{ callToAction.portraitButtonSize }}px;
+                        width: {{ callToAction.portraitButtonWidth }}px;
+                        background-color: {{ callToAction.portraitButtonColor }};
+                        cursor: pointer;
+                    }
+
+                {% if not campaign.posLoginFullSize %}
+                    #container-image {
+                        width: 100%;
+                        height: 100%;
+                    }
+                {% endif %}
+                }
+            {% endif %}
+        </style>
+    {% endif %}
+
+    {% if wspotNas.vendorName  == 'openwrt' %}
+        <script src="{{ asset(assets_path ~'/js/md5.js') }}"></script>
+    {% elseif wspotNas.vendorName  == 'coovachilli' or wspotNas.vendorName  == 'plenatech' %}
+        <script src="{{ asset(assets_path ~'/js/ChilliLibrary.js') }}"></script>
+    {% elseif wspotNas.vendorName == 'tp_link_v4' %}
+        <script>
+            function postJson(url, jsonData, redirectUrl) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', url, true);
+                xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
+                // xhr.setRequestHeader('Access-Control-Allow-Headers', '*');
+                xhr.setRequestHeader('Access-Control-Allow-Origin', window.location.origin);
+
+                xhr.timeout = 5000; // 5 segundos
+
+                xhr.addEventListener('load', function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    handleSuccess(xhr.responseText);
+                } else {
+                    handleError(xhr.status, xhr.responseText);
+                }
+                });
+
+                xhr.addEventListener('error', function() {
+                handleError(xhr.status, xhr.responseText);
+                });
+
+                xhr.addEventListener('timeout', function() {
+                handleError(408, 'Tempo limite da solicitação excedido');
+                });
+
+                xhr.send(JSON.stringify(jsonData));
+
+                function handleSuccess(responseText) {
+                document.write('[success]', responseText);
+                // document.location = redirectUrl;
+                }
+
+                function handleError(status, responseText) {
+                document.write('[error]', status, responseText);
+                }
+            }
+        </script>
+    {% endif %}
+</head>
+<body>
+   
+{% if host in 'suaempresa.wspot.com.br' or host in 'suaempresa.mambowifi.com' %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+        <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TQSQ8RL"
+                height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+{% endif %}
+{{ form(form) }}
+
+{% if campaign and (campaign.posLoginMediaDesktop or campaign.posLoginMediaMobile) %}
+    <div class="content">
+        <div id="warning-message">
+            {{ 'wspot.campaign.loading_message'|trans }}
+        </div>
+        <div id="campaign">
+            <div id="container-image">
+                <div id="container-campaign" style="margin:0 auto;position: absolute;width: 90%;height: 100%;" class="{{ (device == "PC") ? landscapeClass : portraitClass }}">
+                    {% if callToAction is not null and callToAction.status == 1 and callToAction.campaignType == 2 %}
+                        <button id="callToAction" style="border-radius: 5px !important;">{{ callToAction.label }}</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if device == 'winPhone' %}
+    <script src="{{ asset(assets_path ~'/js/jquery.1.12.4.min.js')}}"></script>
+{% else %}
+    <script src="{{ asset(assets_path ~'/js/jquery.min.js')}}"></script>
+{% endif %}
+
+<script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+<script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+<script src="{{ asset(assets_path ~'/js/jquery.bgluminance.js')}}"></script>
+
+<script type="text/javascript">
+    window.onscroll = function () { window.scrollTo(0, 0); };
+
+    /**
+     * Define o tamanho vertical da imagem de campanha
+     */
+    var messageBoxHeight = $('#warning-message').outerHeight(true);
+    var totalBodyHeight = $('body').outerHeight(true);
+    var campaignHeight = totalBodyHeight - messageBoxHeight;
+    $('#campaign').css('height', campaignHeight + "px");
+
+    function formSubmit(){
+        {% if app.session.get('preview') %}
+                console.log('[url]', '{{ path('frontend_redirection_url') }}');
+                location.href = '{{ path('frontend_redirection_url') }}';
+        {% elseif wspotNas.vendorName  == 'coovachilli' or wspotNas.vendorName  == 'plenatech' %}
+            connect();
+        {% elseif wspotNas.vendorName  == 'teltonika' or wspotNas.vendorName  == 'edgecore' or wspotNas.vendorName == 'openwifi' %}
+            $('#button').click();
+        {% elseif wspotNas.vendorName  == 'tp_link_v4' %}
+            postJson(
+                'http://' + $('#target').val() + ':8088/portal/radius/auth',
+                {
+                    'username': $('#username').val(),
+                    'password': $('#password').val(),
+                    'originUrl': $('#originUrl').val(),
+                    'clientIp': $('#clientIp').val(),
+                    'gatewayMac': $('#gatewayMac').val(),
+                    'clientMac': $('#clientMac').val(),
+                    'apMac': $('#apMac').val(),
+                    'ssidName': $('#ssidName').val(),
+                    'radioId': parseInt($('#radioId').val()),
+                    'radiusServerIp': $('#radiusServerIp').val(),
+                    'vid': $('#vid').val(),
+                    'targetPort': parseInt($('#targetPort').val()),
+                    'authType': 2
+                },
+                $('#originUrl').val()
+            )
+        {% elseif wspotNas.vendorName  == 'aruba_v2' %}
+            console.log('[aruba_v2] formPostImageController.html')
+            function redirectToInsecure() {
+                const form = document.getElementById('formLoginControladora');
+                if (!form) {
+                    console.error("Formulário não encontrado!");
+                    return;
+                }
+
+                const actionUrl = form.action;
+                const formData = new FormData(form);
+                const queryParams = new URLSearchParams();
+
+                formData.forEach((value, key) => {
+                    queryParams.append(key, value);
+                });
+
+                const destinationUrl = `${actionUrl}?${queryParams.toString()}`;
+
+                console.log(`Redirecionando para: ${destinationUrl}`);
+                window.location.href = destinationUrl;
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                redirectToInsecure();
+            });
+        {% else %}
+            $('#submit').click();
+        {% endif %}
+    }
+
+    {% if wspotNas.vendorName == 'openwrt' %}
+        var CHAR_SIZE = 8;
+        // convert array to binary little-endian format.
+        function array2binl(str) {
+            var bin = Array();
+            var mask = (1 << CHAR_SIZE) - 1;
+            for (var i = 0; i < str.length * CHAR_SIZE; i += CHAR_SIZE) {
+                bin[i >> 5] |= (str[i / CHAR_SIZE] & mask) << (i % 32);
+            }
+            return bin;
+        }
+
+        // calculate the CHAP response
+        function hotspot_response(password, challenge)
+        {
+            var ch = Array();
+            for (var i = 0; i < challenge.length; i += 2) {
+                var num = challenge.substr(i, 2);
+                ch[i/2] = parseInt(num, 16);
+            }
+            var arr = [0];
+            for (var i = 0; i < password.length; i ++) {
+                arr[i+1] = password.charCodeAt(i);
+            }
+            arr=arr.concat(ch);
+            var bin = array2binl(arr);
+            return binl2hex(core_md5(bin, arr.length * CHAR_SIZE));
+        }
+
+        document.getElementById('formLoginControladora').response.value = hotspot_response('{{ password }}', '{{ app.session.get('challenge') }}');
+    {% endif %}
+
+    {% if campaign and (campaign.posLoginMediaDesktop or campaign.posLoginMediaMobile) and campaign.posLoginMediaTime != 0 %}
+        $('#warning-message').bgColorLuminance("{{ campaign.bgColor }}", -0.4);
+        var device = "{{ device }}";
+        var campaignBox = $('#campaign');
+        var campaignImage = $('#container-image');
+        var campaignContainer = $("#container-campaign");
+        var currentImageIndexMobile = 0;  // Inicializa o índice para a rotação de imagens
+        var currentImageIndexDesktop = 0;  // Inicializa o índice para a rotação de imagens
+        // var updateInterval= ({{campaign.posLoginMediaTime}}+3)*1000/{{totalMobileImages}}
+        var totalMobileImages = {{totalMobileImages}} > 0 ? {{totalMobileImages}} : 1;  // Garantir que seja pelo menos 1
+        var totalDesktopImages = {{totalDesktopImages}} > 0 ? {{totalDesktopImages}} : 1;  // Garantir que seja pelo menos 1
+        var updateIntervalMobile = ({{campaign.posLoginMediaTime}} + 3) * 1000 / totalMobileImages;
+        var updateIntervalDesktop = ({{campaign.posLoginMediaTime}} + 3) * 1000 / totalDesktopImages;
+
+
+        // URLs das imagens mobile
+        var mobileImages = [
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.posLoginMediaMobile) }}",
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.posLoginMediaMobile2) }}",
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.posLoginMediaMobile3) }}"
+        ];
+
+        // URLs das imagens desktop
+        var desktopImages = [
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.posLoginMediaDesktop) }}",
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.posLoginMediaDesktop2) }}",
+            "{{ asset('https://' ~ aws_bucket_proxy_name ~'/'~ config.aws_folder_name ~'/'~ campaign.posLoginMediaDesktop3) }}"
+        ]
+
+        if (device === "PC") {
+            updateImageDesktop();  // Inicializa a primeira imagem de mobile
+            setInterval(updateImageDesktop, updateIntervalDesktop);  // Alterna entre as imagens a cada 4 segundos
+        }
+
+        if (device === "winPhone" || device === "Mobile") {
+            updateImageMobile();  // Inicializa a primeira imagem de mobile
+            setInterval(updateImageMobile, updateIntervalMobile);  // Alterna entre as imagens a cada 4 segundos
+
+        }
+
+        function updateImageDesktop() {
+
+            // Atualiza a imagem de fundo com a próxima imagem na sequência
+            campaignImage.css('background', 'url(' + desktopImages[currentImageIndexDesktop] + ') no-repeat center center');
+            campaignImage.css('background-size', 'contain');  // Faz com que a imagem cubra todo o container
+            currentImageIndexDesktop = (currentImageIndexDesktop + 1) % {{totalDesktopImages}};  // Atualiza o índice circularmente
+
+
+        }
+
+
+        function updateImageMobile() {
+
+            // Atualiza a imagem de fundo com a próxima imagem na sequência
+            campaignImage.css('background', 'url(' + mobileImages[currentImageIndexMobile] + ') no-repeat center center');
+            campaignImage.css('background-size', 'contain');  // Faz com que a imagem cubra todo o container
+            currentImageIndexMobile = (currentImageIndexMobile + 1) % {{totalMobileImages}};  // Atualiza o índice circularmente
+
+        }
+        campaignBox.css('height', '100%');
+        campaignBox.css('width', '100%');
+
+        campaignImage.css('height', '100%');
+        campaignImage.css('width', '100%');
+        campaignImage.css('position', 'relative');
+
+        campaignImage.css('background-size', '100% 100%');
+        campaignImage.css('-webkit-background-size', '100% 100%');
+        campaignImage.css('-moz-background-size', '100% 100%');
+        campaignImage.css('-o-background-size', '100% 100%');
+
+        {% if campaign.posLoginFullSize %}
+            campaignBox.css('margin', '1px 1px');
+        {% else %}
+            campaignImage.css({
+                'background-size' : 'contain',
+                '-webkit-background-size' : 'contain',
+                '-moz-background-size' : 'contain',
+                '-o-background-size' : 'contain',
+                'margin' : '0 auto'
+            });
+
+            campaignContainer.css({
+                'width'  : '90%',
+                'margin' : '0 auto'
+            });
+        {% endif %}
+
+        window.onload = function () {
+            counterElement('{{ campaign.posLoginMediaTime }}');
+            var counter = '{{ campaign.posLoginMediaTime }}';
+            var request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+            var postUrl = Routing.generate('campaign_count_view_post') + '/{{ campaign.id }}/{{ guestId }}/{{ guestMacAddress }}/{{ accessPoint }}';
+
+            setTimeout(function () {
+                request.open('POST', postUrl, true);
+                request.onreadystatechange = function () {
+                    if (request.readyState == 4) {
+                        if (request.status == 200) {
+                            formSubmit();
+                        }
+                    }
+                };
+                request.send("campaign={{ campaign.id }}");
+            }, (counter*1000));
+        };
+
+        function counterElement(seconds) {
+            var warningMessage = $("#warning-message");
+            warningMessage.html("{{ 'wspot.campaign.count_message'|trans }}: <span id='time-count'></span>");
+
+            var counter = $("#time-count");
+            counter.html(seconds);
+
+            var control = seconds;
+            setInterval(function () {
+                counter.html(control);
+                if (control !== 0) {
+                    control--;
+                }
+            }, 1000);
+        }
+
+        {% if callToAction is not null and callToAction.status == 1 and callToAction.campaignType == 2 %}
+            $("#callToAction").on("click", function() {
+                CallToActionButtonAfterBeingClicked();
+                $.ajax({
+                    type: "POST",
+                    url: Routing.generate('frontend_register_call_to_action', {
+                        type: "2",
+                        url: "{{ callToAction.redirectUrl|url_encode|default("null") }}",
+                        macAddress: "{{ guestMacAddress }}",
+                        apMacAddress: "{{ accessPoint }}",
+                        guest: "{{ guestId }}",
+                        campaign: "{{ campaign.id }}"
+                    }),
+                    dataType : "json",
+                    success: function(response) {
+                        if (response.originUrl) {
+                            $('#originUrl').val(response.originUrl);
+                            formSubmit();
+                        } else {
+                            console.error("originUrl não encontrado na resposta.");
+                        }
+                    }
+                });
+            });
+
+            function CallToActionButtonAfterBeingClicked() {
+                $("#callToAction")
+                    .prop("disabled", true)
+                    .css({
+                        "background-color" : "rgba(220, 220, 220, 0.5)",
+                        "color" : "rgba(220, 220, 220, 0.7)"
+                    });
+            }
+        {% endif %}
+
+    {% else %}
+        formSubmit();
+    {% endif %}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    <div class="module-permission">
+        <h1>Limite atingido...</h1>
+        <h3>A quantidade de Pontos de acesso cadastrados atingiu o total contratado. Por favor, entre em contato com o administrador.</h3>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

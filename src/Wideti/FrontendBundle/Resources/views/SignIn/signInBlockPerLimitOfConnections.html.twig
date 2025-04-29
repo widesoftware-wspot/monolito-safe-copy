@@ -1,0 +1,18 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important; min-height: 400px;">
+            <div class="box-content">
+                <h3 style="font-size: 24px;">{{ 'wspot.block_per_limit_of_connections.title'|trans }}</h3>
+
+                <div class="content-center">
+                    {{ 'wspot.block_per_limit_of_connections.message_1'|trans }}<strong>{{ guest.properties.name|default('wspot.default.guest'|trans) }}</strong>.
+                    {{ 'wspot.block_per_limit_of_connections.message_2'|trans }}
+                </div>
+
+                <a class="btnChangeData" href="{{ path('frontend_index') }}" style="margin-top: 30px;">{{ 'wspot.confirmation.button_home'|trans }}</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

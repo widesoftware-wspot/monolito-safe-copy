@@ -1,0 +1,453 @@
+<script type="text/javascript">
+    $('#signupForm').on('keyup keypress', function(e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    function disableSubmitButton()
+    {
+        $('#wspot_signup_submit').attr('onclick', 'return false');
+    }
+
+    function enableSubmitButton()
+    {
+        $('#wspot_signup_submit').attr('onclick', 'return true');
+    }
+
+    function submitButtonControl(status, field)
+    {
+        $(field).attr('error', status);
+
+        var name             = $('#wspot_signup_properties_name').attr('error');
+        var email            = $('#wspot_signup_properties_email').attr('error');
+        var emailValid       = $('#wspot_signup_emailValidate').attr('error');
+        var phone            = $('#wspot_signup_properties_phone').attr('error');
+        var optIn            = $('#wspot_signup_authorizeEmail').attr('error');
+        var termsOfUse       = $('#wspot_signup_terms_required').attr('error');
+        var consentTerm      = $('#wspot_signup_consent_term').attr('error');
+
+        var fields = {name, email, phone, optIn, termsOfUse, consentTerm, emailValid};
+
+        $.each(fields, function(i, val) {
+            if (val === "true") {
+                disableSubmitButton();
+                return false;
+            }
+            enableSubmitButton()
+        });
+    }
+
+
+    $(document).ready(function() {
+        $("#wspot_signup_properties_email").attr('autocomplete','new-password');
+
+        let colors = [
+            'rgba(255, 255, 255, 0.0)',
+            'rgba(255, 255, 255, 0.1)',
+            'rgba(255, 255, 255, 0.2)',
+            'rgba(255, 255, 255, 0.3)',
+            'rgba(255, 255, 255, 0.4)',
+            'rgba(255, 255, 255, 0.5)',
+            'rgba(255, 255, 255, 0.6)',
+            'rgba(255, 255, 255, 0.7)',
+            'rgba(255, 255, 255, 0.8)',
+            'rgba(255, 255, 255, 0.9)',
+            'rgba(255, 255, 255, 1.0)',
+            'rgb(255, 255, 255)',
+            '#ffffff',
+            '#fff'
+        ]
+
+        let loginBox = $('#loginBox.boxes').css('background-color')
+        let signUpBox = $('#signUpBox.boxes').css('background-color')
+
+        colors.forEach(color => {
+            if(loginBox === color) {
+                $('#loginBox input').css("border", "1px solid #96989A")
+            }
+            if(signUpBox === color) {
+                $('#signUpBox input').css("border", "1px solid #96989A")
+            }
+        })
+
+        // i18n phone flags and country code
+        // https://github.com/jackocnr/intl-tel-input#options
+        $('input[type=tel]').on("keyup blur", function() {
+            if ($(this).intlTelInput("getSelectedCountryData").name != "Brasil") {
+                $(this).removeAttr('minlength');
+                $("#signupForm").validate().resetForm();
+            }
+            if (($(this).intlTelInput("getSelectedCountryData").name == "Brasil") && ($(this).val().length == 2)) {
+                var regexPattern = "((([1,4,6,8,9][1-9])|(2[1,2,4,7,8])|(3[1-8])|(4[1-9])|(5[1-5])|(7[1,3,4,5,7,9])))",
+                    regex = new RegExp(regexPattern);
+
+                if (!regex.test($(this).val())) {
+                    $(this).val('').focus();
+                    submitButtonControl(true, $(this));
+                } else {
+                    submitButtonControl(false, $(this));
+                }
+            }
+        });
+
+        $('#wspot_signup_properties_name').on("focusout", function(){
+            var regexPattern = /^[A-Za-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+$/;
+            var regex = new RegExp(regexPattern);
+            var resutl = regexPattern.exec($(this).val());
+
+            if (!regexPattern.test($(this).val())) {
+                $('#name_validate').empty().prepend('<label id="email_validate_error" for="wspot_signup_properties_nome">{{ "wspot.invalid_name.name_validate_error"|trans }}</label>');
+                submitButtonControl(true, $(this));
+            } else {
+                $('#name_validate').empty();
+                submitButtonControl(false, $(this));
+            }
+        });
+
+        var phoneField = $('#wspot_signup_properties_phone');
+        var mobileField = $('#wspot_signup_properties_mobile');
+        var phoneCodeField = $('#wspot_signup_country-code-phone');
+        var mobileCodeField = $('#wspot_signup_country-code-mobile');
+
+        var countryData = $.fn.intlTelInput.getCountryData();
+        $.each(countryData, function(i, country) {
+            country.name = country.name.replace(/.+\((.+)\)/,"$1").substring(0, 20);
+        });
+
+        // add field to phone input
+        phoneField.intlTelInput({
+            initialCountry: 'BR',
+            preferredCountries: ['br']
+        });
+        phoneField.attr('autocomplete', 'on');
+
+        mobileField.intlTelInput({
+            initialCountry: 'BR',
+            preferredCountries: ['br']
+        });
+        mobileField.attr('autocomplete', 'on');
+
+        // Add the first code on page load, by default is Br (55)
+        phoneCodeField.val(phoneField.intlTelInput("getSelectedCountryData").dialCode);
+        mobileCodeField.val(mobileField.intlTelInput("getSelectedCountryData").dialCode);
+
+        // on change country, change de value of input hidden
+        phoneField.on('countrychange', function(e, countryData){
+            phoneCodeField.val(countryData.dialCode);
+        });
+
+        mobileField.on('countrychange', function(e, countryData){
+            mobileCodeField.val(countryData.dialCode);
+        });
+
+        var isMock = {{ (isMockView is defined) ? isMockView : 0 }};
+        var bounceValidator = '{{ bounceValidator }}';
+
+        if (isMock) {
+            $('#wspot_signup_submit').attr('onclick', 'return false');
+            $('#wspot_signin_entrar').attr('onclick', 'return false');
+        }
+
+        $('#wspot_signup_terms_required').on('change', function(){
+            if (!$(this).is(':checked')) {
+                submitButtonControl(true, $(this));
+                $('#wspot_signup_terms_required-error').show();
+            } else {
+                submitButtonControl(false, $(this));
+                $('#wspot_signup_terms_required-error').hide();
+            }
+        });
+
+        $('#signupForm').on('submit', function (e) {
+            if ($('.selected-flag').attr("title") != "Brasil: +55") {
+                $("#wspot_signup_submit").attr("formnovalidate","formnovalidate");
+            }else{
+                $("#wspot_signup_submit").removeAttr("formnovalidate");
+            }
+        });
+
+        var requiredOptIn = '{{ requiredOptIn }}';
+
+        if (requiredOptIn) {
+            $('#wspot_signup_authorizeEmail').on('change', function(){
+                if (!$(this).is(':checked')) {
+                    submitButtonControl(true, $(this));
+                    $('#wspot_signup_authorize_email_required-error').show();
+                } else {
+                    submitButtonControl(false, $(this));
+                    $('#wspot_signup_authorize_email_required-error').hide();
+                }
+            });
+        }
+
+        $('#wspot_signup_consent_term').on('change', function(){
+            if (!$(this).is(':checked')) {
+                submitButtonControl(true, $(this));
+                $('#wspot_signup_consent_term_required-error').show();
+            } else {
+                submitButtonControl(false, $(this));
+                $('#wspot_signup_consent_term_required-error').hide();
+            }
+        });
+
+        $('#wspot_signup_properties_email').keyup(function(){
+            $(this).val($(this).val().toLowerCase());
+        });
+
+        var clientDomain = '{{ client.domain }}';
+        if (clientDomain === 'kopclub') {
+            $('#wspot_signup_password_first').val("kopclub");
+            $('#wspot_signup_password_second').val("kopclub");
+            $('#wspot_signin_password').val("kopclub");
+        } else {
+            $('.forgotPassword').show();
+        }
+
+        if (bounceValidator == 1) {
+            $('#wspot_signup_properties_email').change(function() {
+                setTimeout(function(){
+                    if (!$('#wspot_signup_properties_email').hasClass('error')) {
+                        submitButtonControl(true, $(this));
+                        $('#email_validate').empty().prepend('<label id="email_validate_process" class="info" for="wspot_signup_properties_email">{{ "wspot.invalid_email.email_validate_process"|trans }}</label>');
+
+                        var data  = {
+                            'email' : $('#wspot_signup_properties_email').val()
+                        };
+
+                        var route = Routing.generate('email_validate');
+
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType: "json",
+                            timeout: 10000,
+                            success: function(response)
+                            {
+                                $('#email_validate').empty().prepend('<label id="email_validate_success" class="success" for="wspot_signup_properties_email">{{ "wspot.invalid_email.email_validate_success"|trans }}</label>');
+                                $('#wspot_signup_emailValidate').val(response);
+                                submitButtonControl(false, $('#wspot_signup_emailValidate'));
+                            },
+                            error: function(response, status)
+                            {
+                                if (status == 'timeout') {
+                                    $('#email_validate').empty();
+                                    submitButtonControl(false, $('#wspot_signup_emailValidate'));
+                                } else {
+                                    $('#wspot_signup_properties_emailValidate').val('');
+                                    $('#wspot_signup_emailValidate').val(response.responseJSON);
+                                    submitButtonControl(true, $('#wspot_signup_emailValidate'));
+
+                                    $('#email_validate').empty().prepend('<label id="email_validate_error" for="wspot_signup_properties_email">{{ "wspot.invalid_email.email_validate_error"|trans }}</label>');
+                                }
+                            }
+                        });
+                    }
+                }, 100);
+            });
+        }
+
+        if(!jQuery(".errorBox").text()){
+            jQuery(".errorBox").css("background-color","transparent");
+            jQuery(".errorBox").css("display","none");
+        }
+
+        if(!jQuery(".success").text()){
+            jQuery(".success").css("background-color","transparent");
+            jQuery(".success").css("display","none");
+        }
+
+        $('.country').on('click', function () {
+            if ($(this).attr("data-dial-code") != "55") {
+                $(this).removeAttr('minlength');
+                $("#signupForm").validate().resetForm();
+            }
+        });
+
+        {% if(app.request.locale == 'pt_br') %}
+        jQuery('#wspot_signup_properties_phone').attr('maxlength','11');
+        jQuery("#wspot_signup_properties_document").attr('maxlength','11');
+        {% else %}
+        jQuery("#wspot_signup_properties_document").attr('type','text');
+        {% endif %}
+
+        {% if(app.request.locale != 'pt_br') %}
+        $( "span.label-important" ).each( function(){
+            if($(this).text() == 'Domínio de e-mail não permitido') {
+                $(this).text('Domain not allowed');
+            }
+        });
+        {% endif %}
+
+        {% if(app.request.locale == 'es') %}
+        $( "span.label-important" ).each( function(){
+            if($(this).text() == 'Domain not allowed') {
+                $(this).text('Dominio no autorizado');
+            }
+        });
+        {% endif %}
+
+        $( "span.label-important" ).each( function(){
+            if($(this).text() == 'Este valor já está a ser usado.') {
+                $(this).text('Este valor já está sendo usado.');
+            }
+        });
+
+        jQuery('.btn-facebook').click(function(){
+            if (isMock) return false;
+            jQuery(this).hide();
+            jQuery('#loaderBtnFacebook').show();
+        });
+
+        jQuery('.btn-large-facebook').click(function(){
+            if (isMock) return false;
+            jQuery(this).hide();
+            jQuery('#loaderBtnLargeFacebook').show();
+        });
+
+        jQuery('.btn-twitter').click(function(){
+            if (isMock) return false;
+            jQuery(this).hide();
+            jQuery('#loaderBtnTwitter').show();
+        });
+
+        jQuery('.btn-large.twitter').click(function(){
+            if (isMock) return false;
+            jQuery(this).hide();
+            jQuery('#loaderBtnLargeTwitter').show();
+        });
+
+        jQuery('.btn-google').click(function(){
+            if (isMock) return false;
+            jQuery(this).hide();
+            jQuery('#loaderBtnGoogle').show();
+        });
+
+        jQuery('.btn-google-custom').click(function(){
+            if (isMock) return false;
+            jQuery(this).hide();
+            jQuery('#loaderBtnLargeGoogle').show();
+        });
+
+        if ($('.errorBox').text()) {
+            jQuery('#loginBox').css('display', 'block');
+            jQuery('#defaultBox').hide();
+            jQuery('#loginBox').show();
+        }
+
+        if ($('.label-important').text()) {
+            jQuery('#signUpBox').css('display', 'block');
+            jQuery('#defaultBox').hide();
+            jQuery('#signUpBox').show();
+        }
+
+        jQuery('#loginAccount').click(function(){
+            jQuery('#defaultBox').hide();
+            jQuery('#loginBox').show();
+        });
+
+        jQuery('#signupAccount').click(function(){
+            jQuery('#defaultBox').hide();
+            jQuery('#signUpBox').show();
+        });
+
+        jQuery('#btnCadastro').click(function(){
+            jQuery('#loginBox').hide();
+            jQuery('#signUpBox').show();
+        });
+
+        jQuery('#btnLoginBoxButton').click(function(){
+            jQuery('#loginBox').show();
+            jQuery('#signUpBox').hide();
+        });
+
+        {% if login_error %}
+        if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            jQuery('#defaultBox').hide();
+            jQuery('#signUpBox').hide();
+            jQuery('#loginBox').show();
+        }
+        {% endif %}
+
+        {% if signup_error %}
+        if( /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+            jQuery('#defaultBox').hide();
+            jQuery('#loginBox').hide();
+            jQuery('#signUpBox').show();
+        }
+        {% endif %}
+
+        {% if not client.enablePasswordAuthentication %}
+        jQuery('#defaultBox').hide();
+        {% endif %}
+
+        var data = {
+            'field': ['city']
+        };
+
+        var route = Routing.generate('check_field_exists');
+
+        $.ajax({
+            type: "POST",
+            url: route,
+            data: data,
+            dataType : "json",
+            success: function(response)
+            {
+                if (response) {
+                    listCities();
+                }
+            }
+        });
+    });
+
+    function listCities(){
+        var route = Routing.generate('frontend_load_cities');
+
+        $.ajax({
+            type: "POST",
+            url: route,
+            dataType : "json",
+            success: function(response)
+            {
+                $("#wspot_signup_properties_city").autocomplete({
+                    source: response
+                });
+            }
+        });
+    }
+
+    setTimeout(function() {
+        $(".language-box").toggle("drop", {direction: 'up'}, 800);
+    }, 4000);
+
+    emailAutoCompleteDomain({
+        0: '#wspot_signin_properties_email',
+        1: '#wspot_signup_properties_email'
+    });
+
+    {% for flashMessage in app.session.flashbag.get('error') %}
+    $.gritter.add({
+        title: 'Aviso!',
+        text: ' {{ flashMessage }} '
+    });
+    {% endfor %}
+
+    function setDivSession(divSession){
+        switch (divSession) {
+            case 'google':
+                divSessionGoogle.style.display = 'flex';
+                divSessionLogin.style.display = 'none';
+                console.log('Show default session Google');
+                break;
+            default:
+                divSessionGoogle.style.display = 'none';
+                divSessionLogin.style.display = 'flex';
+                console.log('Show default session Login');
+            // document.location.reload();
+        }
+    }
+</script>

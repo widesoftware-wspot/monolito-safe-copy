@@ -1,0 +1,20 @@
+login_panel:
+    path: /login
+    defaults: { _controller: PanelBundle:Login:login }
+
+login_check_panel:
+    path: /login_check
+    defaults: { _controller: PanelBundle:Login:loginCheck }
+    methods: [POST]
+
+user_panel_forgot_password:
+    path:  /forgot_password
+    defaults: { _controller: wspot.panel.controller.user:forgotPasswordAction }
+
+logout_panel:
+    path: /logout
+    defaults: { _controller: PanelBundle:Login:logout }
+
+login_panel_2fa:
+    path: /login/twoFactorAuthentication
+    defaults: { _controller: PanelBundle:Login:login2fa }

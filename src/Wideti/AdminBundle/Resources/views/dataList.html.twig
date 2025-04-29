@@ -1,0 +1,101 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <style>.timezone {font-size: 11px;text-align:center;}</style>
+{% endblock %}
+
+{% block content %}
+    <ul class="breadcrumb"></ul>
+    <div class="separator bottom"></div>
+
+    <div class="heading-buttons">
+        <h3>
+            {% block dataTitle %}
+            {% endblock %}
+        </h3>
+        <div class="buttons pull-right">
+            {% block buttonRight %}
+            {% endblock %}
+        </div>
+    </div>
+    <div class="separator bottom"></div>
+
+    <div class="filter-bar">
+        {% block filter %}
+        {% endblock %}
+
+        {% block addButton %}
+        {% endblock %}
+        <div class="clearfix"></div>
+    </div>
+    <div class="innerLR">
+        <div class="innerLR">
+
+            {% block emailTemplate %}
+            {% endblock %}
+
+            {% block moduleConfig %}
+            {% endblock %}
+            <!-- Widget -->
+            <div class="widget" style="margin-top: -1px;">
+                <div class="widget-body">
+                    <!-- Total bookings & sort by options -->
+                    <div class="separator bottom form-inline small">
+                        {% block messagebar %}
+                        {% endblock %}
+                    </div>
+
+                    <div style="overflow-x: visible;">
+                        <table class="dynamicTable table table-condensed table-striped table-primary" style="table-layout: auto !important;overflow-x: auto;">
+                            <thead>
+                            <tr>
+                                {% block thead %}
+                                    <th style="width: 1%;" class="uniformjs"><input type="checkbox" /></th>
+                                    <th class="center"></th>
+                                {% endblock %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% block tbody %}
+                                <tr class="gradeX" id="">
+                                    <td class="center uniformjs"><input type="checkbox" /></td>
+                                    <td></td>
+                                </tr>
+                            {% endblock %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="separator top form-inline small">
+
+                        <!-- With selected actions -->
+                        <div class="pull-left checkboxs_actions hide">
+                            <label class="strong">With selected:</label>
+                            {% block selectedAction %}
+                                <select class="selectpicker"
+                                        data-style="btn-default btn-small">
+                                    <option>Action</option>
+                                    <option>Action</option>
+                                    <option>Action</option>
+                                </select>
+                            {% endblock %}
+                        </div>
+                        {% block pagination %}
+                        {% endblock %}
+
+                    </div>
+                </div>
+            </div>
+            <div class="pull-left checkboxs_actions">
+                {% block bottomMenu %}
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block heading %} Histórico de alterações {% endblock %}
+{% block tableHead %} Histórico de alterações {% endblock %}
+
+{% block filterBlock %}
+    <div class="filter-bar row-fluid margin-bottom-none">
+        {% block filter %}
+            {% set exportParams = app.request.query.all %}
+
+            {% form_theme filter 'AdminBundle:Form:fields.html.twig' %}
+
+            {{ form(filter, {'action': path('logs_list', exportParams)}) }}
+
+            {% set exportParams = exportParams|merge({'export': 1}) %}
+
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block resultsInfo %}
+    <div style="margin-bottom: 10px;">
+        {{ (count) ? "Foram encontrados "~ count ~" registros." : "Não foram encontrados resultados no período selecionado." }} <br>
+    </div>
+{% endblock %}
+
+{% block thead %}
+    <th width="105">Administrador</th>
+    <th>Ação</th>
+    <th width="160">Data</th>
+    <th width="105">Módulo</th>
+{% endblock %}
+
+{% block tbody %}
+    {% if changes %}
+        {% for change in changes %}
+            <tr class="gradeX">
+                <td>
+                    <a href="{{ path('admin_usuarios_show', { 'id': change['user']['id'] }) }}">
+                        {{ change['user']['name'] }}
+                    </a>
+                </td>
+                <td>{{ change|el_description|raw }}</td>
+                <td>{{ change['date']|date('d/m/Y \à\\s H:i:s') }}</td>
+                <td>{{ change['module']|el_module }}</td>
+            </tr>
+        {% endfor %}
+    {% else %}
+        <tr class="gradeX">
+            <td colspan="6">Nenhum registro encontrado.</td>
+        </tr>
+    {% endif %}
+{% endblock %}
+
+{% block pagination %}
+    {% include 'AdminBundle::pagination.html.twig' with {'pagination': pagination, 'route': 'logs_list'} %}
+{% endblock %}
+
+{% block javascript %}
+
+    {{ parent() }}
+    <script src="{{ asset('bundles/admin/theme/scripts/plugins/forms/maskedinput/jquery.maskedinput.js')}}"></script>
+
+    <script type="text/javascript">
+        // daterange
+        if ($('#logs_filter_date_from').length && $('#logs_filter_date_to').length)
+        {
+            $( "#logs_filter_date_from" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                changeMonth: false,
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#reportsFilter_date_to" ).datepicker( "option", "minDate", selectedDate );
+                }
+            }).datepicker();
+
+            $( "#logs_filter_date_to" ).datepicker({
+                defaultDate: "+1w",
+                dateFormat: 'dd/mm/yy',
+                dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+                dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+                dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+                monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+                monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+                changeMonth: false,
+                nextText: 'Próximo',
+                prevText: 'Anterior',
+                numberOfMonths: 1,
+                onClose: function( selectedDate ) {
+                    $( "#reportsFilter_date_from" ).datepicker( "option", "maxDate", selectedDate );
+                }
+            }).datepicker();
+        }
+    </script>
+{% endblock %}

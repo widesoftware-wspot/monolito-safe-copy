@@ -1,0 +1,6 @@
+wspot:
+  admin_page:
+    invalid_date: 'Formato de fecha no válido.'
+
+  auth_code:
+    invalid: 'Código no válido! Inténtalo de nuevo.'

@@ -1,0 +1,64 @@
+
+<div id="modal_popup" class="modal fade in" name="modal_popup" tabindex="-1" backdrop="static" style="display: none; overflow:hidden; padding: 10px" aria-hidden="false">
+    <div class="modal-body" style="cursor:pointer;">
+        <a href="https://mambowifi.com/webinar-regulamentacao" target="_blank">
+            <img class="display-mobile" src="{{ asset('bundles/admin/frontend/images/webinar-31-05.png') }}" />
+            <img class="display-desktop" src="{{ asset('bundles/admin/frontend/images/webinar-31-05.png') }}" />
+        </a>
+    </div>
+    <div>
+        <label><input type="checkbox" id="dont_show_again"> Não ver essa mensagem novamente</label>
+    </div>
+    <div class="pull-right">
+        <button id="closeForm" type="button" data-dismiss="modal" class="btn btn-danger">Fechar</button>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        function _popup() {
+            if(!getCookie('firstAccessFusao')) {
+                $('#modal_popup').modal('show');
+            }
+            var now = new Date();
+            now.setDate(now.getDate() + 365);
+            $('#closeForm').click(function() {
+                if($("#dont_show_again").is(":checked")){
+                    setCookie('firstAccessFusao', true, now);
+                }
+                bootbox.hideAll();
+            });
+            //criando a função para inserir cookie
+            function setCookie(name, value, duration) {
+                var cookie = name + "=" + escape(value) +
+                    ((duration) ? "; expires=" + duration.toGMTString() : "");
+                document.cookie = cookie;
+            }
+            //criando a função para buscar cookie
+            function getCookie(name) {
+                var cookies = document.cookie;
+                var prefix = name + "=";
+                var begin = cookies.indexOf("; " + prefix);
+                if (begin == -1) {
+                    begin = cookies.indexOf(prefix);
+                    if (begin != 0) {
+                        return null;
+                    }
+                } else {
+                    begin += 2;
+                }
+                var end = cookies.indexOf(";", begin);
+                if (end == -1) {
+                    end = cookies.length;
+                }
+                return unescape(cookies.substring(begin + prefix.length, end));
+            }
+            //criando a função para deletar cookie
+            function deleteCookie(name) {
+                if (getCookie(name)) {
+                    document.cookie = name + "=" + "; expires=Thu, 01-Jan-70 00:00:01 GMT";
+                }
+            }
+        }
+        _popup()
+    }, false);
+</script>

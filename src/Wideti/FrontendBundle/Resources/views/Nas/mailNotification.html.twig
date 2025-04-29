@@ -1,0 +1,110 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left:30px;padding-bottom:5px;padding-right:30px;padding-top:15px;font-size:16px;line-height:24px;color:#444444">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:46px;line-height:46px;color:#444444;font-family:Arial;">Olá <a style="color: #ec213a; font-weight: bold; text-decoration: none;">{{ user.name }}</a>.</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">
+                        Identificamos que alguns visitantes tentaram se conectar &agrave; sua rede Wi-fi por um ponto de acesso n&atilde;o cadastrado no sistema.
+                        Com isso não é possível realizar cadastros ou navegar em sua rede Wi-fi.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">
+                        Utilize o identificador abaixo para cadastrar este ponto de acesso:
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding-left:50px;padding-bottom:10px;padding-right:50px;padding-top:10px;">
+            <table cellspacing="0" cellpadding="0" border="0" width="550">
+                <tbody>
+                <tr>
+                    <td style="padding: 30px 0px 30px 0px;font-size:20px;line-height:30px;color:#ec213a;font-family:Arial;background-color: #e1e1e1;font-weight: bold;text-align: center">
+                        {{ identifier }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">
+                        Com isso n&atilde;o foi poss&iacute;vel efetuar seus cadastros e liberar o acesso &agrave; rede.
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">Cadastre agora mesmo seu ponto de acesso no seu painel administrativo do {{ whiteLabel.companyName }}.</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td style="text-align: center; padding: 30px 0;">
+            <img src="https://www.mambowifi.com/wp-content/uploads/2017/07/gif-create-ap.gif" alt="Cadastrar Ponto de acesso" title="Cadastrar Ponto de acesso">
+        </td>
+    </tr>
+
+    <tr>
+        <td style="padding: 20px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                <tr>
+                    <td style="padding-right:20px;padding-left: 20px;font-size:22px;line-height:25px;color:#444444;font-family:Arial;">Caso tenha alguma d&uacute;vida, por favor entre em contato conosco pelo e-mail <a href="mailto:suporte@mambowifi.com" style="text-decoration: none; color: #ec213a">suporte@mambowifi.com</a>.</td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block signature %}
+    <table cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;padding-bottom:10px;font-size:18px;line-height:18px;color:#444444;font-family:Arial;">Atenciosamente,</td>
+        </tr>
+        <tr>
+            <td style="padding-right:20px;padding-left: 20px;font-size:18px;line-height:18px;color:#444444;font-family:Arial; font-weight: bold;">Equipe {{ whiteLabel.companyName }}</td>
+        </tr>
+        </tbody>
+    </table>
+{% endblock %}

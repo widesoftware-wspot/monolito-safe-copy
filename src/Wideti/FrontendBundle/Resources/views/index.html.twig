@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+{% set host = app.request.httpHost %}
+<head>
+    {% if host in 'suaempresa.wspot.com.br' or host in 'suaempresa.mambowifi.com'  %}
+        <!-- Global site tag (gtag.js) - Google Analytics -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44869267-2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'UA-44869267-2');
+        </script>
+
+        <!-- Facebook Pixel Code -->
+        <script>
+            !function (f, b, e, v, n, t, s) {
+                if (f.fbq) return;
+                n = f.fbq = function () {
+                    n.callMethod ?
+                        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                };
+                if (!f._fbq) f._fbq = n;
+                n.push = n;
+                n.loaded = !0;
+                n.version = '2.0';
+                n.queue = [];
+                t = b.createElement(e);
+                t.async = !0;
+                t.src = v;
+                s = b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t, s)
+            }(window, document, 'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+            fbq('init', '135513990394921');
+            fbq('track', 'PageView');
+        </script>
+        <noscript><img height="1" width="1" style="display:none"
+                       src="https://www.facebook.com/tr?id=135513990394921&ev=PageView&noscript=1"/>
+        </noscript>
+        <!-- End Facebook Pixel Code -->
+    {% endif %}
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% if app.session.get('wspotClient') != null %}
+        {% if app.session.get('wspotClient').isWhiteLabel == true %}
+            <link rel="icon" type="image/x-icon" href="{{ asset('favicon2.ico') }}" />
+        {% endif %}
+    {% endif %}
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="">
+    {% if app.session.get('wspotClient').isWhiteLabel == false %}
+        <!-- Facebook meta tags -->
+        <meta property="fb:app_id" content="1474723399477930" />
+        <meta property="og:url" content="https://mambowifi.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Mambo WiFi" />
+        <meta property="og:description" content="Mambo WiFi - Gestão de Hotspots e WiFi Marketing" />
+        <meta property="og:image" content="https://mambowifi.com/wp-content/themes/wspot/assets/dist/svg/logo.svg"/>
+    {%  endif %}
+    {% block title %}
+        <title>{{ whiteLabel.companyName }} - {{ 'wspot.login_page.welcome'|trans }}</title>
+    {% endblock %}
+
+    <link type="text/css" href="{{ asset('bundles/admin/bootstrap/css/bootstrap.css')}}" rel="stylesheet" />
+    <link type="text/css" href="{{ asset(assets_path ~'/css/glyphicons.css')}}" rel="stylesheet" />
+    <link type="text/css" href="{{ asset(assets_path ~'/css/custom.css') }}" rel="stylesheet" />
+    <link type="text/css" href="{{ asset(assets_path ~'/css/default.css') }}" rel="stylesheet" />
+    <link type="text/css" href="{{ asset(assets_path ~'/css/jquery-ui.css') }}" rel="stylesheet" />
+    <link type="text/css" href="{{ asset(assets_path ~'/css/awesomplete.css') }}" rel="stylesheet" />
+    <link type="text/css" href="{{ asset(assets_path ~'/js/intl-tel-input-12.1.0/css/intlTelInput.css') }}" rel="stylesheet" />
+
+    <script src="{{ asset(assets_path ~'/js/jquery.min.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery.maskedinput.js')}}"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+
+    <script src="{{ asset(assets_path ~'/js/html5shiv.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/respond.min.js')}}"></script>
+
+    <![endif]-->
+
+    <!--[if lt IE 10]>
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            $("input[placeholder]").each(function () {
+                var $this = $(this);
+                if($this.val() == ""){
+                    $this.val($this.attr("placeholder")).focus(function(){
+                        if($this.val() == $this.attr("placeholder")) {
+                            $this.val("");
+                        }
+                    }).blur(function(){
+                        if($this.val() == "") {
+                            $this.val($this.attr("placeholder"));
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+    <![endif]-->
+    <!--[if IE]>
+    <style>
+        section.container div.boxes form input[type="text"], section.container div.boxes form input[type="tel"], section.container div.boxes form input[type="email"], section.container div.boxes form input[type="password"]{
+            width: 75% !important;
+        }
+
+        .iti-flag {background-image: url("{{ asset(assets_path ~'/js/intl-tel-input-12.1.0/img/flags.png')}}");}
+
+        @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min--moz-device-pixel-ratio: 2), only screen and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-device-pixel-ratio: 2), only screen and (min-resolution: 192dpi), only screen and (min-resolution: 2dppx) {
+            .iti-flag {background-image: url("{{ asset(assets_path ~'/js/intl-tel-input-12.1.0/img/flags@2x.png')}}");}
+        }
+
+    </style>
+    <![endif]-->
+
+    {% include "FrontendBundle:General:templateSettings.html.twig" %}
+
+</head>
+
+<body class="login">
+
+{% if host in 'suaempresa.wspot.com.br' or host in 'suaempresa.mambowifi.com' %}
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TQSQ8RL"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+{% endif %}
+
+<header>
+    {% block header %}
+
+        {% block translation %}
+
+        {% endblock %}
+
+        {% set display = '' %}
+        {% if (config.login_form == 1 and config.signup_form == 0) %}
+            {% set display = 'singleBox' %}
+        {% elseif (config.login_form == 0 and config.signup_form == 1) %}
+            {% set display = 'singleBox' %}
+        {% elseif (config.login_form == 0 and config.signup_form == 0) %}
+            {% set display = 'singleBox' %}
+        {% endif %}
+
+        <div class="logo-box {{ display }}">
+            {% if config.translation == true %}
+
+                {% set currentPath = app.request.attributes.get('_route') ? app.request.attributes.get('_route') : 'frontend_index'  %}
+                {% set queryString = app.request.queryString %}
+
+                {% if (currentPath == 'frontend_guest_confirmation') %}
+                    {% set currentPath = 'frontend_index' %}
+                {% endif %}
+
+                <div id="languageBox" style="float: right;">
+                    <a {{ (app.request.locale == 'pt_br') ? 'style="font-weight:bold;"' : '' }} href="{{ path(currentPath, {'nas': app.session.get('nas'), '_locale': 'pt_br'}) ~ "?" ~ queryString  }}">
+                        <img src="{{ asset(assets_path ~'/images/flags/24/Brazil.png') }}" alt="Português" title="Português">
+                    </a>
+                    <a {{ (app.request.locale == 'en') ? 'style="font-weight:bold;"' : '' }} title="English" href="{{ path(currentPath, {'nas': app.session.get('nas'), '_locale': 'en'}) ~ "?" ~ queryString  }}">
+                        <img src="{{ asset(assets_path ~'/images/flags/24/United-States.png') }}" alt="English" title="English">
+                    </a>
+                    <a {{ (app.request.locale == 'es') ? 'style="font-weight:bold;"' : '' }} title="Español" href="{{ path(currentPath, {'nas': app.session.get('nas'), '_locale': 'es'}) ~ "?" ~ queryString  }}">
+                        <img src="{{ asset(assets_path ~'/images/flags/24/Spain.png') }}" alt="Español" title="Español">
+                    </a>
+                </div>
+            {% endif %}
+            <div style="clear: both; margin-top: -20px;">
+                {% if( template and template.partnerLogo ) %}
+                    <img id="logo-wspot" alt="{{ config.partner_name }}" src="{{ asset("https://" ~ aws_bucket_proxy_name ~"/"~ config.aws_folder_name ~"/"~ template.partnerLogo) }}">
+                {% else %}
+                    <img id="logo-wspot" alt="{{ whiteLabel.companyName }}" src="{{ whiteLabel.logotipo }}" />
+                {% endif %}
+            </div>
+        </div>
+    {% endblock %}
+</header>
+
+{% block container %}
+
+{% endblock %}
+
+{% block footer %}
+    <footer id="terms-footer">
+        {% if (config.terms_required != 1) %}
+            {% if host in 'suaempresa.wspot.com.br' or host in 'suaempresa.mambowifi.com' %}
+            <div style="position: relative; bottom: 30px; margin-bottom: -20px;" class="signup-div-terms">
+                Esta é uma página demonstrativa de como seu visitante se identificará. Ao se cadastrar, você está de acordo com os
+                <a href="{{ path('frontend_terms_of_use') }}" title="{{ 'wspot.login_page.terms_use'|trans }}">
+                    {{ 'wspot.login_page.terms_use'|trans }}
+                </a>
+                Os seus dados não serão utilizados para spam
+            </div>
+            {% else %}
+                <div style="position: relative; bottom: 30px; margin-bottom: -20px;" class="signup-div-terms">
+                    {% if app.request.locale == 'pt_br' %}
+                        {{ config.call_to_terms_pt | replace({'{ use_terms }': '<a href="'~path('frontend_terms_of_use')~'">'~'wspot.login_page.terms_use'|trans~'</a>'})|raw }}
+                    {% elseif app.request.locale == 'en' %}
+                        {{ config.call_to_terms_en | replace({'{ use_terms }': '<a href="'~path('frontend_terms_of_use')~'">'~'wspot.login_page.terms_use'|trans~'</a>'})|raw }}
+                    {% elseif app.request.locale == 'es' %}
+                        {{ config.call_to_terms_es | replace({'{ use_terms }': '<a href="'~path('frontend_terms_of_use')~'">'~'wspot.login_page.terms_use'|trans~'</a>'})|raw }}
+                    {% endif %}
+                </div>
+            {% endif %}
+        {% endif %}
+
+        {% if( template and template.partnerLogo ) %}
+            <div class="logo-wspot-mini">
+                <img id="logo-wspot-mini" src="{{ whiteLabel.logotipo }}" alt="{{ whiteLabel.companyName }}" title="{{ whiteLabel.companyName }}" />
+            </div>
+        {% endif %}
+    </footer>
+{% endblock %}
+
+{% block scripts %}
+    {% if host in 'suaempresa.wspot.com.br' or host in 'suaempresa.mambowifi.com' %}
+    <script type="text/javascript" async src="https://d335luupugsy2.cloudfront.net/js/loader-scripts/34301f73-e641-4a70-94c5-4d81aa7639b2-loader.js" ></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-44869267-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-44869267-2');
+    </script>
+
+    {% endif %}
+    <script src="{{ asset(assets_path ~'/js/jquery.min.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery-ui.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/fingerprinting.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/select2.min.js') }}"></script>
+
+    <!-- Validation and Mask -->
+    <script src="{{ asset(assets_path ~'/js/jquery.validate.min.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/jquery.maskedinput.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/wspot.custom-validate-rules.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/wspot.validate-mask-forms.js')}}"></script>
+
+    <!-- FOSjsRouting -->
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+    <!-- Email AutoComplete Suggest -->
+    <script src="{{ asset(assets_path ~'/js/awesomplete.js')}}"></script>
+    <script src="{{ asset(assets_path ~'/js/wspot.email-autocomplete.js')}}"></script>
+
+    <!-- Phone DDI Jquery field plugin -->
+    <script src="{{ asset(assets_path ~'/js/intl-tel-input-12.1.0/js/intlTelInput.js')}}"></script>
+{% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block heading %} Média de tempo de acesso {% endblock %}
+
+{% block filterBlock %}{% endblock %}
+{% block tableHead %} Média de tempo de acesso  {% endblock %}
+
+{% block thead %}
+    <th>Média</th>
+{% endblock %}
+
+{% block tbody %}
+    <tr class="gradeX">
+        <td>{{ (entity.media_acesso) ? entity.media_acesso : 'Nenhuma visita computada até o momento.' }}</td>
+    </tr>
+{% endblock %}

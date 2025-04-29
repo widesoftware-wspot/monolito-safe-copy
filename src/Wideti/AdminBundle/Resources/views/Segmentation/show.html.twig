@@ -1,0 +1,139 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Segmentação de Visitantes'} %}
+
+<div class="innerLR">
+    <div class="widget widget-tabs widget-tabs border-bottom-none">
+        <div class="widget-head">
+            <ul>
+                <ul>
+                    <li class="active"><a class="glyphicons eye_open" data-toggle="tab"><i></i>Visualizar</a></li>
+                </ul>
+            </ul>
+        </div>
+
+        <div class="widget-body">
+            <div class="tab-content" style="padding: 0;">
+                <div class="innerL" style="margin-top: 20px;">
+                    <div class="row-fluid">
+                        <div class="span12">
+                            <h4 style="margin-bottom: 20px;">Título: {{ entity.title }}</h4>
+                            <div class="widget margin-bottom-none" >
+                                <div class="widget-head">
+                                    <h4 class="heading">Total de visitantes: {{ pagination.getTotalItemCount }}</h4>
+                                </div>
+
+                                <div class="widget-body list products">
+                                    {% if pagination|length > 0 %}
+                                        <table class="dynamicTable table table-striped table-bordered table-condensed">
+                                            <thead>
+                                                <tr>
+                                                    <th class="center">{{ loginField.names['pt_br'] }}</th>
+                                                    <th class="center" style="width: 90px;">Grupo</th>
+                                                    <th class="center" style="width: 120px">Data cadastro</th>
+                                                    <th class="center" style="width: 120px">Último Acesso</th>
+                                                    <th class="center" style="width: 90px">Status</th>
+                                                    <th class="center" style="width: 70px;">Detalhes</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                {% for guest in pagination %}
+                                                    <tr class="gradeX">
+                                                        <td>{{ guest.properties[loginField.identifier] }}</td>
+                                                        <td class="center">{{ guest|guest_group|default('Visitantes') }}</td>
+                                                        {% if guest.timezone is empty %}
+                                                            <td>{{ guest.created|date('d/m/Y H:i', 'America/Sao_Paulo') }} <div class="timezone">America/Sao_Paulo</div></td>
+                                                            <td>{{ (guest.lastAccess) ? guest.lastAccess|date('d/m/Y H:i', 'America/Sao_Paulo') : 'Sem acesso' }}
+                                                                {% if guest.lastAccess is not empty %}
+                                                                    <div class="timezone">America/Sao_Paulo</div>
+                                                                {% endif %}
+                                                            </td>
+                                                        {% else %}
+                                                            <td>{{ guest.created|date('d/m/Y H:i', guest.timezone) }} <div class="timezone">{{ guest.timezone }}</div></td>
+                                                            <td>{{ (guest.lastAccess) ? guest.lastAccess|date('d/m/Y H:i', guest.timezone) : 'Sem acesso' }}
+                                                                {% if guest.lastAccess is not empty %}
+                                                                    <div class="timezone">{{ guest.timezone }}</div>
+                                                                {% endif %}
+                                                            </td>
+                                                        {% endif %}
+                                                        <td class="center">{{ guest.status|guest_status }}</td>
+                                                        <td class="center">
+                                                            <a href="{{ path('admin_visitantes_show',{'id': guest.id}) }}"
+                                                               class="btn-action glyphicons eye_open btn-info"><i></i></a>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% else %}
+                                        &nbsp; Nenhum acesso realizado.
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <br>
+
+                            {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="form-actions right" style="margin-bottom: 20px;">
+                <a href="#" class="btn btn-icon btn-success glyphicons file_export"><i></i>Exportar Visitantes</a>
+                {% set urlBackButton = app.request.headers.get('referer') %}
+                {% if ('show' in urlBackButton) %}
+                    <a href="{{ path('segmentation') }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+                {%  else %}
+                    <a href="{{ urlBackButton }}" class="btn btn-icon btn-default glyphicons left_arrow"><i></i>Voltar</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+
+            $('a.file_export').click(function(){
+                var id = "{{ entity.id }}";
+                var data = {'id' : id};
+
+                bootbox.confirm("Exportaremos e enviaremos para seu e-mail a listagem de visitantes que se enquadram a esta segmentação.", function(result){
+                    if(result){
+                        var route = Routing.generate('segmentation_export', { id: id });
+                        $.ajax({
+                            type: "POST",
+                            url: route,
+                            data: data,
+                            dataType : "json",
+                            success: function(response)
+                            {
+                                var title;
+
+                                if (response.type == 'success') {
+                                    title = 'Aviso!';
+                                } else {
+                                    title = "Erro ao realizar a exportação!";
+                                }
+
+                                $.gritter.add({
+                                    title: title,
+                                    text: response.message
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+    {% include 'AdminBundle::alerts.js.twig' %}
+{% endblock %}

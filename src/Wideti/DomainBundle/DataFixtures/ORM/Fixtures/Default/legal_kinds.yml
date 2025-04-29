@@ -1,0 +1,7 @@
+Wideti\DomainBundle\Entity\LegalKinds:
+  LegitimoInteresse:
+    key: 'legitimo_interesse'
+    kind: "Legítimo Interesse"
+  TermoConsentimento:
+    key: 'termo_consentimento'
+    kind: "Termo de Consentimento"

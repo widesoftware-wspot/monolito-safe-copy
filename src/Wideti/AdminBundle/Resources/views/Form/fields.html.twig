@@ -1,0 +1,39 @@
+{% block form_row %}
+    {% spaceless %}
+        <div class="control-group {{ (form_errors(form)) ? 'error' : ''  }} ">
+            {{ form_label(form) }}
+            <div class="controls {{ (form_errors(form)) ? 'error' : ''  }}">
+                {{ form_widget(form) }}
+                {{ form_errors(form) }}
+            </div>
+        </div>
+        {% block custom_fields_checkbox %}{% endblock %}
+    {% endspaceless %}
+{% endblock form_row %}
+
+{% block button_widget %}
+    {% spaceless %}
+        {% if label is empty %}
+            {% set label = name|humanize %}
+        {% endif %}
+        <button type="{{ type|default('button') }}" {{ block('button_attributes') }}><i></i>{{ label|trans({}, translation_domain) }}</button>
+    {% endspaceless %}
+{% endblock button_widget %}
+
+{% block form_errors %}
+{% spaceless %}
+    {% if errors|length > 0 %}
+        {% for error in errors %}
+            <p class="error help-block"><span class="label label-important">{{ error.message }}</span></p>
+        {% endfor %}
+    {% endif %}
+{% endspaceless %}
+{% endblock form_errors %}
+
+{% block checkbox_widget %}
+    {% spaceless %}
+        <div class="toggle-button" data-toggleButton-style-enabled="danger">
+            <input type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %} />
+        </div>
+    {% endspaceless %}
+{% endblock checkbox_widget %}

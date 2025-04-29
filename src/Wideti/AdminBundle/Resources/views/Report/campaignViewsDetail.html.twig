@@ -1,0 +1,114 @@
+{% extends 'AdminBundle::reportList.html.twig' %}
+
+{% block heading %}
+    Visualizações em Campanha de {{ viewTitle }} - Login
+{% endblock %}
+
+{% block filterBlock %}
+    <div class="filter-bar row-fluid margin-bottom-none">
+        {% block filter %}
+            {% set exportParams = app.request.query.all %}
+
+            {% form_theme filter 'AdminBundle:Form:fields.html.twig' %}
+
+            {{ form(filter, {'action': path('admin_campaign_view_details', {
+                id : campaign, type : type }, exportParams )}) }}
+
+            {% set exportParams = exportParams|merge({'export': 1}) %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
+{% block table %}
+    {% if noData %}
+        <div>Não há dados para impressão no período selecionado.</div>
+    {% else %}
+        <h4>{{ numberOfViews }} visualizações</h4>
+        <br />
+        <table class="table table-bordered">
+        <tr>
+            <th>Visitante</th>
+            <th>Ponto de Acesso</th>
+            <th>Data/Hora</th>
+            <th>Quantidade de Visualizações</th>
+            <th>Campanhas Visualizadas pelo Visitante</th>
+        </tr>
+        {% for key, value in campaignViews %}
+            <tr>
+                <td>{{ value.guestMacAddress }}</td>
+                <td>{{ value.accessPoint }}</td>
+                <td>{{ value.time | date('d/m/Y') }}</td>
+                <td class="text-right">{{ value.quantity }}</td>
+                <td style="text-align: center;">
+                    {% if value.detailsLink %}
+                        <a href="{{ path("admin_campaigns_viewed_by_guest",
+                            { guestMacAddress: value.guestMacAddress, campaignType: type, searchCampaign: campaign }) }}"
+                           class="btn-action glyphicons eye_open btn-info"
+                           title="Clique para ver campanhas visualizadas por este visitante"><i></i></a>
+                    {% else %}
+                        Indisponível para visitante não informado
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+    </table>
+
+    <div class="widget-body">
+        <hr class="separator">
+        {{ knp_pagination_render(pagination, 'AdminBundle::knp_pagination.html.twig') }}
+        <br />
+        <div class="form-actions right">
+            <a href="{{ path('admin_campaign_report_detail', { id : campaign }) }}">
+                <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"><i></i>
+                    Voltar
+                </button>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script>
+        $("#campaignViewsReportsFilter_date_from").datepicker({
+            dateFormat: 'dd/mm/yy',
+            dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+            dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+            dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+            monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+            monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+            nextText: 'Próximo',
+            prevText: 'Anterior',
+            changeMonth: false,
+            numberOfMonths: 1,
+            maxDate: '0',
+            onClose: function(selectedDate) {
+                $("#campaignViewsReportsFilter_date_to").datepicker("option", "minDate", selectedDate);
+            },
+            onSelect: function(date) {
+                var msecsInADay = 2592000000; //30 days
+                var toDate = date.split('/');
+                var aux = toDate[1] + '/' + toDate[0] + '/' + toDate[2];
+                var selectedDate = new Date(aux);
+                var endDate = new Date(selectedDate.getTime() + msecsInADay);
+
+                $("#campaignViewsReportsFilter_date_to").datepicker("option", "maxDate", endDate);
+            }
+
+        });
+
+        $("#campaignViewsReportsFilter_date_to").datepicker({
+            dateFormat: 'dd/mm/yy',
+            dayNames: ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'],
+            dayNamesMin: ['D','S','T','Q','Q','S','S','D'],
+            dayNamesShort: ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+            monthNames: ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'],
+            monthNamesShort: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'],
+            changeMonth: false,
+            nextText: 'Próximo',
+            prevText: 'Anterior',
+            numberOfMonths: 1
+        });
+    </script>
+{% endblock %}

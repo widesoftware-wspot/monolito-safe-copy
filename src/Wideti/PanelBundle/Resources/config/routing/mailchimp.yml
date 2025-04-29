@@ -1,0 +1,4 @@
+panel_client_admin_users_list:
+  path:  /{sync}
+  defaults: { _controller: wspot.panel.controler.mailchimp:indexAction, sync: false }
+  requirements: { methods: post|get }

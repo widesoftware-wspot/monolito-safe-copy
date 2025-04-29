@@ -1,0 +1,36 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block initial_js %}
+{% endblock %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important;">
+            <div class="box-content">
+                <h3>{{ 'wspot.confirmation.title'|trans }}</h3>
+
+                <div class="content-center">
+                    {% set query = app.request.query.all %}
+                    {{ 'wspot.confirmation.sms_message_waiting_1'|trans }} <strong>{{ guest.properties.name|default('wspot.default.guest'|trans) }}</strong>{{ 'wspot.confirmation.sms_message_waiting_2'|trans }}
+
+                    <div class="confirmation-loader">
+                        <img src="{{ asset(assets_path ~'/images/ico-loader.gif') }}" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script src="{{ asset(assets_path ~'/js/fingerprinting.js')}}"></script>
+
+    <script type="text/javascript">
+        window.onload = function () {
+            setTimeout(function(){
+                window.location.href = window.location.href + "&valid=true";
+            }, 5000);
+        };
+    </script>
+{% endblock %}

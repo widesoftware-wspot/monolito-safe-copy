@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="ie lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>    <html class="ie lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>    <html class="ie lt-ie9"> <![endif]-->
+<!--[if gt IE 8]> <html class="ie gt-ie8"> <![endif]-->
+<!--[if !IE]><!--><html><!-- <![endif]-->
+<head>
+    {% block title %}
+        <title>Mambo WiFi Admin {{ (config.partner_name is defined) ? " - " ~ config.partner_name }}</title>
+    {% endblock %}
+
+    {% block meta %}
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE" />
+        {% if app.session.get('wspotClient') != null %}
+            {% if app.session.get('wspotClient').isWhiteLabel == true %}
+                <link rel="icon" type="image/x-icon" href="{{ asset('favicon2.ico') }}" />
+            {% endif %}
+        {% endif %}
+    {% endblock %}
+
+    {% block css %}
+        {#<link href="{{ asset('bundles/panel/bootstrap/css/panel_report.css')}}" rel="stylesheet" />#}
+        <link href="{{ asset('bundles/panel/bootstrap/css/bootstrap.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/bootstrap/css/responsive.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/css/glyphicons.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/scripts/plugins/forms/pixelmatrix-uniform/css/uniform.default.css')}}" rel="stylesheet" />
+        <!--[if IE]><!--><script src="{{ asset('bundles/panel/theme/scripts/plugins/other/excanvas/excanvas.js')}}"></script><!--<![endif]-->
+                                                                                                                             <!--[if lt IE 8]><script src="{{ asset('bundles/panel/theme/scripts/plugins/other/json2.js')}}"></script><![endif]-->
+        <link href="{{ asset('bundles/panel/bootstrap/extend/jasny-bootstrap/css/jasny-bootstrap.min.css')}}" rel="stylesheet">
+        <link href="{{ asset('bundles/panel/bootstrap/extend/jasny-bootstrap/css/jasny-bootstrap-responsive.min.css')}}" rel="stylesheet">
+        <link href="{{ asset('bundles/panel/bootstrap/extend/bootstrap-wysihtml5/css/bootstrap-wysihtml5-0.0.2.css')}}" rel="stylesheet">
+        <link href="{{ asset('bundles/panel/bootstrap/extend/bootstrap-select/bootstrap-select.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/bootstrap/extend/bootstrap-toggle-buttons/static/stylesheets/bootstrap-toggle-buttons.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/scripts/plugins/forms/select2/select2.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/scripts/plugins/forms/bootstrap-datetimepicker/css/datetimepicker.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/scripts/plugins/system/jquery-ui/css/smoothness/jquery-ui-1.9.2.custom.min.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/scripts/plugins/color/jquery-miniColors/jquery.miniColors.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/scripts/plugins/notifications/Gritter/css/jquery.gritter.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/scripts/plugins/other/google-code-prettify/prettify.css')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/css/style-light.css?1369414383')}}" rel="stylesheet" />
+        <link href="{{ asset('bundles/panel/theme/css/blue-gray.css')}}" rel="stylesheet" />
+        <style type="text/css">.tooltip.in { opacity: 1; }</style>
+        {#<style type="text/css">#}
+        {#a {#}
+        {#text-decoration: none !important;#}
+        {#color: #ffffff;#}
+        {#}#}
+        {#</style>#}
+    {% endblock %}
+
+    {% block js %}
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/system/less.min.js')}}"></script>
+    {% endblock %}
+
+</head>
+
+{% block body %}
+    <body class="">
+    <!-- Main Container Fluid -->
+    <div class="container-fluid fluid menu-left">
+        <div class="navbar main hidden-print">
+            <!-- Brand -->
+            <a href="#" class="appbrand pull-left"><span>Painel Mambo Wifi</span></a>
+
+            <!-- Menu Toggle Button -->
+            <button type="button" class="btn btn-navbar">
+                <span class="glyphicons show_lines"><i></i></span>
+            </button>
+            <!-- // Menu Toggle Button END -->
+
+            <!-- Top Menu Right -->
+            <ul class="topnav pull-right">
+                <!-- Profile / Logout menu -->
+                <li class="account">
+                    <a data-toggle="dropdown" href="{#{ path('#') }}#}" class="glyphicons logout lock"><span class="hid den-phone text">{#{ app.user.nome }}#}</span><i></i></a>
+                    <ul class="dropdown-menu pull-right">
+                        <li class="highlight profile">
+                            <span>
+                                <span class="heading">Perfil
+                                    {#<a href="{{ path('#') }}" class="pull-right">editar</a>#}
+                                </span>
+                                <span class="img"></span>
+                                <span class="details">
+                                    {#<a href="{{ path('#') }}">{{ app.user.nome }}</a> <br/>#}
+                                    {#{{ app.user.username }}#}
+                                </span>
+                                <span class="clearfix"></span>
+                            </span>
+                        </li>
+                        <li>
+                            <span>
+                                <a class="btn btn-default btn-mini pull-right" href="{{ path('logout_panel') }}">Sair</a>
+                            </span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <!-- // Top Menu Right END -->
+        </div>
+        <!-- Top navbar END -->
+
+        <!-- Sidebar menu & content wrapper -->
+        <div id="wrapper">
+            <!-- Sidebar Menu -->
+            <div id="menu" class="hidden-phone hidden-print">
+
+                <!-- Scrollable menu wrapper with Maximum height -->
+                <div class="slim-scroll" data-scroll-height="500px">
+
+                    {% set active = '' %}
+
+                    <!-- Regular Size Menu -->
+                    <ul>
+                        <li class="large glyphicons group
+                            {% if app.request.attributes.get('_route') == 'panel_client_list' %} active{% endif %}">
+                            <a href="{{ path('panel_client_list') }}">
+                                <i></i><span>Clientes</span>
+                            </a>
+                        </li>
+                        {% if not is_granted("ROLE_SUPORT_LIMITED") %}
+                            <li class="large hasSubmenu glyphicons notes reports">
+                                <a href="#menu_reports" data-toggle="collapse" class="" id="menu_reports_scroll"><i></i><span>Relatórios</span></a>
+
+                                <ul id="menu_reports" class="collapse" style="height: auto;">
+                                    <li class="{% if app.request.attributes.get('_route') == 'panel_report_clients_not_using' %}active{% endif %}">
+                                        <a href="{{ path('panel_report_clients_not_using') }}">
+                                            <span>Clientes sem Acesso</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if app.request.attributes.get('_route') == 'panel_report_poc' %}active{% endif %}">
+                                        <a href="{{ path('panel_report_poc', {page: 1}) }}">
+                                            <span>Mambo WiFi em POC</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if app.request.attributes.get('_route') == 'panel_report_domain' %}active{% endif %}">
+                                        <a href="{{ path('panel_report_domain') }}">
+                                            <span>Domínios</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if app.request.attributes.get('_route') == 'panel_report_payment' %}active{% endif %}">
+                                        <a href="{{ path('panel_report_payment') }}">
+                                            <span>Pagamento</span>
+                                        </a>
+                                    </li>
+                                    <li class="{% if app.request.attributes.get('_route') == 'panel_report_clientsFeatures' %}active{% endif %}">
+                                        <a href="{{ path('panel_report_clientsFeatures') }}">
+                                            <span>Clientes X Funcionalidades</span>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                            </li>
+
+                            <li class="large glyphicons user
+                                {% if app.request.attributes.get('_route') == 'panel_user_list' %} active{% endif %}">
+                                <a href="{{ path('panel_user_list') }}">
+                                    <i></i><span>Usuários</span>
+                                </a>
+                            </li>
+
+                            <li class="large glyphicons group
+                                {% if app.request.attributes.get('_route') == 'panel_client_admin_users_list' %} active{% endif %}">
+                                <a href="{{ path('panel_client_admin_users_list') }}">
+                                    <i></i><span>Sincron. E-mails Mailchimp</span>
+                                </a>
+                            </li>
+
+                            <li class="large glyphicons usd
+                                {% if app.request.attributes.get('_route') == 'panel_user_sms_billing_control' %} active{% endif %}">
+                                <a href="{{ path('panel_user_sms_billing_control') }}">
+                                    <i></i><span>Cobrança de SMS</span>
+                                </a>
+                            </li>
+
+                            <li class="large glyphicons envelope
+                                {% if app.request.attributes.get('_route') == 'panel_sms_gateway_edit' %} active{% endif %}">
+                                <a href="{{ path('panel_sms_gateway_edit') }}">
+                                    <i></i><span>Serviço de envio de SMS</span>
+                                </a>
+                            </li>
+
+                            <li class="large glyphicons certificate
+                                    {% if app.request.attributes.get('_route') == 'whitelabel_cert_feature_new' %} active{% endif %}">
+                                <a href="{{ path('whitelabel_cert_feature_new') }}">
+                                    <i></i><span>Certificados Whitelabel</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+
+                    <div class="clearfix"></div>
+                    <div class="separator bottom"></div>
+                    <!-- // Regular Size Menu END -->
+                </div>
+                <!-- // Scrollable Menu wrapper with Maximum Height END -->
+            </div>
+            <!-- // Sidebar Menu END -->
+
+            <!-- Content -->
+            <div id="content">
+                {% block content %}
+                {% endblock %}
+                <!-- // Content END -->
+            </div>
+        </div>
+        <!-- // Sidebar menu & content wrapper END -->
+
+        <div class="clearfix"></div>
+
+        <div id="footer" class="hidden-print">
+            <!--  Copyright Line -->
+            <div class="copy center">&copy; {{ "now"|date("Y") }} - <a href="https://www.mambowifi.com">Mambo WiFi {{ wspot_version }}</a> - <a href="https://www.mambowifi.com" target="_blank">Mambo WiFi</a> </div>
+            <!--  End Copyright Line -->
+        </div>
+        <!-- // Footer END -->
+
+    </div>
+    <!-- // Main Container Fluid END -->
+
+    {% block jsLibraries %}
+
+        <!-- JQuery -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/system/jquery.min.js')}}"></script>
+
+        <!-- JQueryUI -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/system/jquery-ui/js/jquery-ui-1.9.2.custom.min.js')}}"></script>
+
+        <!-- JQueryUI Touch Punch -->
+        <!-- small hack that enables the use of touch events on sites using the jQuery UI user interface library -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/system/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js')}}"></script>
+
+        <!-- Modernizr -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/system/modernizr.js')}}"></script>
+
+        <!-- Bootstrap -->
+        <script src="{{ asset('bundles/panel/bootstrap/js/bootstrap.min.js')}}"></script>
+
+        <!-- Common Demo Script -->
+        <script src="{{ asset('bundles/panel/theme/scripts/demo/common.js')}}"></script>
+
+        <!-- SlimScroll Plugin -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/other/jquery-slimScroll/jquery.slimscroll.min.js')}}"></script>
+
+        <!-- Holder Plugin -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/other/holder/holder.js')}}"></script>
+
+        <!-- Uniform Forms Plugin -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/forms/pixelmatrix-uniform/jquery.uniform.min.js')}}"></script>
+
+        <!-- Global -->
+        <script>
+            var basePath = '../../../../common/';
+        </script>
+
+        <script>
+            var primaryColor = '#E04545',
+                dangerColor = '#e25f39',
+                successColor = '#609450',
+                warningColor = '#ab7a4b',
+                inverseColor = '#45484d';
+        </script>
+
+        <!-- Bootstrap Extended -->
+        <script src="{{ asset('bundles/panel/bootstrap/extend/bootstrap-select/bootstrap-select.js')}}"></script>
+        <script src="{{ asset('bundles/panel/bootstrap/extend/bootstrap-toggle-buttons/static/js/jquery.toggle.buttons.js')}}"></script>
+        <script src="{{ asset('bundles/panel/bootstrap/extend/bootstrap-hover-dropdown/twitter-bootstrap-hover-dropdown.min.js')}}"></script>
+        <script src="{{ asset('bundles/panel/bootstrap/extend/jasny-bootstrap/js/jasny-bootstrap.min.js')}}"></script>
+        <script src="{{ asset('bundles/panel/bootstrap/extend/jasny-bootstrap/js/bootstrap-fileupload.js')}}"></script>
+        <script src="{{ asset('bundles/panel/bootstrap/extend/bootbox.js')}}"></script>
+        <script src="{{ asset('bundles/panel/bootstrap/extend/bootstrap-wysihtml5/js/wysihtml5-0.3.0_rc2.min.js')}}"></script>
+        <script src="{{ asset('bundles/panel/bootstrap/extend/bootstrap-wysihtml5/js/bootstrap-wysihtml5-0.0.2.js')}}"></script>
+
+        <!-- Google Code Prettify -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/other/google-code-prettify/prettify.js')}}"></script>
+
+        <!-- Gritter Notifications Plugin -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/notifications/Gritter/js/jquery.gritter.min.js')}}"></script>
+
+        <!-- MiniColors Plugin -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/color/jquery-miniColors/jquery.miniColors.js')}}"></script>
+
+        <!-- DateTimePicker Plugin -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/forms/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js')}}"></script>
+
+        <!-- Cookie Plugin -->
+        <script src="{{ asset('bundles/panel/theme/scripts/plugins/system/jquery.cookie.js')}}"></script>
+
+        <!-- FOSjsRouting -->
+        <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+        <script src="{{ path('fos_js_routing_js', {"callback": "fos.Router.setData"}) }}"></script>
+
+        <script>
+            jQuery(document).ready(function(){
+                footerPosition();
+
+                jQuery(window).resize(function(){
+                    footerPosition();
+                });
+
+                reportScroll();
+
+                $("#menu_reports_scroll").on('click', function(){
+                    reportScroll();
+                });
+
+            });
+
+            function reportScroll() {
+                $('.slim-scroll').stop().animate({
+                    scrollTop: $(".slim-scroll")[0].scrollHeight
+                }, 1000);
+            }
+
+            function footerPosition(){
+                var navbarHeight = jQuery('.navbar').height();
+                var footerHeight = jQuery('div#footer > div').height();
+
+                if( (jQuery('#content').height()+navbarHeight+footerHeight+32) < jQuery(window).height() ){
+                    jQuery('#content').height(
+                        jQuery(window).height() -
+                        navbarHeight -
+                        footerHeight - 32
+                    )
+                }
+            }
+        </script>
+    {% endblock %}
+
+    {% block javascript %}
+
+    {% endblock %}
+    </body>
+{% endblock %}
+</html>

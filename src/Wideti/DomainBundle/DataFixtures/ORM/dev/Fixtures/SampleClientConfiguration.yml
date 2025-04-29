@@ -1,0 +1,435 @@
+Wideti\DomainBundle\Entity\ClientConfiguration:
+  ClientConfiguration1:
+    client: "@Client"
+    configuration: "@ConfigurationItem1"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Wide TI"
+
+  ClientConfiguration2:
+    client: "@Client"
+    configuration: "@ConfigurationItem2"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "dev"
+
+  ClientConfiguration3:
+    client: "@Client"
+    configuration: "@ConfigurationItem3"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "router"
+
+  ClientConfiguration4:
+    client: "@Client"
+    configuration: "@ConfigurationItem4"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "http://www.wspot.com.br"
+
+  ClientConfiguration5:
+    client: "@Client"
+    configuration: "@ConfigurationItem5"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "developers-wspot@wideti.com.br"
+
+  ClientConfiguration6:
+    client: "@Client"
+    configuration: "@ConfigurationItem6"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: true
+
+  ClientConfiguration7:
+    client: "@Client"
+    configuration: "@ConfigurationItem7"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration8:
+    client: "@Client"
+    configuration: "@ConfigurationItem8"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Quero receber novidades por email/sms"
+
+  ClientConfiguration9:
+    client: "@Client"
+    configuration: "@ConfigurationItem9"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "I'd like to receive e-mail/sms content"
+
+  ClientConfiguration10:
+    client: "@Client"
+    configuration: "@ConfigurationItem10"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Quiero recibir noticias por email/sms"
+
+  ClientConfiguration11:
+    client: "@Client"
+    configuration: "@ConfigurationItem11"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "By this \"TERMS OF USE\", signed by {{ partner_name }} and the USER of a portable computer&nbsp;(laptop) or mobile devices (Tablet, Smartphones, etc.), identified and qualified through registration, is aware through this term that should use the HotSpot system, with full responsibility of accesses performed on the Web.As a public place which offers free access to the internet, not be responsible, to&nbsp;{{ partner_name }}, for&nbsp;possible unwanted access and misuse by the USER of the system offered, occurring misuse of access or possibly occur any damage either moral or material, these will be the responsibility of the USER, thus exempting&nbsp;{{ partner_name }}, of any irregularity committed by him USER.USERS may not, be used in service now offered to stir, threaten, offend, shake the image, invade privacy or harm other members of the internet community and is strictly prohibited to use in sex site equipment and with any other benefit of obtaining illicit and immoral advantages of society for USER. {{ partner_name }}&nbsp;is free to answer for any possible irregularities committed by USERS.Thus, being aware and in accordance with the terms thereof, described above, firmo that makes a gift to their legal effects of the Law.<br>"
+
+  ClientConfiguration12:
+    client: "@Client"
+    configuration: "@ConfigurationItem12"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Pelo presente \"TERMO DE USO\", firmado entre {{ partner_name }} e pelo USUÁRIO de&nbsp;microcomputador portátil (Notebook) ou aparelhos móveis (Tablet, Celular, entre outros), identificado e qualificado através do cadastro, fica através do presente termo ciente de que deverá utilizar o sistema de HotSpot, com total responsabilidade dos acessos realizados na Rede.Por ser um local público que disponibiliza de forma gratuita o acesso a internet, não responsabilizar-se-á a&nbsp;{{ partner_name }}, por&nbsp;possíveis acessos indesejados bem como a má utilização por parte do USUÁRIO do sistema oferecido, ocorrendo o mal uso dos acessos ou eventualmente ocorrer quaisquer danos quer moral ou material, estes serão de inteira responsabilidade do USUÁRIO, eximindo dessa forma a&nbsp;{{ partner_name }}, de&nbsp;quaisquer irregularidade por ele USUÁRIO cometidas.Não poderão os USUÁRIOS, utilizar-se do serviço ora oferecido, para instigar, ameaçar, ofender, abalar a imagem, invadir a privacidade ou prejudicar outros membros da comunidade internet, bem como fica terminantemente proibido o uso em site de material de sexo, bem com quaisquer outros em benefício de se obter vantagens ilícitas e imorais em pról do USUÁRIO. Fica a&nbsp;{{ partner_name }}, isenta de&nbsp;responder por qualquer possível irregularidade cometidas por USUÁRIOS.Assim, estando ciente e de acordo com os termos deste, acima descritos, firmo o presente para que surta seus legais efeitos de Lei.<br>"
+
+  ClientConfiguration13:
+    client: "@Client"
+    configuration: "@ConfigurationItem13"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Por lo presente \"CONDICIONES DE USO\", firmado entre {{ partner_name }} y el USUARIO del micro portátil ordenador) y dispositivos móviles (Tablet, móvil, etc.), identificado y calificado por el registro, es a través de este término en cuenta que debe utilizar el sistema de HotSpot, con plena responsabilidad de los accesos realizados en network.Por ser un lugar público que prevé el acceso gratuito a internet, no se hace responsable de {{ partner_name }}, para su posible acceso no deseado y el mal uso por parte del USUARIO el sistema ofrecido, que se producen el mal uso de acceso o producirse cualquier daño, ya sea moral o material, posiblemente, será la responsabilidad del USUARIO, eximiendo de este modo {{ partner_name }}, de cualquier irregularidad por él cometidas. no podrán los USUARIOS, ser utilizado el servicio ofrece ahora, para instigar, amenazar, abusar, agite la imagen, invadir la privacidad o dañar a otros miembros de la comunidad de Internet y está estrictamente prohibido el uso en el sitio de materiales de sexo, así como cualquier otro para el beneficio de obtener pról USUARIO ilegal y ventajas inmorales. {{ partner_name }} está libre de la respuesta de los posibles irregularidades cometidas por USUÁRIOS. Assim, consciente y de acuerdo con los términos de, por encima, aight que esto asuste sus efectos jurídicos de Derecho.<br>"
+
+  ClientConfiguration14:
+    client: "@Client"
+    configuration: "@ConfigurationItem14"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: true
+
+  ClientConfiguration15:
+    client: "@Client"
+    configuration: "@ConfigurationItem15"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: true
+
+  ClientConfiguration16:
+    client: "@Client"
+    configuration: "@ConfigurationItem16"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration17:
+    client: "@Client"
+    configuration: "@ConfigurationItem17"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration18:
+    client: "@Client"
+    configuration: "@ConfigurationItem18"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration19:
+    client: "@Client"
+    configuration: "@ConfigurationItem19"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration20:
+    client: "@Client"
+    configuration: "@ConfigurationItem20"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration21:
+    client: "@Client"
+    configuration: "@ConfigurationItem21"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration22:
+    client: "@Client"
+    configuration: "@ConfigurationItem22"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration23:
+    client: "@Client"
+    configuration: "@ConfigurationItem23"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration24:
+    client: "@Client"
+    configuration: "@ConfigurationItem24"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: true
+
+  ClientConfiguration25:
+    client: "@Client"
+    configuration: "@ConfigurationItem25"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: 30
+
+  ClientConfiguration26:
+    client: "@Client"
+    configuration: "@ConfigurationItem26"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration27:
+    client: "@Client"
+    configuration: "@ConfigurationItem27"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration28:
+    client: "@Client"
+    configuration: "@ConfigurationItem28"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration29:
+    client: "@Client"
+    configuration: "@ConfigurationItem29"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration30:
+    client: "@Client"
+    configuration: "@ConfigurationItem30"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration31:
+    client: "@Client"
+    configuration: "@ConfigurationItem31"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Seja bem vindo a Mambo WiFi{ nome_da_empresa }. Este e o seu codigo de confirmacao de cadastro: { codigo }"
+
+  ClientConfiguration32:
+    client: "@Client"
+    configuration: "@ConfigurationItem32"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Welcome to Mambo WiFi{ nome_da_empresa }. This is your confirmation code: { codigo }"
+
+  ClientConfiguration33:
+    client: "@Client"
+    configuration: "@ConfigurationItem33"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Bienvenido a Mambo WiFi{ nome_da_empresa }. Este es su codigo de confirmacion de registro: { codigo }"
+
+  ClientConfiguration34:
+    client: "@Client"
+    configuration: "@ConfigurationItem34"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration35:
+    client: "@Client"
+    configuration: "@ConfigurationItem35"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration36:
+    client: "@Client"
+    configuration: "@ConfigurationItem36"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration37:
+    client: "@Client"
+    configuration: "@ConfigurationItem37"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Seja bem vindo a Mambo WiFi{ nome_da_empresa }. Para confirmar seu cadastro, clique no endereço a seguir: { url }"
+
+  ClientConfiguration38:
+    client: "@Client"
+    configuration: "@ConfigurationItem38"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Welcome to Mambo WiFi{ nome_da_empresa }. To confirm your registration, click on the following address: { url }"
+
+  ClientConfiguration39:
+    client: "@Client"
+    configuration: "@ConfigurationItem39"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Bienvenido a Mambo WiFi{ nome_da_empresa }. Para confirmar su registro, haga clic en la siguiente dirección: { url }"
+
+  ClientConfiguration40:
+    client: "@Client"
+    configuration: "@ConfigurationItem40"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration41:
+    client: "@Client"
+    configuration: "@ConfigurationItem41"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Seja bem vindo a Mambo WiFi. Seguem seus dados para futuros acessos, usuario: {{ user }} e senha: {{ password }}"
+
+  ClientConfiguration42:
+    client: "@Client"
+    configuration: "@ConfigurationItem42"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Welcome to Mambo WiFi. Following your data for future accesses, username: {{ user }} and password: {{ password }}"
+
+  ClientConfiguration43:
+    client: "@Client"
+    configuration: "@ConfigurationItem43"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Bienvenido a Mambo WiFi. Siga sus datos de acceso en el futuro, del usuario: {{ user }} y Contraseña: {{ password }}"
+
+  ClientConfiguration44:
+    client: "@Client"
+    configuration: "@ConfigurationItem44"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration45:
+    client: "@Client"
+    configuration: "@ConfigurationItem45"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "0"
+
+  ClientConfiguration46:
+    client: "@Client"
+    configuration: "@ConfigurationItem46"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: ""
+
+  ClientConfiguration47:
+    client: "@Client"
+    configuration: "@ConfigurationItem47"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfiguration48:
+    client: "@Client"
+    configuration: "@ConfigurationItem48"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+
+  ClientConfigurationF1:
+    client: "@FacebookAuthTeste"
+    configuration: "@ConfigurationItem1"
+    accessPointGroup: "@Group3"
+    isDefault: true
+    value: "Wide TI"
+
+  ClientConfigurationF2:
+    client: "@FacebookAuthTeste"
+    configuration: "@ConfigurationItem2"
+    accessPointGroup: "@Group3"
+    isDefault: true
+    value: "facebookteste"
+
+  ClientConfigurationF3:
+    client: "@FacebookAuthTeste"
+    configuration: "@ConfigurationItem3"
+    accessPointGroup: "@Group3"
+    isDefault: true
+    value: "router"
+
+  ClientConfigurationF4:
+    client: "@FacebookAuthTeste"
+    configuration: "@ConfigurationItem4"
+    accessPointGroup: "@Group3"
+    isDefault: true
+    value: "http://www.wspot.com.br"
+
+  ClientConfigurationF5:
+    client: "@FacebookAuthTeste"
+    configuration: "@ConfigurationItem5"
+    accessPointGroup: "@Group3"
+    isDefault: true
+    value: "developers-wspot@wideti.com.br"
+
+  ClientConfigurationT1:
+    client: "@TwitterAuthTeste"
+    configuration: "@ConfigurationItem1"
+    accessPointGroup: "@Group4"
+    isDefault: true
+    value: "Wide TI"
+
+  ClientConfigurationT2:
+    client: "@TwitterAuthTeste"
+    configuration: "@ConfigurationItem2"
+    accessPointGroup: "@Group4"
+    isDefault: true
+    value: "twitterteste"
+
+  ClientConfigurationT3:
+    client: "@TwitterAuthTeste"
+    configuration: "@ConfigurationItem3"
+    accessPointGroup: "@Group4"
+    isDefault: true
+    value: "router"
+
+  ClientConfigurationT4:
+    client: "@TwitterAuthTeste"
+    configuration: "@ConfigurationItem4"
+    accessPointGroup: "@Group4"
+    isDefault: true
+    value: "http://www.wspot.com.br"
+
+  ClientConfigurationT5:
+    client: "@TwitterAuthTeste"
+    configuration: "@ConfigurationItem5"
+    accessPointGroup: "@Group4"
+    isDefault: true
+    value: "developers-wspot@wideti.com.br"
+
+  ClientConfiguration49:
+    client: "@Client"
+    configuration: "@ConfigurationItem49"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Ao se cadastrar você está de acordo com os { use_terms }."
+
+  ClientConfiguration50:
+    client: "@Client"
+    configuration: "@ConfigurationItem50"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Signing up you are agreeing with our { use_terms }."
+
+  ClientConfiguration51:
+    client: "@Client"
+    configuration: "@ConfigurationItem51"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: "Al registrarse usted está de acuerdo con el { use_terms }."
+
+  ClientConfiguration52:
+    client: "@Client"
+    configuration: "@ConfigurationItem53"
+    accessPointGroup: "@Group1"
+    isDefault: true
+    value: false
+

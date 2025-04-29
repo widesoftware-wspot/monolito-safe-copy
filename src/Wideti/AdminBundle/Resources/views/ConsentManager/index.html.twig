@@ -1,0 +1,499 @@
+{% extends 'AdminBundle::layout.html.twig' %}
+
+{% block css %}
+    {{ parent() }}
+    <style>
+        .waiting {
+            border: 10px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 10px solid #ec213a;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 2s linear infinite; /* Safari */
+            animation: spin 2s linear infinite;
+        }
+
+        /* Safari */
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #ConsentModal {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0,0,0, 0.5);
+            z-index: 99;
+        }
+
+        #consentModalContainer {
+            position: relative;
+            background-color: #FFFFFF;
+            z-index: 98;
+            opacity: 1;
+        }
+
+        #ConsentModal-header{
+            text-align: center;
+            padding: 15px 0;
+        }
+
+        #ConsentModal-header h2{
+            color: {{ whiteLabel.panelColor }};
+        }
+
+        #ConsentModal-body{
+            text-align: center;
+            font-size: 20px;
+            padding: 20px;
+        }
+
+        #ConsentModal-body p{
+            font-size: 20px;
+            color: #000000;
+        }
+
+        #ConsentModal-footer{
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        #ConsentModal-footer button{
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 20px;
+            background-color: {{ whiteLabel.panelColor }};
+            border: none;
+        }
+
+    </style>
+{% endblock %}
+
+{% block consentModal %}
+    {% if hasConsent is defined and hasConsent is not null and hasConsent == "0" and activeLegalBase is not null and activeLegalBase.legalKind.key == constant('Wideti\\DomainBundle\\Entity\\LegalKinds::TERMO_CONSENTIMENTO') %}
+        <div id="ConsentModal">
+            <div id="consentModalContainer">
+                <div id="ConsentModal-header">
+                    <h2>AVISO!</h2>
+                </div>
+                <div id="ConsentModal-body">
+                    <p>Para que seu spot possa funcionar corretamente é necessário cadastrar um termo de consentimento.</p>
+                </div>
+                <div id="ConsentModal-footer">
+                    <button id="consent-modal-button">Entendi</button>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% include 'AdminBundle::header.html.twig' with {'title': 'Gestão de Consentimento'} %}
+
+    {% if activeLegalBase is not null and activeLegalBase.legalKind.key == constant('Wideti\\DomainBundle\\Entity\\LegalKinds::LEGITIMO_INTERESSE') %}
+        <div class="innerLR">
+            <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;">
+                <div class="span6">
+                    <div class="alert alert-primary">
+                        Enquanto Controlador utilizamos o Legítimo Interesse para captação dos dados. Tenho ciência que o Termo de Consentimento não será solicitado ao visitante da rede WiFi. A Política de Privacidade exibida {{ activeLegalBase.client.whiteLabel? 'na plataforma(Operador)' : 'na Mambo Wifi(Operador)' }} será definida pelo Controlador.
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="innerLR">
+
+            <div id="app">
+
+                <component v-bind:is="active_component" v-bind:has_record="has_record"
+                           v-bind:consent="consent" v-bind:server_error="server_error"
+                           v-bind:is_loading="is_loading">
+                </component>
+            </div>
+        </div>
+
+        {#    Templates Vue #}
+        <template id="show-info">
+            <div class="widget-body">
+                <!-- Widget -->
+                <div class="widget">
+                    <!-- Widget heading -->
+                    <div class="widget-head">
+                        <h4 class="heading">Detalhes do consentimento vigente</h4>
+                    </div>
+
+                    <div v-if="is_loading" class="widget-body">
+                        <div class="waiting"></div>
+                    </div>
+
+                    <div v-else class="widget-body">
+
+                        <div class="heading-buttons">
+                            <div class="buttons pull-right">
+                                {% if is_granted("ROLE_ADMIN") or is_granted("ROLE_ADMIN_LIMITED") or is_granted("ROLE_MANAGER") %}
+                                    <a href="#" style="margin: 0px 0 2px 0;"
+                                       class="btn btn-primary btn-icon glyphicons circle_plus"
+                                       @click.stop.prevent="openForm">
+                                        <i></i>
+                                        <span v-if="has_record">Editar</span>
+                                        <span v-else>Adicionar</span>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;" v-if="server_error">
+                            <div class="span4">
+                                <div class="validateLabel">
+                                    ${server_error}<a @click.stop.prevent="document.location.reload(true)" class="validateLabel">Clique aqui para recarregar</a>
+                                </div>
+                            </div>
+                            <div class="span1">
+
+                            </div>
+                        </div>
+
+                        <!-- Row -->
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;" v-if="!server_error">
+
+                            <div class="span8" v-if="has_record">
+                                <ul class="unstyled icons">
+                                    <li class="glyphicons history"><i></i>Versão: ${consent.consent_version}</li>
+                                    <li class="glyphicons calendar"><i></i>Última alteração: ${consent.consent_version | timestampToDatetime | dateFormat}</li>
+                                </ul>
+                                <p>Para que o visitante possa utilizar a rede wifi disponível, ele deve aceitar os termos sobre o uso dos dados que estão abaixo descritos:</p>
+                                <h4>Termos do consentimento</h4>
+                                <ul style="list-style: none">
+                                    <li style="margin: 2px 0;" v-for="condition in consent.conditions" :key="condition.id">
+                                        <i>&#10004;</i> ${condition.description}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="span6" v-else>
+                                <div class="alert alert-primary">
+                                    Ei, parece que você não tem uma versão do consentimento criado ainda. Clique em adicionar e defina um :)
+                                </div>
+                            </div>
+                            <div class="span6">
+
+                            </div>
+
+                        </div>
+                        <!-- // Row END -->
+                    </div>
+                </div>
+                <!-- // Widget END -->
+            </div>
+            <!-- // Tab content END -->
+        </template>
+
+        <template id="form-info">
+            <div class="widget-body">
+                <!-- Widget -->
+                <div class="widget">
+                    <!-- Widget heading -->
+                    <div class="widget-head">
+                        <h4 class="heading" v-if="has_record">Alteração do Consentimento</h4>
+                        <h4 class="heading" v-else>Criação do Consentimento</h4>
+                    </div>
+
+                    <div class="widget-body">
+                        <!-- Row -->
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;" v-if="server_error">
+                            <div class="span12">
+                                <div class="validateLabel">
+                                    ${server_error}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row-fluid" style="margin-top: 30px; margin-bottom: 30px;" v-if="!server_error">
+                            <h4>Termos do consentimento</h4>
+                            <p>Selecione abaixo os termos que deseja inserir em seu consentimento:</p>
+                            <div v-if="is_loading" class="span12">
+                                <div class="waiting"></div>
+                            </div>
+                            <div v-else class="span12">
+                                <label class="checkbox" v-for="condition in conditions" :key="condition.id" v-bind:for="condition.id">
+                                    <input style="margin-top: 0px" type="checkbox" class="checkbox" v-bind:id="condition.id" v-model="conditionsChecked" v-bind:value="condition.id" />
+                                    ${condition.description.pt_BR}
+                                </label>
+                                <div v-if="error" class="validateLabel">
+                                    ${error}
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- // Row END -->
+                        <hr class="separator">
+                        <!-- Form actions -->
+                        <div class="form-actions right">
+                            <div class="buttons pull-right">
+
+                                <a href="#">
+                                    <button type="button" class="btn btn-icon btn-default glyphicons circle_remove"
+                                            @click.stop.prevent="cancelForm"><i></i>
+                                        Cancelar
+                                    </button>
+                                </a>
+
+                                <a href="#" style="margin: 0px 0 2px 0;"
+                                   class="btn btn-primary btn-icon glyphicons circle_plus"
+                                   @click.stop.prevent="createConsent">
+                                    <i></i>Salvar</a>
+
+                            </div>
+                        </div>
+                        <!-- // Form actions END -->
+                    </div>
+                </div>
+                <!-- // Widget END -->
+            </div>
+            <!-- // Tab content END -->
+        </template>
+    {% endif %}
+
+{% endblock %}
+{% block javascript %}
+{{ parent() }}
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script>
+        var mixin = {
+            filters: {
+                timestampToDatetime: function (timestamp){
+                    myDate = new Date(timestamp * 1000)
+                    return myDate
+                },
+                dateFormat: function (dateSring){
+                    var dateRawUTC = new Date(dateSring);
+                    date = dateRawUTC.getUTCDate();
+                    month = (dateRawUTC.getUTCMonth() + 1).toString();
+                    month = month.length == 2 ? month : "0"+month;
+                    year = dateRawUTC.getUTCFullYear();
+                    hour = dateRawUTC.getHours();
+                    minute = (dateRawUTC.getMinutes() == 0) ? "00" : dateRawUTC.getMinutes()
+                    time = hour + "h" + minute;
+                    return  date + "/" +
+                            month + "/" +
+                            year + " " + time;
+                }
+            }
+        };
+        Vue.component('consent-info',{
+            delimiters: ['${', '}'],
+            template: "#show-info",
+            mixins: [mixin],
+            props: {
+                has_record: {
+                    type: Boolean,
+                    required: true
+                },
+                consent: {
+                    type: Object,
+                    default: {}
+                },
+                server_error: {
+                    type: String,
+                    default: ''
+                },
+                is_loading: {
+                    type: Boolean,
+                    required: true
+                }
+            },
+            methods: {
+                openForm: () => {
+                    eventBus.$emit('interaction', {
+                        navigate_to:'consent-form',
+                        action: 'open-form'
+                    });
+                }
+            }
+        });
+
+        Vue.component('consent-form',{
+            delimiters: ['${', '}'],
+            template: "#form-info",
+            props: {
+                has_record: {
+                    type: Boolean,
+                    required: true
+                }
+            },
+            data(){
+                return {
+                    conditions: [],
+                    conditionsChecked: [],
+                    error: '',
+                    server_error: '',
+                    is_loading: true,
+                }
+            },
+            created (){
+                var routeCreate = Routing.generate('get_conditions');
+                var instance = this;
+                $.ajax({
+                        type: "GET",
+                        url: routeCreate,
+                        dataType : "json",
+                        success: function(response, status, responseInfo)
+                        {
+                            instance.conditions = response;
+                            instance.conditions.forEach((condition, i) => {
+                                condition.description = JSON.parse(condition.description)
+                            });
+                            instance.server_error = '';
+                        },
+                        error: function (err){
+                            instance.processError(err)
+                        },
+                        complete: function (){
+                            instance.is_loading = false;
+                        }
+
+                    });
+            },
+            methods: {
+                createConsent: function (){
+
+                    var instance = this;
+                    if (instance.conditionsChecked.length > 0){
+                        msgConfirm = "Esta alteração irá gerar uma nova versão de consentimento. " +
+                         "Todos os visitantes que acordaram com a versão antiga terão que acordar " +
+                          "novamente com esta nova versão ao conectarem na rede. Deseja continuar?";
+                        bootbox.confirm(
+                            msgConfirm,
+                            function(result){
+                                if (result){
+                                    instance.error = '';
+                                    var routeCreate = Routing.generate('create_consent');
+                                    $.ajax({
+                                        type: "POST",
+                                        url: routeCreate,
+                                        data: {
+                                            conditions: instance.conditionsChecked
+                                        },
+                                        dataType : "json",
+                                        success: function(response, status, responseInfo)
+                                        {
+                                            response.conditions.forEach((condition, i) => {
+                                                condition.description = JSON.parse(condition.description);
+                                                condition.description = condition.description.pt_BR;
+                                            });
+                                            eventBus.$emit('interaction', {
+                                                navigate_to:'consent-info',
+                                                action: 'create',
+                                                data: response
+                                            });
+                                            $.gritter.add({
+                                                title: 'Sucesso!',
+                                                text: "Alteração realizada com sucesso!!"
+                                            });
+                                        },
+                                        error: function (err){
+                                            if (err.status == 409){
+                                                eventBus.$emit('interaction', {
+                                                    navigate_to:'consent-info',
+                                                    action: 'back'
+                                                });
+                                                $.gritter.add({
+                                                    title: 'Atenção!',
+                                                    text: "Não foi identificada nenhuma alteração no consentimento!!"
+                                                });
+                                            }else {
+                                                instance.processError(err)
+                                            }
+                                        }
+                                    });
+                                }
+                            }
+                        );
+                    }else {
+                        instance.error = "Você deve selecionar ao menos um termo!";
+                    }
+
+                },
+                processError(err){
+                    errMsg = JSON.parse(err.responseText);
+                    this.server_error = "Houve um erro com o servidor. Tente novamente mais tarde."
+                    console.log(errMsg);
+                },
+                cancelForm: () => {
+                    eventBus.$emit('interaction', {
+                        navigate_to:'consent-info',
+                        action: 'back'
+                    });
+                }
+            }
+        });
+
+        var eventBus = new Vue();
+        var app = new Vue({
+            delimiters: ['${', '}'],
+            el: '#app',
+            data: {
+                has_record: false,
+                active_component: 'consent-info',
+                consent: {},
+                server_error: '',
+                is_loading: true,
+
+            },
+            created: function () {
+                eventBus.$on('interaction', (event) => {
+                    if (event.action == 'create'){
+                        this.has_record = true;
+                    }
+                    if (event.data){
+                        this.consent = event.data;
+                    }
+                    this.active_component = event.navigate_to;
+                });
+
+                var instance = this;
+                var routeGet = Routing.generate('get_consent');
+                $.ajax({
+                        type: "GET",
+                        url: routeGet,
+                        dataType : "json",
+                        success: function(response, status, responseInfo)
+                        {
+                            instance.consent = response;
+                            instance.has_record = true;
+                            instance.server_error = '';
+                        },
+                        error: function (err){
+                            console.log(err);
+                            errMsg = JSON.parse(err.responseText);
+                            if (err.status == 404){
+                                instance.has_record = false;
+                                instance.server_error = '';
+                            }else {
+                                instance.server_error = "Houve um erro com o servidor. Tente novamente mais tarde.";
+                                console.log(errMsg);
+                            }
+                        },
+                        complete: function (){
+                            instance.is_loading = false;
+                        }
+                    });
+            }
+        });
+
+        $('#consent-modal-button').click(function (){
+           $('#ConsentModal').css('display', 'none')
+        });
+</script>
+
+
+{% endblock %}

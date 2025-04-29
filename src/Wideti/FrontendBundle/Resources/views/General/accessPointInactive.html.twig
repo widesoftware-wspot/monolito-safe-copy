@@ -1,0 +1,23 @@
+{% extends 'FrontendBundle::index.html.twig' %}
+
+{% block container %}
+    <section class="container singleBox">
+        <div id="signUpBox" class="boxes fullBox" style="display: block !important; min-height: 400px;">
+            <div class="box-content">
+                <h3>{{ 'wspot.access_point.title'|trans }}</h3>
+
+                <div class="content-center">
+                    <p>{{ 'wspot.access_point.message_1'|trans }}</p>
+
+                    <div style="font-weight: bold; margin-top: 30px;">
+                        <p>AP: {{ accessPoint.friendlyName }}</p>
+
+                        {% if (accessPoint.identifier) %}
+                            <p>Mac Address: {{ accessPoint.identifier }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

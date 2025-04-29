@@ -1,0 +1,30 @@
+Wideti\DomainBundle\Entity\City:
+  City1:
+    name: Campinas
+
+  City2:
+    name: São Paulo
+
+  City3:
+    name: Indaiatuba
+
+  City4:
+    name: Sumaré
+
+  City5:
+    name: Rio de Janeiro
+
+  City6:
+    name: Goiás
+
+  City7:
+    name: Jundiaí
+
+  City8:
+    name: Belo Horizonte
+
+  City9:
+    name: Recife
+
+  City10:
+    name: Salvador

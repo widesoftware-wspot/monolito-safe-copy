@@ -1,0 +1,5 @@
+admin_token_redirect:
+    path: /token
+    defaults: { _controller: wspot.admin.controller.wspot_poc_token_purchase:redirectChangePlanAction }
+    options:
+      expose: true

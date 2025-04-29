@@ -1,0 +1,1200 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Testes Api Guests Wspot",
+		"_postman_id": "bac4635a-6db2-ef38-4d2d-206663ff1dce",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Custom Fields Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200",
+							"tests['Fields array cant be empty'] = jsonData.length >= 1",
+							"",
+							"",
+							"/// Mass generators ///",
+							"/**",
+							" * Gera email de forma randomica",
+							" */",
+							"function generateRandomEmail() {",
+							"    var text = \"\";",
+							"    var charset = \"abcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for( var i=0; i < 20; i++ ) {",
+							"        text += charset.charAt(Math.floor(Math.random() * charset.length));",
+							"    }",
+							"",
+							"    return `${text}@wideti.com.br`;",
+							"}",
+							"",
+							"/**",
+							" * Gera string randomica para adicionar em campos customizados.",
+							" */",
+							"function generateRandomString() {",
+							"    var text = \"\";",
+							"    var charset = \"abcdefghijklmnopqrstuvwxyz0123456789\";",
+							"",
+							"    for( var i=0; i < 20; i++ ) {",
+							"        text += charset.charAt(Math.floor(Math.random() * charset.length));",
+							"    }",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"/**",
+							" * Gera telefone de forma randomica",
+							" */",
+							"function generateRandomPhone() {",
+							"    var text = \"\";",
+							"    var charset = \"123456789\";",
+							"",
+							"    for( var i=0; i < 11; i++ ) {",
+							"        text += charset.charAt(Math.floor(Math.random() * charset.length));",
+							"    }",
+							"",
+							"    return text;",
+							"}",
+							"",
+							"/**",
+							" * Utilizado pelo Gerador de CPF",
+							" */",
+							"function randomiza(n) {",
+							"\tvar ranNum = Math.round(Math.random()*n);",
+							"\treturn ranNum;",
+							"}",
+							"",
+							"/**",
+							" * Utilizado pelo Gerador de CPF",
+							" */",
+							"function mod(dividendo,divisor) {",
+							"\treturn Math.round(dividendo - (Math.floor(dividendo/divisor)*divisor));",
+							"}",
+							"",
+							"/**",
+							" * Gera um CPF válido randomico",
+							" */",
+							"function gerarCPF(pontos = false) {",
+							"\tcomPontos = pontos; // TRUE para ativar e FALSE para desativar a pontuação.",
+							"\t\t\t  ",
+							"    var n = 9;",
+							"\tvar n1 = randomiza(n);",
+							"\tvar n2 = randomiza(n);",
+							"\tvar n3 = randomiza(n);",
+							"\tvar n4 = randomiza(n);",
+							"\tvar n5 = randomiza(n);",
+							"\tvar n6 = randomiza(n);",
+							"\tvar n7 = randomiza(n);",
+							"\tvar n8 = randomiza(n);",
+							"\tvar n9 = randomiza(n);",
+							"\tvar d1 = n9*2+n8*3+n7*4+n6*5+n5*6+n4*7+n3*8+n2*9+n1*10;",
+							"\td1 = 11 - ( mod(d1,11) );",
+							"\tif (d1>=10) d1 = 0;",
+							"\tvar d2 = d1*2+n9*3+n8*4+n7*5+n6*6+n5*7+n4*8+n3*9+n2*10+n1*11;",
+							"\td2 = 11 - ( mod(d2,11) );",
+							"\tif (d2>=10) d2 = 0;",
+							"\tretorno = '';",
+							"\tif (comPontos) cpf = ''+n1+n2+n3+'.'+n4+n5+n6+'.'+n7+n8+n9+'-'+d1+d2;",
+							"\telse cpf = ''+n1+n2+n3+n4+n5+n6+n7+n8+n9+d1+d2;",
+							"\t\t",
+							"\t    return cpf;",
+							"}",
+							"",
+							"/**",
+							" * Cria um visitante randomico com base nos campos customizados.",
+							" */",
+							"function generateRandomGuestObject(customFields) {",
+							"    return jsonData.reduce((reduce, current) => {",
+							"        const identifier = current.identifier;",
+							"        ",
+							"        if (identifier === 'email') {",
+							"            reduce.properties[identifier] = \"teste\";    ",
+							"        }",
+							"        ",
+							"        switch(identifier) {",
+							"            case 'email':",
+							"                reduce.properties[identifier] = generateRandomEmail();",
+							"                break;",
+							"            case 'document':",
+							"                reduce.properties[identifier] = gerarCPF(false);",
+							"                break;",
+							"            case 'phone':",
+							"                reduce.properties[identifier] = 99999999999",
+							"                break;",
+							"            default:",
+							"                reduce.properties[identifier] = 99999999999",
+							"        }",
+							"        ",
+							"        if (reduce.password === undefined) {",
+							"            reduce.password = '123456'         ",
+							"        }",
+							"        ",
+							"        return reduce;",
+							"    }, {'properties' : {}});",
+							"}",
+							"",
+							"/**",
+							" * Cria um visitante com dados randomicos com properties que não existe no servidor",
+							" */",
+							"function generateRandomGuestObjectWithNoAllowedPropertieField(customFields) {",
+							"    return jsonData.reduce((reduce, current) => {",
+							"        const identifier = current.identifier;",
+							"        ",
+							"        if (identifier === 'email') {",
+							"            reduce.properties[identifier] = \"teste\";    ",
+							"        }",
+							"        ",
+							"        switch(identifier) {",
+							"            case 'email':",
+							"                reduce.properties[identifier] = generateRandomEmail();",
+							"                break;",
+							"            case 'document':",
+							"                reduce.properties[identifier] = gerarCPF(false);",
+							"                break;",
+							"            case 'phone':",
+							"                reduce.properties[identifier] = 99999999999",
+							"                break;",
+							"            default:",
+							"                reduce.properties[identifier] = 99999999999",
+							"        }",
+							"        ",
+							"        if (reduce.password === undefined) {",
+							"            reduce.password = '123456';      ",
+							"        }",
+							"        ",
+							"        if (reduce.notExistsField === undefined) {",
+							"            reduce.notExistsField = 99999999999",
+							"        }",
+							"        ",
+							"        return reduce;",
+							"    }, {'properties' : {}});",
+							"}",
+							"",
+							"/// end mass generators ///",
+							"",
+							"",
+							"/**",
+							" * Create Global Variables to use in Tests",
+							" */",
+							"const guestSingleSave       = JSON.stringify(generateRandomGuestObject(jsonData));",
+							"const guestSingleSave2      = JSON.stringify(generateRandomGuestObject(jsonData));",
+							"const guestSaveSingleOnBulk = JSON.stringify(generateRandomGuestObject(jsonData));",
+							"const guestWrongProperties  = JSON.stringify(generateRandomGuestObjectWithNoAllowedPropertieField(jsonData));",
+							"const customFieldsIdentifiers = JSON.stringify(jsonData.map(field => field.identifier));",
+							"const loginField = jsonData.reduce((reducer, field) => (field.isLogin ? field.identifier : reducer), \"\");",
+							"",
+							"const bulkGuest1 = generateRandomGuestObject(jsonData);",
+							"const bulkGuest2 = generateRandomGuestObject(jsonData);",
+							"const bulkGuest3 = generateRandomGuestObject(jsonData);",
+							"",
+							"const bulkArrayToSaveSuccess = JSON.stringify([bulkGuest1, bulkGuest2]);",
+							"const bulkArrayToSaveOneSuccessAndOneFail = JSON.stringify([bulkGuest1, bulkGuest3]);",
+							"",
+							"postman.setGlobalVariable(\"guestSaveSingle\", guestSingleSave);",
+							"postman.setGlobalVariable(\"guestSaveSingle2\", guestSingleSave2);",
+							"postman.setGlobalVariable(\"guestSaveSingleOnBulk\", guestSaveSingleOnBulk);",
+							"postman.setGlobalVariable(\"guestWrongProperties\", guestWrongProperties);",
+							"postman.setGlobalVariable(\"customFieldsIdentifiers\", customFieldsIdentifiers);",
+							"postman.setGlobalVariable(\"loginFieldIdentifier\", loginField);",
+							"postman.setGlobalVariable(\"bulkArrayToSaveSuccess\", bulkArrayToSaveSuccess);",
+							"postman.setGlobalVariable(\"bulkArrayToSaveOneSuccessAndOneFail\", bulkArrayToSaveOneSuccessAndOneFail);",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/fields",
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": [
+				{
+					"id": "039f26af-f660-421c-93ed-d57d671b6f0f",
+					"name": "teste_export",
+					"originalRequest": {
+						"url": "https://dev.wspot.com.br/app_dev.php/api/guests/fields",
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-TOKEN",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"description": ""
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"_postman_previewtype": "text",
+					"header": [
+						{
+							"name": "Cache-Control",
+							"key": "Cache-Control",
+							"value": "no-cache",
+							"description": "Tells all caching mechanisms from server to client whether they may cache this object. It is measured in seconds"
+						},
+						{
+							"name": "Connection",
+							"key": "Connection",
+							"value": "Keep-Alive",
+							"description": "Options that are desired for the connection"
+						},
+						{
+							"name": "Content-Length",
+							"key": "Content-Length",
+							"value": "1098",
+							"description": "The length of the response body in octets (8-bit bytes)"
+						},
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Date",
+							"key": "Date",
+							"value": "Mon, 02 Jan 2017 18:12:17 GMT",
+							"description": "The date and time that the message was sent"
+						},
+						{
+							"name": "Keep-Alive",
+							"key": "Keep-Alive",
+							"value": "timeout=5, max=100",
+							"description": "Custom header"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Apache/2.4.7 (Ubuntu)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "X-ChromeLogger-Data",
+							"key": "X-ChromeLogger-Data",
+							"value": "eyJ2ZXJzaW9uIjoiNC4wIiwiY29sdW1ucyI6WyJsYWJlbCIsImxvZyIsImJhY2t0cmFjZSIsInR5cGUiXSwicm93cyI6W1sicmVxdWVzdCIseyJtZXNzYWdlIjoiTWF0Y2hlZCByb3V0ZSBcImFwaV9ndWVzdHNfY3VzdG9tX2ZpZWxkc1wiLiIsImNvbnRleHQiOnsicm91dGVfcGFyYW1ldGVycyI6eyJfY29udHJvbGxlciI6IndzcG90LmFwaS5jb250cm9sbGVyLmd1ZXN0czpnZXRDdXN0b21GaWVsZHMiLCJfcm91dGUiOiJhcGlfZ3Vlc3RzX2N1c3RvbV9maWVsZHMifSwicmVxdWVzdF91cmkiOiJodHRwOlwvXC9kZXYud3Nwb3QuY29tLmJyXC9hcHBfZGV2LnBocFwvYXBpXC9ndWVzdHNcL2ZpZWxkcyJ9fSwidW5rbm93biIsImluZm8iXSxbInNlY3VyaXR5Iix7Im1lc3NhZ2UiOiJDaGVja2luZyBmb3IgZ3VhcmQgYXV0aGVudGljYXRpb24gY3JlZGVudGlhbHMuIiwiY29udGV4dCI6eyJmaXJld2FsbF9rZXkiOiJhcGlfZmlyZXdhbGwiLCJhdXRoZW50aWNhdG9ycyI6MX19LCJ1bmtub3duIiwiaW5mbyJdLFsic2VjdXJpdHkiLHsibWVzc2FnZSI6IkNhbGxpbmcgZ2V0Q3JlZGVudGlhbHMgb24gZ3VhcmQgY29uZmlndXJhdG9yLiIsImNvbnRleHQiOnsiZmlyZXdhbGxfa2V5IjoiYXBpX2ZpcmV3YWxsIiwiYXV0aGVudGljYXRvciI6IldpZGV0aVxcQXBpQnVuZGxlXFxTZWN1cml0eVxcVG9rZW5BUElHdWFyZCJ9fSwidW5rbm93biIsImluZm8iXSxbInNlY3VyaXR5Iix7Im1lc3NhZ2UiOiJQYXNzaW5nIGd1YXJkIHRva2VuIGluZm9ybWF0aW9uIHRvIHRoZSBHdWFyZEF1dGhlbnRpY2F0aW9uUHJvdmlkZXIiLCJjb250ZXh0Ijp7ImZpcmV3YWxsX2tleSI6ImFwaV9maXJld2FsbCIsImF1dGhlbnRpY2F0b3IiOiJXaWRldGlcXEFwaUJ1bmRsZVxcU2VjdXJpdHlcXFRva2VuQVBJR3VhcmQifX0sInVua25vd24iLCJpbmZvIl0sWyJzZWN1cml0eSIseyJtZXNzYWdlIjoiR3VhcmQgYXV0aGVudGljYXRpb24gc3VjY2Vzc2Z1bCEiLCJjb250ZXh0Ijp7InRva2VuIjp7fSwiYXV0aGVudGljYXRvciI6IldpZGV0aVxcQXBpQnVuZGxlXFxTZWN1cml0eVxcVG9rZW5BUElHdWFyZCJ9fSwidW5rbm93biIsImluZm8iXSxbInNlY3VyaXR5Iix7Im1lc3NhZ2UiOiJHdWFyZCBhdXRoZW50aWNhdG9yIHNldCBubyBzdWNjZXNzIHJlc3BvbnNlOiByZXF1ZXN0IGNvbnRpbnVlcy4iLCJjb250ZXh0Ijp7ImF1dGhlbnRpY2F0b3IiOiJXaWRldGlcXEFwaUJ1bmRsZVxcU2VjdXJpdHlcXFRva2VuQVBJR3VhcmQifX0sInVua25vd24iLCJpbmZvIl1dLCJyZXF1ZXN0X3VyaSI6IlwvYXBwX2Rldi5waHBcL2FwaVwvZ3Vlc3RzXC9maWVsZHMifQ==",
+							"description": "Custom header"
+						},
+						{
+							"name": "X-Debug-Token",
+							"key": "X-Debug-Token",
+							"value": "ea5b1d",
+							"description": "Custom header"
+						},
+						{
+							"name": "X-Debug-Token-Link",
+							"key": "X-Debug-Token-Link",
+							"value": "https://dev.wspot.com.br/app_dev.php/_profiler/ea5b1d",
+							"description": "Custom header"
+						}
+					],
+					"cookie": [],
+					"responseTime": "487",
+					"body": "[{\"id\":\"58514ff3e0e35b6aa83c9f6c\",\"type\":\"text\",\"name\":{\"pt_br\":\"Nome\",\"en\":\"Name\",\"es\":\"Nombre\"},\"identifier\":\"name\",\"choices\":null,\"validations\":[{\"type\":\"required\",\"value\":true,\"message\":\"wspot.signup_page.field_required\",\"locale\":[\"pt_br\",\"en\",\"es\"]}],\"mask\":null},{\"id\":\"58515db2e0e35b6aa83c9f6d\",\"type\":\"text\",\"name\":{\"pt_br\":\"Cidade\",\"en\":\"City\",\"es\":\"Ciudad\"},\"identifier\":\"city\",\"choices\":null,\"validations\":[{\"type\":\"required\",\"value\":true,\"message\":\"wspot.signup_page.field_required\",\"locale\":[\"pt_br\",\"en\",\"es\"]}],\"mask\":null},{\"id\":\"585168a1e0e35b6aa83c9f6e\",\"type\":\"document\",\"name\":{\"pt_br\":\"CPF\",\"en\":\"Passport\",\"es\":\"Pasaporte\"},\"identifier\":\"document\",\"choices\":null,\"validations\":[{\"type\":\"required\",\"value\":true,\"message\":\"wspot.signup_page.field_required\",\"locale\":[\"pt_br\",\"en\",\"es\"]},{\"type\":\"minlength\",\"value\":10,\"message\":\"wspot.signup_page.field_document_min_characters_required\",\"locale\":[\"pt_br\"]},{\"type\":\"CpfValidator\",\"value\":{\"required\":true},\"message\":\"wspot.signup_page.field_invalid_document\",\"locale\":[\"pt_br\"]}],\"mask\":{\"pt_br\":\"99999999999\",\"en\":\"\",\"es\":\"\"}}]"
+				}
+			]
+		},
+		{
+			"name": "Save Guest Without request body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"",
+							"tests[\"Mensagem de retorno é : A requisição POST não pode ser enviada com o body vazio\"] = jsonData.message == \"A requisição POST não pode ser enviada com o body vazio\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Find one guest by existent id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"",
+							"tests[\"ID is 59cce1d35adb8710518b456e\"] = jsonData.elements[0].id === '59cce1d35adb8710518b456e'",
+							"",
+							"",
+							"tests[\"NAS Vendor is Mikrotik\"] = jsonData.elements[0].nasVendor === 'mikrotik'"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/5172022",
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Find one guest by non-existent id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"",
+							"tests[\"Number of elements is 0\"] = jsonData.totalOfElements === 0",
+							"",
+							"",
+							"tests[\"Number of pages is 0\"] = jsonData.totalOfPages === 0",
+							"",
+							"",
+							"tests[\"Limit per page is 10\"] = jsonData.limitPerPage === 10",
+							"",
+							"",
+							"tests[\"Order is DESC\"] = jsonData.order === 'desc'"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/10",
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Save Guest With not exists Field ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"console.log(jsonData.properties['notExistsField']);",
+							"",
+							"tests[\"Status code is 201\"] = responseCode.code === 201;",
+							"tests['Wrong field is undefined on response'] = jsonData.properties['notExistsField'] === undefined;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/pt_br",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestWrongProperties}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Save Guest Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData     = JSON.parse(responseBody);",
+							"const guestSaved = JSON.parse(postman.getGlobalVariable(\"guestSaveSingle\"));",
+							"const customFieldsIdentifiers = JSON.parse(postman.getGlobalVariable(\"customFieldsIdentifiers\"));",
+							"const propertiesKeys = Object.keys(jsonData.properties);",
+							"const loginField = postman.getGlobalVariable(\"loginFieldIdentifier\");",
+							"",
+							"tests[\"Status code is 201\"] = responseCode.code === 201;",
+							"tests[\"Check guest id is created\"] = (jsonData.id !== undefined || jsonData.id !== null)",
+							"tests['Custom fields is correct in save'] = (customFieldsIdentifiers.length === propertiesKeys.length);",
+							"",
+							"postman.setGlobalVariable('guestIdToFind', jsonData.id);",
+							"postman.setGlobalVariable('guestLoginFieldValue', jsonData.properties[loginField]);",
+							"",
+							"guestSaved.id = jsonData.id;",
+							"postman.setGlobalVariable('guestWithPasswordToEdit', JSON.stringify(guestSaved));",
+							"",
+							"delete guestSaved['password'];",
+							"postman.setGlobalVariable('guestSuccessToEdit', JSON.stringify(guestSaved));",
+							"",
+							"delete guestSaved['id'];",
+							"postman.setGlobalVariable('guestWithoutId', JSON.stringify(guestSaved));"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestSaveSingle}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Save Guest success 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData     = JSON.parse(responseBody);",
+							"const guestSaved = JSON.parse(postman.getGlobalVariable(\"guestSaveSingle\"));",
+							"const customFieldsIdentifiers = JSON.parse(postman.getGlobalVariable(\"customFieldsIdentifiers\"));",
+							"const propertiesKeys = Object.keys(jsonData.properties);",
+							"const loginField = postman.getGlobalVariable(\"loginFieldIdentifier\");",
+							"",
+							"tests[\"Status code is 201\"] = responseCode.code === 201;",
+							"tests[\"Check guest id is created\"] = (jsonData.id !== undefined || jsonData.id !== null)",
+							"tests['Custom fields is correct in save'] = (customFieldsIdentifiers.length === propertiesKeys.length);",
+							"",
+							"",
+							"const successUpdateGuest = JSON.parse(postman.getGlobalVariable('guestSuccessToEdit'));",
+							"successUpdateGuest.id = jsonData.id;",
+							"",
+							"postman.setGlobalVariable(\"guesWithSameLoginFieldInBase\", JSON.stringify(successUpdateGuest));"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestSaveSingle2}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Try save exists guest with same login field",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"console.log(jsonData)"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/pt_br",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestSaveSingle}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Try update guest without fields",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Mensagem: A requisição POST não pode ser enviada com o body vazio\"] = jsonData.message == \"A requisição POST não pode ser enviada com o body vazio\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/pt_br",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Try update guest with password field",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Message\"] = jsonData.message == \"Campo password não pode ser enviado ao atualizar um visitante\";"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/pt_br",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestWithPasswordToEdit}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Try update guest without id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Id field not exists in update\"] = jsonData.errors.id.indexOf(\"É necessário um id para atualizar\") -1"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/pt_br",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestWithoutId}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+
+		{
+			"name": "Try to access guest with valid FROM argument on Query String",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"console.log(responseCode);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Total of elements is greater than 0\"] = jsonData.totalOfElements > 0",
+							"",
+							"",
+							"tests[\"Total of pages is greater than 0\"] = jsonData.totalOfPages > 0"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests?filter=lastAccess&from=2018-08-22",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestWithoutId}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+
+
+		{
+			"name": "Update guest Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/pt_br",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestSuccessToEdit}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Attempts to update login field that already exists",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					},
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guesWithSameLoginFieldInBase}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Find one guest by email Success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"const findId = postman.getGlobalVariable(\"guestIdToFind\");",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Is guest id\"] = jsonData.id === findId;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/{{guestIdToFind}}",
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Not Found one guest by email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"",
+							"",
+							"tests[\"Status code is 404\"] = responseCode.code === 404",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Mensagem não existe \"] = jsonData.message == \"Visitante não encontrado\"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/testeuser98789@wideti.com.br",
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get user list with default parameters",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Is page 1\"] = jsonData.page === 1;",
+							"tests[\"has guests in list\"] = jsonData.totalOfElements >= 2;",
+							"",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests",
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Get guests list with find by login field",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Is page 1\"] = jsonData.page === 1;",
+							"tests[\"total of elements is 1\"] = jsonData.totalOfElements === 1;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": {
+					"raw": "{{url}}/api/guests?filter=properties.{{loginFieldIdentifier}}&value={{guestLoginFieldValue}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"guests"
+					],
+					"query": [
+						{
+							"key": "filter",
+							"value": "properties.{{loginFieldIdentifier}}",
+							"equals": true,
+							"description": ""
+						},
+						{
+							"key": "value",
+							"value": "{{guestLoginFieldValue}}",
+							"equals": true,
+							"description": ""
+						}
+					],
+					"variable": []
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Bulk without body content",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Message ok\"] = jsonData.message == \"A requisição POST não pode ser enviada com o body vazio\"",
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							""
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/bulk",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Fail Try save only one in Bulk",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Message ok\"] = jsonData.message == \"Você não enviou um array para operação de bulk\"",
+							"tests[\"Status code is 400\"] = responseCode.code === 400;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/bulk",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{guestSaveSingleOnBulk}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Bulk insert success",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"",
+							"tests[\"No errors found\"] = jsonData.hasErrors === false",
+							"tests[\"Insert 2 success\"] = jsonData.successTotal == 2"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/bulk",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{bulkArrayToSaveSuccess}}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "Bulk insert one success and one fail",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"has errors\"] = jsonData.hasErrors === true;",
+							"tests[\"has one success\"] = jsonData.successTotal == 1;",
+							"tests[\"has one Error\"] = jsonData.errorsTotal == 1;"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "{{url}}/api/guests/bulk",
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-TOKEN",
+						"value": "{{token}}",
+						"description": ""
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{{bulkArrayToSaveOneSuccessAndOneFail}}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}

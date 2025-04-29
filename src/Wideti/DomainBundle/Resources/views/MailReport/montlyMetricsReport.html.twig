@@ -1,0 +1,68 @@
+{% extends 'AdminBundle:Admin:baseEmailTemplate.html.twig' %}
+
+{% block content %}
+    <tr>
+        <td style="padding-left: 30px;">
+            <table cellspacing="0" cellpadding="0" border="0">
+                <tbody>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;">
+                            <p style="font-size:16px;color:#444444;line-height:30px;">Quantidade de clientes que utilizam os recursos do módulo de regras de acesso</p>
+                            <p style="font-size:22px;color:#444444;font-weight: bold;line-height:16px;">Bloqueio por Tempo: {{ totalClientsUsingBlockPerTime }}</p>
+                            <p style="font-size:22px;color:#444444;font-weight: bold;line-height:16px;">Validade de Acesso: {{ totalClientsUsingAccessValidity }}</p>
+                            <p style="font-size:22px;color:#444444;font-weight: bold;line-height:16px;">Limite de Banda: {{ totalClientsUsingBandwidthLimit }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;">
+                            <p style="font-size:16px;color:#444444;line-height:30px;">Quantidade de regras de acesso (não contabiliza as regras visitantes/funcionários)</p>
+                            <p style="font-size:30px;color:#444444;font-weight: bold;">{{ totalAccessRules }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;">
+                            <p style="font-size:16px;color:#444444;">Qtd de regras com Bloqueio por Tempo aplicado</p>
+                            <p style="font-size:30px;color:#444444;font-weight: bold;">{{ totalBlockPerTimeActive }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;">
+                            <p style="font-size:16px;color:#444444;">Qtd de regras com Validade de Acesso aplicado</p>
+                            <p style="font-size:30px;color:#444444;font-weight: bold;">{{ totalAccessValidityActive }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;">
+                            <p style="font-size:16px;color:#444444;">Qtd de regras com Limite de Banda aplicado</p>
+                            <p style="font-size:30px;color:#444444;font-weight: bold;">{{ totalBandwidthLimitActive }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;padding-top: 40px;">
+                            <p style="font-size:16px;color:#444444;">Total de Accountings (últimos 30 dias)</p>
+                            <p style="font-size:30px;color:#444444;font-weight: bold;">{{ totalAccountings|number_format(0) }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;">
+                            <p style="font-size:16px;color:#444444;">Total de Autenticações (últimos 30 dias)</p>
+                            <p style="font-size:30px;color:#444444;font-weight: bold;">{{ totalAuthentications|number_format(0) }}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding-right:20px;padding-left: 20px;">
+                            <p style="font-size:16px;color:#444444;">Total de Visitantes na base (últimos 30 dias)</p>
+                            <p style="font-size:30px;color:#444444;font-weight: bold;">{{ totalGuests|number_format(0) }}</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
+
+{% block signature %}
+{% endblock %}
