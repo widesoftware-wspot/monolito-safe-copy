@@ -1,0 +1,153 @@
+imports:
+    - { resource: config.yml }
+    - { resource: config_local.yml }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        strict_requirements: true
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: true
+    intercept_redirects: false
+
+twig:
+    cache: false
+
+monolog:
+    handlers:
+        main:
+            type:  stream
+            path:  %kernel.logs_dir%/%kernel.environment%.log
+            level: warning
+        firephp:
+            type:  firephp
+            level: info
+        chromephp:
+            type:  chromephp
+            level: info
+
+assetic:
+    use_controller: true
+
+swiftmailer:
+    delivery_address: %dev_delivery_address%
+
+old_sound_rabbit_mq:
+    connections:
+        default:
+            host: rabbitmq
+            port: %rabbitmq_port%
+            user: 'guest'
+            password: 'guest'
+            lazy: true
+            connection_timeout: 3
+            read_write_timeout: 3
+            keepalive: true
+            heartbeat: 0
+            vhost: '/'
+    producers:
+        send_guest:
+            connection: default
+            exchange_options: {name: 'send_guest', type: 'direct'}
+            queue_options:
+                name: 'wspot-guests'
+        disconnect_guest:
+            connection: default
+            exchange_options: {name: 'disconnect_guest', type: 'direct'}
+            queue_options:
+                name: 'disconnect-guests'
+    consumers:
+        disconnect_guest:
+            connection: default
+            exchange_options: {name: 'disconnect_guest', type: direct}
+            queue_options: {name: 'disconnect-guests'}
+            callback: 'core.service.disconnect_guest_consumer'
+
+doctrine_mongodb:
+    connections:
+        default:
+            server: "mongodb://%mongodb_server1%:%mongodb_port1%"
+            options: %mongodb_options%
+    default_database: %mongodb_database%
+    document_managers:
+        default:
+            auto_mapping: true
+
+# Sobrescrevendo o parameters.yml (produção)
+parameters:
+    database_host: '%env(DATABASE_HOST)%'
+    database_name: '%env(DATABASE_NAME)%'
+    database_user: '%env(DATABASE_USER)%'
+    database_password: '%env(DATABASE_PASSWORD)%'
+    # RADIUS - SERVER
+    radius_host: radiusv3
+
+    mailer_transport: '%env(MAILER_TRANSPORT)%'
+    mailer_host: '%env(MAILER_HOST)%'
+    mailer_user: '%env(MAILER_USER)%'
+    mailer_password: '%env(MAILER_PASSWORD)%'
+
+    email_developers_recipient: developers-wspot@wideti.com.br
+    email_admin_recipient:      developers-wspot@wideti.com.br
+    email_financial_recipient:  developers-wspot@wideti.com.br
+    email_commercial_recipient: developers-wspot@wideti.com.br
+    email_support_recipient:    developers-wspot@wideti.com.br
+
+    assets_path: 'bundles/admin/frontend'
+
+    elastic_hosts:
+        - elasticsearch
+    elastic_log_index: logs
+    elastic_log_type: changelog
+
+    mongodb_server1: mongo1
+    mongodb_port1: 27017
+    mongodb_options:
+        authSource: admin
+    mongodb_database: dev
+
+    cache_active: false
+    cache_host: 'redis://redis'
+    cache_port: 6379
+
+    policy_cache_active: true
+    policy_cache_host: 127.0.0.1
+    policy_cache_port: 6379
+
+    ap_cache_active: true
+    ap_cache_host: 'redis'
+    ap_cache_port: 6379
+
+    bounce_validator_active: false
+    pagination_limit_number: 10
+    redis_dsn_cluster: 'redis:6379'
+
+    sms_marketing_api_host: 'host.docker.internal:8080'
+    sms_marketing_report_api_host: 'host.docker.internal:8181'
+    sites_blocking_api_host: 'host.docker.internal:8484'
+    url_shortner_api_host: 'host.docker.internal:8282'
+    url_shortner_report_api_host: 'host.docker.internal:8383'
+
+    audit_fluentd_address: fluentd-audit
+    audit_fluentd_port: 24224
+    consent_service_host: http://api-mocks:3000
+    consent_gateway_url: 'consent_gateway_mock'
+    session_service_host: 'http://host.docker.internal:8090'
+
+    facebook_app_id: '%env(FACEBOOK_APP_ID)%'
+    facebook_app_secret: '%env(FACEBOOK_APP_SECRET)%'
+    facebook_complete_login_url: "http://<domain>.wspot.com.br/app_dev.php/facebook-complete-login"
+    facebook_redirect_oauth_url: "https://facebookteste.wspot.com.br/app_dev.php/facebook-callback"
+    frontend_index_url: "http://<domain>.wspot.com.br/app_dev.php/home"
+    twitter_redirect_oauth_url: 'http://twitterauthdev.wspot.com.br/app_dev.php/twitter-redirect'
+    twitter_callback_oauth_url: '/app_dev.php/twitter-callback'
+    answer_survey_backend: 'http://api-mocks:3000'
+    survey_url_wspot_callback: '.wspot.com.br/app_dev.php/survey-step?'
+    survey_url_wspot_callback_white_label: '/app_dev.php/survey-step?'
+    survey_frontend_address: 'http://<domain>:8083'
+    survey_url_protocol: 'http://'
+    secret_question_url: 'http://api-mocks:3000/secret-answer/api'
+    linkedin_client_id: '%env(LINKEDIN_CLIENT_ID)%'
+    linkedin_client_secret: '%env(LINKEDIN_CLIENT_SECRET)%'
