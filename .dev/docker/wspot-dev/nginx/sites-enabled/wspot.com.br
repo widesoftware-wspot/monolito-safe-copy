@@ -1,0 +1,61 @@
+server {
+        listen 80;
+        server_name ~^(.+)$;
+        server_name_in_redirect off;
+
+        # Para parar com erro 499 - http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ignore_client_abort
+        proxy_ignore_client_abort on;
+
+        ### LOGS
+        access_log /var/log/nginx/api.wspot.com.br-json.log json_debug if=$api; # API-LOG
+        access_log /dev/stdout json_debug if=$api; # API-LOG
+        #error_log /var/log/nginx/wspot.com.br_error.log warn;
+        access_log /var/log/nginx/wspot.com.br_access-json.log json_debug if=$access;
+        access_log /dev/stdout json_debug if=$access;
+        access_log /var/log/nginx/wspot.com.br_access.log main if=$access;
+        access_log /var/log/nginx/wspot.com.br_error-json.log json_debug if=$error;
+        access_log /dev/stderr json_debug if=$error;
+        access_log /var/log/nginx/wspot.com.br_error_4x-json.log json_debug if=$error4x;
+        access_log /dev/stdout json_debug if=$error4x;
+
+        root /sites/wspot.com.br/web;
+
+        # Symfony #
+        include conf.sites/symfony.conf;
+
+        # SSL /admin #
+
+        location /admin/ {
+                try_files $uri @rewriteapp;
+        }
+
+        # SSL /panel #
+
+        location /panel/ {
+                try_files $uri @rewriteapp;
+        }
+
+        #### LIBERACAO DOS ACCESS POINTS
+        location ~ ^/api/(access-point-groups|access-points)$ {
+                try_files $uri @rewriteapp;
+        }
+
+        #location ~ ^/(app|app_dev|info|config)\.php(/|$) {
+        location ~ ^/(app)\.php(/|$) {
+                fastcgi_split_path_info ^(.+\.php)(/.+)$;
+                fastcgi_pass unix:/var/run/php/php5.6-fpm.sock;
+                fastcgi_index app.php;
+                fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+                include fastcgi_params;
+                fastcgi_intercept_errors on;
+                fastcgi_ignore_client_abort off;
+                fastcgi_connect_timeout 60;
+                fastcgi_send_timeout 90;
+                fastcgi_read_timeout 90;
+                fastcgi_buffer_size 128k;
+                fastcgi_buffers 4 256k;
+                fastcgi_busy_buffers_size 256k;
+                fastcgi_temp_file_write_size 256k;
+                internal;
+        }
+}

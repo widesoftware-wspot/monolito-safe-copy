@@ -1,15 +1,6 @@
 version: '3.9'
 
 services:
-  fluentd-audit:
-    container_name: fluentd-audit
-    platform: linux/x86_64 # Necessário para quem usa processador Apple (M1 e M2)
-    image: sa-saopaulo-1.ocir.io/grtenqmoni5x/wspot-fluentd-kafka-container-image:v0.0.1
-    ports:
-      - "24224:24224"
-    volumes:
-      - ./fluentd-audit/etc:/fluentd/etc
-
   mongo:
       container_name: mongo1
       image: mongo:4.0.1

@@ -56,7 +56,6 @@ foreach ($guests as $guest) {
 
     if (!array_key_exists('mysql', $guest)) {
         echo $guest;
-        die;
     }
 
     $find = $em->getRepository('DomainBundle:Guests')

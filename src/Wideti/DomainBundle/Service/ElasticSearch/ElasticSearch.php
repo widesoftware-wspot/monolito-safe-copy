@@ -78,8 +78,6 @@ class ElasticSearch
             'body'  => $data,
             'filter_path' => $filter_path
         ];
-        echo json_encode($params);
-        die;
         return $this->client->search($params);
     }
 
@@ -334,8 +332,6 @@ class ElasticSearch
             $objectToIndex['id'] = $id;
         }
 
-        echo json_encode($objectToIndex);
-        die;
         return new Response($this->client->index($objectToIndex));
     }
 
